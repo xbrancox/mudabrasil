@@ -101,6 +101,7 @@ function listAllComplaints(options) {
     return {
       id: c.id,
       politicianId: c.politicianId,
+      tipo: 'reclamacao',
       content: c.content,
       status: c.status,
       createdAt: c.createdAt,
@@ -109,6 +110,32 @@ function listAllComplaints(options) {
       response: resp ? { content: resp.content, createdAt: resp.createdAt } : null
     };
   });
+}
+
+function listAllSupports(options) {
+  if (options === undefined) options = {};
+  const supports = db.getAllSupports(options);
+  return supports.map(s => {
+    const p = db.getPolitician(s.politicianId);
+    return {
+      id: s.id,
+      politicianId: s.politicianId,
+      tipo: 'apoio',
+      content: s.content,
+      createdAt: s.createdAt,
+      politician: p ? { id: p.id, name: p.name, party: p.party, state: p.state, photo: p.photo } : null
+    };
+  });
+}
+
+function listAllFeed(options) {
+  if (options === undefined) options = {};
+  const limit = options.limit || 50;
+  const half = Math.ceil(limit / 2);
+  const complaints = listAllComplaints({ limit: half, offset: options.offset || 0 });
+  const supports = listAllSupports({ limit: half, offset: options.offset || 0 });
+  const feed = [...complaints, ...supports].sort((a, b) => b.createdAt - a.createdAt);
+  return feed.slice(0, limit);
 }
 
 function createSupport(opts) {
@@ -254,15 +281,17 @@ function getGlobalStats() {
   const verifications = db.getAllVerifications();
   const all = db.getAllPoliticians();
   const allComplaints = db.getAllComplaints({ limit: 10000 });
+  const allSupports = db.getAllSupports({ limit: 10000 });
 
   const verifiedCount = Object.values(verifications).filter(v => v.verified).length;
   const totalComplaints = allComplaints.length;
+  const totalSupports = allSupports.length;
 
   return {
     totalPoliticians: Object.keys(all).length,
     verifiedPoliticians: verifiedCount,
     totalComplaints,
-    totalSupports: 0,
+    totalSupports,
     totalResponses: 0,
     avgSatisfaction: 0
   };
@@ -270,7 +299,7 @@ function getGlobalStats() {
 
 module.exports = {
   createComplaint, listComplaints, listAllComplaints,
-  createSupport, listSupports,
+  createSupport, listSupports, listAllSupports, listAllFeed,
   createResponse, listResponses,
   getPoliticianStats, getRankings, getGlobalStats,
   sanitize, timeAgo, ipFromReq,

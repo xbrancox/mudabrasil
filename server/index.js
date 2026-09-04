@@ -469,6 +469,23 @@ async function handleApi(req, res, url) {
     return sendJson(res, 200, { ok: true, complaints: list, stats: reclamacoes.getGlobalStats() });
   }
 
+  if (p === '/api/reclamacoes/public' && req.method === 'POST') {
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    const pid = body.politicianId || body.politicoId || '';
+    const tipo = body.tipo || 'rec';
+    const content = (body.titulo || '') + ' — ' + (body.descricao || body.content || '');
+    const voterHash = 'anon-' + require('crypto').createHash('sha256').update(ip + ':' + Date.now()).digest('hex').slice(0, 16);
+    try {
+      if (tipo === 'apoio') {
+        const r = reclamacoes.createSupport({ politicianId: pid, voterHash, voterIp: ip, content });
+        return sendJson(res, 201, r);
+      }
+      const r = reclamacoes.createComplaint({ politicianId: pid, voterHash, voterIp: ip, content });
+      return sendJson(res, 201, r);
+    } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+  }
+
   if (p === '/api/apoios' && req.method === 'POST') {
     let body;
     try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
@@ -486,6 +503,11 @@ async function handleApi(req, res, url) {
     if (!pid) return sendJson(res, 400, { ok: false, error: 'politicianId é obrigatório' });
     const list = reclamacoes.listSupports(pid, { limit: parseInt(q.limit || 20), offset: parseInt(q.offset || 0) });
     return sendJson(res, 200, { ok: true, supports: list });
+  }
+
+  if (p === '/api/feed' && req.method === 'GET') {
+    const feed = reclamacoes.listAllFeed({ limit: parseInt(q.limit || 50), offset: parseInt(q.offset || 0) });
+    return sendJson(res, 200, { ok: true, feed, stats: reclamacoes.getGlobalStats() });
   }
 
   if (p === '/api/respostas' && req.method === 'POST') {

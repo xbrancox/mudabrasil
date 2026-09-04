@@ -566,6 +566,15 @@ function countSupportsByPolitician(politicianId) {
   return Object.values(jsonReadFile('supports')).filter(s => s.politicianId === politicianId).length;
 }
 
+function getAllSupports({ limit = 100, offset = 0 } = {}) {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    return db.prepare('SELECT * FROM supports ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset).map(r => ({ id: r.id, politicianId: r.politician_id, voterHash: r.voter_hash, voterIp: r.voter_ip, content: r.content, createdAt: r.created_at }));
+  }
+  const list = Object.values(jsonReadFile('supports')).sort((a, b) => b.createdAt - a.createdAt);
+  return list.slice(offset, offset + limit);
+}
+
 function createResponse(r) {
   const now = Date.now();
   if (BACKEND === 'sqlite') {
@@ -929,7 +938,7 @@ module.exports = {
   upsertPolitician, getPolitician, getAllPoliticians, getPoliticiansByFilters, getPoliticianFullDetails,
   setVerification, getVerification, getAllVerifications, getVerifiedPoliticians,
   createComplaint, getComplaint, getComplaintsByPolitician, countComplaintsByPolitician, getAllComplaints,
-  createSupport, getSupportsByPolitician, countSupportsByPolitician,
+  createSupport, getSupportsByPolitician, countSupportsByPolitician, getAllSupports,
   createResponse, getResponseByComplaint, getResponsesByPolitician,
   hashVoter, upsertVoter, getVoterById, getVoterByGoogleId, getVoterByPhone, getVoterByHash, getVoterByEmail,
   upsertPl, getPl, readAllPls, getPlsByFilters, castPlVote, getPlVoteForVoter,

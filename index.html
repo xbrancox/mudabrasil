@@ -513,14 +513,18 @@ if(BACKEND_OK){
     if(r.ok){
       toast(FORM_T=='rec'?'Reclamação registrada no servidor. 📣':'Apoio registrado no servidor. 👍');
       fechar('mForm');carregaRemoteRec();renderRad();return
+    } else if(r.status===404){
+      /* Backend desatualizado — rota /api/reclamacoes/public não existe na produção ainda */
+      console.warn('⚠️ Endpoint /api/reclamacoes/public não encontrado (404). Backend precisa ser atualizado. Salvando localmente.');
+      toast('Servidor em atualização. Sua ' + (FORM_T=='rec'?'reclamação':'apoio') + ' foi salva localmente e será sincronizada depois. 📣');
     } else {
       const err = await r.json().catch(()=>({}));
       toast('Erro ao enviar: ' + (err.error || r.status));
     }
-  }catch(e){toast('Erro de conexão: ' + e.message)}}
+  }catch(e){console.warn('Erro de conexão:', e.message);toast('Erro de conexão. Salvando localmente.')}}
 const txt=ti+' — '+de+(files.length?` 📎 ${files.join(', ')}`:'');
-if(FORM_T=='rec'){const m=LS.get('mb_rec_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('mb_rec_txt',m);toast('Reclamação registrada. 📣')}
-else{const m=LS.get('mb_elog_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('mb_elog_txt',m);toast('Apoio registrado. 👍')}
+if(FORM_T=='rec'){const m=LS.get('mb_rec_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('mb_rec_txt',m);if(!toast._silent)toast('Reclamação registrada localmente. 📣')}
+else{const m=LS.get('mb_elog_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('mb_elog_txt',m);if(!toast._silent)toast('Apoio registrado localmente. 👍')}
 fechar('mForm');renderRad()}
 function abrirLogin(){document.getElementById('mLogin').classList.add('open')}
 function entrarCidadao(){SESS={nome:'Cidadão BR'};LS.set('mb_sess',SESS);fechar('mLogin');toast('Bem-vindo, cidadão! (simulado)')}
