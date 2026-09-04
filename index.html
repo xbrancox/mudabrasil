@@ -437,6 +437,14 @@ if(p.cargo==='Deputado Federal'){
     const rl2=document.getElementById('real-'+i);if(rl2)rl2.innerHTML=realHTML(i);}}
   det.votosFim=true;const rl3=document.getElementById('real-'+i);if(rl3)rl3.innerHTML=realHTML(i);
  }catch(e){det.votosFim=true;}
+}else if(/^Senador/.test(p.cargo)){
+ try{const r=await fetch('https://legis.senado.leg.br/dadosabertos/senador/'+p.num+'/votacoes.json',{headers:{Accept:'application/json'}});const j=await r.json();
+  const arr=[].concat((((j.VotacaoParlamentar||{}).Parlamentar||{}).Votacoes||{}).Votacao||[]);
+  det.votos=arr.slice(0,8).map(v=>{const s=v.SessaoPlenaria||{};const m=v.Materia||{};
+   const t=m.DescricaoIdentificacao||((m.Sigla||'')+' '+(m.Numero||'')+'/'+(m.Ano||''))||((v.DescricaoVotacao||'').slice(0,60))||'Votação SF';
+   return {t:t,e:((v.DescricaoVotacao||'')||(m.Ementa||'')).slice(0,110),v:v.SiglaDescricaoVoto||'',d:s.DataSessao?fmtData(s.DataSessao):''};});
+  det.votosFim=true;const rl4=document.getElementById('real-'+i);if(rl4)rl4.innerHTML=realHTML(i);
+ }catch(e){det.votosFim=true;}
 }
 det.mandatos=(p.num%3)+1;det.pls=det.props.length||((p.num%47)+3);det.presenca=(70+(p.num%30))+'%';det.processos=p.rec>=80?2:p.rec>=40?1:0;det.patrimonio='R$ '+((p.num%12)+1)+','+(p.num%9)+'M';det.area=AREAS[p.num%AREAS.length];
 DET[i]=det;const el=document.getElementById('stats-'+i);if(el)el.innerHTML=statsInner(det);const rl=document.getElementById('real-'+i);if(rl)rl.innerHTML=realHTML(i)}
@@ -451,6 +459,7 @@ return h}
 function votoBadge(v){const s=(v||'').toLowerCase();if(s==='sim')return '<span class="badge ok">Sim</span>';if(s==='não'||s==='nao')return '<span class="badge" style="color:var(--red);border-color:rgba(231,76,60,.45)">Não</span>';return '<span class="badge">'+(v||'—')+'</span>'}
 function votosHTML(d,p){const vs=d.votos||[];if(vs.length)return vs.map(x=>`<div class="quote info"><span style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${votoBadge(x.v)}<b>${x.t||'Votação'}</b></span>${x.d?`<small class="muted" style="flex:none">${x.d}</small>`:''}</span>${x.e?`<div style="margin-top:3px">${x.e}</div>`:''}</div>`).join('');
  if(p&&p.cargo==='Deputado Federal')return `<p class="muted">${d.votosFim?'Nenhuma votação nominal do deputado nas últimas votações do Plenário.':'Carregando votações nominais…'}</p>`;
+ if(p&&/^Senador/.test(p.cargo))return `<p class="muted">${d.votosFim?'Votações nominais do senador indisponíveis agora (portal do Senado no fim da página).':'Carregando votações nominais…'}</p>`;
  return '<p class="muted">Votações nominais no link oficial (fim da página).</p>'}
 function fichaHTML(p,i){const d=DET[i];
   const rec=recAll(p,i);const apo=apoAll(p,i);const resp=respList(p);

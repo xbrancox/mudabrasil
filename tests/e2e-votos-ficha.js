@@ -33,7 +33,7 @@ const { chromium } = require('playwright');
     if (votesTxt && !votesTxt.includes('Carregando')) break;
     await page.waitForTimeout(1000);
   }
-  console.log('--- seção Como votou (DOM) ---');
+  console.log('--- DEPUTADO: seção Como votou (DOM) ---');
   console.log(votesTxt.slice(0, 800));
 
   const badges = await page.$$eval('#radList .quote.info .badge', els => els.map(e => e.textContent.trim()));
@@ -41,6 +41,30 @@ const { chromium } = require('playwright');
 
   await page.screenshot({ path: 'tests/screenshots/test-ficha-votos.png', fullPage: true });
   console.log('screenshot salvo: tests/screenshots/test-ficha-votos.png');
+
+  // SENADOR: Alan Rick (codigo 5672, endpoint historico de votacoes do Senado)
+  await page.fill('#cbusca', 'Alan Rick');
+  await page.waitForTimeout(1500);
+  let votesTxtS = '';
+  for (let t = 0; t < 30; t++) {
+    votesTxtS = await page.evaluate(() => {
+      const els = [...document.querySelectorAll('#radList h4')];
+      const h = els.find(e => e.textContent.includes('Como votou'));
+      if (!h) return '';
+      let out = h.textContent + ' :: ';
+      let n = h.nextElementSibling;
+      out += n ? n.textContent : '';
+      return out;
+    });
+    if (votesTxtS && !votesTxtS.includes('Carregando')) break;
+    await page.waitForTimeout(1000);
+  }
+  console.log('--- SENADOR: seção Como votou (DOM) ---');
+  console.log(votesTxtS.slice(0, 800));
+  const badgesS = await page.$$eval('#radList .quote.info .badge', els => els.map(e => e.textContent.trim()));
+  console.log('badges de voto (senador):', badgesS.join(' | '));
+  await page.screenshot({ path: 'tests/screenshots/test-ficha-votos-senador.png', fullPage: true });
+  console.log('screenshot salvo: tests/screenshots/test-ficha-votos-senador.png');
 
   // modal dados públicos
   const btn = await page.$('[onclick*="abrirDados"]');
