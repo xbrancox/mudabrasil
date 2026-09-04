@@ -272,7 +272,7 @@ $$('#nav a').forEach(a=>a.onclick=()=>go(a.dataset.p));
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 const CORES=['#2ECC71','#FFD700','#4a90f0','#E74C3C','#A855F7'],NOMES=['Maria','Carlos','Ana','João','Outros'];
 const AREAS=['Meio Ambiente','Saúde','Educação','Segurança','Economia','Infraestrutura','Direitos Humanos','Agronegócio'];
-let POL=[],ready=false,PINS=[],SESS=LS.get('mb_sess',null),DET={},FTAB={},REMOTE_REC={},REMOTE_APO={},BACKEND_OK=false;
+let POL=[],ready=false,PINS=[],SESS=LS.get('mb_sess',null),DET={},FTAB={},REMOTE_REC={},REMOTE_APO={},BACKEND_OK=false,VOT_CACHE={ts:0,list:[]},VOTOS_BY_ID={};
 const CARGOS_F=['Presidente','Governador','Senador','Deputado Federal','Deputado Estadual','Prefeito','Vereador'];
 const SEED_REC=['Não cumpriu a promessa da creche do bairro.','Faltou às sessões sem justificativa.','Não respondeu ao pedido de informação sobre emendas.','Prometeu a reforma da rodovia e não entregou.','Não destinou verba à saúde como prometido.'];
 const SEED_RESP=['Equipe incluiu a demanda no cronograma da próxima quinzena. — Gabinete','Prestação de contas publicada no portal oficial. — Gabinete'];
@@ -287,7 +287,7 @@ function pill(el,i,modo){el.parentElement.querySelectorAll('.pill').forEach(p=>p
 donut(document.getElementById('dc-'+i),modo==='UF'?DON_UF:DON_CID);if(modo==='Cidade')toast('Recorte por cidade: dados TSE na fase Railway.')}
 async function carregaPol(){POL=[];
 try{const r=await fetch(API_BASE+'/api/candidatos');const j=await r.json();const arr=Array.isArray(j)?j:(j.dados||j.candidatos||[]);
-if(arr.length){arr.forEach(d=>POL.push({nome:d.nome||d.name||d.nomeCivil||'',partido:d.partido||d.party||d.siglaPartido||'',uf:d.uf||d.state||d.siglaUf||'',cargo:d.cargo||d.position||'Deputado Federal',foto:d.foto||d.urlFoto||d.photo||'',num:d.id||d.num||0,real:1,rec:(d.id%90)+5,selo:!!(d.selo||d.verificado||d.verified)}));
+if(arr.length){arr.forEach(d=>{const numId=parseInt(String(d.id||d.num||'').replace(/\D/g,''),10)||0;POL.push({nome:d.nome||d.name||d.nomeCivil||'',partido:d.partido||d.party||d.siglaPartido||'',uf:d.uf||d.state||d.siglaUf||'',cargo:d.cargo||d.position||'Deputado Federal',foto:d.foto||d.urlFoto||d.photo||'',num:numId||d.id||0,real:1,rec:(numId%90)+5,selo:!!(d.selo||d.verificado||d.verified)});});
 BACKEND_OK=true;$('#apiStatus').style.display='inline-block';}}catch(e){}
 if(!POL.length){
 try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?itens=513&ordem=ASC&ordenarPor=nome');const j=await r.json();(j.dados||[]).forEach(d=>POL.push({nome:d.nome,partido:d.siglaPartido||'',uf:d.siglaUf||'',cargo:'Deputado Federal',foto:d.urlFoto||'',num:d.id,real:1,rec:(d.id%90)+5,selo:false}));}catch(e){}
@@ -416,13 +416,27 @@ function idade(iso){if(!iso)return null;const n=new Date(iso);const h=new Date()
 function fmtData(iso){if(!iso)return null;return new Date(iso).toLocaleDateString('pt-BR')}
 async function preencheDetalhe(i){const p=POL[i];const det={props:[],votos:[]};
 if(p.cargo==='Deputado Federal'){
- try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados/'+p.num);const j=await r.json();const d=j.dados||{};
+ const CB=(BACKEND_OK?(location.protocol.startsWith('http')?'':API_BASE):null);const CA=CB!=null?CB+'/api/camara/':'https://dadosabertos.camara.leg.br/api/v2/';
+ try{const r=await fetch(CA+'deputados/'+p.num);const j=await r.json();const d=j.dados||{};
   if(d.dataNascimento){det.idade=idade(d.dataNascimento);det.nasc=fmtData(d.dataNascimento)}
   if(d.escolaridade)det.escolaridade=d.escolaridade;if(d.nomeCivil)det.nomeCivil=d.nomeCivil;
   if(d.municipioNascimento)det.munic=(d.municipioNascimento||'')+(d.ufNascimento?'/'+d.ufNascimento:'');
-  if(d.ultimoStatus)det.legislatura=d.ultimoStatus.idLegislatura;if(d.gabinete)det.gabinete=d.gabinete.nome;
-  if(d.gabinete)det.contato=[d.gabinete.telefone,d.gabinete.email].filter(Boolean).join(' · ');}catch(e){}
- try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes?autorId='+p.num+'&itens=8&ordem=DESC&ordenarPor=id');const j=await r.json();det.props=(j.dados||[]).map(x=>({t:(x.siglaTipo||'')+' '+(x.numero||'')+'/'+(x.ano||''),e:(x.ementa||x.titulo||'').slice(0,110)}));}catch(e){}
+  if(d.ultimoStatus)det.legislatura=d.ultimoStatus.idLegislatura;const gab=(d.ultimoStatus&&d.ultimoStatus.gabinete)?d.ultimoStatus.gabinete:d.gabinete;if(gab)det.gabinete=gab.nome;
+  if(gab)det.contato=[gab.telefone,gab.email].filter(Boolean).join(' · ');}catch(e){}
+ try{const r=await fetch(CA+'proposicoes?idDeputadoAutor='+p.num+'&itens=8&ordem=DESC&ordenarPor=id');const j=await r.json();det.props=(j.dados||[]).map(x=>({t:(x.siglaTipo||'')+' '+(x.numero||'')+'/'+(x.ano||''),e:(x.ementa||x.titulo||'').slice(0,110)}));}catch(e){}
+ DET[i]=det;const rl0=document.getElementById('real-'+i);if(rl0)rl0.innerHTML=realHTML(i);
+ try{/* votações nominais: últimas votações do Plenário + voto do deputado em cada uma (cache compartilhado entre fichas) */
+  const now=Date.now();if(now-VOT_CACHE.ts>600000){const vr=await fetch(CA+'votacoes?itens=150&ordem=DESC&ordenarPor=dataHoraRegistro');VOT_CACHE.list=((await vr.json()).dados||[]).filter(v=>v.siglaOrgao==='PLEN');VOT_CACHE.ts=now;}
+  let probed=0;
+  for(const v of VOT_CACHE.list){if(det.votos.length>=8||probed>=45)break;
+   if(!Object.prototype.hasOwnProperty.call(VOTOS_BY_ID,v.id)){probed++;try{const r2=await fetch(CA+'votacoes/'+v.id+'/votos');VOTOS_BY_ID[v.id]=(await r2.json()).dados||[];}catch(e2){}}
+   const arr=VOTOS_BY_ID[v.id]||[];
+   const mine=arr.find(y=>y.deputado_&&String(y.deputado_.id)===String(p.num));
+   if(mine){const pr=v.proposicaoObjeto;const dt=v.data||v.dataHoraRegistro||'';const dfmt=dt?fmtData(String(dt).slice(0,10)):'';
+    det.votos.push({t:pr&&pr.siglaTipo?((pr.siglaTipo||'')+' '+(pr.numero||'')+'/'+(pr.ano||'')):'Votação PLEN',e:(v.descricao||'').slice(0,110),v:mine.tipoVoto||'',d:dfmt});
+    const rl2=document.getElementById('real-'+i);if(rl2)rl2.innerHTML=realHTML(i);}}
+  det.votosFim=true;const rl3=document.getElementById('real-'+i);if(rl3)rl3.innerHTML=realHTML(i);
+ }catch(e){det.votosFim=true;}
 }
 det.mandatos=(p.num%3)+1;det.pls=det.props.length||((p.num%47)+3);det.presenca=(70+(p.num%30))+'%';det.processos=p.rec>=80?2:p.rec>=40?1:0;det.patrimonio='R$ '+((p.num%12)+1)+','+(p.num%9)+'M';det.area=AREAS[p.num%AREAS.length];
 DET[i]=det;const el=document.getElementById('stats-'+i);if(el)el.innerHTML=statsInner(det);const rl=document.getElementById('real-'+i);if(rl)rl.innerHTML=realHTML(i)}
@@ -432,8 +446,12 @@ function realHTML(i){const p=POL[i];const d=DET[i]||{props:[],votos:[]};
 let h=`<h4 style="color:var(--gold);font-size:12px">📚 Projetos apresentados (${d.props.length?d.props.length:'…'})</h4>`;
 h+=d.props.length?d.props.map(x=>`<div class="quote info"><b>${x.t}</b> — ${x.e}…</div>`).join(''):`<p class="muted">${p.cargo==='Deputado Federal'?'Carregando proposições…':'Proposituras no link oficial (fim da página).'}</p>`;
 h+=`<h4 style="color:var(--blueL);font-size:12px;margin-top:8px">🗳️ Como votou (últimas votações)</h4>`;
-h+=d.votos.length?d.votos.map(x=>`<div class="quote info"><b>${x.t||'Votação'}</b>${x.v?` — voto: <b>${x.v}</b>`:''}</div>`).join(''):`<p class="muted">Votações nominais no link oficial (fim da página).</p>`;
+h+=votosHTML(d,p);
 return h}
+function votoBadge(v){const s=(v||'').toLowerCase();if(s==='sim')return '<span class="badge ok">Sim</span>';if(s==='não'||s==='nao')return '<span class="badge" style="color:var(--red);border-color:rgba(231,76,60,.45)">Não</span>';return '<span class="badge">'+(v||'—')+'</span>'}
+function votosHTML(d,p){const vs=d.votos||[];if(vs.length)return vs.map(x=>`<div class="quote info"><span style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${votoBadge(x.v)}<b>${x.t||'Votação'}</b></span>${x.d?`<small class="muted" style="flex:none">${x.d}</small>`:''}</span>${x.e?`<div style="margin-top:3px">${x.e}</div>`:''}</div>`).join('');
+ if(p&&p.cargo==='Deputado Federal')return `<p class="muted">${d.votosFim?'Nenhuma votação nominal do deputado nas últimas votações do Plenário.':'Carregando votações nominais…'}</p>`;
+ return '<p class="muted">Votações nominais no link oficial (fim da página).</p>'}
 function fichaHTML(p,i){const d=DET[i];
   const rec=recAll(p,i);const apo=apoAll(p,i);const resp=respList(p);
   const tab=FTAB[i]||'rec';let lista='';
@@ -451,13 +469,16 @@ function fichaHTML(p,i){const d=DET[i];
   </div>
   <div class="tabs"><button class="${tab=='rec'?'on':''}" onclick="FTAB[${i}]='rec';renderRad()">🔴 Reclamações (${rec.length})</button><button class="${tab=='resp'?'on':''}" onclick="FTAB[${i}]='resp';renderRad()">🗣️ Respostas (${resp.length})</button><button class="${tab=='apo'?'on':''}" onclick="FTAB[${i}]='apo';renderRad()">🟢 Apoios (${apo.length})</button></div>
   <div>${lista}</div>
-  <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><button class="btn red sm" onclick="abrirForm(${i},'rec')"><i class="fa-solid fa-bullhorn"></i> Fazer reclamação</button><button class="btn green sm" onclick="abrirForm(${i},'apo')"><i class="fa-solid fa-thumbs-up"></i> Dar apoio</button><button class="btn sm" onclick="souPolitico()"><i class="fa-solid fa-fingerprint"></i> É você? Verificar</button></div>
+  <div id="real-${i}" style="margin-top:10px"></div>
+  <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><button class="btn red sm" onclick="abrirForm(${i},'rec')"><i class="fa-solid fa-bullhorn"></i> Fazer reclamação</button><button class="btn green sm" onclick="abrirForm(${i},'apo')"><i class="fa-solid fa-thumbs-up"></i> Dar apoio</button><button class="btn sm" onclick="abrirDados(${i})"><i class="fa-solid fa-magnifying-glass-chart"></i> Dados públicos</button><button class="btn sm" onclick="souPolitico()"><i class="fa-solid fa-fingerprint"></i> É você? Verificar</button></div>
   </div>`}
 function abrirDados(i){const p=POL[i];const d=DET[i]||{};
 const rows=[['Nome civil',d.nomeCivil],['Nascimento',d.nasc],['Idade',d.idade],['Município/UF nasc.',d.munic],['Escolaridade',d.escolaridade],['Partido/UF',p.partido+' · '+p.uf],['Cargo',p.cargo],['Nº eleitoral',p.num],['Legislatura',d.legislatura],['Gabinete',d.gabinete],['Contato gabinete',d.contato],['Projetos apresentados',(d.props||[]).length],['Últimas votações',(d.votos||[]).length],['Patrimônio declarado','ver TSE (fim da pág.)'],['Processos/condenações','ver CNJ (fim da pág.)']];
 $('#dadosBody').innerHTML=`<h3 style="margin-bottom:10px">🔎 Dados públicos — ${p.nome}</h3>
 <div class="stats" style="grid-template-columns:1fr 1fr">${rows.map(r=>`<div class="stat"><small>${r[0]}</small><b>${r[1]!=null&&r[1]!==''?r[1]:'—'}</b></div>`).join('')}</div>
-<p class="muted">Fontes oficiais no final da página do Radar.</p>`;
+<h4 style="color:var(--blueL);font-size:12px;margin:12px 0 4px">🗳️ Últimas votações nominais</h4>
+${votosHTML(d,p)}
+<p class="muted" style="margin-top:10px">Fontes oficiais no final da página do Radar.</p>`;
 document.getElementById('mDados').classList.add('open')}
 function renderRad(){if(!ready)return;const q=($('#cbusca').value||'').toLowerCase();const uf=$('#fUF').value;const pt=$('#fPartido').value;const cg=$('#fCargo').value;const ord=$('#fOrdem').value;
 	const temFiltro=q||uf||pt||cg;

@@ -163,6 +163,24 @@ async function handleApi(req, res, url) {
   const q = Object.fromEntries(url.searchParams);
   const ip = clientIp(req);
 
+  /* Proxy simples para a API da Câmara (alguns endpoints não enviam CORS e ele é instável) */
+  if (p.startsWith('/api/camara/') && req.method === 'GET') {
+    const camaraPath = p.replace('/api/camara/', '');
+    if (!/^[\w/-]+$/.test(camaraPath)) return sendJson(res, 400, { ok: false, error: 'caminho inválido' });
+    try {
+      const r = await fetch('https://dadosabertos.camara.leg.br/api/v2/' + camaraPath + (url.search || ''), { headers: { Accept: 'application/json' } });
+      if (!r.ok) return sendJson(res, r.status === 404 ? 404 : 502, { ok: false, error: 'Câmara respondeu ' + r.status });
+      const j = await r.json();
+      res.writeHead(200, Object.assign({}, SEC_HEADERS, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      }));
+      return res.end(JSON.stringify(j));
+    } catch (e) {
+      return sendJson(res, 502, { ok: false, error: 'Falha ao consultar a Câmara: ' + e.message });
+    }
+  }
+
   if (p === '/api/health') {
     let registros = 0;
     try { registros = db.countBallots(); } catch (_) { }
