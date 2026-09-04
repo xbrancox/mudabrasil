@@ -450,8 +450,14 @@ async function handleApi(req, res, url) {
     const token = q.token || '';
     try {
       const r = verificacao.confirmVerification(token);
-      return sendJson(res, 200, r);
-    } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+      if (q.formato === 'json') return sendJson(res, 200, r);
+      res.writeHead(302, { Location: '/index.html?verificado=1' });
+      return res.end();
+    } catch (e) {
+      if (q.formato === 'json') return sendJson(res, 400, { ok: false, error: e.message });
+      res.writeHead(302, { Location: '/index.html?verificado=0&erro=' + encodeURIComponent(e.message) });
+      return res.end();
+    }
   }
 
   if (p === '/api/verificacao/dominios' && req.method === 'GET') {

@@ -267,6 +267,7 @@ if(window.caches){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 /* API_BASE vem do config.js (carregado no <head>) — não redeclarar aqui, isso quebrava o script todo */
 function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2600)}
+(function(){const qv=new URLSearchParams(location.search);if(qv.has('verificado')){if(qv.get('verificado')==='1')toast('✅ E-mail confirmado! Selo de verificado ativado.');else toast('Falha na confirmação: '+(qv.get('erro')||'token inválido'));history.replaceState({},'',location.pathname)}})();
 function fechar(id){document.getElementById(id).classList.remove('open')}
 function toggleMenu(){document.getElementById('mnav').classList.toggle('open')}
 function go(p){$$('.sec').forEach(s=>s.classList.remove('on'));$('#sec-'+p).classList.add('on');$$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===p));window.scrollTo(0,0);if(p=='radar')renderRad()}

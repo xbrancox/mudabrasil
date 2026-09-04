@@ -54,7 +54,10 @@ function loadFromCache() {
     if (Array.isArray(items)) {
       items.forEach(d => {
         const normalized = normalize(d);
-        if (normalized.id) out['camara-' + normalized.id] = { ...normalized, id: 'camara-' + normalized.id };
+        if (normalized.id) {
+          const full = /^camara-/.test(String(normalized.id)) ? normalized.id : 'camara-' + normalized.id;
+          out[full] = { ...normalized, id: full };
+        }
       });
     }
   } catch (_) { }
@@ -64,7 +67,10 @@ function loadFromCache() {
     if (Array.isArray(items)) {
       items.forEach(s => {
         const normalized = normalize(s);
-        if (normalized.id) out['senado-' + normalized.id] = { ...normalized, id: 'senado-' + normalized.id };
+        if (normalized.id) {
+          const full = /^senado-/.test(String(normalized.id)) ? normalized.id : 'senado-' + normalized.id;
+          out[full] = { ...normalized, id: full };
+        }
       });
     }
   } catch (_) { }

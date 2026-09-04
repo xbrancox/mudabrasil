@@ -46,7 +46,11 @@ function extractList(json) {
 
 function normalizeSenador(s) {
   const ident = (s && (s.IdentificacaoParlamentar || s.identificacaoParlamentar)) || s || {};
-  const codigo = pick(ident, ['CodigoParlamentar', 'codigoParlamentar', 'Codigo', 'codigo', 'id']);
+  let codigo = pick(ident, ['CodigoParlamentar', 'codigoParlamentar', 'Codigo', 'codigo']);
+  if (!codigo && ident.id) {
+    const mId = String(ident.id).match(/(\d+)\s*$/);
+    if (mId) codigo = mId[1];
+  }
   const uri = pick(ident, ['UrlPaginaParlamentar', 'urlPaginaParlamentar', 'uri']);
   const m = String(uri || '').match(/(\d+)\s*$/);
   const nome = pick(ident, ['NomeParlamentar', 'nomeParlamentar', 'NomeCompletoParlamentar', 'nome', 'name']) || 'Senador';
