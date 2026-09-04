@@ -247,14 +247,16 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <p class="muted" style="margin-top:10px">Político/Candidato = verificação REAL via backend (e-mail institucional ou TSE).</p>
 <button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mLogin')">Fechar</button></div></div>
 <div class="overlay" id="mVerif"><div class="modal"><h3 style="margin-bottom:10px">🔐 Verificação de identidade</h3>
+<div id="verifAlvo" class="muted" style="margin-bottom:8px"></div>
 <div id="verifPasso1">
 <label class="muted">E-mail institucional (@camara.leg.br / @senado.leg.br) ou registro TSE</label>
 <input id="vEmail" placeholder="nome@camara.leg.br" style="margin:6px 0 10px"/>
 <button class="btn gold" style="width:100%" onclick="solicitarCodigo()"><i class="fa-solid fa-envelope"></i> Enviar código</button>
 </div>
 <div id="verifPasso2" style="display:none">
-<label class="muted">Código recebido</label>
-<input id="vCodigo" placeholder="000000" style="margin:6px 0 10px;text-align:center;letter-spacing:4px"/>
+<label class="muted">Token do link recebido</label>
+<input id="vCodigo" placeholder="cole o token aqui" style="margin:6px 0 10px;text-align:center"/>
+<div id="verifDev" class="quote ok" style="display:none;margin:8px 0"></div>
 <button class="btn green" style="width:100%" onclick="confirmarCodigo()"><i class="fa-solid fa-circle-check"></i> Confirmar e obter selo</button>
 </div>
 <button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mVerif')">Fechar</button></div></div>
@@ -485,7 +487,7 @@ function fichaHTML(p,i){const d=DET[i];
   <div class="tabs"><button class="${tab=='rec'?'on':''}" onclick="FTAB[${i}]='rec';renderRad()">🔴 Reclamações (${rec.length})</button><button class="${tab=='resp'?'on':''}" onclick="FTAB[${i}]='resp';renderRad()">🗣️ Respostas (${resp.length})</button><button class="${tab=='apo'?'on':''}" onclick="FTAB[${i}]='apo';renderRad()">🟢 Apoios (${apo.length})</button></div>
   <div>${lista}</div>
   <div id="real-${i}" style="margin-top:10px"></div>
-  <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><button class="btn red sm" onclick="abrirForm(${i},'rec')"><i class="fa-solid fa-bullhorn"></i> Fazer reclamação</button><button class="btn green sm" onclick="abrirForm(${i},'apo')"><i class="fa-solid fa-thumbs-up"></i> Dar apoio</button><button class="btn sm" onclick="abrirDados(${i})"><i class="fa-solid fa-magnifying-glass-chart"></i> Dados públicos</button><button class="btn sm" onclick="souPolitico()"><i class="fa-solid fa-fingerprint"></i> É você? Verificar</button></div>
+  <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><button class="btn red sm" onclick="abrirForm(${i},'rec')"><i class="fa-solid fa-bullhorn"></i> Fazer reclamação</button><button class="btn green sm" onclick="abrirForm(${i},'apo')"><i class="fa-solid fa-thumbs-up"></i> Dar apoio</button><button class="btn sm" onclick="abrirDados(${i})"><i class="fa-solid fa-magnifying-glass-chart"></i> Dados públicos</button><button class="btn sm" onclick="souPolitico(${i})"><i class="fa-solid fa-fingerprint"></i> É você? Verificar</button></div>
   </div>`}
 function abrirDados(i){const p=POL[i];const d=DET[i]||{};
 const rows=[['Nome civil',d.nomeCivil],['Nascimento',d.nasc],['Idade',d.idade],['Município/UF nasc.',d.munic],['Escolaridade',d.escolaridade],['Partido/UF',p.partido+' · '+p.uf],['Cargo',p.cargo],['Nº eleitoral',p.num],['Legislatura',d.legislatura],['Gabinete',d.gabinete],['Contato gabinete',d.contato],['Projetos apresentados',(d.props||[]).length],['Últimas votações',(d.votosHist||d.votos||[]).length],['Patrimônio declarado','ver TSE (fim da pág.)'],['Processos/condenações','ver CNJ (fim da pág.)']];
@@ -564,21 +566,32 @@ else{const m=LS.get('mb_elog_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('m
 fechar('mForm');renderRad()}
 function abrirLogin(){document.getElementById('mLogin').classList.add('open')}
 function entrarCidadao(){SESS={nome:'Cidadão BR'};LS.set('mb_sess',SESS);fechar('mLogin');toast('Bem-vindo, cidadão! (simulado)')}
-function souPolitico(){fechar('mLogin');$('#verifPasso1').style.display='block';$('#verifPasso2').style.display='none';document.getElementById('mVerif').classList.add('open')}
+let VERIF_PID='',VERIF_NOME='';
+function souPolitico(i){fechar('mLogin');
+ if(i!=null&&POL[i]){const p=POL[i];VERIF_PID=(p.cargo==='Deputado Federal'?'camara-':'senado-')+p.num;VERIF_NOME=p.nome;}
+ else{VERIF_PID='';VERIF_NOME='';go('radar');toast('Busque seu perfil no Radar e use “É você? Verificar”.');return}
+ const al=$('#verifAlvo');if(al)al.textContent='Perfil: '+VERIF_NOME;
+ const dv=$('#verifDev');if(dv){dv.style.display='none';dv.innerHTML='';}
+ $('#verifPasso1').style.display='block';$('#verifPasso2').style.display='none';document.getElementById('mVerif').classList.add('open')}
 async function solicitarCodigo(){const em=($('#vEmail').value||'').trim();if(em.length<5)return toast('Informe e-mail institucional ou registro TSE.');
-try{const r=await fetch(API_BASE+'/api/verificacao/solicitar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})});
-if(r.ok){$('#verifPasso1').style.display='none';$('#verifPasso2').style.display='block';toast('Código enviado! Confira seu e-mail.')}
-else toast('Verificação real ativa na versão online completa.')}catch(e){toast('Verificação real ativa na versão online completa.')}}
+if(!VERIF_PID)return toast('Abra seu perfil no Radar e use “É você? Verificar”.');
+try{const r=await fetch(API_BASE+'/api/verificacao/solicitar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({politicianId:VERIF_PID,email:em})});
+const data=await r.json().catch(()=>({}));
+if(r.ok&&data.ok){$('#verifPasso1').style.display='none';$('#verifPasso2').style.display='block';
+ const dv=$('#verifDev');if(dv&&data.devConfirmUrl){dv.style.display='block';dv.innerHTML='MODO DEV (SMTP não configurado) — use o link de confirmação: <a style="color:var(--blueL)" href="'+data.devConfirmUrl+'">confirmar agora</a> ou cole o token abaixo.';}
+ toast(data.message||'Link de confirmação enviado!')}
+else toast(data.error||'Falha ao solicitar verificação.')}catch(e){toast('Backend indisponível para verificação.')}}
 
 async function confirmarCodigo(){const em=($('#vEmail').value||'').trim();const cod=($('#vCodigo').value||'').trim();
 try{
   const r=await fetch(API_BASE+'/api/verificacao/confirmar?token='+encodeURIComponent(cod));
   const data = await r.json().catch(()=>({}));
-  if(r.ok && data.verified){
-    SESS={nome:em,politico:true,verified:true};LS.set('mb_sess',SESS);
+  if(r.ok && data.ok){
+    if(SESS){SESS.verified=true;LS.set('mb_sess',SESS);}
+    const vi=POL.findIndex(x=>x&&(VERIF_PID==='camara-'+x.num||VERIF_PID==='senado-'+x.num));if(vi>=0)POL[vi].selo=true;
     fechar('mVerif');toast('✅ Selo de verificado concedido!');renderRad();
   } else {
-    toast(data.error || 'Código inválido.');
+    toast(data.error || 'Token inválido ou expirado.');
   }
 }catch(e){toast('Verificação real ativa na versão online completa.')}}
 let PLS=[];

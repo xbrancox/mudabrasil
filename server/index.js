@@ -239,7 +239,8 @@ async function handleApi(req, res, url) {
       const deputados = depResult.list.map(d => ({ ...d, position: 'Deputado Federal' }));
       const senadores = senResult.list.map(s => ({ ...s, position: 'Senador Federal' }));
       const todos = [...deputados, ...senadores];
-      const candidatos = applyQuery(todos, q);
+      const verSet = new Set(Object.keys(verificacao.getAllVerified()));
+      const candidatos = applyQuery(todos, q).map(c => (verSet.has(c.id) ? { ...c, selo: true, verificado: true } : c));
       return sendJson(res, 200, {
         mode: 'real',
         source: 'Câmara dos Deputados + Senado Federal',

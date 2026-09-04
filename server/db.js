@@ -464,6 +464,10 @@ function getVerifiedPoliticians() {
     for (const r of db.prepare('SELECT * FROM verifications WHERE verified = 1').all()) {
       const p = db.prepare('SELECT * FROM politicians WHERE id = ?').get(r.politician_id);
       if (p) out[r.politician_id] = JSON.parse(p.data_json);
+      else {
+        const cache = loadFromCache();
+        if (cache[r.politician_id]) out[r.politician_id] = cache[r.politician_id];
+      }
     }
     return out;
   }
