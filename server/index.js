@@ -421,7 +421,8 @@ async function handleApi(req, res, url) {
     let body;
     try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
     try {
-      const r = verificacao.startVerification(body.politicianId || '', body.email || '');
+      const baseUrl = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`;
+      const r = await verificacao.startVerification(body.politicianId || '', body.email || '', baseUrl);
       return sendJson(res, 200, r);
     } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
   }
@@ -621,7 +622,8 @@ async function handleApi(req, res, url) {
     let body;
     try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
     try {
-      const r = verificacao.startVerification(body.politicianId || '', body.email || '');
+      const baseUrl = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`;
+      const r = await verificacao.startVerification(body.politicianId || '', body.email || '', baseUrl);
       return sendJson(res, 200, r);
     } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
   }
