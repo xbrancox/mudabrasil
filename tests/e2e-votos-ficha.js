@@ -66,7 +66,7 @@ const { chromium } = require('playwright');
   await page.screenshot({ path: 'tests/screenshots/test-ficha-votos-senador.png', fullPage: true });
   console.log('screenshot salvo: tests/screenshots/test-ficha-votos-senador.png');
 
-  // VER TODAS: modal dados públicos do senador — botão deve expandir para o histórico completo
+  // VER TODAS + SCROLL INFINITO: 8 -> 50 -> 100 (blocos de 50)
   const btnDados = await page.$('[onclick*="abrirDados"]');
   if (btnDados) {
     await btnDados.click();
@@ -74,10 +74,14 @@ const { chromium } = require('playwright');
     const antes = await page.$$eval('#dadosBody .quote.info', els => els.length);
     const rotulo = await page.$eval('#dadosBody [onclick*="verTodas"]', e => e.textContent).catch(() => '(sem botão)');
     await page.$eval('#dadosBody [onclick*="verTodas"]', e => e.click()).catch(() => {});
-    await page.waitForTimeout(800);
-    const depois = await page.$$eval('#dadosBody .quote.info', els => els.length);
-    console.log('--- VER TODAS (senador) ---');
-    console.log('rotulo:', rotulo.trim(), '| antes:', antes, '| depois:', depois);
+    await page.waitForTimeout(500);
+    const bloco1 = await page.$$eval('#dadosBody .quote.info', els => els.length);
+    const rotuloMais = await page.$eval('#dadosBody [onclick*="carregaMaisVotos"]', e => e.textContent).catch(() => '(sem botão carregar mais)');
+    await page.$eval('#dadosBody [onclick*="carregaMaisVotos"]', e => e.click()).catch(() => {});
+    await page.waitForTimeout(500);
+    const bloco2 = await page.$$eval('#dadosBody .quote.info', els => els.length);
+    console.log('--- VER TODAS + PAGINAÇÃO (senador) ---');
+    console.log('rotulo:', rotulo.trim(), '| antes:', antes, '| expandido:', bloco1, '| após carregar mais:', bloco2, '| rotuloMais:', rotuloMais.trim());
     await page.screenshot({ path: 'tests/screenshots/test-modal-ver-todas.png' });
     console.log('screenshot salvo: tests/screenshots/test-modal-ver-todas.png');
   }

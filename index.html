@@ -453,14 +453,20 @@ h+=`<h4 style="color:var(--blueL);font-size:12px;margin-top:8px">🗳️ Como vo
 h+=votosHTML(d,p,i);
 return h}
 function votoBadge(v){const s=(v||'').toLowerCase();if(s==='sim')return '<span class="badge ok">Sim</span>';if(s==='não'||s==='nao')return '<span class="badge" style="color:var(--red);border-color:rgba(231,76,60,.45)">Não</span>';return '<span class="badge">'+(v||'—')+'</span>'}
-function votosHTML(d,p,i){const hist=d.votosHist||[];const vs=(d.votosTodas&&hist.length)?hist:(d.votos||[]);let h='';
+function votosHTML(d,p,i){const hist=d.votosHist||[];const limite=d.votosMostrados||50;const vs=(d.votosTodas&&hist.length)?hist.slice(0,limite):(d.votos||[]);let h='';
  if(vs.length)h+=vs.map(x=>`<div class="quote info"><span style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${votoBadge(x.v)}<b>${x.t||'Votação'}</b></span>${x.d?`<small class="muted" style="flex:none">${x.d}</small>`:''}</span>${x.e?`<div style="margin-top:3px">${x.e}</div>`:''}</div>`).join('');
  else{if(p&&p.cargo==='Deputado Federal')h+=`<p class="muted">${d.votosFim?'Nenhuma votação nominal do deputado nas últimas votações do Plenário.':'Carregando votações nominais…'}</p>`;
   else if(p&&/^Senador/.test(p.cargo))h+=`<p class="muted">${d.votosFim?'Votações nominais do senador indisponíveis agora (portal do Senado no fim da página).':'Carregando votações nominais…'}</p>`;
   else h+='<p class="muted">Votações nominais no link oficial (fim da página).</p>';}
- if(hist.length>8&&i!=null)h+=`<div style="margin-top:6px"><button class="btn sm" onclick="verTodas(${i})">${d.votosTodas?'Mostrar as 8 mais recentes':'Ver todas ('+hist.length+')'}</button></div>`;
+ if(hist.length>8&&i!=null){
+  if(d.votosTodas){if(hist.length>limite)h+=`<div id="votos-more-${i}" style="margin-top:6px"><button class="btn sm" onclick="carregaMaisVotos(${i})">Carregar mais (restam ${hist.length-limite})</button></div>`;}
+  else h+=`<div style="margin-top:6px"><button class="btn sm" onclick="verTodas(${i})">Ver todas (${hist.length})</button></div>`;}
  return h}
-function verTodas(i){if(!DET[i])return;DET[i].votosTodas=!DET[i].votosTodas;const rl=document.getElementById('real-'+i);if(rl)rl.innerHTML=realHTML(i);const md=document.getElementById('mDados');if(md&&md.classList.contains('open'))abrirDados(i)}
+let VOTOS_OBS=null;
+function setupVotosObserver(i){if(VOTOS_OBS){VOTOS_OBS.disconnect();VOTOS_OBS=null}const m=document.getElementById('votos-more-'+i);if(!m||!('IntersectionObserver'in window))return;VOTOS_OBS=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)carregaMaisVotos(i)})},{rootMargin:'250px'});VOTOS_OBS.observe(m)}
+function renderVotosBloco(i){const rl=document.getElementById('real-'+i);if(rl)rl.innerHTML=realHTML(i);const md=document.getElementById('mDados');if(md&&md.classList.contains('open'))abrirDados(i);setupVotosObserver(i)}
+function verTodas(i){if(!DET[i])return;DET[i].votosTodas=!DET[i].votosTodas;DET[i].votosMostrados=0;renderVotosBloco(i)}
+function carregaMaisVotos(i){if(!DET[i])return;DET[i].votosMostrados=(DET[i].votosMostrados||50)+50;renderVotosBloco(i)}
 function fichaHTML(p,i){const d=DET[i];
   const rec=recAll(p,i);const apo=apoAll(p,i);const resp=respList(p);
   const tab=FTAB[i]||'rec';let lista='';
@@ -488,7 +494,7 @@ $('#dadosBody').innerHTML=`<h3 style="margin-bottom:10px">🔎 Dados públicos �
 <h4 style="color:var(--blueL);font-size:12px;margin:12px 0 4px">🗳️ Últimas votações nominais</h4>
 ${votosHTML(d,p,i)}
 <p class="muted" style="margin-top:10px">Fontes oficiais no final da página do Radar.</p>`;
-document.getElementById('mDados').classList.add('open')}
+document.getElementById('mDados').classList.add('open');setupVotosObserver(i)}
 function renderRad(){if(!ready)return;const q=($('#cbusca').value||'').toLowerCase();const uf=$('#fUF').value;const pt=$('#fPartido').value;const cg=$('#fCargo').value;const ord=$('#fOrdem').value;
 	const temFiltro=q||uf||pt||cg;
 	if(!temFiltro){$('#cCount').textContent='';$('#radList').innerHTML=`<div class="card" style="grid-column:1/-1;text-align:center;padding:40px"><i class="fa-solid fa-magnifying-glass" style="font-size:30px;color:var(--gold)"></i><h3 style="margin:12px 0 6px">Pesquise um político</h3><p class="muted">Digite nome, número, estado, partido ou área pra abrir a ficha completa com dados reais.</p></div>`;return}
