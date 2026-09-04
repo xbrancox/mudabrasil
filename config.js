@@ -5,7 +5,13 @@
    Frontend: https://xbrancox.github.io/mudabrasil/
    ============================================================ */
 
-const API_BASE = 'https://mudabrasil-production-79eb.up.railway.app';
+let API_BASE = 'https://mudabrasil-production-79eb.up.railway.app';
+
+/* Página servida pelo próprio backend (dev localhost ou Railway) = mesma origem.
+   Hosts estáticos (GitHub Pages) e file:// continuam apontando pro Railway. */
+const SERVIDO_PELO_BACKEND = location.protocol.startsWith('http') &&
+  (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || /railway\.app$/.test(location.hostname));
+if (SERVIDO_PELO_BACKEND) API_BASE = '';
 
 // Backend Railway = modo PRODUÇÃO (votos ao vivo, selo real, reclamações persistentes)
 // API_BASE vazio = modo DEMO (só frontend, dados públicos + localStorage)
@@ -13,7 +19,8 @@ const API_BASE = 'https://mudabrasil-production-79eb.up.railway.app';
 window.MudaBrasil = window.MudaBrasil || {};
 
 window.MudaBrasil.API_BASE = API_BASE;
-window.MudaBrasil.MODO = API_BASE ? 'producao' : 'demo';
+window.MudaBrasil.MODO = 'producao';
+window.MudaBrasil.SERVIDO_PELO_BACKEND = SERVIDO_PELO_BACKEND;
 
 window.MudaBrasil.URLS = {
   camara: 'https://dadosabertos.camara.leg.br/api/v2',

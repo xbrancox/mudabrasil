@@ -268,6 +268,9 @@
           <button class="btn btn-accent btn-block" id="btn-votar" disabled style="margin-top:var(--space-md);">
             🗳️ Expressar Confiança
           </button>
+          <div id="consent-note" style="display:none; margin-top:var(--space-sm); color:var(--text-secondary); font-size:14px;">
+            🔒 Seu voto é <strong>anônimo</strong> e pode ser revogado a qualquer momento com o código.
+          </div>
 
           <p style="text-align:center; font-size:var(--text-xs); color:var(--text-muted); margin-top:var(--space-md);">
             Não sabe em quem votar? Comece comparando políticos em
@@ -349,10 +352,21 @@
               <div class="metric-number" id="m-total">0</div>
               <div class="metric-label">Total de participações</div>
             </div>
+            <div class="metric-card">
+              <div class="metric-number" id="m-participantes">0</div>
+              <div class="metric-label">Registros</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-number" id="m-top">—</div>
+              <div class="metric-label">Índice do topo</div>
+            </div>
           </div>
 
           <h4 style="margin-bottom:var(--space-sm);">📈 Top parlamentares por confiança</h4>
           <div class="thermo-mini-list" id="thermo-list"></div>
+
+          <h4 style="margin:var(--space-lg) 0 var(--space-sm);">📉 Tendência de votos ativos</h4>
+          <div style="max-width:900px;"><canvas id="trendChart" height="180"></canvas></div>
 
           <div style="text-align:center; margin-top:var(--space-lg);">
             <p style="color:var(--text-muted); font-size:var(--text-sm); margin-bottom:var(--space-sm);">

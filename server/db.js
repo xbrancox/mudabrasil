@@ -274,8 +274,9 @@ function init() {
     const n = db.prepare('SELECT COUNT(*) AS n FROM ballots').get().n;
     if (n === 0) {
       const legacy = jsonReadFile('ballots');
-      const list = Object.values(legacy);
-      if (list.length) { importAllBallots(legacy); migrated = list.length; }
+      const raw = (legacy && legacy.ballots && typeof legacy.ballots === 'object') ? legacy.ballots : legacy;
+      const list = Object.values(raw || {}).filter(b => b && typeof b === 'object' && b.ballotId);
+      if (list.length) { importAllBallots(Object.fromEntries(list.map(b => [b.ballotId, b]))); migrated = list.length; }
     }
   }
   return { backend: BACKEND, migrated };
@@ -356,6 +357,22 @@ function importAllBallots(ballotsObj) {
   }
   jsonWriteFile('ballots', ballotsObj || {});
 }
+
+function clear() {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    db.exec('DELETE FROM ballots');
+    try { db.exec('DELETE FROM voters'); } catch (_) { }
+    try { db.exec('DELETE FROM verifications'); } catch (_) { }
+    try { db.exec('DELETE FROM complaints'); } catch (_) { }
+    try { db.exec('DELETE FROM supports'); } catch (_) { }
+    try { db.exec('DELETE FROM responses'); } catch (_) { }
+    return;
+  }
+  jsonWriteFile('ballots', {});
+}
+
+function importAll(ballotsObj) { return importAllBallots(ballotsObj); }
 
 function upsertPolitician(p) {
   const now = Date.now();
@@ -943,7 +960,7 @@ function getPoliticianFullDetails(id) {
 }
 
 module.exports = {
-  init, close, backend, file,
+  init, close, backend, file, clear, importAll,
   getBallot, upsertBallot, readAllBallots, countBallots, clearBallots, importAllBallots,
   upsertPolitician, getPolitician, getAllPoliticians, getPoliticiansByFilters, getPoliticianFullDetails,
   setVerification, getVerification, getAllVerifications, getVerifiedPoliticians,

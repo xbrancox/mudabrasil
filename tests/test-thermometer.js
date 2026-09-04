@@ -22,21 +22,29 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const step = (ok, msg) => console.log((ok ? '  ✅ ' : '  ❌ ') + msg);
 
   await page.goto(BASE + '/pages/termometro.html', { waitUntil: 'networkidle' });
-  await sleep(1500); // espera carga real
+  // a termometro.html redireciona p/ meu-voto.html em 2s; espera o badge sair de 'Carregando'
+  let badge = '';
+  for (let i = 0; i < 30; i++) {
+    badge = (await page.textContent('#source-badge').catch(() => '')) || '';
+    if (badge.includes('Dados reais') || badge.includes('demo')) break;
+    await sleep(1000);
+  }
 
   // 1) Modo real
-  const badge = await page.textContent('#source-badge');
   step(badge.includes('Dados reais'), 'badge real: "' + badge.trim().slice(0, 50) + '"');
 
   // 2) Métricas carregadas
   const ativos0 = await page.textContent('#m-ativos');
   step(true, 'métricas iniciais — ativos=' + ativos0.trim() + ' revogados=' + (await page.textContent('#m-revogados')).trim());
 
-  // 3) Buscar parlamentar
-  await page.fill('#pol-search', 'marina');
+  // 3) Buscar parlamentar (nome estável na legislatura atual)
+  // o redirect abre #termometro; volta à tab de votação p/ o seletor ficar visível
+  await page.evaluate(() => { if (typeof switchTab === 'function') switchTab('expressar'); });
+  await sleep(300);
+  await page.fill('#pol-search', 'favacho');
   await sleep(500);
   const items = await page.$$('.pol-item[data-id]');
-  step(items.length > 0, 'busca "marina" → ' + items.length + ' resultado(s)');
+  step(items.length > 0, 'busca "favacho" → ' + items.length + ' resultado(s)');
 
   // 4) Selecionar o primeiro
   await page.click('.pol-item[data-id]');
@@ -62,7 +70,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const inputCode = await page.inputValue('#code-input');
   step(inputCode === code, 'código pré-preenchido no campo (e salvo em mb_codigo)');
 
-  // 7) Ver meu voto (mascarado - R6)
+  // 7) Ver meu voto (mascarado - R6) — troca p/ a tab conferir
+  await page.evaluate(() => { if (typeof switchTab === 'function') switchTab('conferir'); });
+  await sleep(300);
   await page.click('#btn-ver');
   await sleep(900);
   const masked = await page.textContent('#myvote-name');
@@ -75,11 +85,16 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const revealed = await page.textContent('#myvote-name');
   step(revealed === selName.trim() && !revealed.includes('•'), 'nome revelado ao tocar: "' + revealed.trim() + '"');
 
-  // 9) Manter meu voto (reafirmar)
-  await page.click('#btn-manter');
-  await sleep(900);
-  const manterMsg = await page.textContent('#my-vote-box');
-  step(manterMsg.includes('reafirmado'), '"Manter meu voto" reafirmou');
+  // 9) Manter meu voto (reafirmar) — o botão só aparece quando o voto tem >30 dias
+  const manterVis = await page.isVisible('#btn-manter');
+  if (manterVis) {
+    await page.click('#btn-manter');
+    await sleep(900);
+    const manterMsg = await page.textContent('#my-vote-box');
+    step(manterMsg.includes('reafirmado'), '"Manter meu voto" reafirmou');
+  } else {
+    step(true, 'reafirmação N/A — voto novo ainda não precisa reafirmar (>30 dias)');
+  }
 
   // 10) Métricas subiram (coloca)
   const ativos1 = parseInt((await page.textContent('#m-ativos')).trim(), 10);

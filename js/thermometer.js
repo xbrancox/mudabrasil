@@ -98,12 +98,12 @@
     if (m === 'real') {
       badge.className = 'source-badge-pill real';
       badge.textContent = '📡 Dados reais · Câmara dos Deputados · voto anônimo ao vivo';
-      $('demo-notice').style.display = 'none';
+      const dn = $('demo-notice'); if (dn) dn.style.display = 'none';
       if (search) { search.disabled = false; search.placeholder = 'Nome, partido ou estado…'; }
     } else {
       badge.className = 'source-badge-pill demo';
       badge.textContent = '🧪 Modo demo — dados sintéticos';
-      $('demo-notice').style.display = 'block';
+      const dn = $('demo-notice'); if (dn) dn.style.display = 'block';
       if (search) { search.disabled = true; search.placeholder = 'Disponível apenas em modo real (com o servidor)'; }
     }
   }
@@ -112,10 +112,13 @@
   function renderThermometer(data) {
     $('m-ativos').textContent = fmt(data.totalVotosAtivos);
     $('m-revogados').textContent = fmt(data.totalRevogados);
-    $('m-participantes').textContent = fmt(data.totalRegistros);
-    const top = data.topN && data.topN[0];
-    $('m-top').textContent = top ? top.indice.toFixed(1) : '—';
-    $('m-top').title = top ? top.name : '';
+    const mp = $('m-participantes'); if (mp) mp.textContent = fmt(data.totalRegistros);
+    const mt = $('m-top');
+    if (mt) {
+      const top = data.topN && data.topN[0];
+      mt.textContent = top ? top.indice.toFixed(1) : '—';
+      mt.title = top ? top.name : '';
+    }
 
     renderThermoList(data.topN || []);
     renderTrendChart(data.tendencia || []);
@@ -238,14 +241,14 @@
     $('sp-meta').textContent = (p.party || '—') + ' · ' + (p.state || '—');
     const ph = $('sp-photo');
     if (p.photo) { ph.style.display = ''; ph.src = p.photo; } else { ph.style.display = 'none'; }
-    $('consent-note').style.display = 'block';
+    const cn = $('consent-note'); if (cn) cn.style.display = 'block';
     updateButtons();
   }
 
   function clearSelected() {
     selectedId = null;
     $('selected-pol').style.display = 'none';
-    $('consent-note').style.display = 'none';
+    const cn2 = $('consent-note'); if (cn2) cn2.style.display = 'none';
     updateButtons();
   }
 
@@ -377,6 +380,7 @@
     const active = currentVote && !currentVote.revoked;
     $('btn-manter').disabled = mode !== 'real' || !hasCode || !active;
     $('btn-revogar').disabled = mode !== 'real' || !hasCode || !active;
+    const va = $('vote-actions'); if (va) va.style.display = hasCode ? 'flex' : 'none';
   }
 
   /* ---------- CARREGAMENTO ---------- */
@@ -431,6 +435,7 @@
     });
 
     $('sp-clear').addEventListener('click', clearSelected);
+    const ci = $('code-input'); if (ci) ci.addEventListener('input', updateButtons);
     $('btn-votar').addEventListener('click', confirmVote);
     $('btn-ver').addEventListener('click', viewMyVote);
     $('btn-revogar').addEventListener('click', revokeMyVote);
