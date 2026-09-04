@@ -24,6 +24,30 @@ Esta é a versão **redesign**, criada em arquivos novos sem alterar o projeto o
 > em JSON, persistência que sobrevive a reinícios e atualização automática dos dados
 > públicos a cada 24 h.
 
+## 🆕 Atualizações — 04/09/2026
+
+- **🗳️ Como votou (votações nominais) na ficha:** deputados federais via sondagem
+  das votações do Plenário (`/votacoes/{id}/votos`) com cache de sessão compartilhado;
+  senadores via histórico completo do Senado (`/senador/{codigo}/votacoes`) — 8 mais
+  recentes na ficha e histórico inteiro com "Ver todas" e scroll infinito (blocos de 50).
+  Badges: Sim = verde, Não = vermelho, presentes/ausências em cinza.
+- **📡 Proxy `/api/camara/*`:** o CORS da Câmara é instável e `/deputados/{id}` nunca
+  envia `Access-Control-Allow-Origin` — com backend ativo, todas as chamadas da Câmara
+  vão same-origin pelo proxy. Em hosts estáticos (GitHub Pages), o frontend usa o
+  Railway como proxy automaticamente.
+- **🔐 Verificação de políticos ponta a ponta:** `solicitar` envia `politicianId`,
+  `confirmar` checa `data.ok`, o selo grava no SQLite e passa a aparecer no
+  `/api/candidatos`; o link do e-mail redireciona para a home com toast. Domínios
+  autorizados: `@camara.leg.br`, `@senado.leg.br`, `@senador.leg.br`, `@tse.jus.br`.
+- **🧪 Bateria de testes verde:** `test-engine` 25/25 (migração, carga 10k, SSE,
+  persistência, fallback JSON), `test-thermometer` 21/21 (voto → código → revogação),
+  `test-live` 4/4 (SSE entre páginas), `test-render` 6 páginas sem erros.
+  Novos: `tests/e2e-votos-ficha.js`, `tests/e2e-pages.js`, `tests/e2e-verificacao.js`.
+- **🩹 Correções:** ids de senadores sem prefixo duplicado (`senado-senado-*`),
+  `idDeputadoAutor` (parâmetro correto das proposições), métricas sintéticas removidas
+  da ficha (só dados reais), `config.js` em mesma origem quando servido pelo backend,
+  consent-note/trendChart restabelecidos no meu-voto.html.
+
 ---
 
 ## 🚀 Como Executar
