@@ -1,0 +1,33 @@
+# ===============================
+# MudaBrasil — Ignorar arquivos locais
+# ===============================
+
+# Urnas de voto (ANONIMATO GARANTIDO)
+server/data/votos.db
+server/data/votos.json
+
+# Sal criptográfico (não deve ser versionado)
+server/data/.salt
+
+# Cache de enriquecimento (regenerável)
+server/data/enrich/
+
+# Dependências Node.js
+node_modules/
+
+# Testes e artefatos locais
+tests/screenshots/
+*.log
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Temporários
+tmp/
+temp/
+
+# === FIM .gitignore ===

@@ -1,0 +1,14 @@
+# Arquivos que o Docker NÃO deve copiar pro container
+node_modules/
+.git/
+.gitignore
+*.md
+tests/
+tmp/
+temp/
+.DS_Store
+Thumbs.db
+server/data/votos.db
+server/data/votos.json
+server/data/.salt
+server/data/enrich/
