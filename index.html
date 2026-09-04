@@ -97,6 +97,24 @@ textarea{min-height:70px;resize:vertical}
 .tabs button.on{color:var(--gold);border-color:var(--gold)}
 [data-tip]{position:relative;cursor:help}
 [data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:125%;left:50%;transform:translateX(-50%);background:#000;color:#fff;font:600 11px Manrope;padding:6px 10px;border-radius:8px;white-space:normal;width:max-content;max-width:220px;z-index:99}
+.ncar-wrap{display:flex;align-items:stretch;gap:10px;margin-top:18px}
+.ncar{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:6px 2px 14px;flex:1;scrollbar-width:thin}
+.ncar::-webkit-scrollbar{height:6px}.ncar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.ncar-btn{flex:none;width:42px;border:1px solid var(--line);background:var(--card);color:var(--gold);border-radius:12px;font-size:22px;cursor:pointer;align-self:center}
+.ncar-btn:hover{background:#123059}
+.ncard-new{flex:0 0 320px;max-width:320px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;transition:transform .18s,border-color .18s}
+.ncard-new:hover{transform:translateY(-3px);border-color:var(--gold)}
+.nbadge{display:inline-flex;align-items:center;gap:5px;background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.4);font:800 9.5px Manrope;letter-spacing:.08em;padding:4px 9px;border-radius:999px;text-transform:uppercase;width:max-content}
+.nbadge.uf{background:rgba(255,215,0,.12);color:var(--gold);border-color:rgba(255,215,0,.4)}
+.ncard-new h4{font-size:14.5px;line-height:1.35;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ncard-new p{color:var(--muted);font-size:12.5px;margin:0;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nmeta{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:auto;font-size:11px;color:var(--muted);flex-wrap:wrap}
+.nmeta a{color:var(--blueL);font-weight:700;text-decoration:none}
+.nmeta a:hover{text-decoration:underline}
+.nchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.nchips button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:6px 14px;font:700 12px Manrope;cursor:pointer}
+.nchips button.on{background:var(--gold);color:#1a1400;border-color:var(--gold)}
+@media(max-width:960px){.ncard-new{flex-basis:280px}}
 .news{max-width:420px}
 .ncard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .ncard .th{height:160px;background:linear-gradient(135deg,#0e3a2e,#0d2242);display:grid;place-items:center;color:#2ECC71;font-size:28px;position:relative}
@@ -155,10 +173,17 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div class="exp"><div class="ic" style="background:rgba(231,76,60,.15);color:var(--red)"><i class="fa-regular fa-trash-can"></i></div><h3>Revogar Voto</h3><p>Não cumpriu? Revogue a confiança do seu voto após a posse.</p><a onclick="go('revogados')" style="color:var(--red)">Revogar →</a></div>
 <div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-scale-balanced"></i></div><h3>Comparar</h3><p>Fixe políticos e veja dois (ou mais) lado a lado.</p><a onclick="go('radar')">Comparar →</a></div>
 </div>
-<div style="margin-top:50px"><span class="kick">02 — ACOMPANHAMENTO</span><h2 style="margin-top:8px">Acompanhe quem está na frente</h2><p class="muted">Preferência do eleitorado por cargo (recorte UF / Cidade).</p></div>
-<div class="donuts" id="donuts"></div>
-<div style="margin-top:50px"><span class="kick">03 — ATUALIZAÇÕES</span><h2 style="margin-top:8px">Notícias</h2><p class="muted">Fique por dentro do que acontece na política</p></div>
-<div class="news" id="homeNews" style="margin-top:20px"></div>
+<!-- seção ACOMPANHAMENTO removida em 04/09 (dados sintéticos) -->
+<div style="margin-top:50px"><!-- antigo 02 ACOMPANHAMENTO --></div><!-- seção 02 ACOMPANHAMENTO removida (04/09) -->/ Cidade).</p></div>
+  <div style="margin-top:40px"><span class="kick">02 — NOTÍCIAS</span><h2 style="margin-top:8px">Notícias do Congresso e da política</h2>
+  <p class="muted">Direto das fontes oficiais e da grande imprensa — <b>com os devidos créditos</b>. Filtre por recorte: Geral, Brasil ou UF citada na matéria.</p>
+  <div class="nchips" id="nchips"></div>
+  <div class="ncar-wrap">
+    <button class="ncar-btn" onclick="ncarScroll(-1)" aria-label="Anteriores">‹</button>
+    <div class="ncar" id="homeNews"></div>
+    <button class="ncar-btn" onclick="ncarScroll(1)" aria-label="Próximas">›</button>
+  </div>
+  <div id="nstatus" class="muted" style="font-size:12px;margin-top:8px">Carregando notícias…</div>
 <div class="ctabox"><h2>Sua voz faz a <span style="color:var(--blueL)">diferença</span></h2>
 <p class="muted">Participe ativamente da democracia brasileira. Acompanhe, opine, vote e fiscalize. O poder está em suas mãos.</p>
 <div class="cta" style="margin-top:8px;justify-content:center"><input id="eml" placeholder="seu@email.com" style="max-width:260px"/><button class="btn gold" onclick="toast('E-mail cadastrado! (fase final)')">OK</button></div>
@@ -229,7 +254,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <p style="color:var(--gold);font-weight:800;font-size:13px">"Seu voto coloca, seu voto tira."</p></div>
 <div><h5>Navegar</h5><a onclick="go('radar')">Radar Político</a><a onclick="go('congresso')">Congresso</a><a onclick="go('conferir')">Conferir Voto</a><a onclick="go('revogados')">Revogados</a></div>
 <div><h5>Participar</h5><a onclick="go('conferir')">Meus Votos</a><a onclick="go('radar')">Reclame Aqui</a><a onclick="abrirForm(-1,'rec')">📝 Reclamar ou 👍 Apoiar</a><a onclick="abrirLogin()">Sou Político/Candidato</a></div>
-<div><h5>Institucional</h5><a onclick="go('quem')">Sobre Nós</a><a>Termos de Uso</a><a>Privacidade</a><a>Contato</a></div>
+<div><h5>Institucional</h5><a onclick="go('quem')">Sobre Nós</a><a href="termos.html">Termos de Uso</a><a href="privacidade.html">Política de Privacidade</a><a>Contato</a></div>
 </div><div class="fbot"><span>© 2026 MudaBrasil. Protótipo demonstrativo.</span><span>mudabrasil.app</span></div></div></footer>
 <div class="cmpbar" id="cmpbar"><span id="cmpcount" class="muted">0 fixados</span><div style="display:flex;gap:8px"><button class="btn sm" onclick="limparPin()">Limpar</button><button class="btn gold sm" onclick="abrirCmp()">Comparar lado a lado</button></div></div>
 <div class="overlay" id="mCmp"><div class="modal"><h3 style="margin-bottom:12px">🆚 Comparação lado a lado</h3><div id="cmpBody" class="cmpgrid"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mCmp')">Fechar</button></div></div>
@@ -261,6 +286,23 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 </div>
 <button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mVerif')">Fechar</button></div></div>
 <div class="overlay" id="mVotos"><div class="modal"><div id="votosBody" style="max-height:70vh;overflow-y:auto"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mVotos')">Fechar</button></div></div>
+<div class="overlay" id="mDisclaimer"><div class="modal">
+<h3 style="margin-bottom:10px;color:var(--gold)">⚖️ Aviso Legal e Termos de Uso</h3>
+<div class="doss">
+<div class="blk"><b>1. Natureza da plataforma</b><p class="muted">O <b>MudaBrasil</b> é uma plataforma cívica independente, em fase de <b>protótipo demonstrativo</b>, sem qualquer vínculo com o Poder Executivo, o Congresso Nacional, o TSE, partidos políticos ou qualquer outro órgão público ou entidade privada. Não possui fins eleitorais, partidários ou promocionais de candidatos.</p></div>
+<div class="blk"><b>2. Ausência de efeitos jurídicos</b><p class="muted">Os votos, apoios, reclamações e revogações realizadas nesta plataforma têm caráter exclusivamente <b>declaratório, opinativo e demonstrativo</b>, <b>não produzindo qualquer efeito jurídico</b>, não substituindo mecanismos eleitorais ou institucionais oficiais e não afetando, em nenhuma hipótese, mandatos, direitos, deveres ou a investidura de agentes públicos. A proposta de "voto contínuo e revogável" e a "regra dos 70%" constituem <b>propostas cívicas de debate (de lege ferenda)</b>, não previstas no ordenamento jurídico brasileiro vigente.</p></div>
+<div class="blk"><b>3. Dados públicos e fontes oficiais</b><p class="muted">As informações sobre parlamentares, projetos de lei, votações nominais, composição partidária, frentes parlamentares, ocupações e histórico institucional são obtidas de <b>fontes públicas oficiais</b> (Câmara dos Deputados, Senado Federal, TSE, Portal da Transparência e CNJ), sob licenças de dados abertos. A plataforma as reproduz como disponíveis, sem alterar seu conteúdo, e não garante imediatismo ou completude absoluta. Para fins oficiais, <b>consulte sempre a fonte original</b> indicada no rodapé de cada página.</p></div>
+<div class="blk"><b>4. Liberdade de expressão e responsabilidade do usuário</b><p class="muted">Reclamações, apoios e demais manifestações constituem <b>opinião pessoal dos usuários</b>, que são <b>civil e criminalmente responsáveis</b> por seu teor, inclusive quanto a eventuais ofensas, calúnias, difamações, injúrias, discriminação, falsidade ideológica ou violações de direito autoral. <b>A plataforma não realiza revisão editorial prévia</b>, mas poderá remover conteúdo mediante comunicação fundamentada ou decisão judicial. É vedada a postagem de conteúdo que incite violência, ódio ou discriminação, conforme art. 5º, IV, da Constituição Federal e legislação aplicável.</p></div>
+<div class="blk"><b>5. Direito de resposta</b><p class="muted">Parlamentares e candidatos que tiverem sua identidade verificada por e-mail institucional (@camara.leg.br, @senado.leg.br) ou registro TSE possuem <b>direito de resposta</b> no mesmo registro, em igualdade de condições de visualização, nos moldes do art. 5º, V, da CF/88. A verificação concede apenas o <b>selo "Verificado"</b> e a possibilidade de responder; não implica endosso, afiliação ou patrocínio pela plataforma.</p></div>
+<div class="blk"><b>6. Privacidade e LGPD</b><p class="muted">A plataforma <b>não vende, aluga ou compartilha dados com terceiros</b> para fins publicitários ou comerciais. O envio de dados pessoais e de arquivos anexos é <b>voluntário</b>. Os titulares podem solicitar, a qualquer tempo, <b>acesso, correção, portabilidade e exclusão</b> de seus dados via <b>contato@mudabrasil.app</b>, nos termos da Lei nº 13.709/2018 (LGPD). Dados agregados anonimizados poderão ser utilizados para fins estatísticos e de pesquisa cívica. <a href="privacidade.html" target="_blank">Leia a Política de Privacidade completa →</a></p></div>
+<div class="blk"><b>7. Propriedade intelectual</b><p class="muted">O nome "MudaBrasil", a identidade visual, o logotipo, o layout e o código-fonte são de titularidade do projeto. Os dados públicos reproduzidos permanecem em <b>domínio público</b>. Marcas de terceiros citadas pertencem aos seus respectivos titulares.</p></div>
+<div class="blk"><b>8. Disponibilidade e garantias</b><p class="muted">O serviço é fornecido <b>"no estado em que se encontra" (as is)</b>, sem garantias de disponibilidade ininterrupta, precisão absoluta ou adequação a finalidade específica, dada sua natureza de protótipo. O usuário reconhece que eventuais indisponibilidades não geram direito a indenização.</p></div>
+<div class="blk"><b>9. Modificações</b><p class="muted">Este Aviso Legal poderá ser atualizado periodicamente. Versões anteriores ficam arquivadas no histórico do repositório público.</p></div>
+<div class="blk"><b>10. Contato e notificações</b><p class="muted"><b>Geral:</b> contato@mudabrasil.app · <b>Imprensa:</b> imprensa@mudabrasil.app · <b>Parcerias:</b> anuncie@mudabrasil.app · <b>LGPD/Exclusão:</b> contato@mudabrasil.app</p></div>
+</div>
+<p class="muted" style="margin-top:10px;font-size:11px;text-align:center">Vigência: setembro de 2026 · Última atualização: 05/09/2026</p>
+<button class="btn gold" style="width:100%;margin-top:12px" onclick="fechar('mDisclaimer')">Li e entendi</button>
+</div></div>
 <div id="toast"></div>
 <script>
 if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}
@@ -280,14 +322,6 @@ const CARGOS_F=['Presidente','Governador','Senador','Deputado Federal','Deputado
 const SEED_REC=['Não cumpriu a promessa da creche do bairro.','Faltou às sessões sem justificativa.','Não respondeu ao pedido de informação sobre emendas.','Prometeu a reforma da rodovia e não entregou.','Não destinou verba à saúde como prometido.'];
 const SEED_RESP=['Equipe incluiu a demanda no cronograma da próxima quinzena. — Gabinete','Prestação de contas publicada no portal oficial. — Gabinete'];
 const SEED_APO=['Destinou emenda pra reforma da escola municipal.','Atendeu o mutirão de saúde no bairro.'];
-const DON_UF=[28,25,20,16,11],DON_CID=[22,27,18,19,14];
-function donut(el,d){const t=d.reduce((a,b)=>a+b,0);let a=0;const g=d.map((v,i)=>{const p=v/t*360;const s=`${CORES[i]} ${a}deg ${a+p}deg`;a+=p;return s}).join(',');
-el.innerHTML=`<div class="donut" style="background:conic-gradient(${g})"></div><div class="leg">${NOMES.map((n,i)=>`<span><i style="background:${CORES[i]}"></i>${n}</span>`).join('')}</div>`}
-function initDonuts(){const cargos=['Presidente','Governador','Senador','Deputado Federal','Deputado Estadual / Distrital','Prefeito','Vereador'];
-$('#donuts').innerHTML=cargos.map((c,i)=>`<div class="don"><h4>${c}</h4><div class="pills"><button class="pill on" onclick="pill(this,${i},'UF')">UF</button><button class="pill" onclick="pill(this,${i},'Cidade')">Cidade</button></div><div class="dchart" id="dc-${i}"></div></div>`).join('');
-cargos.forEach((c,i)=>donut(document.getElementById('dc-'+i),DON_UF))}
-function pill(el,i,modo){el.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');
-donut(document.getElementById('dc-'+i),modo==='UF'?DON_UF:DON_CID);if(modo==='Cidade')toast('Recorte por cidade: dados TSE na fase Railway.')}
 async function carregaPol(){POL=[];
 try{const r=await fetch(API_BASE+'/api/candidatos');const j=await r.json();const arr=Array.isArray(j)?j:(j.dados||j.candidatos||[]);
 if(arr.length){arr.forEach(d=>{const numId=parseInt(String(d.id||d.num||'').replace(/\D/g,''),10)||0;POL.push({nome:d.nome||d.name||d.nomeCivil||'',partido:d.partido||d.party||d.siglaPartido||'',uf:d.uf||d.state||d.siglaUf||'',cargo:d.cargo||d.position||'Deputado Federal',foto:d.foto||d.urlFoto||d.photo||'',num:numId||d.id||0,real:1,rec:(numId%90)+5,selo:!!(d.selo||d.verificado||d.verified)});});
@@ -680,11 +714,36 @@ $('#revList').innerHTML=l.map((p,i)=>{const pct=Math.round(p.rev/p.el*100);const
 <div class="muted">${pct}% dos 70% · ${falta>0?`faltam <b style="color:var(--gold)">${falta}</b>`:'<b style="color:var(--red)">atingiu 70% — cassação</b>'}</div></div>`}).join('')||'<p class="muted">Nada encontrado.</p>'}
 const FAQ=[['O que é simulação?','A votação/revogação não tem valor jurídico hoje. Notícias, políticos e PLs são reais.'],['Como revogo?','No site, com código + login, só após a posse.'],['Quem pode responder reclamações?','Só o político/candidato com identidade verificada (selo).'],['Posso anexar provas?','Sim — o formulário aceita anexos.'],['O que é a regra dos 70%?','Proposta: 70% dos votos que elegeram = cassação.']];
 $('#faqList').innerHTML=FAQ.map(f=>`<div class="card"><b>${f[0]}</b><p class="muted" style="margin:6px 0 0">${f[1]}</p></div>`).join('');
-async function news(){try{const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml'));const j=await r.json();const it=(j.items||[]).slice(0,2);
+let NUF_FILTRO='GERAL';
+async function news(){try{const j=await fetch(API_BASE+'/api/noticias').then(r=>r.json());
+ const it=(j.noticias||[]);
+ window._NEWS=it;
+ renderChipsUF();renderNews();
+ $('#nstatus').textContent=it.length?('Atualizado em '+new Date(j.geradoEm).toLocaleTimeString('pt-BR')+' · fontes: Agência Brasil, G1 Política, Agência Senado'):'Sem notícias disponíveis agora.';
+}catch(e){$('#nstatus').textContent='Não foi possível carregar as notícias agora (backend).';}}
+function renderChipsUF(){const ns=window._NEWS||[];const ufs=[...new Set(ns.map(n=>n.uf).filter(Boolean))];
+ const chips=[['GERAL','Geral'],['BR','Brasil'],...ufs.filter(u=>u!=='BR').map(u=>[u,u])];
+ $('#nchips').innerHTML=chips.map(c=>`<button class="${NUF_FILTRO===c[0]?'on':''}" onclick="NUF_FILTRO='${c[0]}';renderNews();renderChipsUF()">${c[1]}</button>`).join('');}
+function renderNews(){const ns=window._NEWS||[];const lista=ns.filter(n=>NUF_FILTRO==='GERAL'||NUF_FILTRO==='BR'?true:(n.uf===NUF_FILTRO)).filter(n=>NUF_FILTRO!=='BR'||n.uf==='BR');
+ const dtRel=iso=>{if(!iso)return'';const d=(Date.now()-new Date(iso))/1000;if(d<3600)return Math.max(1,Math.floor(d/60))+' min atrás';if(d<86400)return Math.floor(d/3600)+' h atrás';return Math.floor(d/86400)+' d atrás'};
+ $('#homeNews').innerHTML=lista.length?lista.map(n=>`<article class="ncard-new">
+  <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="nbadge">✓ Fonte verificada · ${n.fonte}</span>${n.uf&&n.uf!=='BR'?`<span class="nbadge uf">📍 ${n.uf}</span>`:''}${n.uf==='BR'?`<span class="nbadge uf">🇧🇷 Brasil</span>`:''}</div>
+  <h4>${n.t}</h4>${n.res?`<p>${n.res}</p>`:''}
+  <div class="nmeta"><span>${n.dt?dtRel(n.dt):''}</span><a href="${n.l}" target="_blank" rel="noopener">Ler na fonte →</a></div>
+ </article>`).join(''):`<p class="muted" style="padding:20px 4px">Nenhuma notícia neste recorte agora — tente "Geral".</p>`;
+}
+function ncarScroll(dir){const c=document.getElementById('homeNews');if(c)c.scrollBy({left:dir*360,behavior:'smooth'})}
+async function newsOLD(){try{const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml'));const j=await r.json();const it=(j.items||[]).slice(0,2);
 $('#homeNews').innerHTML=it.map(n=>`<div class="ncard"><div class="th"><span class="cat">${(n.category||'Política').toString().slice(0,14)}</span><i class="fa-solid fa-layer-group"></i></div><div class="bd"><h4>${n.title}</h4><p>${(n.description||'').replace(/<[^>]+>/g,'').slice(0,140)}</p><div style="display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted)"><span class="seal">Fonte verificada</span><span>Agência Brasil</span><a href="${n.link}" target="_blank">Ler →</a></div></div></div>`).join('')}catch(e){$('#homeNews').innerHTML='<div class="ncard"><div class="th"><span class="cat">Política</span><i class="fa-solid fa-layer-group"></i></div><div class="bd"><h4>Brasil promete restaurar 163 mil km² de terras degradadas até 2030</h4><p>O Brasil apresentou as primeiras metas de Neutralidade da Degradação da Terra em evento internacional.</p><div style="display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted)"><span class="seal">Fonte verificada</span><span>Agência Brasil</span><a>Ler →</a></div></div></div>'}}
-initDonuts();try{carregaPol()}catch(e){console.error('carregaPol',e)}try{carregaPLS()}catch(e){console.error('carregaPLS',e)}try{news()}catch(e){console.error('news',e)}try{carregaStats()}catch(e){console.error('carregaStats',e)}
+try{carregaPol()}catch(e){console.error('carregaPol',e)}try{carregaPLS()}catch(e){console.error('carregaPLS',e)}try{news()}catch(e){console.error('news',e)}try{carregaStats()}catch(e){console.error('carregaStats',e)}
 /* Fase 3 — SSE: inicia conexão após carregamento inicial */
 setTimeout(initSSE, 2000);
 </script>
+<div id="bannerProto" style="position:fixed;bottom:16px;left:16px;right:16px;max-width:560px;margin:0 auto;background:linear-gradient(135deg,#0d2242,#123059);border:1px solid var(--gold);border-radius:14px;padding:14px 16px;z-index:250;display:none;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.4)">
+<i class="fa-solid fa-circle-info" style="color:var(--gold);font-size:20px;flex:none"></i>
+<div style="flex:1;font-size:13px"><b style="color:var(--gold)">Protótipo demonstrativo</b><br><span class="muted">Votos e revogações aqui <b>não têm efeito jurídico</b>. A plataforma é cívica e independente. <a onclick="document.getElementById('mDisclaimer').classList.add('open');document.getElementById('bannerProto').style.display='none'">Leia o aviso completo →</a></span></div>
+<button class="btn sm" onclick="document.getElementById('bannerProto').style.display='none';localStorage.setItem('mb_aviso','1')">×</button>
+</div>
+<script>if(!localStorage.getItem('mb_aviso'))document.getElementById('bannerProto').style.display='flex'</script>
 </body>
 </html>
