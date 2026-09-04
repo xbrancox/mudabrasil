@@ -389,7 +389,7 @@ async function carregaRemoteRec(){
   try{
     const r=await fetch(API_BASE+'/api/reclamacoes');
     const j=await r.json();
-    const arr=j.reclamacoes||j.feed||j||[];
+    const arr=j.complaints||j.reclamacoes||j.feed||j||[];
     REMOTE_REC={};REMOTE_APO={};
     if(Array.isArray(arr))arr.forEach(x=>{
       const k=x.politicianId||x.politico||x.politicoNum;
@@ -504,12 +504,11 @@ if(idx<0)return toast('Selecione o político.');if(ti.length<5||de.length<10)ret
 const files=[...($('#fFile').files||[])].map(f=>f.name);
 const p=POL[idx];
 if(BACKEND_OK){
-  const sessionToken = generateSessionToken();
   try{
-    const r=await fetch(API_BASE+'/api/reclamacoes',{
+    const r=await fetch(API_BASE+'/api/reclamacoes/public',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({sessionToken, politicianId:p.num, tipo:FORM_T, titulo:ti, descricao:de, anexos:files})
+      body:JSON.stringify({politicianId:p.num, tipo:FORM_T, titulo:ti, descricao:de, anexos:files})
     });
     if(r.ok){
       toast(FORM_T=='rec'?'Reclamação registrada no servidor. 📣':'Apoio registrado no servidor. 👍');
@@ -533,7 +532,7 @@ else toast('Verificação real ativa na versão online completa.')}catch(e){toas
 
 async function confirmarCodigo(){const em=($('#vEmail').value||'').trim();const cod=($('#vCodigo').value||'').trim();
 try{
-  const r=await fetch(API_BASE+'/api/verificacao/confirmar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,token:cod})});
+  const r=await fetch(API_BASE+'/api/verificacao/confirmar?token='+encodeURIComponent(cod));
   const data = await r.json().catch(()=>({}));
   if(r.ok && data.verified){
     SESS={nome:em,politico:true,verified:true};LS.set('mb_sess',SESS);
