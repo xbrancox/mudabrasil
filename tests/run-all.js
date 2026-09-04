@@ -16,7 +16,8 @@ const SHARED = [
   { name: 'thermometer (fluxo de voto E2E)', args: ['tests/test-thermometer.js'] },
   { name: 'live (SSE entre páginas)', args: ['tests/test-live.js'] },
   { name: 'e2e ficha de votações nominais', args: ['tests/e2e-votos-ficha.js'] },
-  { name: 'e2e verificação de político', args: ['tests/e2e-verificacao.js'] }
+  { name: 'e2e verificação de político', args: ['tests/e2e-verificacao.js'] },
+  { name: 'e2e parlamentares autenticado', args: ['tests/e2e-parlamentares-auth.js'] }
 ];
 
 let server = null;
