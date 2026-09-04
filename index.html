@@ -394,7 +394,7 @@ async function carregaRemoteRec(){
     const arr=j.complaints||j.reclamacoes||j.feed||j||[];
     REMOTE_REC={};REMOTE_APO={};
     if(Array.isArray(arr))arr.forEach(x=>{
-      const k=x.politicianId||x.politico||x.politicoNum;
+      const k=String(x.politicianId||x.politico||x.politicoNum||'').replace(/\D/g,'');
       const item={txt:(x.titulo?x.titulo+' — ':'')+(x.descricao||x.content||x.texto||''),ts:x.createdAt||x.timestamp,tipo:x.tipo};
       if(x.tipo==='apoio'){(REMOTE_APO[k]=REMOTE_APO[k]||[]).push(item)}
       else{(REMOTE_REC[k]=REMOTE_REC[k]||[]).push(item)}
@@ -547,7 +547,7 @@ if(BACKEND_OK){
     const r=await fetch(API_BASE+'/api/reclamacoes/public',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({politicianId:p.num, tipo:FORM_T, titulo:ti, descricao:de, anexos:files})
+      body:JSON.stringify({politicianId:(p.cargo==='Deputado Federal'?'camara-':'senado-')+p.num, tipo:FORM_T, titulo:ti, descricao:de, anexos:files})
     });
     if(r.ok){
       toast(FORM_T=='rec'?'Reclamação registrada no servidor. 📣':'Apoio registrado no servidor. 👍');

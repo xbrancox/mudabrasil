@@ -155,6 +155,19 @@ function applyQuery(list, q) {
   return out;
 }
 
+/* Resolve politicianId aceitando formatos cru (204379) ou prefixado (camara-204379) */
+function resolvePoliticianId(id) {
+  const raw = String(id || '').trim();
+  if (!raw) return raw;
+  if (db.getPolitician(raw)) return raw;
+  const m = raw.match(/(\d+)\s*$/);
+  const digits = m ? m[1] : raw;
+  for (const pref of ['camara-', 'senado-']) {
+    if (db.getPolitician(pref + digits)) return pref + digits;
+  }
+  return raw;
+}
+
 async function handleApi(req, res, url) {
   let p = url.pathname;
   if (p.startsWith('/api/candidatos/detalhes/')) {
@@ -480,7 +493,7 @@ async function handleApi(req, res, url) {
     const voter = auth.getVoterFromToken(token);
     if (!voter) return sendJson(res, 401, { ok: false, error: 'Faça login para reclamar' });
     try {
-      const r = reclamacoes.createComplaint({ politicianId: body.politicianId, voterHash: voter.voterHash, voterIp: ip, content: body.content });
+      const r = reclamacoes.createComplaint({ politicianId: resolvePoliticianId(body.politicianId), voterHash: voter.voterHash, voterIp: ip, content: body.content });
       return sendJson(res, 201, r);
     } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
   }
@@ -498,7 +511,7 @@ async function handleApi(req, res, url) {
   if (p === '/api/reclamacoes/public' && req.method === 'POST') {
     let body;
     try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
-    const pid = body.politicianId || body.politicoId || '';
+    const pid = resolvePoliticianId(body.politicianId || body.politicoId || '');
     const tipo = body.tipo || 'rec';
     const content = (body.titulo || '') + ' — ' + (body.descricao || body.content || '');
     const voterHash = 'anon-' + require('crypto').createHash('sha256').update(ip + ':' + Date.now()).digest('hex').slice(0, 16);
@@ -519,7 +532,7 @@ async function handleApi(req, res, url) {
     const voter = auth.getVoterFromToken(token);
     if (!voter) return sendJson(res, 401, { ok: false, error: 'Faça login para apoiar' });
     try {
-      const r = reclamacoes.createSupport({ politicianId: body.politicianId, voterHash: voter.voterHash, voterIp: ip, content: body.content });
+      const r = reclamacoes.createSupport({ politicianId: resolvePoliticianId(body.politicianId), voterHash: voter.voterHash, voterIp: ip, content: body.content });
       return sendJson(res, 201, r);
     } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
   }
@@ -543,7 +556,7 @@ async function handleApi(req, res, url) {
     const voter = auth.getVoterFromToken(token);
     if (!voter) return sendJson(res, 401, { ok: false, error: 'Faça login' });
     try {
-      const r = reclamacoes.createResponse({ complaintId: body.complaintId, politicianId: body.politicianId, content: body.content, sessionToken: token });
+      const r = reclamacoes.createResponse({ complaintId: body.complaintId, politicianId: resolvePoliticianId(body.politicianId), content: body.content, sessionToken: token });
       return sendJson(res, 201, r);
     } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
   }
