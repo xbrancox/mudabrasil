@@ -174,7 +174,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <select id="fCargo" onchange="renderRad()"></select>
 </div>
 <div class="filtros" style="grid-template-columns:1fr 1fr;margin-top:0">
-<select id="fOrdem" onchange="renderRad()"><option value="rec">🗳️ Reclamações (maior)</option><option value="props">📚 Proposições (maior)</option></select>
+<select id="fOrdem" onchange="renderRad()"><option value="rec">🔴 Reclamações (maior)</option><option value="apo">🟢 Apoios (maior)</option><option value="props">📚 Proposições (maior)</option></select>
 <span id="cCount" class="muted" style="align-self:center"></span>
 </div>
 <div id="radList"></div>
@@ -228,7 +228,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <p class="muted" style="margin:12px 0">Plataforma de opinião e participação para um Brasil com mais transparência, voz e poder de voto real.</p>
 <p style="color:var(--gold);font-weight:800;font-size:13px">"Seu voto coloca, seu voto tira."</p></div>
 <div><h5>Navegar</h5><a onclick="go('radar')">Radar Político</a><a onclick="go('congresso')">Congresso</a><a onclick="go('conferir')">Conferir Voto</a><a onclick="go('revogados')">Revogados</a></div>
-<div><h5>Participar</h5><a onclick="go('conferir')">Meus Votos</a><a onclick="go('radar')">Reclame Aqui</a><a onclick="abrirForm(-1,'rec')">Fazer Reclamação</a><a onclick="abrirLogin()">Sou Político/Candidato</a></div>
+<div><h5>Participar</h5><a onclick="go('conferir')">Meus Votos</a><a onclick="go('radar')">Reclame Aqui</a><a onclick="abrirForm(-1,'rec')">📝 Reclamar ou 👍 Apoiar</a><a onclick="abrirLogin()">Sou Político/Candidato</a></div>
 <div><h5>Institucional</h5><a onclick="go('quem')">Sobre Nós</a><a>Termos de Uso</a><a>Privacidade</a><a>Contato</a></div>
 </div><div class="fbot"><span>© 2026 MudaBrasil. Protótipo demonstrativo.</span><span>mudabrasil.app</span></div></div></footer>
 <div class="cmpbar" id="cmpbar"><span id="cmpcount" class="muted">0 fixados</span><div style="display:flex;gap:8px"><button class="btn sm" onclick="limparPin()">Limpar</button><button class="btn gold sm" onclick="abrirCmp()">Comparar lado a lado</button></div></div>
@@ -272,7 +272,7 @@ $$('#nav a').forEach(a=>a.onclick=()=>go(a.dataset.p));
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 const CORES=['#2ECC71','#FFD700','#4a90f0','#E74C3C','#A855F7'],NOMES=['Maria','Carlos','Ana','João','Outros'];
 const AREAS=['Meio Ambiente','Saúde','Educação','Segurança','Economia','Infraestrutura','Direitos Humanos','Agronegócio'];
-let POL=[],ready=false,PINS=[],SESS=LS.get('mb_sess',null),DET={},FTAB={},REMOTE_REC={},BACKEND_OK=false;
+let POL=[],ready=false,PINS=[],SESS=LS.get('mb_sess',null),DET={},FTAB={},REMOTE_REC={},REMOTE_APO={},BACKEND_OK=false;
 const CARGOS_F=['Presidente','Governador','Senador','Deputado Federal','Deputado Estadual','Prefeito','Vereador'];
 const SEED_REC=['Não cumpriu a promessa da creche do bairro.','Faltou às sessões sem justificativa.','Não respondeu ao pedido de informação sobre emendas.','Prometeu a reforma da rodovia e não entregou.','Não destinou verba à saúde como prometido.'];
 const SEED_RESP=['Equipe incluiu a demanda no cronograma da próxima quinzena. — Gabinete','Prestação de contas publicada no portal oficial. — Gabinete'];
@@ -381,8 +381,23 @@ function atualizaContadoresSSE(data){
   }
 }
 
-async function carregaRemoteRec(){try{const r=await fetch(API_BASE+'/api/reclamacoes');const j=await r.json();const arr=j.reclamacoes||j.dados||j||[];
-if(Array.isArray(arr))arr.forEach(x=>{const k=x.politicoId||x.politico||x.politicoNum;(REMOTE_REC[k]=REMOTE_REC[k]||[]).push((x.titulo?x.titulo+' — ':'')+(x.descricao||x.texto||''))});}catch(e){}}
+/* ============================================================
+   FASE 4 — Reclamações/Apoios via backend
+   Corrige: endpoint /api/reclamacoes (sem /public) + sessionToken
+   ============================================================ */
+async function carregaRemoteRec(){
+  try{
+    const r=await fetch(API_BASE+'/api/reclamacoes');
+    const j=await r.json();
+    const arr=j.reclamacoes||j.feed||j||[];
+    REMOTE_REC={};REMOTE_APO={};
+    if(Array.isArray(arr))arr.forEach(x=>{
+      const k=x.politicianId||x.politico||x.politicoNum;
+      const item={txt:(x.titulo?x.titulo+' — ':'')+(x.descricao||x.content||x.texto||''),ts:x.createdAt||x.timestamp,tipo:x.tipo};
+      if(x.tipo==='apoio'){(REMOTE_APO[k]=REMOTE_APO[k]||[]).push(item)}
+      else{(REMOTE_REC[k]=REMOTE_REC[k]||[]).push(item)}
+    });
+  }catch(e){console.warn('carregaRemoteRec failed:',e)}}
 function fill(id,arr,all){const el=document.getElementById(id);if(el)el.innerHTML=`<option value="">${all}</option>`+arr.map(x=>`<option>${x}</option>`).join('')}
 function popula(){const uf=[...new Set(POL.map(p=>p.uf))].filter(Boolean).sort();const pt=[...new Set(POL.map(p=>p.partido))].filter(Boolean).sort();
 fill('fUF',uf,'Todos os estados');fill('fPartido',pt,'Todos os partidos');fill('fCargo',CARGOS_F,'Todos os cargos');
@@ -392,8 +407,11 @@ function txtUser(i){const m=LS.get('mb_rec_txt',{});return m[i]||[]}
 function elogUser(i){const m=LS.get('mb_elog_txt',{});return m[i]||[]}
 function txtSeed(p){const n=p.rec>=80?3:p.rec>=40?2:p.rec>=15?1:0;const o=[];for(let k=0;k<n;k++)o.push(SEED_REC[(p.num+k)%SEED_REC.length]);return o}
 function respList(p){return p.selo?SEED_RESP.slice(0,(p.num%2)+1):[]}
-function recAll(p,i){return txtUser(i).concat(REMOTE_REC[p.num]||[]).concat(txtSeed(p))}
+function fmtTs(ts){if(!ts)return'';try{return new Date(ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return''}}
+function recAll(p,i){const loc=txtUser(i).map(t=>({txt:t,ts:Date.now(),tipo:'reclamacao'}));const rem=(REMOTE_REC[p.num]||[]).map(r=>({txt:r.txt,ts:r.ts,tipo:r.tipo}));const seed=txtSeed(p).map(t=>({txt:t,ts:0,tipo:'reclamacao'}));return[...loc,...rem,...seed]}
+function apoAll(p,i){const loc=elogUser(i).map(t=>({txt:t,ts:Date.now(),tipo:'apoio'}));const rem=(REMOTE_APO[p.num]||[]).map(r=>({txt:r.txt,ts:r.ts,tipo:r.tipo}));const seed=SEED_APO.slice(0,(p.num%2)+1).map(t=>({txt:t,ts:0,tipo:'apoio'}));return[...loc,...rem,...seed]}
 function countRec(p,i){return p.rec+txtUser(i).length+(REMOTE_REC[p.num]||[]).length}
+function countApo(p,i){return elogUser(i).length+(REMOTE_APO[p.num]||[]).length+(SEED_APO.slice(0,(p.num%2)+1).length)}
 function idade(iso){if(!iso)return null;const n=new Date(iso);const h=new Date();let a=h.getFullYear()-n.getFullYear();const m=h.getMonth()-n.getMonth();if(m<0||(m===0&&h.getDate()<n.getDate()))a--;return a}
 function fmtData(iso){if(!iso)return null;return new Date(iso).toLocaleDateString('pt-BR')}
 async function preencheDetalhe(i){const p=POL[i];const det={props:[],votos:[]};
@@ -417,22 +435,24 @@ h+=`<h4 style="color:var(--blueL);font-size:12px;margin-top:8px">🗳️ Como vo
 h+=d.votos.length?d.votos.map(x=>`<div class="quote info"><b>${x.t||'Votação'}</b>${x.v?` — voto: <b>${x.v}</b>`:''}</div>`).join(''):`<p class="muted">Votações nominais no link oficial (fim da página).</p>`;
 return h}
 function fichaHTML(p,i){const d=DET[i];
-const rec=recAll(p,i);const resp=respList(p);const apo=elogUser(i).concat(SEED_APO.slice(0,(p.num%2)+1));
-const tab=FTAB[i]||'rec';let lista='';
-if(tab=='rec')lista=rec.map(x=>`<div class="quote">“${x}”</div>`).join('')||'<p class="muted">Nenhuma reclamação ainda.</p>';
-if(tab=='resp')lista=resp.map(x=>`<div class="quote ok">“${x}”</div>`).join('')||'<p class="muted">Sem respostas (só verificado responde).</p>';
-if(tab=='apo')lista=apo.map(x=>`<div class="quote ok">“${x}”</div>`).join('')||'<p class="muted">Nenhum apoio ainda.</p>';
-return `<div class="card">
-<button class="pin ${PINS.includes(i)?'on':''}" data-tip="Fixar para comparar lado a lado" onclick="togglePin(${i})">📌</button>
-<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${av(p,'avXL')}<div style="flex:1"><b style="font-size:17px">${p.nome}</b><div class="muted">${p.partido} · ${p.uf} · ${p.cargo} · nº ${p.num}</div>
-<div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap"><span class="badge blue">#${p.num}</span><span class="badge ${p.selo?'ok':''}" data-tip="${p.selo?'Identidade confirmada.':'Ainda não verificado.'}">${p.selo?'Verificado':'Sem selo'}</span></div></div></div>
-<div class="stats" id="stats-${i}">${d?statsInner(d):'<div class="stat"><small>Carregando…</small><b>…</b></div>'}</div>
-<button class="btn blue sm" style="width:100%" onclick="abrirDados(${i})"><i class="fa-solid fa-database"></i> Dados públicos completos (15)</button>
-<div id="real-${i}" style="margin-top:10px">${d?realHTML(i):'<p class="muted">Carregando dados reais…</p>'}</div>
-<div class="tabs"><button class="${tab=='rec'?'on':''}" onclick="FTAB[${i}]='rec';renderRad()">Reclamações (${rec.length})</button><button class="${tab=='resp'?'on':''}" onclick="FTAB[${i}]='resp';renderRad()">Respostas (${resp.length})</button><button class="${tab=='apo'?'on':''}" onclick="FTAB[${i}]='apo';renderRad()">Apoios (${apo.length})</button></div>
-<div>${lista}</div>
-<div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><button class="btn red sm" onclick="abrirForm(${i},'rec')"><i class="fa-solid fa-bullhorn"></i> Fazer reclamação</button><button class="btn green sm" onclick="abrirForm(${i},'apo')"><i class="fa-solid fa-thumbs-up"></i> Dar apoio</button><button class="btn sm" onclick="souPolitico()"><i class="fa-solid fa-fingerprint"></i> É você? Verificar</button></div>
-</div>`}
+  const rec=recAll(p,i);const apo=apoAll(p,i);const resp=respList(p);
+  const tab=FTAB[i]||'rec';let lista='';
+  if(tab=='rec')lista=rec.map(x=>`<div class="quote"><span style="display:flex;justify-content:space-between;gap:8px"><b style="color:var(--red)">🔴 Reclamação</b><small class="muted" style="flex:none">${fmtTs(x.ts)}</small></span>"${x.txt}"</div>`).join('')||'<p class="muted">Nenhuma reclamação ainda.</p>';
+  if(tab=='apo')lista=apo.map(x=>`<div class="quote ok"><span style="display:flex;justify-content:space-between;gap:8px"><b style="color:var(--green)">🟢 Apoio</b><small class="muted" style="flex:none">${fmtTs(x.ts)}</small></span>"${x.txt}"</div>`).join('')||'<p class="muted">Nenhum apoio ainda.</p>';
+  if(tab=='resp')lista=resp.map(x=>`<div class="quote ok"><span style="display:flex;justify-content:space-between;gap:8px"><b style="color:var(--blueL)">🗣️ Resposta</b></span>"${x}"</div>`).join('')||'<p class="muted">Sem respostas (só verificado responde).</p>';
+  return `<div class="card">
+  <button class="pin ${PINS.includes(i)?'on':''}" data-tip="Fixar para comparar lado a lado" onclick="togglePin(${i})">📌</button>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${av(p,'avXL')}<div style="flex:1"><b style="font-size:17px">${p.nome}</b><div class="muted">${p.partido} · ${p.uf} · ${p.cargo} · nº ${p.num}</div>
+  <div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap"><span class="badge blue">#${p.num}</span><span class="badge ${p.selo?'ok':''}" data-tip="${p.selo?'Identidade confirmada.':'Ainda não verificado.'}">${p.selo?'Verificado':'Sem selo'}</span></div></div></div>
+  <div class="stats" style="grid-template-columns:repeat(3,1fr);margin:10px 0">
+    <div class="stat"><small>🔴 Reclamações</small><b style="color:var(--red)">${rec.length}</b></div>
+    <div class="stat"><small>🟢 Apoios</small><b style="color:var(--green)">${apo.length}</b></div>
+    <div class="stat"><small>🗣️ Respostas</small><b style="color:var(--blueL)">${resp.length}</b></div>
+  </div>
+  <div class="tabs"><button class="${tab=='rec'?'on':''}" onclick="FTAB[${i}]='rec';renderRad()">🔴 Reclamações (${rec.length})</button><button class="${tab=='resp'?'on':''}" onclick="FTAB[${i}]='resp';renderRad()">🗣️ Respostas (${resp.length})</button><button class="${tab=='apo'?'on':''}" onclick="FTAB[${i}]='apo';renderRad()">🟢 Apoios (${apo.length})</button></div>
+  <div>${lista}</div>
+  <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><button class="btn red sm" onclick="abrirForm(${i},'rec')"><i class="fa-solid fa-bullhorn"></i> Fazer reclamação</button><button class="btn green sm" onclick="abrirForm(${i},'apo')"><i class="fa-solid fa-thumbs-up"></i> Dar apoio</button><button class="btn sm" onclick="souPolitico()"><i class="fa-solid fa-fingerprint"></i> É você? Verificar</button></div>
+  </div>`}
 function abrirDados(i){const p=POL[i];const d=DET[i]||{};
 const rows=[['Nome civil',d.nomeCivil],['Nascimento',d.nasc],['Idade',d.idade],['Município/UF nasc.',d.munic],['Escolaridade',d.escolaridade],['Partido/UF',p.partido+' · '+p.uf],['Cargo',p.cargo],['Nº eleitoral',p.num],['Legislatura',d.legislatura],['Gabinete',d.gabinete],['Contato gabinete',d.contato],['Projetos apresentados',(d.props||[]).length],['Últimas votações',(d.votos||[]).length],['Patrimônio declarado','ver TSE (fim da pág.)'],['Processos/condenações','ver CNJ (fim da pág.)']];
 $('#dadosBody').innerHTML=`<h3 style="margin-bottom:10px">🔎 Dados públicos — ${p.nome}</h3>
@@ -440,39 +460,65 @@ $('#dadosBody').innerHTML=`<h3 style="margin-bottom:10px">🔎 Dados públicos �
 <p class="muted">Fontes oficiais no final da página do Radar.</p>`;
 document.getElementById('mDados').classList.add('open')}
 function renderRad(){if(!ready)return;const q=($('#cbusca').value||'').toLowerCase();const uf=$('#fUF').value;const pt=$('#fPartido').value;const cg=$('#fCargo').value;const ord=$('#fOrdem').value;
-const temFiltro=q||uf||pt||cg;
-if(!temFiltro){$('#cCount').textContent='';$('#radList').innerHTML=`<div class="card" style="grid-column:1/-1;text-align:center;padding:40px"><i class="fa-solid fa-magnifying-glass" style="font-size:30px;color:var(--gold)"></i><h3 style="margin:12px 0 6px">Pesquise um político</h3><p class="muted">Digite nome, número, estado, partido ou área pra abrir a ficha completa com dados reais.</p></div>`;return}
-let l=POL.filter(p=>(!q||p.nome.toLowerCase().includes(q)||p.partido.toLowerCase().includes(q)||p.uf.toLowerCase().includes(q)||String(p.num).includes(q))&&(!uf||p.uf===uf)&&(!pt||p.partido===pt)&&(!cg||p.cargo===cg));
-if(ord==='rec')l.sort((a,b)=>countRec(b,POL.indexOf(b))-countRec(a,POL.indexOf(a)));
-if(ord==='props')l.sort((a,b)=>((DET[POL.indexOf(b)]||{}).props||[]).length-((DET[POL.indexOf(a)]||{}).props||[]).length);
-$('#cCount').textContent=l.length+' político(s) encontrado(s)';
-const top=l.slice(0,6);
-$('#radList').innerHTML=top.map(p=>fichaHTML(p,POL.indexOf(p))).join('')||'<p class="muted">Nada encontrado.</p>';
-top.forEach(p=>{const i=POL.indexOf(p);if(!DET[i])preencheDetalhe(i)})}
+	const temFiltro=q||uf||pt||cg;
+	if(!temFiltro){$('#cCount').textContent='';$('#radList').innerHTML=`<div class="card" style="grid-column:1/-1;text-align:center;padding:40px"><i class="fa-solid fa-magnifying-glass" style="font-size:30px;color:var(--gold)"></i><h3 style="margin:12px 0 6px">Pesquise um político</h3><p class="muted">Digite nome, número, estado, partido ou área pra abrir a ficha completa com dados reais.</p></div>`;return}
+	let l=POL.filter(p=>(!q||p.nome.toLowerCase().includes(q)||p.partido.toLowerCase().includes(q)||p.uf.toLowerCase().includes(q)||String(p.num).includes(q))&&(!uf||p.uf===uf)&&(!pt||p.partido===pt)&&(!cg||p.cargo===cg));
+	if(ord==='rec')l.sort((a,b)=>countRec(b,POL.indexOf(b))-countRec(a,POL.indexOf(a)));
+	if(ord==='props')l.sort((a,b)=>((DET[POL.indexOf(b)]||{}).props||[]).length-((DET[POL.indexOf(a)]||{}).props||[]).length);
+	if(ord==='apo')l.sort((a,b)=>countApo(b,POL.indexOf(b))-countApo(a,POL.indexOf(a)));
+	$('#cCount').textContent=l.length+' político(s) encontrado(s)';
+	const top=l.slice(0,6);
+	$('#radList').innerHTML=top.map(p=>fichaHTML(p,POL.indexOf(p))).join('')||'<p class="muted">Nada encontrado.</p>';
+	top.forEach(p=>{const i=POL.indexOf(p);if(!DET[i])preencheDetalhe(i)})}
 function togglePin(i){if(PINS.includes(i))PINS=PINS.filter(x=>x!==i);else{if(PINS.length>=5)return toast('Máximo de 5 — solte um pra trocar.');PINS.push(i)}
 $('#cmpcount').textContent=PINS.length+' fixados';$('#cmpbar').classList.toggle('on',PINS.length>0);renderRad()}
 function limparPin(){PINS=[];$('#cmpbar').classList.remove('on');renderRad()}
 function abrirCmp(){if(PINS.length<2)return toast('Fixe pelo menos 2.');
-$('#cmpBody').innerHTML=PINS.map(i=>{const p=POL[i];const d=DET[i]||{};const rec=countRec(p,i);const resp=respList(p).length;
-return `<div class="card" style="margin:0">${av(p)}<div style="margin:10px 0"><b>${p.nome}</b><div class="muted">${p.partido} · ${p.uf} · ${p.cargo}</div></div>
-<div class="stat" style="margin-bottom:6px"><small>Idade</small><b>${d.idade!=null?d.idade:'—'}</b></div>
-<div class="stat" style="margin-bottom:6px"><small>Escolaridade</small><b>${d.escolaridade||'—'}</b></div>
-<div class="stat" style="margin-bottom:6px"><small>Projetos</small><b>${(d.props||[]).length}</b></div>
-<div class="stat" style="margin-bottom:6px"><small>Reclamações</small><b style="color:var(--red)">${rec}</b></div>
-<div class="stat" style="margin-bottom:6px"><small>Respostas</small><b style="color:var(--green)">${resp}</b></div>
-<div class="badge ${p.selo?'ok':''}">${p.selo?'Verificado':'Sem selo'}</div></div>`}).join('');
-document.getElementById('mCmp').classList.add('open')}
+  $('#cmpBody').innerHTML=PINS.map(i=>{const p=POL[i];const d=DET[i]||{};const rec=countRec(p,i);const apo=countApo(p,i);const resp=respList(p).length;
+  return `<div class="card" style="margin:0">${av(p)}<div style="margin:10px 0"><b>${p.nome}</b><div class="muted">${p.partido} · ${p.uf} · ${p.cargo}</div></div>
+  <div class="stats" style="grid-template-columns:1fr 1fr;margin:0">
+    <div class="stat"><small>🔴 Reclamações</small><b style="color:var(--red)">${rec}</b></div>
+    <div class="stat"><small>🟢 Apoios</small><b style="color:var(--green)">${apo}</b></div>
+    <div class="stat"><small>🗣️ Respostas</small><b style="color:var(--blueL)">${resp}</b></div>
+    <div class="stat"><small>📚 Projetos</small><b>${(d.props||[]).length}</b></div>
+  </div>
+  <div class="badge ${p.selo?'ok':''}">${p.selo?'Verificado':'Sem selo'}</div></div>`}).join('');
+  document.getElementById('mCmp').classList.add('open')}
 function abrirForm(i,t){FORM_T=t;$('#fTitle').textContent=t=='rec'?'📝 Fazer reclamação':'👍 Dar apoio';
 if(!ready)return toast('Aguarde carregar os políticos.');
 fill('fPol',POL.map(p=>p.nome),'Selecione…');
 const sel=$('#fPol');if(i>=0)sel.selectedIndex=i;
 $('#fTitulo').value='';$('#fDesc').value='';$('#fFile').value='';document.getElementById('mForm').classList.add('open')}
+
+/* Gera sessionToken simples para autenticação de reclamações/apoios */
+function generateSessionToken(){
+  const stored = LS.get('mb_session_token', null);
+  if(stored) return stored.token;
+  const token = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
+  LS.set('mb_session_token', {token, created: Date.now()});
+  return token;
+}
+
 async function enviaForm(){const idx=$('#fPol').selectedIndex;const ti=($('#fTitulo').value||'').trim();const de=($('#fDesc').value||'').trim();
 if(idx<0)return toast('Selecione o político.');if(ti.length<5||de.length<10)return toast('Preencha título (5+) e descrição (10+).');
 const files=[...($('#fFile').files||[])].map(f=>f.name);
 const p=POL[idx];
-if(BACKEND_OK){try{const r=await fetch(API_BASE+'/api/reclamacoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({politicoId:p.num,nome:p.nome,tipo:FORM_T,titulo:ti,descricao:de,anexos:files})});
-if(r.ok){toast(FORM_T=='rec'?'Reclamação registrada no servidor. 📣':'Apoio registrado no servidor. 👍');fechar('mForm');carregaRemoteRec();renderRad();return}}catch(e){}}
+if(BACKEND_OK){
+  const sessionToken = generateSessionToken();
+  try{
+    const r=await fetch(API_BASE+'/api/reclamacoes',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({sessionToken, politicianId:p.num, tipo:FORM_T, titulo:ti, descricao:de, anexos:files})
+    });
+    if(r.ok){
+      toast(FORM_T=='rec'?'Reclamação registrada no servidor. 📣':'Apoio registrado no servidor. 👍');
+      fechar('mForm');carregaRemoteRec();renderRad();return
+    } else {
+      const err = await r.json().catch(()=>({}));
+      toast('Erro ao enviar: ' + (err.error || r.status));
+    }
+  }catch(e){toast('Erro de conexão: ' + e.message)}}
 const txt=ti+' — '+de+(files.length?` 📎 ${files.join(', ')}`:'');
 if(FORM_T=='rec'){const m=LS.get('mb_rec_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('mb_rec_txt',m);toast('Reclamação registrada. 📣')}
 else{const m=LS.get('mb_elog_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('mb_elog_txt',m);toast('Apoio registrado. 👍')}
@@ -484,10 +530,18 @@ async function solicitarCodigo(){const em=($('#vEmail').value||'').trim();if(em.
 try{const r=await fetch(API_BASE+'/api/verificacao/solicitar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})});
 if(r.ok){$('#verifPasso1').style.display='none';$('#verifPasso2').style.display='block';toast('Código enviado! Confira seu e-mail.')}
 else toast('Verificação real ativa na versão online completa.')}catch(e){toast('Verificação real ativa na versão online completa.')}}
+
 async function confirmarCodigo(){const em=($('#vEmail').value||'').trim();const cod=($('#vCodigo').value||'').trim();
-try{const r=await fetch(API_BASE+'/api/verificacao/confirmar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,codigo:cod})});
-if(r.ok){SESS={nome:em,politico:true};LS.set('mb_sess',SESS);fechar('mVerif');toast('✅ Selo de verificado concedido!');renderRad();}
-else toast('Código inválido.')}catch(e){toast('Verificação real ativa na versão online completa.')}}
+try{
+  const r=await fetch(API_BASE+'/api/verificacao/confirmar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,token:cod})});
+  const data = await r.json().catch(()=>({}));
+  if(r.ok && data.verified){
+    SESS={nome:em,politico:true,verified:true};LS.set('mb_sess',SESS);
+    fechar('mVerif');toast('✅ Selo de verificado concedido!');renderRad();
+  } else {
+    toast(data.error || 'Código inválido.');
+  }
+}catch(e){toast('Verificação real ativa na versão online completa.')}}
 let PLS=[];
 async function carregaPLS(){try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=PL&itens=8&ordem=DESC&ordenarPor=id');const j=await r.json();PLS=(j.dados||[]).map(d=>({num:(d.siglaTipo||'PL')+' '+(d.numero||'')+'/'+(d.ano||''),txt:(d.ementa||d.titulo||'').slice(0,180),id:d.id,autor:d.autor||''}))}catch(e){PLS=[]}
 if(!PLS.length)PLS=[{num:'PL 5183/2026',txt:'Altera a Lei Rouanet para assegurar critérios específicos de avaliação e cota mínima de recursos.',id:1},{num:'PL 5182/2026',txt:'Institui o Programa Nacional de Recuperação de Rodovias Municipais com materiais recicláveis.',id:2}];renderPLS()}
