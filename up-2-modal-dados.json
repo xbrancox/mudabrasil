@@ -1,0 +1,16 @@
+{
+  "code": 0,
+  "msg": "SUCCESS",
+  "time": 1788550042408,
+  "trace": "2ecdf068890247929df17ce50932a51c",
+  "data": {
+    "message": "",
+    "oss_info": [
+      {
+        "filename": "2-modal-dados.png",
+        "oss_name": "auto_fly/htjjjo_2-modal-dados.png",
+        "oss_url": "https://autoglm-oss.z.ai/auto_fly/htjjjo_2-modal-dados.png?auth_key=1788550042-0-0-ad77b03e0b30efd9fabf868dc69bc29b"
+      }
+    ]
+  }
+}

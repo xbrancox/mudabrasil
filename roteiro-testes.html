@@ -75,7 +75,8 @@ const AREAS = [
   {id:'1.11',t:'Fixar e comparar (pins)',s:'Fixe 2–3 fichas com 📌 e abra a comparação.<br><b>Esperado:</b> máximo de 5, cards lado a lado com projetos/votos.'},
   {id:'1.12',t:'Verificação de político (modo dev)',s:'Na ficha, <b>É você? Verificar</b> → use um e-mail <b>@camara.leg.br</b>.<br><b>Esperado:</b> modal mostra "Perfil: [nome]" e, em modo dev, um <b>link de confirmação</b> verde; ao colar o token, badge muda para <b>Verificado</b>.'},
   {id:'1.13',t:'SSE ao vivo na home',s:'Deixe a home aberta e vote no <b>Meu Voto</b> em outra aba.<br><b>Esperado:</b> o contador "X votos registrados" atualiza sem recarregar a página.'},
-  {id:'1.14',t:'Ordenação do radar',s:'Ordene por reclamações, apoios e projetos.<br><b>Esperado:</b> lista reordena sem erros no console (F12).'}
+  {id:'1.14',t:'Ordenação do radar',s:'Ordene por reclamações, apoios e projetos.<br><b>Esperado:</b> lista reordena sem erros no console (F12).'},
+  {id:'1.15',t:'Popup: quem votou como',s:'Na ficha de um <b>deputado</b>, clique numa linha de "Como votou".<br><b>Esperado:</b> popup com placar (Sim/Não/…), busca por nome, filtro por partido e a lista de TODOS os votantes com badge colorido.'}
  ]},
  {area:'2 · Meu Voto (voto contínuo e revogável)', url:'http://localhost:8080/pages/meu-voto.html', itens:[
   {id:'2.1',t:'Badge "Dados reais"',s:'Abra a aba <b>Termômetro</b>.<br><b>Esperado:</b> badge "📡 Dados reais · Câmara dos Deputados" (não "Modo demo").'},
@@ -94,7 +95,8 @@ const AREAS = [
   {id:'3.2',t:'Candidatos (594)',s:'Abra <b>/pages/candidatos.html</b>.<br><b>Esperado:</b> 594 cards, filtros e busca funcionando, "594 candidato(s) encontrado(s)".'},
   {id:'3.3',t:'Proposta (PLs)',s:'Abra <b>/pages/proposta.html</b>.<br><b>Esperado:</b> 8 PLs reais da Câmara com botões de aprovar/reprovar e link de inteiro teor.'},
   {id:'3.4',t:'Comunidade',s:'Abra <b>/pages/comunidade.html</b>.<br><b>Esperado:</b> carrega sem erros de console.'},
-  {id:'3.5',t:'Parlamentares (v2.1)',s:'Abra <b>/pages/parlamentares.html</b>, faça login por e-mail OTP e reclame/apoie num parlamentar.<br><b>Esperado:</b> login com código na tela, reclamação/apoio aceitos e listados no perfil.'}
+  {id:'3.5',t:'Parlamentares (v2.1)',s:'Abra <b>/pages/parlamentares.html</b>, faça login por e-mail OTP e reclame/apoie num parlamentar.<br><b>Esperado:</b> login com código na tela, reclamação/apoio aceitos e listados no perfil.'},
+  {id:'3.6',t:'Congresso: votações por PL',s:'Na aba <b>Congresso</b>, clique em <b>🗳️ Votações</b> num PL.<br><b>Esperado:</b> popup com as votações registradas do projeto (ou mensagem honesta se não houver); clicando numa votação abre o popup "Quem votou como".'}
  ]},
  {area:'4 · Produção e responsivo', url:'https://mudabrasil-production-79eb.up.railway.app/', itens:[
   {id:'4.1',t:'Produção (Railway)',s:'Repita os itens essenciais (1.1, 1.4, 1.6, 2.4, 2.8) em <b>https://mudabrasil-production-79eb.up.railway.app</b>.<br><b>Esperado:</b> mesmo comportamento do local.'},
