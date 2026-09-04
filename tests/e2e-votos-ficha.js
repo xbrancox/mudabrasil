@@ -66,16 +66,20 @@ const { chromium } = require('playwright');
   await page.screenshot({ path: 'tests/screenshots/test-ficha-votos-senador.png', fullPage: true });
   console.log('screenshot salvo: tests/screenshots/test-ficha-votos-senador.png');
 
-  // modal dados públicos
-  const btn = await page.$('[onclick*="abrirDados"]');
-  if (btn) {
-    await btn.click();
+  // VER TODAS: modal dados públicos do senador — botão deve expandir para o histórico completo
+  const btnDados = await page.$('[onclick*="abrirDados"]');
+  if (btnDados) {
+    await btnDados.click();
     await page.waitForTimeout(800);
-    const modalTxt = await page.$eval('#dadosBody', e => e.textContent.slice(0, 700));
-    console.log('--- modal dadosBody ---');
-    console.log(modalTxt);
-    await page.screenshot({ path: 'tests/screenshots/test-modal-votos.png', fullPage: true });
-    console.log('screenshot salvo: tests/screenshots/test-modal-votos.png');
+    const antes = await page.$$eval('#dadosBody .quote.info', els => els.length);
+    const rotulo = await page.$eval('#dadosBody [onclick*="verTodas"]', e => e.textContent).catch(() => '(sem botão)');
+    await page.$eval('#dadosBody [onclick*="verTodas"]', e => e.click()).catch(() => {});
+    await page.waitForTimeout(800);
+    const depois = await page.$$eval('#dadosBody .quote.info', els => els.length);
+    console.log('--- VER TODAS (senador) ---');
+    console.log('rotulo:', rotulo.trim(), '| antes:', antes, '| depois:', depois);
+    await page.screenshot({ path: 'tests/screenshots/test-modal-ver-todas.png' });
+    console.log('screenshot salvo: tests/screenshots/test-modal-ver-todas.png');
   }
 
   console.log('--- recursos >=400:', bad.length);
