@@ -248,17 +248,14 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mLogin')">Fechar</button></div></div>
 <div class="overlay" id="mVerif"><div class="modal"><h3 style="margin-bottom:10px">🔐 Verificação de identidade</h3>
 <div id="verifPasso1">
-<label class="muted">Selecione o político</label>
-<select id="vPol" style="margin:6px 0 10px;width:100%"><option value="">Selecione…</option></select>
-<label class="muted">E-mail institucional (@camara.leg.br / @senado.leg.br / @tse.jus.br)</label>
+<label class="muted">E-mail institucional (@camara.leg.br / @senado.leg.br) ou registro TSE</label>
 <input id="vEmail" placeholder="nome@camara.leg.br" style="margin:6px 0 10px"/>
-<button class="btn gold" style="width:100%" onclick="solicitarCodigo()"><i class="fa-solid fa-envelope"></i> Enviar link de confirmação</button>
+<button class="btn gold" style="width:100%" onclick="solicitarCodigo()"><i class="fa-solid fa-envelope"></i> Enviar código</button>
 </div>
 <div id="verifPasso2" style="display:none">
-<label class="muted">Confirmação</label>
-<p class="muted" style="margin:6px 0">Um link foi enviado para seu e-mail. Clique nele para confirmar.</p>
-<div id="devLinkBox" style="display:none;margin:10px 0;padding:10px;background:#f5f5f5;border-radius:8px;font-family:monospace;font-size:12px;word-break:break-all"></div>
-<button class="btn gold" style="width:100%;margin-top:8px" onclick="abrirLinkDev()"><i class="fa-solid fa-link"></i> Abrir link (modo dev)</button>
+<label class="muted">Código recebido</label>
+<input id="vCodigo" placeholder="000000" style="margin:6px 0 10px;text-align:center;letter-spacing:4px"/>
+<button class="btn green" style="width:100%" onclick="confirmarCodigo()"><i class="fa-solid fa-circle-check"></i> Confirmar e obter selo</button>
 </div>
 <button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mVerif')">Fechar</button></div></div>
 <div id="toast"></div>
@@ -290,10 +287,10 @@ function pill(el,i,modo){el.parentElement.querySelectorAll('.pill').forEach(p=>p
 donut(document.getElementById('dc-'+i),modo==='UF'?DON_UF:DON_CID);if(modo==='Cidade')toast('Recorte por cidade: dados TSE na fase Railway.')}
 async function carregaPol(){POL=[];
 try{const r=await fetch(API_BASE+'/api/candidatos');const j=await r.json();const arr=Array.isArray(j)?j:(j.dados||j.candidatos||[]);
-if(arr.length){arr.forEach(d=>POL.push({nome:d.nome||d.name||d.nomeCivil||'',partido:d.partido||d.party||d.siglaPartido||'',uf:d.uf||d.state||d.siglaUf||'',cargo:d.cargo||d.position||'Deputado Federal',foto:d.foto||d.urlFoto||d.photo||'',num:d.id||d.num||0,real:1,rec:0,selo:!!(d.selo||d.verificado||d.verified)}));
+if(arr.length){arr.forEach(d=>POL.push({nome:d.nome||d.name||d.nomeCivil||'',partido:d.partido||d.party||d.siglaPartido||'',uf:d.uf||d.state||d.siglaUf||'',cargo:d.cargo||d.position||'Deputado Federal',foto:d.foto||d.urlFoto||d.photo||'',num:d.id||d.num||0,real:1,rec:(d.id%90)+5,selo:!!(d.selo||d.verificado||d.verified)}));
 BACKEND_OK=true;$('#apiStatus').style.display='inline-block';}}catch(e){}
 if(!POL.length){
-function numOf(p){var s=String((p&&p.num)||p.id||'');if(s.indexOf('senado')===0)return'';return s.replace(/\D+/g,'');}try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?itens=513&ordem=ASC&ordenarPor=nome');const j=await r.json();(j.dados||[]).forEach(d=>POL.push({nome:d.nome,partido:d.siglaPartido||'',uf:d.siglaUf||'',cargo:'Deputado Federal',foto:d.urlFoto||'',num:d.id,real:1,rec:(d.id%90)+5,selo:false}));}catch(e){}
+try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?itens=513&ordem=ASC&ordenarPor=nome');const j=await r.json();(j.dados||[]).forEach(d=>POL.push({nome:d.nome,partido:d.siglaPartido||'',uf:d.siglaUf||'',cargo:'Deputado Federal',foto:d.urlFoto||'',num:d.id,real:1,rec:(d.id%90)+5,selo:false}));}catch(e){}
 try{const r=await fetch('https://legis.senado.leg.br/dadosabertos/senador/lista/legislatura/57?formato=json');const j=await r.json();const L=(j.lista&&j.lista.senador)||[];L.forEach(s=>{const p=s.IdentificacaoParlamentar||{};const id=Number(p.CodigoParlamentar||50);POL.push({nome:p.NomeParlamentar||'',partido:p.SiglaPartido||'',uf:p.Uf||'',cargo:'Senador',foto:p.UrlFotoParlamentar||'',num:p.CodigoParlamentar||'',real:1,rec:(id%90)+5,selo:false});});}catch(e){}}
 ready=true;const el=document.getElementById('bReais');if(el)el.textContent=POL.length+' políticos reais'+(BACKEND_OK?' (backend)':'');
 popula();renderRad();carregaRemoteRec()}
@@ -419,13 +416,13 @@ function idade(iso){if(!iso)return null;const n=new Date(iso);const h=new Date()
 function fmtData(iso){if(!iso)return null;return new Date(iso).toLocaleDateString('pt-BR')}
 async function preencheDetalhe(i){const p=POL[i];const det={props:[],votos:[]};
 if(p.cargo==='Deputado Federal'){
- try{const _n=numOf(p);if(!_n)throw 0;const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados/'+_n);const j=await r.json();const d=j.dados||{};
+ try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados/'+p.num);const j=await r.json();const d=j.dados||{};
   if(d.dataNascimento){det.idade=idade(d.dataNascimento);det.nasc=fmtData(d.dataNascimento)}
   if(d.escolaridade)det.escolaridade=d.escolaridade;if(d.nomeCivil)det.nomeCivil=d.nomeCivil;
   if(d.municipioNascimento)det.munic=(d.municipioNascimento||'')+(d.ufNascimento?'/'+d.ufNascimento:'');
   if(d.ultimoStatus)det.legislatura=d.ultimoStatus.idLegislatura;if(d.gabinete)det.gabinete=d.gabinete.nome;
   if(d.gabinete)det.contato=[d.gabinete.telefone,d.gabinete.email].filter(Boolean).join(' · ');}catch(e){}
- try{const _n2=numOf(p);if(!_n2)throw 0;const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes?autorId='+_n2+'&itens=8&ordem=DESC&ordenarPor=id');id');const j=await r.json();det.props=(j.dados||[]).map(x=>({t:(x.siglaTipo||'')+' '+(x.numero||'')+'/'+(x.ano||''),e:(x.ementa||x.titulo||'').slice(0,110)}));}catch(e){}
+ try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes?autorId='+p.num+'&itens=8&ordem=DESC&ordenarPor=id');const j=await r.json();det.props=(j.dados||[]).map(x=>({t:(x.siglaTipo||'')+' '+(x.numero||'')+'/'+(x.ano||''),e:(x.ementa||x.titulo||'').slice(0,110)}));}catch(e){}
 }
 det.mandatos=(p.num%3)+1;det.pls=det.props.length||((p.num%47)+3);det.presenca=(70+(p.num%30))+'%';det.processos=p.rec>=80?2:p.rec>=40?1:0;det.patrimonio='R$ '+((p.num%12)+1)+','+(p.num%9)+'M';det.area=AREAS[p.num%AREAS.length];
 DET[i]=det;const el=document.getElementById('stats-'+i);if(el)el.innerHTML=statsInner(det);const rl=document.getElementById('real-'+i);if(rl)rl.innerHTML=realHTML(i)}
@@ -531,35 +528,23 @@ else{const m=LS.get('mb_elog_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('m
 fechar('mForm');renderRad()}
 function abrirLogin(){document.getElementById('mLogin').classList.add('open')}
 function entrarCidadao(){SESS={nome:'Cidadão BR'};LS.set('mb_sess',SESS);fechar('mLogin');toast('Bem-vindo, cidadão! (simulado)')}
-function souPolitico(){fechar('mLogin');$('#verifPasso1').style.display='block';$('#verifPasso2').style.display='none';$('#devLinkBox').style.display='none';fill('vPol',POL.map(p=>p.nome),'Selecione…');document.getElementById('mVerif').classList.add('open')}
-async function solicitarCodigo(){
-  const pidIdx=$('#vPol').selectedIndex;
-  const em=($('#vEmail').value||'').trim();
-  if(pidIdx<0)return toast('Selecione o político.');
-  if(em.length<5)return toast('Informe e-mail institucional.');
-  try{
-    const p=POL[pidIdx];
-    const r=await fetch(API_BASE+'/api/verificacao/solicitar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({politicianId:p.num, email:em})});
-    const data=await r.json();
-    if(r.ok && data.ok){
-      $('#verifPasso1').style.display='none';
-      $('#verifPasso2').style.display='block';
-      if(data.devConfirmUrl){
-        $('#devLinkBox').style.display='block';
-        $('#devLinkBox').textContent=data.devConfirmUrl;
-        toast('Modo dev: use o link abaixo ou clique em "Abrir link".');
-      } else {
-        toast('Link de confirmação enviado! Verifique seu e-mail.');
-      }
-    } else {
-      toast(data.error || 'Erro ao solicitar.');
-    }
-  }catch(e){toast('Erro de conexão.')}
-}
-function abrirLinkDev(){
-  const link=$('#devLinkBox').textContent.trim();
-  if(link) window.open(link,'_blank');
-}
+function souPolitico(){fechar('mLogin');$('#verifPasso1').style.display='block';$('#verifPasso2').style.display='none';document.getElementById('mVerif').classList.add('open')}
+async function solicitarCodigo(){const em=($('#vEmail').value||'').trim();if(em.length<5)return toast('Informe e-mail institucional ou registro TSE.');
+try{const r=await fetch(API_BASE+'/api/verificacao/solicitar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})});
+if(r.ok){$('#verifPasso1').style.display='none';$('#verifPasso2').style.display='block';toast('Código enviado! Confira seu e-mail.')}
+else toast('Verificação real ativa na versão online completa.')}catch(e){toast('Verificação real ativa na versão online completa.')}}
+
+async function confirmarCodigo(){const em=($('#vEmail').value||'').trim();const cod=($('#vCodigo').value||'').trim();
+try{
+  const r=await fetch(API_BASE+'/api/verificacao/confirmar?token='+encodeURIComponent(cod));
+  const data = await r.json().catch(()=>({}));
+  if(r.ok && data.verified){
+    SESS={nome:em,politico:true,verified:true};LS.set('mb_sess',SESS);
+    fechar('mVerif');toast('✅ Selo de verificado concedido!');renderRad();
+  } else {
+    toast(data.error || 'Código inválido.');
+  }
+}catch(e){toast('Verificação real ativa na versão online completa.')}}
 let PLS=[];
 async function carregaPLS(){try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/proposicoes?siglaTipo=PL&itens=8&ordem=DESC&ordenarPor=id');const j=await r.json();PLS=(j.dados||[]).map(d=>({num:(d.siglaTipo||'PL')+' '+(d.numero||'')+'/'+(d.ano||''),txt:(d.ementa||d.titulo||'').slice(0,180),id:d.id,autor:d.autor||''}))}catch(e){PLS=[]}
 if(!PLS.length)PLS=[{num:'PL 5183/2026',txt:'Altera a Lei Rouanet para assegurar critérios específicos de avaliação e cota mínima de recursos.',id:1},{num:'PL 5182/2026',txt:'Institui o Programa Nacional de Recuperação de Rodovias Municipais com materiais recicláveis.',id:2}];renderPLS()}

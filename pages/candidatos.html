@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MudaBrasil - Compare Candidatos</title>
+  <meta name="description" content="Compare candidatos com base em dados públicos: Portal da Transparência, TSE, CNJ e votação nominal.">
+  <link rel="stylesheet" href="../css/design-system.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="navbar">
+    <div class="logo" onclick="location.href='../index.html'">
+      <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+        <defs>
+          <linearGradient id="gradLogo" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#7fb0f5"/>
+            <stop offset="100%" stop-color="#FFD700"/>
+          </linearGradient>
+        </defs>
+        <circle cx="20" cy="20" r="18" stroke="url(#gradLogo)" stroke-width="4" fill="none"/>
+        <path d="M12 20 L20 12 L28 20 L20 28 Z" fill="url(#gradLogo)"/>
+      </svg>
+      <span>MudaBrasil</span>
+    </div>
+
+    <nav>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../index.html">Início</a></li>
+        <li><a href="parlamentares.html" class="active">🏛️ Parlamentares</a></li>
+        <li><a href="meu-voto.html">Meu Voto</a></li>
+        <li><a href="proposta.html">Proposta</a></li>
+        <li><a href="comunidade.html">Comunidade</a></li>
+      </ul>
+    </nav>
+
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="btn btn-primary btn-sm" id="login-btn" onclick="showLoginForm()">Login</button>
+      <div class="mobile-toggle" id="mobile-menu">☰</div>
+    </div>
+  </header>
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <ul>
+      <li><a href="../index.html">🏠 Início</a></li>
+      <li><a href="candidatos.html" style="color:var(--accent-500);">🗳️ Políticos</a></li>
+      <li><a href="meu-voto.html">✋ Meu Voto</a></li>
+      <li><a href="proposta.html">📖 Proposta</a></li>
+      <li><a href="comunidade.html">👥 Comunidade</a></li>
+    </ul>
+    <div class="login-area">
+      <button class="btn btn-secondary btn-sm" onclick="showLoginForm()">Entrar na sua conta</button>
+    </div>
+  </aside>
+
+  <!-- ===================== CONTEÚDO ===================== -->
+  <main class="main-content">
+    <section class="reveal">
+      <h1 style="text-align:center;">🗳️ Compare Políticos</h1>
+      <p id="page-subtitle" style="text-align:center; max-width:720px; margin:0 auto var(--space-md);">
+        Antes de expressar confiança, conheça bem o político. Todos os dados abaixo
+        vêm de <strong>fontes públicas oficiais</strong>: Câmara, Senado, TSE,
+        Portal da Transparência e CNJ.
+      </p>
+
+      <!-- Selo de fonte de dados (preenchido pelo JS: reais ou demo) -->
+      <div style="text-align:center; margin:0 auto var(--space-xl);">
+        <span id="source-badge" class="source-badge-pill">⏳ Carregando dados…</span>
+      </div>
+
+      <!-- Busca -->
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Buscar por nome, partido, estado ou área de atuação...">
+      </div>
+
+      <!-- Filtros -->
+      <div class="filter-row">
+        <select id="filter-state">
+          <option value="all">📍 Todos os estados</option>
+        </select>
+        <select id="filter-party">
+          <option value="all">🏛️ Todos os partidos</option>
+        </select>
+        <select id="filter-position">
+          <option value="all">💼 Todos os cargos</option>
+        </select>
+        <select id="sort-select">
+          <option value="transparencyScore:desc">📊 Transparência (maior)</option>
+          <option value="transparencyScore:asc">📊 Transparência (menor)</option>
+          <option value="votesLastElection:desc">🗳️ Votos (maior)</option>
+          <option value="billsApproved:desc">✅ Proposituras aprovadas</option>
+          <option value="attendanceRate:desc">📅 Presença em sessões</option>
+          <option value="lawsuits:asc">⚖️ Processos (menor)</option>
+          <option value="annualIncome:asc">💰 Rendimentos (menor)</option>
+        </select>
+      </div>
+
+      <p style="text-align:center; color:var(--text-muted); font-size:var(--text-sm);" id="result-count">Carregando...</p>
+
+      <!-- Grade de candidatos -->
+      <div class="candidates-grid" id="candidates-grid"></div>
+
+      <div style="text-align:center; margin-top:var(--space-2xl); padding:var(--space-lg); background:var(--surface-500); border-radius:var(--border-radius-md);">
+        <p style="margin:0 0 var(--space-md);">
+          💡 <strong>Dica:</strong> marque a caixa no canto superior direito de até 3 políticos para comparar lado a lado.
+        </p>
+        <p style="margin:0; font-size:var(--text-sm); color:var(--text-secondary);">
+          Já decidiu? <a href="meu-voto.html" style="color:var(--accent-400); font-weight:600;">Expresse sua confiança agora →</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== BARRA DE COMPARAÇÃO ===================== -->
+  <div class="compare-bar" id="compare-bar">
+    <div class="compare-info">
+      <span class="compare-count" id="compare-count">0</span>
+      <span>candidato(s) selecionado(s) para comparação</span>
+    </div>
+    <div class="compare-actions">
+      <button class="btn btn-secondary btn-sm" id="compare-clear">Limpar</button>
+      <button class="btn btn-accent btn-sm" id="compare-open">Comparar agora</button>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL DE COMPARAÇÃO ===================== -->
+  <div class="modal" id="compare-modal">
+    <div class="modal-content" style="max-width:800px;">
+      <span class="close" onclick="this.closest('.modal').style.display='none'">×</span>
+      <h2>🆚 Comparação de Candidatos</h2>
+      <div id="compare-body"></div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL DE DETALHES ===================== -->
+  <div class="modal" id="detail-modal">
+    <div class="modal-content" style="max-width:640px;">
+      <span class="close" onclick="this.closest('.modal').style.display='none'">×</span>
+      <div id="detail-body"></div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL DE LOGIN ===================== -->
+  <div class="modal" id="login-modal">
+    <div class="modal-content">
+      <span class="close" onclick="this.closest('.modal').style.display='none'">×</span>
+      <h2>Login na Conta MudaBrasil</h2>
+      <form onsubmit="event.preventDefault(); alert('Login simulado!'); this.closest('.modal').style.display='none';">
+        <label>Usuário</label>
+        <input type="text" placeholder="Seu usuário" required>
+        <label>Senha</label>
+        <input type="password" placeholder="Senha" required>
+        <button class="btn btn-primary" type="submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Links Rápidos</h4>
+        <ul>
+          <li><a href="../index.html">Início</a></li>
+          <li><a href="proposta.html">Proposta</a></li>
+          <li><a href="status.html">Status</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Fontes de Dados</h4>
+        <ul>
+          <li><a href="https://www.tse.jus.br" target="_blank" rel="noopener">TSE</a></li>
+          <li><a href="https://portaldatransparencia.gov.br" target="_blank" rel="noopener">Portal da Transparência</a></li>
+          <li><a href="https://www.cnj.jus.br" target="_blank" rel="noopener">CNJ</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Score Atual</h4>
+        <div class="mini-score-bar"><div class="mini-score-fill" style="width:78%"></div></div>
+        <p>Última atualização: 2026-08-18</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MudaBrasil. Dados públicos de candidaturas para fins de transparência cívica.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../config.js"></script>
+  <script src="../js/candidate-data.js"></script>
+  <script src="../js/candidates.js"></script>
+  <script src="../js/shared-ui.js"></script>
+</body>
+</html>

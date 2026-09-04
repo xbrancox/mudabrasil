@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MudaBrasil — Compare Candidatos, Radar Cívico, PLs</title>
+  <meta name="description" content="Plataforma cívica de voto contínuo e revogável. Compare candidatos, acompanhe reclamações, vote em PLs e revogue votos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/parlamentares.css">
+</head>
+<body>
+  <!-- ===================== HEADER ===================== -->
+  <header class="mb-header">
+    <a href="../index.html" class="mb-logo" aria-label="MudaBrasil - Início">
+      <span class="mb-logo-mark">M</span>
+      <span class="mb-logo-text">MudaBrasil</span>
+    </a>
+    <nav class="mb-nav" id="mb-nav">
+      <a href="../index.html" class="mb-nav-link">Início</a>
+      <a href="parlamentares.html" class="mb-nav-link active">Parlamentares</a>
+      <a href="meu-voto.html" class="mb-nav-link">Meu Voto</a>
+      <a href="proposta.html" class="mb-nav-link">Proposta</a>
+      <a href="comunidade.html" class="mb-nav-link">Comunidade</a>
+    </nav>
+    <div class="mb-header-actions">
+      <button class="mb-btn-ghost" id="mb-login-btn">Entrar</button>
+    </div>
+  </header>
+
+  <!-- ===================== TÍTULO DA PÁGINA ===================== -->
+  <section class="mb-hero">
+    <h1>🗳️ <strong>Compare Candidatos</strong></h1>
+    <p class="mb-hero-sub">Transparência total para o eleitor decidir. Todos os dados são estruturados a partir de <strong>fontes públicas oficiais</strong>: TSE, Portal da Transparência, Câmara/Senado e CNJ.</p>
+    <div class="mb-demo-banner">
+      <span class="mb-pill-icon">📌</span>
+      <span><strong>Modo demo</strong> — dados sintéticos de exemplo (API de dados reais em produção)</span>
+    </div>
+  </section>
+
+  <!-- ===================== ABAS PRINCIPAIS ===================== -->
+  <section class="mb-section">
+    <div class="mb-tabs" role="tablist">
+      <button class="mb-tab active" data-tab="candidatos" role="tab">
+        <span class="mb-tab-ico">🗳️</span>
+        <span>Compare Candidatos</span>
+      </button>
+      <button class="mb-tab" data-tab="radar" role="tab">
+        <span class="mb-tab-ico">📡</span>
+        <span>Radar Cívico</span>
+      </button>
+      <button class="mb-tab" data-tab="pls" role="tab">
+        <span class="mb-tab-ico">📜</span>
+        <span>PLs no Congresso</span>
+      </button>
+      <button class="mb-tab" data-tab="revogados" role="tab">
+        <span class="mb-tab-ico">⚖️</span>
+        <span>Votos Revogados</span>
+      </button>
+      <button class="mb-tab" data-tab="conferir" role="tab">
+        <span class="mb-tab-ico">🔍</span>
+        <span>Conferir Voto</span>
+      </button>
+      <button class="mb-tab" data-tab="revogar" role="tab">
+        <span class="mb-tab-ico">↩️</span>
+        <span>Revogar Voto</span>
+      </button>
+    </div>
+
+    <!-- ===================== ABA 1: COMPARE CANDIDATOS ===================== -->
+    <div class="mb-tab-panel active" id="tab-candidatos" role="tabpanel">
+      <div class="mb-search-bar">
+        <input type="search" id="cand-search" class="mb-input" placeholder="Buscar por nome, partido, estado ou área de atuação…">
+      </div>
+
+      <div class="mb-filters">
+        <label class="mb-filter">
+          <span class="mb-filter-ico">📍</span>
+          <select id="cand-filter-state">
+            <option value="">Todos os estados</option>
+          </select>
+        </label>
+        <label class="mb-filter">
+          <span class="mb-filter-ico">🏛️</span>
+          <select id="cand-filter-party">
+            <option value="">Todos os partidos</option>
+          </select>
+        </label>
+        <label class="mb-filter">
+          <span class="mb-filter-ico">💼</span>
+          <select id="cand-filter-position">
+            <option value="">Todos os cargos</option>
+            <option value="Deputado Federal">Deputado Federal</option>
+            <option value="Senador">Senador</option>
+          </select>
+        </label>
+        <label class="mb-filter">
+          <span class="mb-filter-ico">📊</span>
+          <select id="cand-filter-sort">
+            <option value="transparency">Transparência (maior)</option>
+            <option value="name">Nome (A-Z)</option>
+            <option value="party">Partido</option>
+            <option value="integrity">Índice de Integridade</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="mb-result-count">
+        <span id="cand-count">0</span> candidato(s) encontrado(s)
+      </div>
+
+      <div class="mb-card-grid" id="cand-grid"></div>
+
+      <div class="mb-compare-bar" id="compare-bar" hidden>
+        <div class="mb-compare-bar-info">
+          <span>Comparando <strong id="compare-count">0</strong>/3</span>
+        </div>
+        <button class="mb-btn-ghost" id="compare-clear">Limpar</button>
+        <button class="mb-btn-primary" id="compare-btn" disabled>Comparar lado a lado</button>
+      </div>
+
+      <div class="mb-compare-panel" id="compare-panel" hidden></div>
+
+      <div class="mb-tip-banner">
+        <span>💡</span>
+        <strong>Dica:</strong> marque a caixa no canto superior direito de até 3 políticos para comparar lado a lado.
+      </div>
+
+      <div class="mb-sources">
+        <h2>🔎 <strong>Dados 100% Públicos e Verificáveis</strong></h2>
+        <p class="mb-sources-sub">Nossa plataforma de comparação de candidatos é alimentada exclusivamente por fontes oficiais, garantindo total transparência e rastreabilidade.</p>
+        <div class="mb-sources-table">
+          <div class="mb-src-row mb-src-head">
+            <div>Fonte</div>
+            <div>Dados Disponíveis</div>
+            <div>Link</div>
+          </div>
+          <div class="mb-src-row">
+            <div><strong>TSE</strong></div>
+            <div>Registro de candidatura, histórico eleitoral, condenações, votos</div>
+            <div><a href="https://www.tse.jus.br/" target="_blank" rel="noopener">tse.jus.br</a></div>
+          </div>
+          <div class="mb-src-row">
+            <div><strong>Portal da Transparência</strong></div>
+            <div>Rendimentos, patrimônio declarado, gastos</div>
+            <div><a href="https://portaldatransparencia.gov.br/" target="_blank" rel="noopener">portaldatransparencia.gov.br</a></div>
+          </div>
+          <div class="mb-src-row">
+            <div><strong>Câmara / Senado</strong></div>
+            <div>Proposituras autorais, votação nominal, presença em sessões</div>
+            <div><a href="https://www.camara.leg.br/deputados/quem-e-quem" target="_blank" rel="noopener">camara.leg.br</a></div>
+          </div>
+          <div class="mb-src-row">
+            <div><strong>CNJ</strong></div>
+            <div>Processos judiciais, status de ações, condenações</div>
+            <div><a href="https://www.cnj.jus.br/" target="_blank" rel="noopener">cnj.jus.br</a></div>
+          </div>
+        </div>
+        <p class="mb-src-footer">⚙️ O Índice de Integridade é calculado automaticamente combinando transparência, processos judiciais e presença. Em produção, os dados são atualizados via APIs oficiais.</p>
+      </div>
+    </div>
+
+    <!-- ===================== ABA 2: RADAR CÍVICO ===================== -->
+    <div class="mb-tab-panel" id="tab-radar" role="tabpanel">
+      <div class="mb-section-header">
+        <h2>📡 <strong>Cobre, acompanhe, elogie</strong></h2>
+        <p class="mb-muted">O político só pode responder se tiver o <strong>selo de verificado</strong>. Esse selo confirma sua identidade.</p>
+      </div>
+
+      <div class="mb-search-bar">
+        <input type="search" id="radar-search" class="mb-input" placeholder="Procurar político…">
+      </div>
+
+      <div class="mb-radar-actions">
+        <button class="mb-btn-primary" id="open-complaint-modal">📝 Abrir reclamação / apoio</button>
+        <button class="mb-btn-secondary" id="open-radar-search">🔍 Pesquisar reclamação / resposta</button>
+      </div>
+
+      <div class="mb-radar-lists">
+        <div class="mb-radar-list">
+          <h3>📊 Políticos com mais reclamações</h3>
+          <div id="radar-more"></div>
+        </div>
+        <div class="mb-radar-list">
+          <h3>🌟 Políticos com menos reclamações</h3>
+          <div id="radar-less"></div>
+        </div>
+      </div>
+
+      <div id="radar-feed" class="mb-radar-feed"></div>
+    </div>
+
+    <!-- ===================== ABA 3: PLs NO CONGRESSO ===================== -->
+    <div class="mb-tab-panel" id="tab-pls" role="tabpanel">
+      <div class="mb-section-header">
+        <h2>📜 <strong>PLs Tramitando no Congresso</strong></h2>
+        <p class="mb-muted">Vote <strong>Aprovo</strong> ou <strong>Não aprovo</strong> nos projetos em tramitação.</p>
+      </div>
+
+      <div class="mb-pls-filters">
+        <input type="search" id="pl-search" class="mb-input" placeholder="Nº do PL…">
+        <input type="search" id="pl-author" class="mb-input" placeholder="Autor…">
+        <select id="pl-party" class="mb-input">
+          <option value="">Todos os partidos</option>
+        </select>
+        <select id="pl-chamber" class="mb-input">
+          <option value="">Ambas as Casas</option>
+          <option value="Câmara">Câmara</option>
+          <option value="Senado">Senado</option>
+        </select>
+      </div>
+
+      <div class="mb-pls-list" id="pls-list"></div>
+    </div>
+
+    <!-- ===================== ABA 4: VOTOS REVOGADOS ===================== -->
+    <div class="mb-tab-panel" id="tab-revogados" role="tabpanel">
+      <div class="mb-section-header">
+        <h2>⚖️ <strong>Políticos com votos revogados</strong></h2>
+        <p class="mb-muted">Acompanhe quem está perto de ter a <strong>legislatura cassada</strong> (limite: 70% dos votos que elegeram).</p>
+      </div>
+
+      <div class="mb-revogados-filters">
+        <input type="search" id="rev-search" class="mb-input" placeholder="Buscar por nome…">
+        <select id="rev-party" class="mb-input">
+          <option value="">Todos os partidos</option>
+        </select>
+        <select id="rev-state" class="mb-input">
+          <option value="">Todos os estados</option>
+        </select>
+      </div>
+
+      <div class="mb-section-sub">
+        <h3>🔥 Top 10 com mais revogações</h3>
+      </div>
+      <div class="mb-revogados-list" id="rev-top10"></div>
+
+      <div class="mb-revogados-all" id="rev-all"></div>
+    </div>
+
+    <!-- ===================== ABA 5: CONFERIR VOTO ===================== -->
+    <div class="mb-tab-panel" id="tab-conferir" role="tabpanel">
+      <div class="mb-section-header">
+        <h2>🔍 <span class="mb-blue">Conferir</span> <span class="mb-green">voto</span></h2>
+        <p class="mb-muted">Local onde você prova que seu voto existe e confirma em quem realmente votou.</p>
+      </div>
+
+      <div class="mb-card mb-conferir-card">
+        <h3>📋 Seus candidatos votados</h3>
+        <div id="conferir-votes"></div>
+        <button class="mb-btn-primary mb-btn-block" id="generate-code-btn" hidden>Gerar código de verificação</button>
+        <p class="mb-muted-sm" id="conferir-no-votes" hidden>Você ainda não votou em ninguém. <a href="meu-voto.html">Vote aqui</a> primeiro.</p>
+      </div>
+
+      <div class="mb-card mb-conferir-card">
+        <h3>🔐 Cole seu código de verificação</h3>
+        <p class="mb-muted-sm">Formato: 5 grupos de 4 dígitos (0000 0000 0000 0000 0000)</p>
+        <div class="mb-code-inputs">
+          <input type="text" maxlength="4" class="mb-code-group" data-idx="0">
+          <input type="text" maxlength="4" class="mb-code-group" data-idx="1">
+          <input type="text" maxlength="4" class="mb-code-group" data-idx="2">
+          <input type="text" maxlength="4" class="mb-code-group" data-idx="3">
+          <input type="text" maxlength="4" class="mb-code-group" data-idx="4">
+        </div>
+        <button class="mb-btn-mint" id="conferir-btn">🔍 Conferir</button>
+        <div id="conferir-result" class="mb-conferir-result"></div>
+      </div>
+    </div>
+
+    <!-- ===================== ABA 6: REVOGAR VOTO ===================== -->
+    <div class="mb-tab-panel" id="tab-revogar" role="tabpanel">
+      <div class="mb-section-header">
+        <h2>↩️ <strong>Revogar voto</strong></h2>
+        <p class="mb-muted">Aperte "Revogar" no candidato que você deseja retirar seu voto. Após a confirmação, o político recebe essa revogação e vai para a lista de <strong>Políticos com votos revogados</strong>.</p>
+        <div class="mb-warn-banner">
+          ⚠️ <strong>Explicação detalhada:</strong> este é apenas uma simulação cívica. Não tem valor legal nem vínculo com eleições oficiais. O MudaBrasil é um protótipo de voto contínuo e revogável.
+        </div>
+      </div>
+
+      <div id="revogar-list" class="mb-revogar-list"></div>
+      <p class="mb-muted" id="revogar-empty" hidden>Você precisa estar logado para revogar votos. <button class="mb-btn-link" id="revogar-login">Entrar</button></p>
+    </div>
+  </section>
+
+  <!-- ===================== MODAL: DETALHES DO CANDIDATO ===================== -->
+  <div class="mb-modal" id="cand-modal" hidden>
+    <div class="mb-modal-card">
+      <button class="mb-modal-close" data-close>×</button>
+      <div id="cand-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: RECLAMAÇÃO/APOIO ===================== -->
+  <div class="mb-modal" id="complaint-modal" hidden>
+    <div class="mb-modal-card">
+      <button class="mb-modal-close" data-close>×</button>
+      <h2>📝 Abrir reclamação / apoio</h2>
+      <form id="complaint-form" class="mb-form">
+        <label>
+          <span>Político</span>
+          <select id="complaint-politician" required></select>
+        </label>
+        <label>
+          <span>Título</span>
+          <input type="text" id="complaint-title" placeholder="resuma o problema" maxlength="120" required>
+        </label>
+        <label>
+          <span>Descrição</span>
+          <textarea id="complaint-content" rows="5" placeholder="fale sobre sua insatisfação, link de notícias, vídeos e promessas de campanha. Ou manda um elogio, um apoio." required></textarea>
+        </label>
+        <div class="mb-form-row">
+          <button type="button" class="mb-btn-ghost">📎 Anexar Arquivos</button>
+          <button type="submit" class="mb-btn-mint-send">✈️ Enviar reclamação</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: REVOGAR COM CONTADOR 10s ===================== -->
+  <div class="mb-modal" id="revogar-modal" hidden>
+    <div class="mb-modal-card mb-modal-narrow">
+      <button class="mb-modal-close" data-close>×</button>
+      <h2>↩️ Confirmar revogação</h2>
+      <p>Você está prestes a <strong>revogar seu voto</strong> de:</p>
+      <div id="revogar-modal-info" class="mb-card-inner"></div>
+      <p class="mb-warn-text">Após confirmar, seu voto será computado como revogação. <strong>Aguarde <span id="rev-countdown">10</span>s</strong> para confirmar.</p>
+      <div class="mb-form-row">
+        <button class="mb-btn-ghost" id="revogar-cancel" data-close>Cancelar</button>
+        <button class="mb-btn-danger" id="revogar-confirm" disabled>Confirmar (<span id="rev-countdown-2">10</span>s)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TOAST ===================== -->
+  <div id="mb-toast" class="mb-toast" hidden></div>
+
+  <!-- ===================== AUTH MODAL ===================== -->
+  <div class="mb-modal" id="auth-modal" hidden>
+    <div class="mb-modal-card mb-modal-narrow">
+      <button class="mb-modal-close" data-close>×</button>
+      <h2>Entrar</h2>
+      <div class="mb-auth-tabs">
+        <button class="mb-auth-tab active" data-auth="google">Google</button>
+        <button class="mb-auth-tab" data-auth="phone">Telefone (SMS)</button>
+      </div>
+      <div class="mb-auth-pane" data-pane="google">
+        <p class="mb-muted">Faça login com sua conta Google.</p>
+        <input type="email" id="google-email" class="mb-input" placeholder="seu@email.com">
+        <input type="text" id="google-name" class="mb-input" placeholder="Seu nome">
+        <button class="mb-btn-primary mb-btn-block" id="google-login">Entrar com Google</button>
+        <p class="mb-muted-sm">Modo dev: preencha email + nome e clique Entrar.</p>
+      </div>
+      <div class="mb-auth-pane" data-pane="phone" hidden>
+        <p class="mb-muted">Receba um código de verificação por SMS.</p>
+        <input type="tel" id="phone-number" class="mb-input" placeholder="(11) 99999-9999">
+        <button class="mb-btn-primary mb-btn-block" id="phone-send">Enviar código</button>
+        <div id="phone-verify" hidden>
+          <input type="text" id="phone-code" class="mb-input" placeholder="000000" maxlength="6">
+          <button class="mb-btn-primary mb-btn-block" id="phone-verify-btn">Verificar</button>
+        </div>
+        <p class="mb-muted-sm" id="phone-dev-info"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../config.js"></script>
+  <script src="../js/parlamentar-auth.js"></script>
+  <script src="../js/parlamentares.js"></script>
+</body>
+</html>

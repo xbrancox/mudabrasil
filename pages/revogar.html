@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MudaBrasil - Revogar Voto</title>
+  <meta http-equiv="refresh" content="2;url=meu-voto.html#conferir">
+  <link rel="stylesheet" href="../css/design-system.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: var(--space-md);
+      text-align: center;
+    }
+    .redirect-box {
+      max-width: 480px;
+      padding: var(--space-2xl);
+      background: var(--surface-500);
+      border-radius: var(--border-radius-lg);
+      border: 1px solid var(--border-500);
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--border-500);
+      border-top-color: var(--accent-500);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto var(--space-md);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="redirect-box">
+    <div class="spinner"></div>
+    <h2>↩ Revogar está em "Meu Voto"</h2>
+    <p style="color:var(--text-secondary); margin-bottom:var(--space-lg);">
+      A opção de conferir e revogar seu voto agora fica na aba
+      <strong>"Conferir / Revogar"</strong> dentro de <strong>Meu Voto</strong>.
+      É só colar seu código e escolher a ação.
+    </p>
+    <p style="font-size:var(--text-sm); color:var(--text-muted);">
+      Redirecionando em 2 segundos...
+    </p>
+    <a href="meu-voto.html#conferir" class="btn btn-accent" style="display:inline-block; margin-top:var(--space-md);">
+      Ir agora →
+    </a>
+  </div>
+  <script>
+    setTimeout(function() {
+      window.location.href = 'meu-voto.html#conferir';
+    }, 2000);
+  </script>
+</body>
+</html>

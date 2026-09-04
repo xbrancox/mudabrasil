@@ -17,7 +17,6 @@
 
 const crypto = require('crypto');
 const db = require('./db');
-const nodemailer = require('nodemailer');
 
 const AUTHORIZED_DOMAINS = [
   'camara.leg.br',
@@ -27,27 +26,6 @@ const AUTHORIZED_DOMAINS = [
 ];
 
 const pendingVerifications = new Map();
-
-// Email transporter (configurado via env vars)
-let emailTransporter = null;
-function getEmailTransporter() {
-  if (emailTransporter) return emailTransporter;
-  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const port = parseInt(process.env.SMTP_PORT || '587');
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  if (!user || !pass) {
-    console.warn('[verificacao] SMTP não configurado - e-mails serão logados apenas');
-    return null;
-  }
-  emailTransporter = nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    auth: { user, pass }
-  });
-  return emailTransporter;
-}
 
 function isAuthorizedDomain(email) {
   if (!email || typeof email !== 'string') return null;
@@ -65,79 +43,7 @@ function normalizeEmail(email) {
   return String(email || '').toLowerCase().trim();
 }
 
-async function sendVerificationEmail(email, token, politicianName, baseUrl) {
-  const transporter = getEmailTransporter();
-  const confirmUrl = `${baseUrl}/api/verificacao/confirmar?token=${token}`;
-  
-  const html = `
-    <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: linear-gradient(135deg, #061a3a 0%, #115FCB 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-        <h1 style="color: #FFD700; margin: 0; font-size: 28px;">🇧🇷 MudaBrasil</h1>
-        <p style="color: #fff; margin: 10px 0 0; opacity: 0.9;">Verificação de Identidade Política</p>
-      </div>
-      <div style="background: #fff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 12px 12px;">
-        <h2 style="color: #061a3a; margin-top: 0;">Olá, ${politicianName}</h2>
-        <p>Você (ou sua assessoria) solicitou a verificação de identidade no <strong>MudaBrasil</strong> para obter o selo de político verificado.</p>
-        <p>Seu e-mail institucional <strong>${email}</strong> foi reconhecido como domínio autorizado.</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${confirmUrl}" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #061a3a; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; display: inline-block; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);">
-            ✅ Confirmar e obter selo
-          </a>
-        </div>
-        <p style="font-size: 14px; color: #666;">Ou acesse diretamente: <a href="${confirmUrl}">${confirmUrl}</a></p>
-        <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 24px 0;">
-        <p style="font-size: 12px; color: #999;">Este link expira em 24 horas. Se não solicitou esta verificação, ignore este e-mail.</p>
-        <p style="font-size: 12px; color: #999;">MudaBrasil — Seu voto coloca. Seu voto tira.</p>
-      </div>
-    </body>
-    </html>
-  `;
-
-  const text = `
-    MudaBrasil - Verificação de Identidade Política
-    
-    Olá, ${politicianName}
-    
-    Você (ou sua assessoria) solicitou a verificação de identidade no MudaBrasil para obter o selo de político verificado.
-    
-    Seu e-mail institucional ${email} foi reconhecido como domínio autorizado.
-    
-    Para confirmar e obter o selo, acesse: ${confirmUrl}
-    
-    Este link expira em 24 horas. Se não solicitou esta verificação, ignore este e-mail.
-    
-    MudaBrasil — Seu voto coloca. Seu voto tira.
-  `;
-
-  if (transporter) {
-    try {
-      await transporter.sendMail({
-        from: `"MudaBrasil" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
-        to: email,
-        subject: '🇧🇷 MudaBrasil - Confirme seu e-mail para obter o selo de verificado',
-        text,
-        html
-      });
-      console.log('[verificacao] E-mail de verificação enviado para:', email);
-      return { sent: true };
-    } catch (e) {
-      console.error('[verificacao] Falha ao enviar e-mail:', e.message);
-      return { sent: false, error: e.message };
-    }
-  } else {
-    // Dev mode: log the confirmation link
-    console.log('[verificacao] MODO DEV - Link de confirmação:', confirmUrl);
-    return { sent: false, devMode: true, confirmUrl };
-  }
-}
-
-async function startVerification(politicianId, email, baseUrl) {
+function startVerification(politicianId, email) {
   const politician = db.getPolitician(politicianId);
   if (!politician) throw new Error('Político não encontrado: ' + politicianId);
 
@@ -158,8 +64,6 @@ async function startVerification(politicianId, email, baseUrl) {
     politicianName: politician.name
   });
 
-  const emailResult = await sendVerificationEmail(normalized, token, politician.name, baseUrl);
-
   return {
     ok: true,
     token,
@@ -168,12 +72,7 @@ async function startVerification(politicianId, email, baseUrl) {
     confirmationLink: `/api/verificacao/confirmar?token=${token}`,
     politicianName: politician.name,
     expiresAt,
-    message: emailResult.sent 
-      ? 'E-mail de confirmação enviado! Verifique sua caixa de entrada.'
-      : (emailResult.devMode 
-        ? 'MODO DEV: e-mail não enviado. Use o link de confirmação abaixo.'
-        : 'E-mail não enviado (SMTP não configurado). Link de confirmação gerado.'),
-    devConfirmUrl: emailResult.devMode ? emailResult.confirmUrl : undefined
+    message: 'Token gerado. Em produção, um e-mail seria enviado. Em dev, use o link diretamente.'
   };
 }
 
