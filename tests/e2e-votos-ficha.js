@@ -2,6 +2,7 @@
 const { chromium } = require('playwright');
 
 (async () => {
+  const BASE = process.env.BASE_URL || 'http://localhost:8091';
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
@@ -10,7 +11,7 @@ const { chromium } = require('playwright');
   page.on('pageerror', e => errors.push('[pageerror] ' + e.message));
   page.on('response', r => { if (r.status() >= 400) bad.push(r.status() + ' ' + r.url().slice(0, 120)); });
 
-  await page.goto('http://localhost:8080/index.html', { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(BASE + '/index.html', { waitUntil: 'networkidle', timeout: 30000 });
   await page.waitForTimeout(2000);
 
   // ativa a seção Radar e busca o deputado

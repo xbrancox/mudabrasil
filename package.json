@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js",
-    "test": "playwright test"
+    "test": "node tests/run-all.js"
   },
   "engines": {
     "node": ">=22.0.0"

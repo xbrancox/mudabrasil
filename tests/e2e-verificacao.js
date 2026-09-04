@@ -2,6 +2,7 @@
 const { chromium } = require('playwright');
 
 (async () => {
+  const BASE = process.env.BASE_URL || 'http://localhost:8091';
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
@@ -9,7 +10,7 @@ const { chromium } = require('playwright');
   let solicitResp = null;
   page.on('response', r => { if (r.url().includes('/api/verificacao/solicitar')) solicitResp = r; });
 
-  await page.goto('http://localhost:8080/index.html', { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(BASE + '/index.html', { waitUntil: 'networkidle', timeout: 30000 });
   await page.waitForTimeout(2000);
 
   // abre a ficha do deputado e clica em "É você? Verificar"
@@ -46,6 +47,16 @@ const { chromium } = require('playwright');
   const api = await page.evaluate(() => fetch('/api/candidatos').then(r => r.json()));
   const alvoApi = (api.candidatos || []).find(c => c.id === 'camara-204379');
   console.log('selo no /api/candidatos:', alvoApi ? !!alvoApi.selo : '(não encontrado)');
+
+  // auto-limpeza: remove a verificação de teste do db
+  try {
+    const { DatabaseSync } = require('node:sqlite');
+    const path = require('path');
+    const dbf = new DatabaseSync(path.join(__dirname, '..', 'server', 'data', 'votos.db'));
+    const del = dbf.prepare('DELETE FROM verifications').run();
+    console.log('[cleanup] verificações de teste removidas:', del.changes);
+    dbf.close();
+  } catch (ce) { console.log('[cleanup] skip:', ce.message); }
 
   console.log('--- pageerrors:', errors.length);
   errors.forEach(e => console.log('  ', e));
