@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MudaBrasil — Roteiro de Testes Manuais</title>
+<style>
+  :root{--bg:#0a1628;--card:#10233f;--line:#1e3a5f;--ink:#e8eef7;--mut:#8fa3bd;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C;--blue:#4a90f0}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:980px;margin:0 auto;padding:24px 16px 80px}
+  header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);padding:14px 16px;z-index:10}
+  h1{margin:0;font-size:20px;color:var(--gold)}
+  .bar{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--mut)}
+  .bar b{color:var(--ink)}
+  progress{width:100%;height:10px;margin-top:8px}
+  h2{font-size:16px;color:var(--gold);margin:28px 0 8px;border-bottom:1px solid var(--line);padding-bottom:6px}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}
+  .item.bug{border-color:var(--red)}
+  .item.ok{border-color:rgba(46,204,113,.5)}
+  .top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+  .t{font-weight:700;font-size:14px}
+  .btns{display:flex;gap:6px;flex:none}
+  .btns button{border:1px solid var(--line);background:transparent;color:var(--mut);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:12px;font-weight:700}
+  .btns button.on-ok{background:rgba(46,204,113,.18);color:var(--green);border-color:var(--green)}
+  .btns button.on-bug{background:rgba(231,76,60,.18);color:var(--red);border-color:var(--red)}
+  .steps{font-size:13px;color:var(--mut);margin:6px 0 0;line-height:1.5}
+  .steps b{color:var(--ink)}
+  textarea{width:100%;min-height:44px;margin-top:8px;background:#0b1c33;border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px;font-size:13px;display:none;resize:vertical}
+  .item.show-note textarea{display:block}
+  .hint{font-size:12px;color:var(--mut);background:#0b1c33;border:1px dashed var(--line);border-radius:8px;padding:8px 12px;margin:8px 0}
+  .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .actions button{border:none;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;font-size:13px}
+  .a-copy{background:var(--gold);color:#1a1400}
+  .a-reset{background:transparent;color:var(--red);border:1px solid var(--red)!important}
+  .where{font-size:12px;color:var(--blue);margin-top:4px}
+  a{color:var(--blue)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧪 MudaBrasil — Roteiro de Testes Manuais</h1>
+  <div class="bar">
+    <span>Progresso: <b id="p-ok">0</b> ok · <b id="p-bug">0</b> bugs · <b id="p-pend">0</b> pendentes de <b id="p-total">0</b></span>
+    <span style="margin-left:auto">Estado salvo neste navegador</span>
+  </div>
+  <progress id="prog" value="0" max="100"></progress>
+</header>
+<div class="wrap">
+  <div class="hint">
+    <b>Onde testar:</b> local <a href="http://localhost:8080/index.html">http://localhost:8080</a> (servidor: <code>cd C:\Users\euler\MudaBrasil && node server/index.js</code>) ·
+    produção <a href="https://mudabrasil-production-79eb.up.railway.app/" target="_blank">Railway</a> ·
+    <a href="https://xbrancox.github.io/mudabrasil/" target="_blank">GitHub Pages</a>.<br>
+    <b>Como usar:</b> teste cada item na ordem, marque <b>OK</b> ou <b>BUG</b> (e descreva o problema na nota). No final, clique em <b>📋 Copiar relatório</b> e me mande o resultado — os itens marcados como BUG viram os ajustes da etapa final. Tudo fica salvo neste navegador automaticamente.
+  </div>
+  <div id="content"></div>
+  <div class="actions">
+    <button class="a-copy" onclick="copiarRel()">📋 Copiar relatório</button>
+    <button class="a-reset" onclick="resetar()">🗑️ Zerar roteiro</button>
+  </div>
+</div>
+<script>
+const AREAS = [
+ {area:'1 · Home / Radar Político', url:'http://localhost:8080/index.html', itens:[
+  {id:'1.1',t:'Busca de político',s:'Na seção <b>Radar Político</b>, digite <b>favacho</b> na busca.<br><b>Esperado:</b> 1 ficha (Acácio Favacho, MDB/AP).'},
+  {id:'1.2',t:'Filtros por UF e partido',s:'Filtre por <b>UF = AP</b> e depois por <b>partido</b>.<br><b>Esperado:</b> a lista filtra corretamente e o contador atualiza.'},
+  {id:'1.3',t:'Ficha: badges e contadores',s:'Abra a ficha e veja o badge de verificação e os contadores de reclamações/apoios/respostas.<br><b>Esperado:</b> "Nº eleitoral" com número (ex.: 204379), contadores numéricos sem NaN.'},
+  {id:'1.4',t:'Dados públicos (modal)',s:'Clique em <b>Dados públicos</b> na ficha.<br><b>Esperado:</b> modal com nome civil, nascimento, idade, escolaridade, legislatura, gabinete, contato — <b>nenhum campo fake</b> — e a lista de votações nominais com badges coloridas (Sim=verde, Não=vermelho, resto=cinza).'},
+  {id:'1.5',t:'Como votou (deputado)',s:'Na ficha de um <b>deputado</b>, veja "🗳️ Como votou".<br><b>Esperado:</b> até 8 votações com badges; se a fonte não tiver votação nominal recente, mensagem honesta "Nenhuma votação nominal...".'},
+  {id:'1.6',t:'Como votou (senador) + Ver todas',s:'Busque <b>Alan Rick</b> e abra "Como votou".<br><b>Esperado:</b> 8 votações com badges + botão <b>Ver todas (N)</b> que expande o histórico; ao expandir, "Carregar mais" carrega de 50 em 50 ao rolar; botão volta a "Mostrar as 8 mais recentes".'},
+  {id:'1.7',t:'Projetos apresentados',s:'Na ficha de um deputado, veja "📚 Projetos apresentados".<br><b>Esperado:</b> até 8 projetos com sigla/numero/ano reais da Câmara (ex.: Acácio Favacho tem 8).'},
+  {id:'1.8',t:'Reclamação pela ficha',s:'Clique em <b>Fazer reclamação</b>, preencha título (5+) e descrição (10+) e envie.<br><b>Esperado:</b> toast "Reclamação registrada" e o contador sobe na hora.'},
+  {id:'1.9',t:'Apoio pela ficha',s:'Clique em <b>Dar apoio</b> e envie.<br><b>Esperado:</b> toast "Apoio registrado" e contador sobe.'},
+  {id:'1.10',t:'Validação do formulário',s:'Tente enviar com título de 2 letras.<br><b>Esperado:</b> toast pedindo título (5+) e descrição (10+) — nada é enviado.'},
+  {id:'1.11',t:'Fixar e comparar (pins)',s:'Fixe 2–3 fichas com 📌 e abra a comparação.<br><b>Esperado:</b> máximo de 5, cards lado a lado com projetos/votos.'},
+  {id:'1.12',t:'Verificação de político (modo dev)',s:'Na ficha, <b>É você? Verificar</b> → use um e-mail <b>@camara.leg.br</b>.<br><b>Esperado:</b> modal mostra "Perfil: [nome]" e, em modo dev, um <b>link de confirmação</b> verde; ao colar o token, badge muda para <b>Verificado</b>.'},
+  {id:'1.13',t:'SSE ao vivo na home',s:'Deixe a home aberta e vote no <b>Meu Voto</b> em outra aba.<br><b>Esperado:</b> o contador "X votos registrados" atualiza sem recarregar a página.'},
+  {id:'1.14',t:'Ordenação do radar',s:'Ordene por reclamações, apoios e projetos.<br><b>Esperado:</b> lista reordena sem erros no console (F12).'}
+ ]},
+ {area:'2 · Meu Voto (voto contínuo e revogável)', url:'http://localhost:8080/pages/meu-voto.html', itens:[
+  {id:'2.1',t:'Badge "Dados reais"',s:'Abra a aba <b>Termômetro</b>.<br><b>Esperado:</b> badge "📡 Dados reais · Câmara dos Deputados" (não "Modo demo").'},
+  {id:'2.2',t:'Login por e-mail OTP (modo dev)',s:'Clique em <b>Login</b>, use um e-mail qualquer com @ e ponto.<br><b>Esperado:</b> o código aparece na própria tela (modo dev); após confirmar, seu nome/e-mail aparece logado.'},
+  {id:'2.3',t:'Selecionar parlamentar',s:'Na aba <b>Expressar confiança</b>, busque <b>favacho</b> e selecione.<br><b>Esperado:</b> card do selecionado com foto/iniciais + nota de consentimento (🔒 anônimo e revogável).'},
+  {id:'2.4',t:'Votar e receber código',s:'Clique em <b>Expressar Confiança</b>.<br><b>Esperado:</b> modal com código único no formato XXXX-XXXX-XXXX-XXXX, mostrado apenas uma vez, e botão copiar funcional.'},
+  {id:'2.5',t:'Código pré-preenchido',s:'Feche o modal e veja o campo da aba <b>Conferir</b>.<br><b>Esperado:</b> código já preenchido e salvo no navegador.'},
+  {id:'2.6',t:'Ver meu voto (mascarado → revelar)',s:'Clique em <b>Ver meu voto</b>.<br><b>Esperado:</b> nome MASCARADO (••••••) e botão 👁 que revela/oculta ao clicar.'},
+  {id:'2.7',t:'Reafirmar confiança',s:'Veja o botão 🔄 Reafirmar.<br><b>Esperado:</b> em voto novo (0 dias) ele fica desabilitado/ausente — reafirmação só faz sentido após 30 dias sem reconfirmação.'},
+  {id:'2.8',t:'Revogar voto',s:'Clique em <b>Revogar meu voto</b> e aceite o confirm.<br><b>Esperado:</b> mensagem "Voto revogado com sucesso. Seu voto foi tirado", ativos −1 e revogados +1 no termômetro.'},
+  {id:'2.9',t:'Termômetro: ranking e tendência',s:'Na aba <b>Termômetro</b>, veja métricas, ranking e o gráfico de tendência.<br><b>Esperado:</b> métricas numéricas, ranking com pelo menos 1 linha, gráfico desenhado (canvas).'},
+  {id:'2.10',t:'Busca no termômetro',s:'Busque um nome no campo do termômetro.<br><b>Esperado:</b> lista filtra; nome não existente mostra estado vazio educado.'}
+ ]},
+ {area:'3 · Demais páginas', url:'http://localhost:8080/pages/status.html', itens:[
+  {id:'3.1',t:'Status (painel ao vivo)',s:'Abra <b>/pages/status.html</b>.<br><b>Esperado:</b> painel em modo real, sem erros no console (F12).'},
+  {id:'3.2',t:'Candidatos (594)',s:'Abra <b>/pages/candidatos.html</b>.<br><b>Esperado:</b> 594 cards, filtros e busca funcionando, "594 candidato(s) encontrado(s)".'},
+  {id:'3.3',t:'Proposta (PLs)',s:'Abra <b>/pages/proposta.html</b>.<br><b>Esperado:</b> 8 PLs reais da Câmara com botões de aprovar/reprovar e link de inteiro teor.'},
+  {id:'3.4',t:'Comunidade',s:'Abra <b>/pages/comunidade.html</b>.<br><b>Esperado:</b> carrega sem erros de console.'},
+  {id:'3.5',t:'Parlamentares (v2.1)',s:'Abra <b>/pages/parlamentares.html</b>, faça login por e-mail OTP e reclame/apoie num parlamentar.<br><b>Esperado:</b> login com código na tela, reclamação/apoio aceitos e listados no perfil.'}
+ ]},
+ {area:'4 · Produção e responsivo', url:'https://mudabrasil-production-79eb.up.railway.app/', itens:[
+  {id:'4.1',t:'Produção (Railway)',s:'Repita os itens essenciais (1.1, 1.4, 1.6, 2.4, 2.8) em <b>https://mudabrasil-production-79eb.up.railway.app</b>.<br><b>Esperado:</b> mesmo comportamento do local.'},
+  {id:'4.2',t:'GitHub Pages',s:'Repita a busca de ficha em <b>https://xbrancox.github.io/mudabrasil/</b>.<br><b>Esperado:</b> ficha carrega (frontend fala com o Railway automaticamente).'},
+  {id:'4.3',t:'Responsivo (celular)',s:'F12 → modo dispositivo (375px) nas páginas principais.<br><b>Esperado:</b> sem sobreposição, botões sem estouro de texto, modais com scroll.'},
+  {id:'4.4',t:'Console limpo',s:'F12 → Console nas páginas principais.<br><b>Esperado:</b> nenhum erro vermelho (warnings amarelos são aceitáveis).'}
+ ]}
+];
+
+const KEY='mb_roteiro_testes';
+let state=JSON.parse(localStorage.getItem(KEY)||'{}');
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function render(){
+  const c=document.getElementById('content');c.innerHTML='';
+  let total=0,ok=0,bug=0;
+  AREAS.forEach(a=>{
+    const h2=document.createElement('h2');h2.textContent=a.area+' — '+a.url.replace(/https?:\/\//,'');c.appendChild(h2);
+    a.itens.forEach(it=>{
+      total++;const st=state[it.id]||{};
+      if(st.v==='ok')ok++;if(st.v==='bug')bug++;
+      const d=document.createElement('div');d.className='item '+(st.v==='ok'?'ok':st.v==='bug'?'bug':'');
+      d.innerHTML=`<div class="top"><div><span class="t">${it.id} · ${it.t}</span><div class="where">↳ ${a.url}</div></div>
+        <div class="btns"><button class="${st.v==='ok'?'on-ok':''}" data-v="ok" data-id="${it.id}">✔ OK</button>
+        <button class="${st.v==='bug'?'on-bug':''}" data-v="bug" data-id="${it.id}">✖ BUG</button></div></div>
+        <p class="steps">${it.s}</p>
+        <textarea placeholder="Nota (obrigatória em BUG: o que aconteceu? onde?)">${st.n||''}</textarea>`;
+      if(st.n)d.classList.add('show-note');
+      d.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>{
+        const v=b.dataset.v,id=b.dataset.id;state[id]=state[id]||{};
+        state[id].v=state[id].v===v?'':v;save();render();
+      });
+      const ta=d.querySelector('textarea');
+      ta.oninput=()=>{state[it.id]=state[it.id]||{};state[it.id].n=ta.value;ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';save()};
+      if(st.v==='bug')d.classList.add('show-note');
+      c.appendChild(d);
+    });
+  });
+  document.getElementById('p-total').textContent=total;
+  document.getElementById('p-ok').textContent=ok;
+  document.getElementById('p-bug').textContent=bug;
+  document.getElementById('p-pend').textContent=total-ok-bug;
+  const done=ok+bug;document.getElementById('prog').value=total?Math.round(done*100/total):0;
+}
+function copiarRel(){
+  let md='# Relatório de testes — MudaBrasil\n\n';
+  AREAS.forEach(a=>{
+    a.itens.forEach(it=>{
+      const st=state[it.id]||{};
+      if(st.v==='bug')md+=`- ❌ BUG ${it.id} — ${it.t}\n  Passos: ${it.s.replace(/<[^>]+>/g,'').replace(/\n/g,' ')}\n  Nota: ${st.n||'(sem nota)'}\n`;
+      else if(st.v==='ok')md+=`- ✅ OK ${it.id} — ${it.t}${st.n?' (nota: '+st.n+')':''}\n`;
+    });
+  });
+  md+='\nGerado em '+new Date().toLocaleString('pt-BR');
+  navigator.clipboard.writeText(md).then(()=>alert('Relatório copiado! Cole aqui no chat com o AutoClaw.'))
+    .catch(()=>{const w=window.open('','_blank');w.document.write('<pre>'+md+'</pre>')});
+}
+function resetar(){if(confirm('Zerar todo o progresso do roteiro?')){state={};localStorage.removeItem(KEY);render()}}
+render();
+</script>
+</body>
+</html>
