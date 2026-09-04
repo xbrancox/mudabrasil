@@ -416,7 +416,7 @@ function idade(iso){if(!iso)return null;const n=new Date(iso);const h=new Date()
 function fmtData(iso){if(!iso)return null;return new Date(iso).toLocaleDateString('pt-BR')}
 async function preencheDetalhe(i){const p=POL[i];const det={props:[],votos:[]};
 if(p.cargo==='Deputado Federal'){
- const CB=(BACKEND_OK?(location.protocol.startsWith('http')?'':API_BASE):null);const CA=CB!=null?CB+'/api/camara/':'https://dadosabertos.camara.leg.br/api/v2/';
+ const CB=(function(){if(!BACKEND_OK)return null;const h=location.hostname;if(h==='localhost'||h==='127.0.0.1'||/railway\.app$/.test(h))return '';return API_BASE;})();const CA=CB!=null?CB+'/api/camara/':'https://dadosabertos.camara.leg.br/api/v2/';
  try{const r=await fetch(CA+'deputados/'+p.num);const j=await r.json();const d=j.dados||{};
   if(d.dataNascimento){det.idade=idade(d.dataNascimento);det.nasc=fmtData(d.dataNascimento)}
   if(d.escolaridade)det.escolaridade=d.escolaridade;if(d.nomeCivil)det.nomeCivil=d.nomeCivil;
