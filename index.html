@@ -102,11 +102,19 @@ textarea{min-height:70px;resize:vertical}
 .ncar::-webkit-scrollbar{height:6px}.ncar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
 .ncar-btn{flex:none;width:42px;border:1px solid var(--line);background:var(--card);color:var(--gold);border-radius:12px;font-size:22px;cursor:pointer;align-self:center}
 .ncar-btn:hover{background:#123059}
+<<<<<<< HEAD
 .ncard-new{flex:0 0 320px;max-width:320px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;transition:transform .18s,border-color .18s}
 .ncard-new:hover{transform:translateY(-3px);border-color:var(--gold)}
 .nimg{position:relative;height:140px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#0e3a2e,#0d2242);display:grid;place-items:center}
 .nimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .nimg .nph{color:rgba(46,204,113,.45);font-size:26px}
+=======
+.ncard-new{flex:0 0 320px;max-width:320px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0;display:flex;flex-direction:column;gap:8px;transition:transform .18s,border-color .18s;overflow:hidden}
+.ncard-new:hover{transform:translateY(-3px);border-color:var(--gold)}
+.nimg{width:100%;height:140px;object-fit:cover;display:block;background:linear-gradient(135deg,#0e3a2e,#0d2242)}
+.nimg-ph{width:100%;height:140px;display:grid;place-items:center;background:linear-gradient(135deg,#0e3a2e,#0d2242);color:var(--green);font-size:32px}
+.nbd{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+>>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 .nbadge{display:inline-flex;align-items:center;gap:5px;background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.4);font:800 9.5px Manrope;letter-spacing:.08em;padding:4px 9px;border-radius:999px;text-transform:uppercase;width:max-content}
 .nbadge.uf{background:rgba(255,215,0,.12);color:var(--gold);border-color:rgba(255,215,0,.4)}
 .ncard-new h4{font-size:14.5px;line-height:1.35;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -142,7 +150,11 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <header><div class="hd">
 <div class="lg"><div class="ic"><i class="fa-solid fa-layer-group"></i></div><div><b>MudaBrasil</b><small>Participação Cívica</small></div></div>
 <nav id="nav">
+<<<<<<< HEAD
 <a data-p="inicio" class="on">Início</a><a data-p="radar">Radar<br>Político</a><a data-p="congresso">Congresso</a>
+=======
+<a data-p="inicio" class="on">Início</a><a data-p="radar">Radar<br>Político</a><a href="pages/congresso.html">PLs no<br>Congresso</a>
+>>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 <a href="pages/votacoes.html">Votações</a><a href="pages/eleicoes-2026.html">Eleições<br>2026</a>
 <a data-p="conferir">Conferir<br>Voto</a><a data-p="revogar">Revogar<br>Voto</a><a data-p="revogados">Políticos com<br>votos revogados</a><a data-p="ajuda">Ajuda</a><a data-p="quem">Quem<br>Somos</a>
 </nav>
@@ -150,7 +162,11 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div class="hact"><span class="badge ok" id="apiStatus" style="display:none">backend ativo</span><button class="btn sm" onclick="abrirLogin()">Entrar</button><button class="btn gold sm" onclick="abrirLogin()">Cadastrar</button></div>
 </div></header>
 <div class="mnav" id="mnav">
+<<<<<<< HEAD
 <a onclick="go('inicio');toggleMenu()">Início</a><a onclick="go('radar');toggleMenu()">Radar Político</a><a onclick="go('congresso');toggleMenu()">Congresso</a>
+=======
+<a onclick="go('inicio');toggleMenu()">Início</a><a onclick="go('radar');toggleMenu()">Radar Político</a><a href="pages/congresso.html" onclick="toggleMenu()">PLs no Congresso</a>
+>>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 <a href="pages/votacoes.html" onclick="toggleMenu()">Votações nominais</a><a href="pages/eleicoes-2026.html" onclick="toggleMenu()">Eleições 2026</a>
 <a onclick="go('conferir');toggleMenu()">Conferir Voto</a><a onclick="go('revogar');toggleMenu()">Revogar Voto</a><a onclick="go('revogados');toggleMenu()">Políticos com votos revogados</a><a onclick="go('ajuda');toggleMenu()">Ajuda</a><a onclick="go('quem');toggleMenu()">Quem Somos</a>
 </div>
@@ -173,14 +189,18 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div style="text-align:center;margin-top:50px"><h2>Explore o MudaBrasil</h2><p class="muted">Tudo o que você precisa para uma participação cívica informada e ativa.</p></div>
 <div class="explore">
 <div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-regular fa-clock"></i></div><h3>Radar Político</h3><p>Ficha completa com dados reais, reclamações e comparação lado a lado.</p><a onclick="go('radar')">Acessar →</a></div>
-<div class="exp"><div class="ic" style="background:rgba(59,130,246,.15);color:var(--blueL)"><i class="fa-regular fa-file-lines"></i></div><h3>PLs no Congresso</h3><p>Opine sobre leis em tramitação no congresso nacional.</p><a onclick="go('congresso')">Ir ao Congresso →</a></div>
+<div class="exp"><div class="ic" style="background:rgba(59,130,246,.15);color:var(--blueL)"><i class="fa-regular fa-file-lines"></i></div><h3>PLs no Congresso</h3><p>Opine sobre leis em tramitação no congresso nacional.</p><a href="pages/congresso.html">Ir ao Congresso →</a></div>
 <div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-solid fa-check"></i></div><h3>Conferir Voto</h3><p>Cole o código e confira os candidatos em quem votou.</p><a onclick="go('conferir')">Verificar →</a></div>
 <div class="exp"><div class="ic" style="background:rgba(231,76,60,.15);color:var(--red)"><i class="fa-regular fa-trash-can"></i></div><h3>Revogar Voto</h3><p>Não cumpriu? Revogue a confiança do seu voto após a posse.</p><a onclick="go('revogados')" style="color:var(--red)">Revogar →</a></div>
 <div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-scale-balanced"></i></div><h3>Comparar</h3><p>Fixe políticos e veja dois (ou mais) lado a lado.</p><a onclick="go('radar')">Comparar →</a></div>
 </div>
 <!-- seção ACOMPANHAMENTO removida em 04/09 (dados sintéticos) -->
+<<<<<<< HEAD
 <div style="margin-top:50px"><!-- antigo 02 ACOMPANHAMENTO --></div><!-- seção 02 ACOMPANHAMENTO removida (04/09) -->
   <div style="margin-top:40px"><h2 style="margin-top:0">Notícias do Congresso e da política</h2>
+=======
+<div style="margin-top:40px"><h2 style="margin-top:8px">Notícias do Congresso e da política</h2>
+>>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
   <p class="muted">Direto das fontes oficiais e da grande imprensa — <b>com os devidos créditos</b>. Filtre por recorte: Geral, Brasil ou UF citada na matéria.</p>
   <div class="nchips" id="nchips"></div>
   <div class="ncar-wrap">
@@ -216,12 +236,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div class="blk"><b>⚖️ CNJ</b> <a href="https://www.cnj.jus.br/" target="_blank">cnj.jus.br</a></div>
 </div>
 </div></section>
-<section class="sec" id="sec-congresso"><div class="wrap">
-<span class="kick">CONGRESSO</span><h2 style="margin:8px 0 6px">PLs Tramitando no Congresso</h2>
-<p class="muted">Reais, via API da Câmara. Opine e leia o inteiro teor.</p>
-<div class="filtros" style="grid-template-columns:1fr"><input id="plBusca" placeholder="procurar por Nº do PL, autor, partido…" oninput="renderPLS()"/></div>
-<div id="plsList" class="grid"></div>
-</div></section>
+
 <section class="sec" id="sec-conferir"><div class="wrap" style="max-width:640px">
 <span class="kick">CONFERIR VOTO</span><h2 style="margin:8px 0 6px">Conferir voto</h2>
 <p class="muted">Local onde você prova que seu voto existe e confirma em quem realmente votou.</p>
@@ -257,7 +272,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div><div class="lg"><div class="ic"><i class="fa-solid fa-layer-group"></i></div><b>MudaBrasil</b></div>
 <p class="muted" style="margin:12px 0">Plataforma de opinião e participação para um Brasil com mais transparência, voz e poder de voto real.</p>
 <p style="color:var(--gold);font-weight:800;font-size:13px">"Seu voto coloca, seu voto tira."</p></div>
-<div><h5>Navegar</h5><a onclick="go('radar')">Radar Político</a><a onclick="go('congresso')">Congresso</a><a onclick="go('conferir')">Conferir Voto</a><a onclick="go('revogados')">Revogados</a></div>
+<div><h5>Navegar</h5><a onclick="go('radar')">Radar Político</a><a href="pages/congresso.html">PLs no Congresso</a><a onclick="go('conferir')">Conferir Voto</a><a onclick="go('revogados')">Revogados</a></div>
 <div><h5>Participar</h5><a onclick="go('conferir')">Meus Votos</a><a onclick="go('radar')">Reclame Aqui</a><a onclick="abrirForm(-1,'rec')">📝 Reclamar ou 👍 Apoiar</a><a onclick="abrirLogin()">Sou Político/Candidato</a></div>
 <div><h5>Institucional</h5><a onclick="go('quem')">Sobre Nós</a><a href="termos.html">Termos de Uso</a><a href="privacidade.html">Política de Privacidade</a><a>Contato</a></div>
 </div><div class="fbot"><span>© 2026 MudaBrasil. Protótipo demonstrativo.</span><span>mudabrasil.app</span></div></div></footer>
@@ -500,7 +515,7 @@ if(p.cargo==='Deputado Federal'){
 }
 DET[i]=det;const rl=document.getElementById('real-'+i);if(rl)rl.innerHTML=realHTML(i);const fsEl=document.getElementById('fstats-'+i);if(fsEl)fsEl.innerHTML=fstatsHTML(det,p)}
 function realHTML(i){const p=POL[i];const d=DET[i]||{props:[],votos:[]};
-let h=`<h4 style="color:var(--gold);font-size:12px">📚 Projetos apresentados (${d.props.length?d.props.length:'…'})</h4>`;
+let h=`<a href="pages/congresso.html" style="text-decoration:none"><h4 style="color:var(--gold);font-size:12px;cursor:pointer">📚 Projetos de Leis (PLs) apresentados (${d.props.length?d.props.length:'…'})</h4></a>`;
 h+=d.props.length?d.props.map(x=>`<div class="quote info"><b>${x.t}</b> — ${x.e}…</div>`).join(''):`<p class="muted">${p.cargo==='Deputado Federal'?'Carregando proposições…':'Proposituras no link oficial (fim da página).'}</p>`;
 h+=`<h4 style="color:var(--blueL);font-size:12px;margin-top:8px">🗳️ Como votou (últimas votações)</h4>`;
 h+=votosHTML(d,p,i);
@@ -724,19 +739,33 @@ async function news(){try{const j=await fetch(API_BASE+'/api/noticias').then(r=>
  const it=(j.noticias||[]);
  window._NEWS=it;
  renderChipsUF();renderNews();
+<<<<<<< HEAD
  $('#nstatus').textContent=it.length?('Atualizado em '+new Date(j.geradoEm).toLocaleTimeString('pt-BR')+' · fontes: '+((j.fontes&&j.fontes.length)?j.fontes.join(', '):'Agência Brasil, G1 Política, Agência Senado')):'Sem notícias disponíveis agora.';
+=======
+ $('#nstatus').textContent=it.length?('Atualizado em '+new Date(j.geradoEm).toLocaleTimeString('pt-BR')+' · fontes: '+(j.fontes||['Agência Brasil','G1 Política','Agência Senado','Congresso em Foco','Poder360','CNN Brasil','Folha Poder','Estadão Política','UOL','BBC Brasil']).join(', ')):'Sem notícias disponíveis agora.';
+>>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 }catch(e){$('#nstatus').textContent='Não foi possível carregar as notícias agora (backend).';}}
 function renderChipsUF(){const ns=window._NEWS||[];const ufs=[...new Set(ns.map(n=>n.uf).filter(Boolean))];
  const chips=[['GERAL','Geral'],['BR','Brasil'],...ufs.filter(u=>u!=='BR').map(u=>[u,u])];
  $('#nchips').innerHTML=chips.map(c=>`<button class="${NUF_FILTRO===c[0]?'on':''}" onclick="NUF_FILTRO='${c[0]}';renderNews();renderChipsUF()">${c[1]}</button>`).join('');}
 function renderNews(){const ns=window._NEWS||[];const lista=ns.filter(n=>NUF_FILTRO==='GERAL'||NUF_FILTRO==='BR'?true:(n.uf===NUF_FILTRO)).filter(n=>NUF_FILTRO!=='BR'||n.uf==='BR');
  const dtRel=iso=>{if(!iso)return'';const d=(Date.now()-new Date(iso))/1000;if(d<3600)return Math.max(1,Math.floor(d/60))+' min atrás';if(d<86400)return Math.floor(d/3600)+' h atrás';return Math.floor(d/86400)+' d atrás'};
+<<<<<<< HEAD
  $('#homeNews').innerHTML=lista.length?lista.map(n=>`<article class="ncard-new">
   <div class="nimg">${(n.img||n.thumb)?`<img src="${n.img||n.thumb}" alt="" loading="lazy" onerror="this.remove()">`:''}<i class="fa-solid fa-landmark nph"></i></div>
   <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="nbadge">✓ ${n.fonte}</span>${n.uf&&n.uf!=='BR'?`<span class="nbadge uf">📍 ${n.uf}</span>`:''}${n.uf==='BR'?`<span class="nbadge uf">🇧🇷 Brasil</span>`:''}</div>
   <h4>${n.t}</h4>${n.res?`<p>${n.res}</p>`:''}
   <div class="nmeta"><span>${n.dt?dtRel(n.dt):''}</span><a href="${n.l}" target="_blank" rel="noopener">Ler na fonte →</a></div>
  </article>`).join(''):`<p class="muted" style="padding:20px 4px">Nenhuma notícia neste recorte agora — tente "Geral".</p>`;
+=======
+ $('#homeNews').innerHTML=lista.length?lista.map(n=>{
+  const thumb=n.thumb?`<img class="nimg" src="${n.thumb}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\'nimg-ph\'><i class=\'fa-solid fa-newspaper\'></i></div>'">`:`<div class="nimg-ph"><i class="fa-solid fa-newspaper"></i></div>`;
+  return `<article class="ncard-new">${thumb}<div class="nbd">
+  <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="nbadge">✓ ${n.fonte}</span>${n.uf&&n.uf!=='BR'?`<span class="nbadge uf">📍 ${n.uf}</span>`:''}${n.uf==='BR'?`<span class="nbadge uf">🇧🇷 Brasil</span>`:''}</div>
+  <h4>${n.t}</h4>${n.res?`<p>${n.res}</p>`:''}
+  <div class="nmeta"><span>${n.dt?dtRel(n.dt):''}</span><a href="${n.l}" target="_blank" rel="noopener">Ler na fonte →</a></div>
+ </div></article>`;}).join(''):`<p class="muted" style="padding:20px 4px">Nenhuma notícia neste recorte agora — tente "Geral".</p>`;
+>>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 }
 function ncarScroll(dir){const c=document.getElementById('homeNews');if(c)c.scrollBy({left:dir*360,behavior:'smooth'})}
 async function newsOLD(){try{const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml'));const j=await r.json();const it=(j.items||[]).slice(0,2);
