@@ -121,7 +121,13 @@ const $ = s => document.querySelector(s);
 let VOTS = [];
 const DETALHES = {};
 
-async function carregar(){
+let _retry = 0;
+let _timeoutId = null;
+async function carregar(retry){
+  _retry = retry ? _retry + 1 : 0;
+  _timeoutId = setTimeout(() => {
+    $('#loader').innerHTML = '<i class="fa-solid fa-spinner"></i> 1ª carga após o deploy — buscando Câmara ao vivo (até 60s)…';
+  }, 8000);
   try{
     const r = await fetch(API_BASE + '/api/camara/votacoes?itens=30&ordem=DESC&ordenarPor=data');
     if(!r.ok) throw new Error('HTTP ' + r.status);
@@ -138,10 +144,17 @@ async function carregar(){
     }));
     $('#bModo').textContent = 'dados reais';
     $('#bTotal').textContent = VOTS.length + ' votação(ões)';
+    clearTimeout(_timeoutId);
     $('#loader').style.display = 'none';
     render();
   }catch(e){
+    clearTimeout(_timeoutId);
     console.error('Erro ao carregar votações:', e);
+    if(_retry === 0){
+      $('#loader').innerHTML = '<i class="fa-solid fa-spinner"></i> Tentando novamente em 3s…';
+      setTimeout(() => carregar(true), 3000);
+      return;
+    }
     $('#loader').innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:var(--red)"></i><br>Não foi possível carregar: ' + e.message + '<br><br><button class="btn sm" onclick="carregar()">Tentar de novo</button>';
   }
 }
