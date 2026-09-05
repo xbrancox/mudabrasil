@@ -96,7 +96,7 @@ footer a{color:var(--gold)}
 </section>
 
 <div class="filtros">
-<input id="fBusca" placeholder="🔎 Buscar votação por descrição…" oninput="render()"/>
+<input id="fBusca" placeholder="🔎 Buscar votações por descrição…" oninput="render()"/>
 <select id="fOrdem" onchange="render()" style="background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px 12px;font:500 14px Manrope;width:100%">
 <option value="data">Mais recentes</option>
 <option value="desc">Descrição A–Z</option>
@@ -126,7 +126,6 @@ async function carregar(){
     const r = await fetch(API_BASE + '/api/camara/votacoes?itens=30&ordem=DESC&ordenarPor=data');
     if(!r.ok) throw new Error('HTTP ' + r.status);
     const j = await r.json();
-    // A API da Câmara retorna em j.dados
     VOTS = (j.dados || []).map(v => ({
       id: v.id,
       data: v.data,
