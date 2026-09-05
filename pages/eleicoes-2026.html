@@ -97,8 +97,20 @@ async function buscar(p){
   let arr;
   if(Array.isArray(j)){arr=j;total=arr.length;const s=(page-1)*PS;arr=arr.slice(s,s+PS);}
   else{arr=j.candidatos||j.dados||[];total=j.total!=null?j.total:arr.length;}
+  // FIX: em modo incumbentes com filtro de situação, re-busca sem o filtro
+  if(j.mode==='incumbentes' && sit){
+   try{
+    const url2=`${API}/api/candidatos-tse?cargo=${cargo}&uf=${uf}&page=${page}&pageSize=${PS}`+(q?`&q=${encodeURIComponent(q)}`:'');
+    const r2=await fetch(url2);const j2=await r2.json();
+    const arr2=j2.candidatos||j2.dados||[];
+    if(arr2.length){arr=arr2;total=j2.total!=null?j2.total:arr2.length;}
+   }catch(e2){}
+  }
   LAST=arr;
-  aviso(j.mode==='amostra'?'⚠️ <b>Modo amostra:</b> o TSE bloqueia scraping automático (403 no robots). O backend serve uma amostra até o CSV oficial de 2026 entrar em dadosabertos.tse.jus.br. UI, filtros e paginação já estão 100% prontos.':'');
+  let avisoMsg='';
+  if(j.mode==='amostra') avisoMsg='⚠️ <b>Modo amostra:</b> o TSE bloqueia scraping automático — servindo amostra até o CSV oficial de 2026 entrar no ar.';
+  else if(j.mode==='incumbentes') avisoMsg='ℹ️ <b>Eleições 2026:</b> o TSE ainda não publicou as candidaturas — exibindo parlamentares em <b>mandato ativo</b> (possíveis recandidaturas).'+(sit?' <i>Os filtros DEFERIDO/INDEFERIDO valerão quando o TSE publicar as candidaturas 2026.</i>':'');
+  aviso(avisoMsg);
   $('#info').textContent=`${total} candidato(s) — mostrando ${arr.length} nesta página.`;
   const tp=Math.max(1,Math.ceil(total/PS));
   $('#pgInfo').textContent=`Página ${page} de ${tp}`;
