@@ -102,19 +102,11 @@ textarea{min-height:70px;resize:vertical}
 .ncar::-webkit-scrollbar{height:6px}.ncar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
 .ncar-btn{flex:none;width:42px;border:1px solid var(--line);background:var(--card);color:var(--gold);border-radius:12px;font-size:22px;cursor:pointer;align-self:center}
 .ncar-btn:hover{background:#123059}
-<<<<<<< HEAD
 .ncard-new{flex:0 0 320px;max-width:320px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;transition:transform .18s,border-color .18s}
 .ncard-new:hover{transform:translateY(-3px);border-color:var(--gold)}
 .nimg{position:relative;height:140px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#0e3a2e,#0d2242);display:grid;place-items:center}
 .nimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .nimg .nph{color:rgba(46,204,113,.45);font-size:26px}
-=======
-.ncard-new{flex:0 0 320px;max-width:320px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0;display:flex;flex-direction:column;gap:8px;transition:transform .18s,border-color .18s;overflow:hidden}
-.ncard-new:hover{transform:translateY(-3px);border-color:var(--gold)}
-.nimg{width:100%;height:140px;object-fit:cover;display:block;background:linear-gradient(135deg,#0e3a2e,#0d2242)}
-.nimg-ph{width:100%;height:140px;display:grid;place-items:center;background:linear-gradient(135deg,#0e3a2e,#0d2242);color:var(--green);font-size:32px}
-.nbd{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
->>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 .nbadge{display:inline-flex;align-items:center;gap:5px;background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.4);font:800 9.5px Manrope;letter-spacing:.08em;padding:4px 9px;border-radius:999px;text-transform:uppercase;width:max-content}
 .nbadge.uf{background:rgba(255,215,0,.12);color:var(--gold);border-color:rgba(255,215,0,.4)}
 .ncard-new h4{font-size:14.5px;line-height:1.35;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -150,11 +142,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <header><div class="hd">
 <div class="lg"><div class="ic"><i class="fa-solid fa-layer-group"></i></div><div><b>MudaBrasil</b><small>Participação Cívica</small></div></div>
 <nav id="nav">
-<<<<<<< HEAD
-<a data-p="inicio" class="on">Início</a><a data-p="radar">Radar<br>Político</a><a data-p="congresso">Congresso</a>
-=======
 <a data-p="inicio" class="on">Início</a><a data-p="radar">Radar<br>Político</a><a href="pages/congresso.html">PLs no<br>Congresso</a>
->>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 <a href="pages/votacoes.html">Votações</a><a href="pages/eleicoes-2026.html">Eleições<br>2026</a>
 <a data-p="conferir">Conferir<br>Voto</a><a data-p="revogar">Revogar<br>Voto</a><a data-p="revogados">Políticos com<br>votos revogados</a><a data-p="ajuda">Ajuda</a><a data-p="quem">Quem<br>Somos</a>
 </nav>
@@ -162,11 +150,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div class="hact"><span class="badge ok" id="apiStatus" style="display:none">backend ativo</span><button class="btn sm" onclick="abrirLogin()">Entrar</button><button class="btn gold sm" onclick="abrirLogin()">Cadastrar</button></div>
 </div></header>
 <div class="mnav" id="mnav">
-<<<<<<< HEAD
-<a onclick="go('inicio');toggleMenu()">Início</a><a onclick="go('radar');toggleMenu()">Radar Político</a><a onclick="go('congresso');toggleMenu()">Congresso</a>
-=======
 <a onclick="go('inicio');toggleMenu()">Início</a><a onclick="go('radar');toggleMenu()">Radar Político</a><a href="pages/congresso.html" onclick="toggleMenu()">PLs no Congresso</a>
->>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 <a href="pages/votacoes.html" onclick="toggleMenu()">Votações nominais</a><a href="pages/eleicoes-2026.html" onclick="toggleMenu()">Eleições 2026</a>
 <a onclick="go('conferir');toggleMenu()">Conferir Voto</a><a onclick="go('revogar');toggleMenu()">Revogar Voto</a><a onclick="go('revogados');toggleMenu()">Políticos com votos revogados</a><a onclick="go('ajuda');toggleMenu()">Ajuda</a><a onclick="go('quem');toggleMenu()">Quem Somos</a>
 </div>
@@ -195,12 +179,8 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-scale-balanced"></i></div><h3>Comparar</h3><p>Fixe políticos e veja dois (ou mais) lado a lado.</p><a onclick="go('radar')">Comparar →</a></div>
 </div>
 <!-- seção ACOMPANHAMENTO removida em 04/09 (dados sintéticos) -->
-<<<<<<< HEAD
 <div style="margin-top:50px"><!-- antigo 02 ACOMPANHAMENTO --></div><!-- seção 02 ACOMPANHAMENTO removida (04/09) -->
   <div style="margin-top:40px"><h2 style="margin-top:0">Notícias do Congresso e da política</h2>
-=======
-<div style="margin-top:40px"><h2 style="margin-top:8px">Notícias do Congresso e da política</h2>
->>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
   <p class="muted">Direto das fontes oficiais e da grande imprensa — <b>com os devidos créditos</b>. Filtre por recorte: Geral, Brasil ou UF citada na matéria.</p>
   <div class="nchips" id="nchips"></div>
   <div class="ncar-wrap">
@@ -739,33 +719,19 @@ async function news(){try{const j=await fetch(API_BASE+'/api/noticias').then(r=>
  const it=(j.noticias||[]);
  window._NEWS=it;
  renderChipsUF();renderNews();
-<<<<<<< HEAD
  $('#nstatus').textContent=it.length?('Atualizado em '+new Date(j.geradoEm).toLocaleTimeString('pt-BR')+' · fontes: '+((j.fontes&&j.fontes.length)?j.fontes.join(', '):'Agência Brasil, G1 Política, Agência Senado')):'Sem notícias disponíveis agora.';
-=======
- $('#nstatus').textContent=it.length?('Atualizado em '+new Date(j.geradoEm).toLocaleTimeString('pt-BR')+' · fontes: '+(j.fontes||['Agência Brasil','G1 Política','Agência Senado','Congresso em Foco','Poder360','CNN Brasil','Folha Poder','Estadão Política','UOL','BBC Brasil']).join(', ')):'Sem notícias disponíveis agora.';
->>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 }catch(e){$('#nstatus').textContent='Não foi possível carregar as notícias agora (backend).';}}
 function renderChipsUF(){const ns=window._NEWS||[];const ufs=[...new Set(ns.map(n=>n.uf).filter(Boolean))];
  const chips=[['GERAL','Geral'],['BR','Brasil'],...ufs.filter(u=>u!=='BR').map(u=>[u,u])];
  $('#nchips').innerHTML=chips.map(c=>`<button class="${NUF_FILTRO===c[0]?'on':''}" onclick="NUF_FILTRO='${c[0]}';renderNews();renderChipsUF()">${c[1]}</button>`).join('');}
 function renderNews(){const ns=window._NEWS||[];const lista=ns.filter(n=>NUF_FILTRO==='GERAL'||NUF_FILTRO==='BR'?true:(n.uf===NUF_FILTRO)).filter(n=>NUF_FILTRO!=='BR'||n.uf==='BR');
  const dtRel=iso=>{if(!iso)return'';const d=(Date.now()-new Date(iso))/1000;if(d<3600)return Math.max(1,Math.floor(d/60))+' min atrás';if(d<86400)return Math.floor(d/3600)+' h atrás';return Math.floor(d/86400)+' d atrás'};
-<<<<<<< HEAD
  $('#homeNews').innerHTML=lista.length?lista.map(n=>`<article class="ncard-new">
   <div class="nimg">${(n.img||n.thumb)?`<img src="${n.img||n.thumb}" alt="" loading="lazy" onerror="this.remove()">`:''}<i class="fa-solid fa-landmark nph"></i></div>
   <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="nbadge">✓ ${n.fonte}</span>${n.uf&&n.uf!=='BR'?`<span class="nbadge uf">📍 ${n.uf}</span>`:''}${n.uf==='BR'?`<span class="nbadge uf">🇧🇷 Brasil</span>`:''}</div>
   <h4>${n.t}</h4>${n.res?`<p>${n.res}</p>`:''}
   <div class="nmeta"><span>${n.dt?dtRel(n.dt):''}</span><a href="${n.l}" target="_blank" rel="noopener">Ler na fonte →</a></div>
  </article>`).join(''):`<p class="muted" style="padding:20px 4px">Nenhuma notícia neste recorte agora — tente "Geral".</p>`;
-=======
- $('#homeNews').innerHTML=lista.length?lista.map(n=>{
-  const thumb=n.thumb?`<img class="nimg" src="${n.thumb}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\'nimg-ph\'><i class=\'fa-solid fa-newspaper\'></i></div>'">`:`<div class="nimg-ph"><i class="fa-solid fa-newspaper"></i></div>`;
-  return `<article class="ncard-new">${thumb}<div class="nbd">
-  <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="nbadge">✓ ${n.fonte}</span>${n.uf&&n.uf!=='BR'?`<span class="nbadge uf">📍 ${n.uf}</span>`:''}${n.uf==='BR'?`<span class="nbadge uf">🇧🇷 Brasil</span>`:''}</div>
-  <h4>${n.t}</h4>${n.res?`<p>${n.res}</p>`:''}
-  <div class="nmeta"><span>${n.dt?dtRel(n.dt):''}</span><a href="${n.l}" target="_blank" rel="noopener">Ler na fonte →</a></div>
- </div></article>`;}).join(''):`<p class="muted" style="padding:20px 4px">Nenhuma notícia neste recorte agora — tente "Geral".</p>`;
->>>>>>> aef4f7f (feat: pagina PLs no Congresso completa (urna expressa, DNA civico, tooltips))
 }
 function ncarScroll(dir){const c=document.getElementById('homeNews');if(c)c.scrollBy({left:dir*360,behavior:'smooth'})}
 async function newsOLD(){try{const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml'));const j=await r.json();const it=(j.items||[]).slice(0,2);
