@@ -37,6 +37,7 @@ const auth = require('./auth');
 const verificacao = require('./verificacao');
 const reclamacoes = require('./reclamacoes');
 const seedPls = require('./seed_pls');
+const tse = require('./tse');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = process.env.PORT || 8080;
@@ -109,6 +110,10 @@ function clientIp(req) {
 
 const streamClients = new Set();
 
+/* ===== Cache em memória para votações da Câmara (1 hora) ===== */
+const CAMARA_CACHE = { votacoes: { ts: 0, data: null }, votos: {} };
+const CAMARA_TTL = 3600 * 1000; // 1 hora
+
 votes.onVoteChange(info => {
   const payload = Object.assign({}, info, votes.totals());
   const frame = 'event: termometro\ndata: ' + JSON.stringify(payload) + '\n\n';
@@ -168,6 +173,77 @@ function resolvePoliticianId(id) {
   return raw;
 }
 
+/* ===== Notícias: RSS de fontes confiáveis (Agência Brasil, G1 Política, Senado) ===== */
+const NEWS_FEEDS = [
+  { fonte: 'Agência Brasil', url: 'https://agenciabrasil.ebc.com.br/rss/politica/feed.xml', politicas: true },
+  { fonte: 'G1 Política', url: 'https://g1.globo.com/rss/g1/politica/', politicas: true },
+  { fonte: 'Agência Senado', url: 'https://www12.senado.leg.br/noticias/rss', politicas: true },
+  { fonte: 'Congresso em Foco', url: 'https://congressoemfoco.uol.com.br/feed/', politicas: true },
+  { fonte: 'Poder360', url: 'https://www.poder360.com.br/feed/', politicas: true },
+  { fonte: 'CNN Brasil', url: 'https://www.cnnbrasil.com.br/politica/feed/', politicas: true },
+  { fonte: 'Folha Poder', url: 'https://feeds.folha.uol.com.br/poder/rss091.xml', politicas: true },
+  { fonte: 'Estadão Política', url: 'https://www.estadao.com.br/arc/outboundfeeds/rss/categoria/politica/', politicas: true },
+  { fonte: 'UOL Notícias', url: 'https://rss.uol.com.br/feed/noticias.xml', politicas: false },
+  { fonte: 'BBC Brasil', url: 'https://feeds.bbci.co.uk/portuguese/rss.xml', politicas: false }
+];
+const POLITICS_KW = /\b(pol[ií]t|governo|congresso|senado|c[aâ]mara|tse|stf|stj|elei[çc]|[cç]andidat|deputad|senador|ministr|presidente|governador|prefeito|vereador|partido|plen[aá]rio|vota[çc]|[lL]ei\b|projeto de lei|medida provis[óo]ria|emenda|comiss[aã]o|frente parlamentar|impeachment|cassa[çc]|den[úu]ncia|inqu[éé]rito| Lava Jato|mensal[aã]o|petrol[aã]o|corrup[cç]|improbidade|impeachment)\b/i;
+const UF_LIST = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+const NEWS_CACHE = { ts: 0, items: [] };
+function stripTags(v) { return String(v || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\s+/g, ' ').trim(); }
+function parseRss(xml, fonte, politicasOnly) {
+  const items = [];
+  const blocks = String(xml).replace(/\r/g, '').split(/<item[\s>]/).slice(1);
+  for (const b of blocks) {
+    const pick = tag => { const m = b.match(new RegExp('<' + tag + '[^>]*>([\\s\\S]*?)</' + tag + '>', 'i')); return m ? stripTags(m[1]) : ''; };
+    const t = pick('title');
+    const lm = b.match(/<link[^>]*href=["']([^"']+)["']/i);
+    const l = lm ? lm[1] : pick('link');
+    const dt = pick('pubDate') || pick('published') || pick('updated');
+    let iso = ''; try { iso = dt ? new Date(dt).toISOString() : ''; } catch (_) { }
+    if (!t || !l) continue;
+    const desc = pick('description') || pick('summary') || '';
+    // Política-only: se feed geral, só mantém itens com palavras-chave
+    if (!politicasOnly && !POLITICS_KW.test(t + ' ' + desc)) continue;
+    // Thumbnail: media:content url=..., enclosure url=..., media:thumbnail url=..., ou primeira <img src=...> na description crua
+    let thumb = '';
+    const m1 = b.match(/<media:content[^>]*url=["']([^"']+\.(jpg|jpeg|png|webp|gif))["']/i);
+    const m2 = b.match(/<enclosure[^>]*url=["']([^"']+\.(jpg|jpeg|png|webp|gif))["']/i);
+    const m3 = b.match(/<media:thumbnail[^>]*url=["']([^"']+)["']/i);
+    const m4 = b.match(/<img[^>]*src=["']([^"']+)["']/i);
+    const m5 = b.match(/<og:image[^>]*content=["']([^"']+)["']/i);
+    thumb = (m1 && m1[1]) || (m2 && m2[1]) || (m3 && m3[1]) || (m4 && m4[1]) || (m5 && m5[1]) || '';
+    // Limpa a thumb (rss2json-like: remove query de tracker se for imgur/cloudinary etc.)
+    thumb = thumb.replace(/\?.*$/, '').trim();
+    items.push({ t: t.slice(0, 200), l: l.trim(), res: desc.slice(0, 220), fonte: fonte, dt: iso, thumb: thumb });
+  }
+  return items;
+}
+function detectUF(texto) {
+  const t = ' ' + String(texto || '').toUpperCase() + ' ';
+  let found = null;
+  for (const uf of UF_LIST) {
+    if (new RegExp('[ ([\\[]' + uf + '[ )\\]\\.,;:!?~-]').test(t)) {
+      if (found && found !== uf) return 'BR';
+      found = uf;
+    }
+  }
+  return found;
+}
+async function refreshNoticias(force) {
+  const now = Date.now();
+  if (!force && now - NEWS_CACHE.ts < 600000 && NEWS_CACHE.items.length) return;
+  try {
+    const res = await Promise.all(NEWS_FEEDS.map(f =>
+      fetch(f.url, { headers: { Accept: 'application/rss+xml,application/xml,text/xml', 'User-Agent': 'MudaBrasil/1.0 (+https://mudabrasil.app)' }, signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined })
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+        .then(x => parseRss(x, f.fonte, f.politicas)).catch(err => { console.warn('[noticias] falha em', f.fonte, ':', err.message); return []; })));
+    const items = [].concat(...res).map(n => ({ ...n, uf: detectUF(n.t + ' ' + n.res) }));
+    items.sort((a, b) => (b.dt || '').localeCompare(a.dt || ''));
+    if (items.length) { NEWS_CACHE.items = items.slice(0, 60); NEWS_CACHE.ts = now; }
+    console.log('[noticias] ' + items.length + ' itens de ' + NEWS_FEEDS.length + ' fontes (cache 10min)');
+  } catch (e) { console.warn('[noticias] falha ao atualizar feeds:', e.message); }
+}
+
 async function handleApi(req, res, url) {
   let p = url.pathname;
   if (p.startsWith('/api/candidatos/detalhes/')) {
@@ -176,7 +252,48 @@ async function handleApi(req, res, url) {
   const q = Object.fromEntries(url.searchParams);
   const ip = clientIp(req);
 
-  /* Proxy simples para a API da Câmara (alguns endpoints não enviam CORS e ele é instável) */
+  /* ===== Votações nominais da Câmara (rota específica com cache 1h) ===== */
+  if (p === '/api/camara/votacoes' && req.method === 'GET') {
+    const now = Date.now();
+    if (CAMARA_CACHE.votacoes.data && (now - CAMARA_CACHE.votacoes.ts) < CAMARA_TTL) {
+      return sendJson(res, 200, CAMARA_CACHE.votacoes.data);
+    }
+    try {
+      const itens = parseInt(q.itens || '30', 10);
+      const pagina = parseInt(q.pagina || '1', 10);
+      const ordem = q.ordem || 'DESC';
+      const ordenarPor = q.ordenarPor || 'data';
+      const r = await fetch(`https://dadosabertos.camara.leg.br/api/v2/votacoes?itens=${itens}&pagina=${pagina}&ordem=${ordem}&ordenarPor=${ordenarPor}`, { headers: { Accept: 'application/json' } });
+      if (!r.ok) return sendJson(res, r.status === 404 ? 404 : 502, { ok: false, error: 'Câmara respondeu ' + r.status });
+      const j = await r.json();
+      CAMARA_CACHE.votacoes = { ts: now, data: j };
+      return sendJson(res, 200, j);
+    } catch (e) {
+      return sendJson(res, 502, { ok: false, error: 'Falha ao buscar votações: ' + e.message });
+    }
+  }
+
+  /* ===== Votos individuais de uma votação (com cache 1h por votação) ===== */
+  const mVotos = p.match(/^\/api\/camara\/votacoes\/(\d+)\/votos$/);
+  if (mVotos && req.method === 'GET') {
+    const votacaoId = mVotos[1];
+    const cacheKey = 'votos-' + votacaoId;
+    const now = Date.now();
+    if (CAMARA_CACHE[cacheKey] && (now - CAMARA_CACHE[cacheKey].ts) < CAMARA_TTL) {
+      return sendJson(res, 200, CAMARA_CACHE[cacheKey].data);
+    }
+    try {
+      const r = await fetch(`https://dadosabertos.camara.leg.br/api/v2/votacoes/${votacaoId}/votos`, { headers: { Accept: 'application/json' } });
+      if (!r.ok) return sendJson(res, r.status === 404 ? 404 : 502, { ok: false, error: 'Câmara respondeu ' + r.status });
+      const j = await r.json();
+      CAMARA_CACHE[cacheKey] = { ts: now, data: j };
+      return sendJson(res, 200, j);
+    } catch (e) {
+      return sendJson(res, 502, { ok: false, error: 'Falha ao buscar votos: ' + e.message });
+    }
+  }
+
+  /* Proxy simples para a API da Câmara (outros endpoints) */
   if (p.startsWith('/api/camara/') && req.method === 'GET') {
     const camaraPath = p.replace('/api/camara/', '');
     if (!/^[\w/-]+$/.test(camaraPath)) return sendJson(res, 400, { ok: false, error: 'caminho inválido' });
@@ -192,6 +309,73 @@ async function handleApi(req, res, url) {
     } catch (e) {
       return sendJson(res, 502, { ok: false, error: 'Falha ao consultar a Câmara: ' + e.message });
     }
+  }
+
+  /* ===== Eleições 2026 (TSE) com paginação ===== */
+  if (p === '/api/candidatos-tse' && req.method === 'GET') {
+    try {
+      const all = tse.getCandidatos();
+      let lista = all.candidatos || [];
+      const ano = q.ano;
+      if (ano) lista = lista.filter(c => !c.ano || String(c.ano) === String(ano));
+      if (q.cargo) lista = lista.filter(c => String(c.cargo) === String(q.cargo));
+      if (q.uf) lista = lista.filter(c => c.uf === q.uf);
+      if (q.situacao) {
+        const sitUpper = String(q.situacao).toUpperCase();
+        lista = lista.filter(c => {
+          const v = String(c.situacao || '').toUpperCase();
+          if (sitUpper === 'DEFERIDO') return /DEFERIDO|APTO/.test(v);
+          if (sitUpper === 'PENDENTE') return /SUB|PENDENTE/.test(v);
+          if (sitUpper === 'INAPTO') return /INAPTO|INDEF|CANCEL|CASSADO/.test(v);
+          return true;
+        });
+      }
+      const busca = (q.busca || q.q || '').toLowerCase().trim();
+      if (busca) {
+        lista = lista.filter(c =>
+          (c.nomeUrna || c.nome || '').toLowerCase().includes(busca) ||
+          String(c.numero || '').includes(busca) ||
+          (c.partido || '').toLowerCase().includes(busca)
+        );
+      }
+      // Paginação
+      const pagina = Math.max(1, parseInt(q.pagina || '1', 10));
+      const porPagina = Math.min(100, Math.max(10, parseInt(q.porPagina || '50', 10)));
+      const total = lista.length;
+      const totalPaginas = Math.ceil(total / porPagina);
+      const inicio = (pagina - 1) * porPagina;
+      const candidatos = lista.slice(inicio, inicio + porPagina);
+      
+      return sendJson(res, 200, {
+        ok: true,
+        mode: all.mode,
+        aviso: all.aviso,
+        ano: parseInt(ano || '2026', 10),
+        total,
+        totalPaginas,
+        pagina,
+        porPagina,
+        retornados: candidatos.length,
+        candidatos
+      });
+    } catch (e) {
+      return sendJson(res, 500, { ok: false, error: e.message });
+    }
+  }
+
+  if (p === '/api/noticias' && req.method === 'GET') {
+    try { await refreshNoticias(q.force === '1'); } catch (_) { }
+    const uf = (q.uf || '').toUpperCase();
+    let lista = NEWS_CACHE.items;
+    if (uf === 'GERAL') lista = lista.filter(n => !n.uf || n.uf === 'BR');
+    else if (uf) lista = lista.filter(n => n.uf === uf);
+    return sendJson(res, 200, {
+      ok: true,
+      geradoEm: new Date(NEWS_CACHE.ts).toISOString(),
+      total: lista.length,
+      fontes: NEWS_FEEDS.map(f => f.fonte),
+      noticias: lista
+    });
   }
 
   if (p === '/api/health') {
@@ -710,7 +894,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log('\n  🇧🇷  MudaBrasil rodando em  http://localhost:' + PORT + '\n');
   console.log('    Frontend:       http://localhost:' + PORT + '/');
   console.log('    API (lista):    http://localhost:' + PORT + '/api/candidatos');
@@ -728,6 +912,19 @@ server.listen(PORT, () => {
   if (migrated > 0) console.log('    Migração:       ' + migrated + ' cédulas importadas de votos.json → votos.db');
   console.log('    Atualização:    dados públicos a cada ' + REFRESH_HOURS + 'h (automática)');
   console.log('    Encerramento:   Ctrl+C / SIGTERM fecham o banco com segurança\n');
+  
+  // Popula cache de incumbentes (deputados + senadores em mandato) para Eleições 2026
+  try {
+    const [depResult, senResult] = await Promise.all([fetchDeputados(), fetchSenadores()]);
+    const incumbentes = [
+      ...depResult.list.map(d => ({ ...d, position: 'Deputado Federal' })),
+      ...senResult.list.map(s => ({ ...s, position: 'Senador Federal' }))
+    ];
+    tse.setIncumbents(incumbentes);
+    console.log('    🗳️  Cache de incumbentes: ' + incumbentes.length + ' parlamentares (Eleições 2026 fallback)\n');
+  } catch (e) {
+    console.warn('    ⚠️  Falha ao carregar incumbentes: ' + e.message + '\n');
+  }
 });
 
 let shuttingDown = false;

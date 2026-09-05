@@ -1,0 +1,16 @@
+﻿{
+  "code": 0,
+  "msg": "SUCCESS",
+  "time": 1788553198147,
+  "trace": "ae69bf29897e44cd9869020464ff240f",
+  "data": {
+    "message": "",
+    "oss_info": [
+      {
+        "filename": "20260904-171726-9cacb694-8d2-Captura de tela 2026-09-04 170611.jpg",
+        "oss_name": "auto_fly/zzqew7_20260904-171726-9cacb694-8d2-Capturadetela2026-09-04170611.jpg",
+        "oss_url": "https://autoglm-oss.z.ai/auto_fly/zzqew7_20260904-171726-9cacb694-8d2-Capturadetela2026-09-04170611.jpg?auth_key=1788553198-0-0-8095e6fb7392fb0fdc713f5f68b74bac"
+      }
+    ]
+  }
+}
