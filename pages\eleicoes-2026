@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Eleições 2026 · Candidatos · MudaBrasil</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="../config.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--blueL:#4a90f0;--green:#2ECC71;--red:#E74C3C;--r:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;padding:20px}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-family:Montserrat;font-weight:900;font-size:26px;margin:8px 0}
+.kick{color:var(--gold);font:800 11px Manrope;letter-spacing:.2em;text-transform:uppercase}
+.muted{color:var(--muted);font-size:12.5px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 13px Manrope;padding:10px 16px;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
+.btn.sm{padding:6px 12px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+input,select{background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px 12px;font:500 14px Manrope;width:100%}
+.filtros{display:grid;grid-template-columns:2fr 1.4fr .7fr 1.2fr auto;gap:10px;margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;cursor:pointer;transition:.15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.av{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:top;background:var(--card2);flex:none}
+.badge{font:800 10px Manrope;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.badge.ok{color:var(--green);border-color:rgba(46,204,113,.4)}
+.badge.red{color:var(--red);border-color:rgba(231,76,60,.4)}
+.badge.amb{color:var(--gold);border-color:rgba(255,215,0,.4)}
+.pager{display:flex;gap:10px;align-items:center;justify-content:center;margin:18px 0}
+.overlay{position:fixed;inset:0;background:rgba(4,8,20,.85);backdrop-filter:blur(5px);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
+.overlay.open{display:flex}
+.modal{background:var(--bg);border:1px solid var(--line);border-radius:20px;max-width:720px;width:100%;max-height:90vh;overflow:auto;padding:24px}
+.stat{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px}
+.stat small{color:var(--muted);font-size:9.5px;display:block}
+.stat b{font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.quote{border-left:3px solid var(--blueL);background:rgba(74,144,240,.08);border-radius:6px;padding:5px 9px;margin-top:6px;font-size:12px;color:var(--muted)}
+.topo{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#aviso{display:none;background:rgba(255,215,0,.08);border:1px solid var(--gold);border-radius:12px;padding:12px;margin:12px 0;font-size:13px}
+@media(max-width:900px){.filtros{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topo">
+<div><span class="kick">TSE · DIVULGACAND</span><h1>Eleições 2026 — Candidatos</h1>
+<p class="muted">Dados públicos do TSE. Escolha os filtros e clique em <b>Buscar</b> — paginação de 50, nada de carregar 15 mil de uma vez.</p></div>
+<a class="btn" href="../index.html">← Voltar</a>
+</div>
+<div id="aviso"></div>
+<div class="filtros">
+<input id="q" placeholder="🔎 Nome ou número…"/>
+<select id="cargo">
+<option value="6">Deputado Federal</option>
+<option value="7">Deputado Estadual</option>
+<option value="5">Senador</option>
+<option value="3">Governador</option>
+<option value="1">Presidente</option>
+</select>
+<select id="uf"></select>
+<select id="sit">
+<option value="">Todas situações</option>
+<option value="DEFERIDO">DEFERIDO</option>
+<option value="INDEFERIDO">INDEFERIDO</option>
+<option value="AGUARDANDO">AGUARDANDO JULGAMENTO</option>
+</select>
+<button class="btn gold" onclick="buscar(1)"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
+</div>
+<div class="muted" id="info">Nenhuma busca ainda — escolha UF + cargo e clique em Buscar.</div>
+<div class="grid" id="lista" style="margin-top:12px"></div>
+<div class="pager">
+<button class="btn sm" id="pgAnt" onclick="buscar(page-1)" disabled>‹ Anterior</button>
+<span class="muted" id="pgInfo">—</span>
+<button class="btn sm" id="pgProx" onclick="buscar(page+1)" disabled>Próxima ›</button>
+</div>
+</div>
+<div class="overlay" id="mDet"><div class="modal"><div id="detBody"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar()">Fechar</button></div></div>
+<script>
+const API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'https://mudabrasil-production-79eb.up.railway.app';
+const UFS=['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
+const $=s=>document.querySelector(s);
+$('#uf').innerHTML=UFS.map(u=>`<option value="${u}" ${u==='SP'?'selected':''}>${u}</option>`).join('');
+let page=1,total=0,LAST=[];const PS=50;
+function aviso(m){const a=$('#aviso');a.style.display=m?'block':'none';a.innerHTML=m||''}
+async function buscar(p){
+ page=Math.max(1,p);
+ const q=$('#q').value.trim(),cargo=$('#cargo').value,uf=$('#uf').value,sit=$('#sit').value;
+ $('#info').textContent='Carregando…';$('#lista').innerHTML='';
+ const url=`${API}/api/candidatos-tse?cargo=${cargo}&uf=${uf}&page=${page}&pageSize=${PS}`+(sit?`&situacao=${encodeURIComponent(sit)}`:'')+(q?`&q=${encodeURIComponent(q)}`:'');
+ try{
+  const r=await fetch(url);
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const j=await r.json();
+  let arr;
+  if(Array.isArray(j)){arr=j;total=arr.length;const s=(page-1)*PS;arr=arr.slice(s,s+PS);}
+  else{arr=j.candidatos||j.dados||[];total=j.total!=null?j.total:arr.length;}
+  LAST=arr;
+  aviso(j.mode==='amostra'?'⚠️ <b>Modo amostra:</b> o TSE bloqueia scraping automático (403 no robots). O backend serve uma amostra até o CSV oficial de 2026 entrar em dadosabertos.tse.jus.br. UI, filtros e paginação já estão 100% prontos.':'');
+  $('#info').textContent=`${total} candidato(s) — mostrando ${arr.length} nesta página.`;
+  const tp=Math.max(1,Math.ceil(total/PS));
+  $('#pgInfo').textContent=`Página ${page} de ${tp}`;
+  $('#pgAnt').disabled=page<=1;$('#pgProx').disabled=page>=tp;
+  $('#lista').innerHTML=arr.map((c,i)=>card(c,i)).join('')||'<p class="muted">Nada encontrado com esses filtros.</p>';
+ }catch(e){
+  $('#info').textContent='';
+  aviso(`⚠️ Não falei com o backend (${e.message}). A rota <b>/api/candidatos-tse</b> existe no servidor local atualizado: rode <b>node server/index.js</b> e abra <b>http://localhost:8080/pages/eleicoes-2026.html</b>. No Railway, ela entra no próximo deploy.`);
+  $('#lista').innerHTML='';
+ }
+}
+function card(c,i){
+ const sit=(c.situacao||'').toUpperCase();
+ const cls=sit.includes('INDEF')?'red':(sit.includes('DEFERIDO')?'ok':'amb');
+ return `<div class="card" onclick="abrirIdx(${i})">
+ <div style="display:flex;gap:10px;align-items:center">${c.foto?`<img class="av" src="${c.foto}" alt="">`:`<div class="av" style="display:grid;place-items:center;font-weight:800;color:#1a1400;background:var(--gold)">${(c.nomeUrna||c.nome||'?')[0]}</div>`}
+ <div><b style="font-size:14px">${c.nomeUrna||c.nome||'—'}</b><div class="muted">${c.numero||''} · ${c.partido||''} · ${c.uf||''}</div>
+ <span class="badge ${cls}" style="margin-top:4px;display:inline-block">${c.situacao||'—'}</span></div></div></div>`;
+}
+function abrirIdx(i){abrir(LAST[i])}
+function abrir(c){
+ const bens=c.bens||[];
+ $('#detBody').innerHTML=`<h3 style="margin-bottom:6px">${c.nomeUrna||c.nome||''}</h3>
+ <div class="muted">${c.nome||''} · ${c.numero||''} · ${c.partido||''} · ${c.uf||''} · ${c.cargo||''}</div>
+ <div class="stats">
+ <div class="stat"><small>Situação</small><b>${c.situacao||'—'}</b></div>
+ <div class="stat"><small>Bens declarados</small><b>${bens.length}</b></div>
+ <div class="stat"><small>Valor total</small><b>${c.bensTotal?'R$ '+Number(c.bensTotal).toLocaleString('pt-BR'):'—'}</b></div>
+ <div class="stat"><small>Fonte</small><b>TSE</b></div>
+ </div>
+ <h4 style="font-size:13px;color:var(--gold);margin-top:8px">💰 Bens declarados</h4>
+ ${bens.length?bens.slice(0,10).map(b=>`<div class="quote">${b.descricao||b.tipo||'Bem'} — <b>R$ ${Number(b.valor||0).toLocaleString('pt-BR')}</b></div>`).join(''):'<p class="muted">Sem bens declarados.</p>'}`;
+ $('#mDet').classList.add('open');
+}
+function fechar(){$('#mDet').classList.remove('open')}
+</script>
+</body>
+</html>
