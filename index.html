@@ -732,7 +732,7 @@ function renderChipsUF(){const ns=window._NEWS||[];const ufs=[...new Set(ns.map(
 function renderNews(){const ns=window._NEWS||[];const lista=ns.filter(n=>NUF_FILTRO==='GERAL'||NUF_FILTRO==='BR'?true:(n.uf===NUF_FILTRO)).filter(n=>NUF_FILTRO!=='BR'||n.uf==='BR');
  const dtRel=iso=>{if(!iso)return'';const d=(Date.now()-new Date(iso))/1000;if(d<3600)return Math.max(1,Math.floor(d/60))+' min atrás';if(d<86400)return Math.floor(d/3600)+' h atrás';return Math.floor(d/86400)+' d atrás'};
  $('#homeNews').innerHTML=lista.length?lista.map(n=>`<article class="ncard-new">
-  <div class="nimg">${n.img?`<img src="${n.img}" alt="" loading="lazy" onerror="this.remove()">`:''}<i class="fa-solid fa-landmark nph"></i></div>
+  <div class="nimg">${(n.img||n.thumb)?`<img src="${n.img||n.thumb}" alt="" loading="lazy" onerror="this.remove()">`:''}<i class="fa-solid fa-landmark nph"></i></div>
   <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="nbadge">✓ ${n.fonte}</span>${n.uf&&n.uf!=='BR'?`<span class="nbadge uf">📍 ${n.uf}</span>`:''}${n.uf==='BR'?`<span class="nbadge uf">🇧🇷 Brasil</span>`:''}</div>
   <h4>${n.t}</h4>${n.res?`<p>${n.res}</p>`:''}
   <div class="nmeta"><span>${n.dt?dtRel(n.dt):''}</span><a href="${n.l}" target="_blank" rel="noopener">Ler na fonte →</a></div>
