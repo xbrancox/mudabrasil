@@ -279,8 +279,10 @@ function renderAgenda(){
   ${botoesVoto(i.key,mv)}</div>`}).join('')||`<div class="vazio">Nada pendente.</div>`;
  const votadas=VOT.map(v=>({v,i:infoVot(v)})).filter(x=>{if(!x.i.data)return true;return (agora-new Date(x.i.data))/864e5<=perAtivo}).sort((a,b)=>new Date(b.i.data||0)-new Date(a.i.data||0)).slice(0,10);
  $('#ag-dir').innerHTML=votadas.map(({v,i})=>{const pc=placar(VOTOS[v.id]||[]);const tot=pc.favor+pc.contra;const cong=tot?Math.round(pc.favor/tot*100):0;
-  const res=pc.favor>pc.contra?`<span class="chip green" data-tip="Aprovada no plenário">APROVADA</span>`:pc.contra>pc.favor?`<span class="chip red" data-tip="Rejeitada no plenário">REJEITADA</span>`:`<span class="chip grey">SEM MAIORIA</span>`;
-  return `<div class="item">${res}<h3 style="margin:6px 0">${corte(i.desc,80)}</h3><p class="mini">Congresso: ${cong}% a favor · 🪑 não votaram: ${pc.cinza}${i.data?' · '+new Date(i.data).toLocaleDateString('pt-BR'):''}</p></div>`}).join('')||`<div class="vazio">Nenhuma votação nominal neste período.</div>`}
+  const simb=pc.total===0;
+  const res=simb?`<span class="chip grey" data-tip="Votação sem registro nominal voto a voto (simbólica)">SIMBÓLICA</span>`:pc.favor>pc.contra?`<span class="chip green" data-tip="Aprovada no plenário">APROVADA</span>`:pc.contra>pc.favor?`<span class="chip red" data-tip="Rejeitada no plenário">REJEITADA</span>`:`<span class="chip grey">SEM MAIORIA</span>`;
+  const linha=simb?`sem registro nominal voto a voto`:`Congresso: ${cong}% a favor · 🪑 não votaram: ${pc.cinza}`;
+  return `<div class="item">${res}<h3 style="margin:6px 0">${corte(i.desc,80)}</h3><p class="mini">${linha}${i.data?' · '+new Date(i.data).toLocaleDateString('pt-BR'):''}</p></div>`}).join('')||`<div class="vazio">Nenhuma votação nominal neste período.</div>`}
 function aplicaFiltro(){
  const q=($('#busca').value||'').toLowerCase();let vis=0;
  $$('#lista .card').forEach(c=>{const t=c.dataset.tema||'Outros';const ok=c.dataset.busca.includes(q)&&(!temaAtivo||t===temaAtivo);c.style.display=ok?'':'none';if(ok)vis++});
