@@ -188,9 +188,7 @@ function temaDe(t){t=(t||'').toLowerCase();if(/sa[uú]d|sus|hospital|m[eé]dic|v
 function autorNome(i){const a=(i.author||'').trim();const gen=/^(deputado|senador|mesa|comiss|lideran|poder)/i;
  if(a&&!gen.test(a))return a;
  const cargo=/^senador/i.test(a)?'Senador(a)':'Deputado(a)';
- return `${cargo} do ${i.party||'partido'} — <span data-tip="A API não manda o nome do autor — confira no inteiro teor">nome no inteiro teor →</span>`}(i){const a=(i.author||'').trim();const gen=/^(deputado federal|senador|mesa|comiss|lideran|poder executivo)/i;
- if(a&&!gen.test(a))return a;
- return `<span data-tip="A API não manda o nome do autor — confira no inteiro teor">autoria no inteiro teor →</span>`}
+ return `${cargo} do ${i.party||'partido'} — <span data-tip="A API não manda o nome do autor — confira no inteiro teor">nome no inteiro teor →</span>`}
 function barPL(p){const t=p.total||1,f=p.favor/t*100,c=p.contra/t*100,g=p.cinza/t*100;
 return `<div class="bar"><span class="g" style="width:${f}%">${f>=12?Math.round(f)+'%':''}</span><span class="r" style="width:${c}%">${c>=12?Math.round(c)+'%':''}</span><span class="c" style="width:${g}%">${g>=14?'🪑 '+Math.round(g)+'%':''}</span></div>`}
 function placarPovo(key){const p=POVO[key]||{aprovo:0,nao:0};const tot=p.aprovo+p.nao;
@@ -211,7 +209,7 @@ function veredito(pc,mv,key){
  const p=POVO[key]||{aprovo:0,nao:0};const totP=p.aprovo+p.nao;
  const cong=Math.round(pc.favor/((pc.favor+pc.contra)||1)*100);
  if(totP){const pp=Math.round(p.aprovo/totP*100);const contra=(pp>=50)!==(cong>=50);
-  const txt=contra?`🔴 Nesta lei, o Congresso foi contra a vontade do povo (${totP} voto${tot>1?'s':''}).`:`🟢 Nesta lei, o Congresso está sincronizado com o povo.`;
+  const txt=contra?`🔴 Nesta lei, o Congresso foi contra a vontade do povo (${totP} voto${totP>1?'s':''}).`:`🟢 Nesta lei, o Congresso está sincronizado com o povo.`;
   return `<div class="${contra?'veredito':'veredito ok'}"><span data-tip="Veredito automático: Placar do Povo real × votação do plenário">${txt}</span><button class="btn-compartilhar" data-compartilhar="${txt}">📤 Compartilhar</button></div>`}
  if(!mv)return `<div class="veredito n">⚪ Opine (Aprovo / Não aprovo) pra comparar sua vontade com a do Congresso.</div>`;
  const contra=(mv==='aprovo'&&cong<50)||(mv==='nao'&&cong>=50);
