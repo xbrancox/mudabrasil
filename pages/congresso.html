@@ -185,7 +185,10 @@ async function votosDe(id){if(VOTOS[id])return VOTOS[id];try{const r=await fetch
 async function carregaPovo(){try{POVO=await(await fetch(API+'/api/votos-pl')).json()||{}}catch(e){POVO={}}}
 async function mandaVotoPl(key,v){try{await fetch(API+'/api/votos-pl',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:meuUid(),pl:key,voto:v})});await carregaPovo();renderTudo()}catch(e){}}
 function temaDe(t){t=(t||'').toLowerCase();if(/sa[uú]d|sus|hospital|m[eé]dic|vacina|obesidade/.test(t))return'Saúde';if(/educa|escola|professor|aluno/.test(t))return'Educação';if(/ambient|clima|ecol|floresta|bioma/.test(t))return'Meio Ambiente';if(/econom|impost|tribut|trabalh|sal[aá]rio|icms|or[cç]ament|profiss/.test(t))return'Economia';if(/seguran|crime|penal|policial|viol[eê]nc/.test(t))return'Segurança';if(/rouanet|cultura|arte|audiovisual|patrim[oô]nio/.test(t))return'Cultura';return''}
-function autorNome(i){const a=(i.author||'').trim();const gen=/^(deputado federal|senador|mesa|comiss|lideran|poder executivo)/i;
+function autorNome(i){const a=(i.author||'').trim();const gen=/^(deputado|senador|mesa|comiss|lideran|poder)/i;
+ if(a&&!gen.test(a))return a;
+ const cargo=/^senador/i.test(a)?'Senador(a)':'Deputado(a)';
+ return `${cargo} do ${i.party||'partido'} — <span data-tip="A API não manda o nome do autor — confira no inteiro teor">nome no inteiro teor →</span>`}(i){const a=(i.author||'').trim();const gen=/^(deputado federal|senador|mesa|comiss|lideran|poder executivo)/i;
  if(a&&!gen.test(a))return a;
  return `<span data-tip="A API não manda o nome do autor — confira no inteiro teor">autoria no inteiro teor →</span>`}
 function barPL(p){const t=p.total||1,f=p.favor/t*100,c=p.contra/t*100,g=p.cinza/t*100;
