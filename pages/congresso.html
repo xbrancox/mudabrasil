@@ -51,7 +51,7 @@ main{max-width:1150px;margin:0 auto;padding:24px 16px 100px}
 .bloco{margin:12px 0} .bloco h4{font-size:12px;letter-spacing:.4px;color:#d7e3f5;margin-bottom:8px;text-transform:uppercase}
 .bar{height:26px;border-radius:999px;background:#22406b;overflow:hidden;display:flex;font-size:12px;font-weight:800}
 .bar>span{display:flex;align-items:center;justify-content:center}
-.g{background:var(--green);color:#04122b}.r{background:var(--red)}.c{background:#5b6b82}
+.g{background:var(--green);color:#04122b}.g2{background:#9BE29B;color:#04122b}.r{background:var(--red)}.c{background:#5b6b82}
 .bar.grey span{width:100%;color:#9fb0c8;font-weight:600}
 .lado{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:10px 0}
 .bx{border-radius:12px;padding:12px;text-align:center;font-weight:800;font-size:14px}
@@ -129,7 +129,7 @@ h2{margin:26px 0 10px}
   <div class="pills" id="pills-tema"></div>
 
   <div class="card urna" id="urna">
-    <h3 data-tip="Vote nas matérias em 1 minuto — inclusive nas que o Congresso JÁ votou. Seus votos ficam no navegador e alimentam seu DNA Cívico.">🗳️ URNA EXPRESSA DO POVO</h3>
+    <h3 data-tip="Vote nas matérias em 1 minuto — inclusive nas que o Congresso JÁ votou. Seu voto vai pro Placar do Povo REAL e alimenta seu DNA Cívico.">🗳️ URNA EXPRESSA DO POVO</h3>
     <p class="mini">Vote rápido em todas as matérias pendentes. Seu voto coloca. Seu voto tira.</p>
     <div class="prog" id="urna-prog"><div style="width:0%"></div></div>
     <p class="mini" id="urna-txt">0 de 0 votadas</p>
@@ -162,7 +162,7 @@ h2{margin:26px 0 10px}
 
 <div id="popup"><div class="box">
   <h3>🔍 Aqui quem manda é você.</h3>
-  <p style="margin:10px 0">Busque um político ou partido e veja, com dados REAIS, como votaram. Toque em <b>Aprovo / Não aprovo</b> pra construir seu <b>DNA Cívico</b> e descobrir sua sincronia com cada parlamentar.</p>
+  <p style="margin:10px 0">Busque um político ou partido e veja, com dados REAIS, como votaram. Toque em <b>Aprovo / Não aprovo</b> pra construir seu <b>DNA Cívico</b> e somar sua voz no <b>Placar do Povo</b>.</p>
   <button class="pill on" id="popup-ok">Começar</button>
 </div></div>
 
@@ -170,7 +170,8 @@ h2{margin:26px 0 10px}
 const API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){localStorage.setItem(k,JSON.stringify(v))}};
-let PLS=[],VOT=[],VOTOS={},MAPVOT={},temaAtivo='',perAtivo=30,pular=[],fila=[],ultimaKey='';
+let PLS=[],VOT=[],VOTOS={},MAPVOT={},POVO={},temaAtivo='',perAtivo=30,pular=[],fila=[],ultimaKey='';
+const meuUid=()=>{let u=LS.get('mb_uid',null);if(!u){u='u'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);LS.set('mb_uid',u)}return u};
 const meusVotos=()=>LS.get('mb_votos_pl',{});
 const corte=(t,n=140)=>{t=(t||'').toString().trim();return t.length>n?t.slice(0,n).trim()+'…':t};
 const cssk=k=>k.replace(/[^a-zA-Z0-9]/g,'');
@@ -179,28 +180,41 @@ function infoVot(v){v=v||{};const desc=v.descricao||'Votação nominal no plená
 function votoParl(v){v=v||{};const dep=v.deputado_||{};const nome=dep.nome||'—',part=dep.siglaPartido||'—',uf=dep.siglaUf||'';const tipo=String(v.tipoVoto||'');let t='cinza';if(/^sim$/i.test(tipo))t='favor';else if(/^n[ãa]o$/i.test(tipo))t='contra';return{nome,part,uf,t}}
 function placar(l){const p={favor:0,contra:0,cinza:0};(l||[]).forEach(x=>p[x.t]++);p.total=l?l.length:0;return p}
 async function votosDe(id){if(VOTOS[id])return VOTOS[id];try{const r=await fetch(API+'/api/camara/votacoes/'+id+'/votos');const j=await r.json();VOTOS[id]=(Array.isArray(j)?j:(j.dados||[])).map(votoParl)}catch(e){VOTOS[id]=[]}return VOTOS[id]}
+async function carregaPovo(){try{POVO=await(await fetch(API+'/api/votos-pl')).json()||{}}catch(e){POVO={}}}
+async function mandaVotoPl(key,v){try{await fetch(API+'/api/votos-pl',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:meuUid(),pl:key,voto:v})});await carregaPovo();renderTudo()}catch(e){}}
 function temaDe(t){t=(t||'').toLowerCase();if(/sa[uú]d|sus|hospital|m[eé]dic|vacina|obesidade/.test(t))return'Saúde';if(/educa|escola|professor|aluno/.test(t))return'Educação';if(/ambient|clima|ecol|floresta|bioma/.test(t))return'Meio Ambiente';if(/econom|impost|tribut|trabalh|sal[aá]rio|icms|or[cç]ament|profiss/.test(t))return'Economia';if(/seguran|crime|penal|policial|viol[eê]nc/.test(t))return'Segurança';if(/rouanet|cultura|arte|audiovisual|patrim[oô]nio/.test(t))return'Cultura';return''}
 function autorLabel(i){const a=(i.author||'').trim();const gen=/^(deputado federal|senador|mesa|comiss|lideran|poder executivo)/i;
  if(a&&!gen.test(a))return `👤 Parlamentar: ${a}`;
  return `👤 Parlamentar: <span data-tip="A API não manda o nome do autor — confira no inteiro teor">autoria no inteiro teor →</span>`}
+function placarPovo(key){const p=POVO[key]||{aprovo:0,nao:0};const tot=p.aprovo+p.nao;
+ if(!tot)return `<div class="bloco"><h4 data-tip="Votos reais dos usuários da plataforma. Seja o primeiro!">Placar do Povo</h4><div class="bar grey"><span>sem dados ainda — seja o primeiro a opinar</span></div></div>`;
+ const a=Math.round(p.aprovo/tot*100);
+ return `<div class="bloco"><h4 data-tip="Votos reais e persistidos dos usuários da plataforma">Placar do Povo (${tot} voto${tot>1?'s':''} real${tot>1?'is':''})</h4><div class="bar"><span class="g" style="width:${a}%">${a>=12?'aprovo '+a+'%':''}</span><span class="g2" style="width:${100-a}%">${100-a>=12?'não aprovo '+(100-a)+'%':''}</span></div></div>`}
 function barPL(p){const t=p.total||1,f=p.favor/t*100,c=p.contra/t*100,g=p.cinza/t*100;
 return `<div class="bar"><span class="g" style="width:${f}%">${f>=12?Math.round(f)+'%':''}</span><span class="r" style="width:${c}%">${c>=12?Math.round(c)+'%':''}</span><span class="c" style="width:${g}%">${g>=14?'🪑 '+Math.round(g)+'%':''}</span></div>`}
-function ladoALado(pc,mv){
+function ladoALado(pc,mv,key){
+ const p=POVO[key]||{aprovo:0,nao:0};const totP=p.aprovo+p.nao;
+ const povoPct=totP?Math.round(p.aprovo/totP*100):null;
  const cong=pc&&pc.favor+pc.contra?Math.round(pc.favor/(pc.favor+pc.contra)*100):null;
- const esq=mv?`<div class="bx verde">Você: ${mv==='aprovo'?'aprova':'não aprova'}</div>`:`<div class="bx nulo" data-tip="Nenhum usuário opinou ainda nesta matéria">Povo: sem dados ainda</div>`;
- const dir=cong==null?`<div class="bx nulo">Congresso: sem votação nominal</div>`:`<div class="bx ${mv==='aprovo'?(cong>=50?'verde':'verm'):mv==='nao'?(cong<50?'verde':'verm'):'verm'}">Congresso: ${cong}% a favor</div>`;
- let gap='';if(mv&&cong!=null){const g=mv==='aprovo'?100-cong:cong;const contra=(mv==='aprovo'?cong<50:cong>=50);gap=`<div class="gap" data-tip="Diferença em pontos percentuais entre a vontade popular e o plenário">GAP ${g} pts ${contra?'contra você':'a seu favor'}</div>`}
+ const ref=totP?{label:`Povo: ${povoPct}% aprova`,pct:povoPct}:mv?{label:`Você: ${mv==='aprovo'?'aprova':'não aprova'}`,pct:mv==='aprovo'?100:0}:null;
+ const esq=ref?`<div class="bx verde">${ref.label}</div>`:`<div class="bx nulo" data-tip="Nenhum usuário opinou ainda nesta matéria">Povo: sem dados ainda</div>`;
+ const dir=cong==null?`<div class="bx nulo">Congresso: sem votação nominal</div>`:`<div class="bx ${ref?(((ref.pct>=50)===(cong>=50))?'verde':'verm'):'verm'}">Congresso: ${cong}% a favor</div>`;
+ let gap='';if(ref&&cong!=null){const g=Math.abs(ref.pct-cong);gap=`<div class="gap" data-tip="Distância em pontos entre a vontade popular e o plenário">GAP ${g} pts ${(ref.pct>=50)!==(cong>=50)?'contra o povo':'a favor do povo'}</div>`}
  return `<div class="lado">${esq}<div>⇄</div>${dir}</div>${gap}`}
-function veredito(pc,mv){
+function veredito(pc,mv,key){
  if(!pc)return `<div class="veredito n">⚫ Esta lei ainda não tem votação nominal registrada.</div>`;
- if(!mv)return `<div class="veredito n">⚪ Opine (Aprovo / Não aprovo) pra comparar sua vontade com a do Congresso.</div>`;
+ const p=POVO[key]||{aprovo:0,nao:0};const totP=p.aprovo+p.nao;
  const cong=Math.round(pc.favor/((pc.favor+pc.contra)||1)*100);
+ if(totP){const pp=Math.round(p.aprovo/totP*100);const contra=(pp>=50)!==(cong>=50);
+  const txt=contra?`🔴 Nesta lei, o Congresso foi contra a vontade do povo (${totP} voto${totP>1?'s':''}).`:`🟢 Nesta lei, o Congresso está sincronizado com o povo.`;
+  return `<div class="${contra?'veredito':'veredito ok'}"><span data-tip="Veredito automático: Placar do Povo real × votação do plenário">${txt}</span><button class="btn-compartilhar" data-compartilhar="${txt}">📤 Compartilhar</button></div>`}
+ if(!mv)return `<div class="veredito n">⚪ Opine (Aprovo / Não aprovo) pra comparar sua vontade com a do Congresso.</div>`;
  const contra=(mv==='aprovo'&&cong<50)||(mv==='nao'&&cong>=50);
  const txt=contra?`🔴 Nesta lei, o Congresso foi contra a sua vontade.`:`🟢 Nesta lei, o Congresso está sincronizado com você.`;
  return `<div class="${contra?'veredito':'veredito ok'}"><span data-tip="Veredito automático: seu voto comparado à votação real do plenário">${txt}</span><button class="btn-compartilhar" data-compartilhar="${txt}">📤 Compartilhar</button></div>`}
 function botoesVoto(key,mv){return `<div class="pills" style="margin-top:8px">
- <button class="pill ${mv==='aprovo'?'on-g':''}" data-acao="votar" data-v="aprovo" data-key="${key}" data-tip="Registra que você aprova esta lei">👍 Aprovo</button>
- <button class="pill ${mv==='nao'?'on-r':''}" data-acao="votar" data-v="nao" data-key="${key}" data-tip="Registra que você não aprova esta lei">👎 Não aprovo</button></div>`}
+ <button class="pill ${mv==='aprovo'?'on-g':''}" data-acao="votar" data-v="aprovo" data-key="${key}" data-tip="Registra que você aprova (soma no Placar do Povo)">👍 Aprovo</button>
+ <button class="pill ${mv==='nao'?'on-r':''}" data-acao="votar" data-v="nao" data-key="${key}" data-tip="Registra que você não aprova (soma no Placar do Povo)">👎 Não aprovo</button></div>`}
 function cardPL(p){
  const i=infoPL(p),v=MAPVOT[i.n+'/'+i.ano],mv=meusVotos()[i.key],pc=v?placar(VOTOS[v.id]):null;
  const el=document.createElement('div');el.className='card';el.dataset.tema=temaDe(i.desc)||'Outros';el.dataset.busca=(i.key+' '+i.desc+' '+i.party+' '+i.author).toLowerCase();
@@ -209,10 +223,10 @@ function cardPL(p){
  <div class="mini">${autorLabel(i)} · ${i.party} · ${i.chamber} · <span class="chip blue">Assunto: ${temaDe(i.desc)||'Geral'}</span></div>
  <p class="desc">${corte(i.desc,260)}</p>
  ${botoesVoto(i.key,mv)}
- <div class="bloco"><h4 data-tip="Opinião agregada dos usuários da plataforma (em breve, com backend de votos)">Placar do Povo</h4><div class="bar grey"><span>sem dados ainda — em breve, voto real dos usuários</span></div></div>
+ ${placarPovo(i.key)}
  ${pc?`<div class="bloco"><h4>Placar do Congresso <span class="mini" data-tip="Voto a voto dos deputados no plenário (dados oficiais)">voto a voto</span></h4>${barPL(pc)}<p class="mini">não votaram: ${pc.cinza} de ${pc.total}</p></div>`:''}
- ${ladoALado(pc,mv)}
- ${veredito(pc,mv)}
+ ${ladoALado(pc,mv,i.key)}
+ ${veredito(pc,mv,i.key)}
  <button class="pill ghost" data-acao="sanf" data-key="${cssk(i.key)}">📊 Ver partidos e parlamentares ▾</button>
  <div id="d-${cssk(i.key)}" hidden></div>`;
  return el}
@@ -253,7 +267,7 @@ function renderUrna(){
  <div class="pills"><span class="chip blue" data-tip="Tema principal da matéria">Assunto: ${atual.tema}</span></div>
  <div class="mini">${atual.extra}</div>
  <p class="desc">${corte(atual.desc,160)}</p><a class="link" target="_blank" href="${atual.url}">${atual.tipo==='pl'?'📄 inteiro teor →':'🗳️ ver votação real →'}</a>
- <div class="botoes"><button id="bAprovo" data-acao="votar" data-v="aprovo" data-key="${atual.key}" data-tip="Registra que você aprova">👍 APROVO</button><button id="bNao" data-acao="votar" data-v="nao" data-key="${atual.key}" data-tip="Registra que você não aprova">👎 NÃO APROVO</button></div>
+ <div class="botoes"><button id="bAprovo" data-acao="votar" data-v="aprovo" data-key="${atual.key}" data-tip="Registra que você aprova (soma no Placar do Povo)">👍 APROVO</button><button id="bNao" data-acao="votar" data-v="nao" data-key="${atual.key}" data-tip="Registra que você não aprova (soma no Placar do Povo)">👎 NÃO APROVO</button></div>
  <button class="pill ghost" data-acao="pula" data-tip="Avança sem registrar voto">próxima →</button>`}
 function renderAgenda(){
  const agora=Date.now();
@@ -298,7 +312,7 @@ async function dna(){
  $('#dna').innerHTML=`<p class="mini">${comparadas} votação(ões) comparada(s) com seus votos.</p><div class="cols"><div><h4>🟢 Top afinidades</h4>${top.map(li).join('')}</div><div><h4>🔴 Top divergências</h4>${bot.map(li).join('')}</div></div>`}
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-acao]');if(!b)return;const a=b.dataset.acao;
- if(a==='votar'){const mv=meusVotos();mv[b.dataset.key]=b.dataset.v;LS.set('mb_votos_pl',mv);renderTudo()}
+ if(a==='votar'){const mv=meusVotos();mv[b.dataset.key]=b.dataset.v;LS.set('mb_votos_pl',mv);renderTudo();mandaVotoPl(b.dataset.key,b.dataset.v)}
  else if(a==='pula'){pular.push(ultimaKey);renderUrna()}
  else if(a==='sanf'){const p=PLS.find(x=>cssk(infoPL(x).key)===b.dataset.key);if(p){const i=infoPL(p);abreSanf(i,MAPVOT[i.n+'/'+i.ano])}}
  else if(a==='per'){$$('[data-acao="per"]').forEach(x=>x.classList.remove('on'));b.classList.add('on');perAtivo=+b.dataset.per;renderAgenda()}
@@ -316,6 +330,7 @@ $('#popup-ok').onclick=()=>{LS.set('mb_popup_congresso',1);$('#popup').style.dis
  try{const j=await(await fetch(API+'/api/camara/votacoes')).json();VOT=Array.isArray(j)?j:(j.dados||[])}catch(e){}
  VOT.forEach(v=>{const i=infoVot(v);if(i.num)MAPVOT[i.num+'/'+i.ano]=v});
  await Promise.all([...new Set(VOT.slice(0,10).map(v=>v.id))].filter(Boolean).map(id=>votosDe(id)));
+ await carregaPovo();
  buildFila();
  const dep=new URLSearchParams(location.search).get('dep');if(dep)$('#busca').value=dep;
  renderTudo()})();

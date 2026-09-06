@@ -850,6 +850,35 @@ async function handleApi(req, res, url) {
     } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
   }
 
+  /* ===== PLACAR DO POVO (votos-pl) — agregado real dos usuários ===== */
+  if (p === '/api/votos-pl' && req.method === 'GET') {
+    try {
+      db.exec(`CREATE TABLE IF NOT EXISTS votos_pl (uid TEXT, pl TEXT, voto TEXT, PRIMARY KEY (uid, pl))`);
+      const rows = db.prepare(`SELECT pl, SUM(CASE WHEN voto='aprovo' THEN 1 ELSE 0 END) AS aprovo, SUM(CASE WHEN voto='nao' THEN 1 ELSE 0 END) AS nao FROM votos_pl GROUP BY pl`).all();
+      const out = {};
+      rows.forEach(r => { out[r.pl] = { aprovo: Number(r.aprovo) || 0, nao: Number(r.nao) || 0 }; });
+      return sendJson(res, 200, out);
+    } catch (e) {
+      return sendJson(res, 200, {});
+    }
+  }
+
+  if (p === '/api/votos-pl' && req.method === 'POST') {
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    const { uid, pl, voto } = body || {};
+    if (!uid || !pl || !['aprovo', 'nao'].includes(voto)) {
+      return sendJson(res, 400, { ok: false, error: 'uid, pl e voto (aprovo|nao) obrigatorios' });
+    }
+    try {
+      db.exec(`CREATE TABLE IF NOT EXISTS votos_pl (uid TEXT, pl TEXT, voto TEXT, PRIMARY KEY (uid, pl))`);
+      db.prepare(`INSERT INTO votos_pl (uid, pl, voto) VALUES (?,?,?) ON CONFLICT(uid, pl) DO UPDATE SET voto = excluded.voto`).run(uid, pl, voto);
+      return sendJson(res, 200, { ok: true });
+    } catch (e) {
+      return sendJson(res, 500, { ok: false, error: e.message });
+    }
+  }
+
   return sendJson(res, 404, { error: 'Rota de API não encontrada' });
 }
 
