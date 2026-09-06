@@ -495,8 +495,8 @@ if(p.cargo==='Deputado Federal'){
 }
 DET[i]=det;const rl=document.getElementById('real-'+i);if(rl)rl.innerHTML=realHTML(i);const fsEl=document.getElementById('fstats-'+i);if(fsEl)fsEl.innerHTML=fstatsHTML(det,p)}
 function realHTML(i){const p=POL[i];const d=DET[i]||{props:[],votos:[]};
-let h=`<a href="pages/congresso.html" style="text-decoration:none"><h4 style="color:var(--gold);font-size:12px;cursor:pointer">📚 Projetos de Leis (PLs) apresentados (${d.props.length?d.props.length:'…'})</h4></a>`;
-h+=d.props.length?d.props.map(x=>`<div class="quote info"><b>${x.t}</b> — ${x.e}…</div>`).join(''):`<p class="muted">${p.cargo==='Deputado Federal'?'Carregando proposições…':'Proposituras no link oficial (fim da página).'}</p>`;
+let h=`<a href="pages/congresso.html?dep=${encodeURIComponent(p.nome)}" style="text-decoration:none;display:inline-block;padding:6px 10px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);border-radius:8px;margin:4px 0" data-tip="Abre a página do Congresso já filtrada nas PLs deste(a) parlamentar"><h4 style="color:var(--gold);font-size:13px;cursor:pointer;margin:0">📚 Projetos de Leis (PLs) apresentados (${d.props.length?d.props.length:'…'}) →</h4></a>`;
+h+=`<p class="muted" style="margin-top:6px">Clique pra ver as PLs e como os partidos votaram. <b>A lista completa fica na página do Congresso.</b></p>`;
 h+=`<h4 style="color:var(--blueL);font-size:12px;margin-top:8px">🗳️ Como votou (últimas votações)</h4>`;
 h+=votosHTML(d,p,i);
 return h}
