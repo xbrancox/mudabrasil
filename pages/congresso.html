@@ -107,7 +107,7 @@ h2{margin:26px 0 10px}
     <a href="../index.html#ajuda">Ajuda</a>
     <a href="../index.html#quem-somos">Quem Somos</a>
   </nav>
-  <div class="hact"><span class="badge" id="badge">…</span><a class="btn az" href="../index.html">Entrar</a><a class="btn gold" href="../index.html">Cadastrar</a></div>
+  <div class="hact"><span class="badge" id="badge">…</span><a class="btn az" href="../index.html" data-tip="Login e cadastro ficam na home">Entrar</a><a class="btn gold" href="../index.html">Cadastrar</a></div>
 </header>
 <div class="mnav" id="mnav">
   <a href="../index.html">Início</a><a href="parlamentares.html">Radar Político</a><a href="congresso.html">PLs no Congresso</a><a href="votacoes.html">Votações</a><a href="eleicoes-2026.html">Eleições 2026</a><a href="../index.html#conferir-voto">Conferir Voto</a><a href="../index.html#revogar-voto">Revogar Voto</a><a href="../index.html#revogados">Políticos com votos revogados</a><a href="../index.html#ajuda">Ajuda</a><a href="../index.html#quem-somos">Quem Somos</a>
@@ -126,14 +126,7 @@ h2{margin:26px 0 10px}
   </div>
 
   <input id="busca" class="busca" placeholder="Busque político, partido, PL nº, autor ou tema…">
-  <div class="pills" id="pills-tema">
-    <button class="pill on" data-acao="tema" data-t="">Todos</button>
-    <button class="pill" data-acao="tema" data-t="Saúde">Saúde</button>
-    <button class="pill" data-acao="tema" data-t="Educação">Educação</button>
-    <button class="pill" data-acao="tema" data-t="Meio Ambiente">Meio Ambiente</button>
-    <button class="pill" data-acao="tema" data-t="Economia">Economia</button>
-    <button class="pill" data-acao="tema" data-t="Segurança">Segurança</button>
-  </div>
+  <div class="pills" id="pills-tema"></div>
 
   <div class="card urna" id="urna">
     <h3 data-tip="Vote nas matérias em 1 minuto — inclusive nas que o Congresso JÁ votou. Seus votos ficam no navegador e alimentam seu DNA Cívico.">🗳️ URNA EXPRESSA DO POVO</h3>
@@ -150,13 +143,13 @@ h2{margin:26px 0 10px}
     <button class="pill" data-acao="per" data-per="365">Ano 2026</button>
   </div>
   <div class="agenda">
-    <div class="card"><h3 data-tip="Projetos em tramitação, sem votação nominal registrada ainda">🗓️ SERÃO VOTADAS</h3><div id="ag-esq"></div></div>
+    <div class="card"><h3 data-tip="Projetos em tramitação, sem votação nominal registrada ainda. Opine direto daqui!">🗓️ SERÃO VOTADAS</h3><div id="ag-esq"></div></div>
     <div class="card"><h3 data-tip="Votações nominais já realizadas no plenário, voto a voto">✅ JÁ VOTADAS</h3><div id="ag-dir"></div></div>
   </div>
 
-  <h2>📜 Projetos de Lei em análise</h2>
+  <h2 id="anc-lista">📜 Projetos de Lei em análise</h2>
   <div id="lista"></div>
-  <div id="lista-vazio" class="vazio" hidden>Nenhuma PL encontrada pra esse filtro. Aqui quem escolhe é você — use a busca. 🔍</div>
+  <div id="lista-vazio" class="vazio" hidden></div>
 
   <h2>🧬 Meu DNA Cívico</h2>
   <p class="mini" style="margin-bottom:8px" data-tip="Cruza seus votos com os votos REAIS dos deputados nas matérias que o Congresso já votou">Descubra quais parlamentares votam como você, com base em votações nominais reais.</p>
@@ -186,7 +179,10 @@ function infoVot(v){v=v||{};const desc=v.descricao||'Votação nominal no plená
 function votoParl(v){v=v||{};const dep=v.deputado_||{};const nome=dep.nome||'—',part=dep.siglaPartido||'—',uf=dep.siglaUf||'';const tipo=String(v.tipoVoto||'');let t='cinza';if(/^sim$/i.test(tipo))t='favor';else if(/^n[ãa]o$/i.test(tipo))t='contra';return{nome,part,uf,t}}
 function placar(l){const p={favor:0,contra:0,cinza:0};(l||[]).forEach(x=>p[x.t]++);p.total=l?l.length:0;return p}
 async function votosDe(id){if(VOTOS[id])return VOTOS[id];try{const r=await fetch(API+'/api/camara/votacoes/'+id+'/votos');const j=await r.json();VOTOS[id]=(Array.isArray(j)?j:(j.dados||[])).map(votoParl)}catch(e){VOTOS[id]=[]}return VOTOS[id]}
-function temaDe(t){t=(t||'').toLowerCase();if(/sa[uú]d|sus|hospital|m[eé]dic|vacina/.test(t))return'Saúde';if(/educa|escola|professor|aluno/.test(t))return'Educação';if(/ambient|clima|ecol|floresta|bioma/.test(t))return'Meio Ambiente';if(/econom|impost|tribut|trabalh|sal[aá]rio|icms|or[cç]ament/.test(t))return'Economia';if(/seguran|crime|penal|policial|viol[eê]nc/.test(t))return'Segurança';return''}
+function temaDe(t){t=(t||'').toLowerCase();if(/sa[uú]d|sus|hospital|m[eé]dic|vacina|obesidade/.test(t))return'Saúde';if(/educa|escola|professor|aluno/.test(t))return'Educação';if(/ambient|clima|ecol|floresta|bioma/.test(t))return'Meio Ambiente';if(/econom|impost|tribut|trabalh|sal[aá]rio|icms|or[cç]ament|profiss/.test(t))return'Economia';if(/seguran|crime|penal|policial|viol[eê]nc/.test(t))return'Segurança';if(/rouanet|cultura|arte|audiovisual|patrim[oô]nio/.test(t))return'Cultura';return''}
+function autorLabel(i){const a=(i.author||'').trim();const gen=/^(deputado federal|senador|mesa|comiss|lideran|poder executivo)/i;
+ if(a&&!gen.test(a))return `👤 Parlamentar: ${a}`;
+ return `👤 Parlamentar: <span data-tip="A API não manda o nome do autor — confira no inteiro teor">autoria no inteiro teor →</span>`}
 function barPL(p){const t=p.total||1,f=p.favor/t*100,c=p.contra/t*100,g=p.cinza/t*100;
 return `<div class="bar"><span class="g" style="width:${f}%">${f>=12?Math.round(f)+'%':''}</span><span class="r" style="width:${c}%">${c>=12?Math.round(c)+'%':''}</span><span class="c" style="width:${g}%">${g>=14?'🪑 '+Math.round(g)+'%':''}</span></div>`}
 function ladoALado(pc,mv){
@@ -202,17 +198,17 @@ function veredito(pc,mv){
  const contra=(mv==='aprovo'&&cong<50)||(mv==='nao'&&cong>=50);
  const txt=contra?`🔴 Nesta lei, o Congresso foi contra a sua vontade.`:`🟢 Nesta lei, o Congresso está sincronizado com você.`;
  return `<div class="${contra?'veredito':'veredito ok'}"><span data-tip="Veredito automático: seu voto comparado à votação real do plenário">${txt}</span><button class="btn-compartilhar" data-compartilhar="${txt}">📤 Compartilhar</button></div>`}
+function botoesVoto(key,mv){return `<div class="pills" style="margin-top:8px">
+ <button class="pill ${mv==='aprovo'?'on-g':''}" data-acao="votar" data-v="aprovo" data-key="${key}" data-tip="Registra que você aprova esta lei">👍 Aprovo</button>
+ <button class="pill ${mv==='nao'?'on-r':''}" data-acao="votar" data-v="nao" data-key="${key}" data-tip="Registra que você não aprova esta lei">👎 Não aprovo</button></div>`}
 function cardPL(p){
  const i=infoPL(p),v=MAPVOT[i.n+'/'+i.ano],mv=meusVotos()[i.key],pc=v?placar(VOTOS[v.id]):null;
- const el=document.createElement('div');el.className='card';el.dataset.tema=temaDe(i.desc);el.dataset.busca=(i.key+' '+i.desc+' '+i.party+' '+i.author).toLowerCase();
+ const el=document.createElement('div');el.className='card';el.dataset.tema=temaDe(i.desc)||'Outros';el.dataset.busca=(i.key+' '+i.desc+' '+i.party+' '+i.author).toLowerCase();
  el.innerHTML=`
  <div class="plhead"><h3 data-tip="Número e sigla do projeto (${i.chamber})">${i.key}</h3><a class="link" target="_blank" rel="noopener" href="${i.url}" data-tip="Abre o documento oficial no site da ${i.chamber}">📄 inteiro teor →</a></div>
- <div class="mini">${i.author}${i.party?' · '+i.party:''} · ${i.chamber}</div>
+ <div class="mini">${autorLabel(i)} · ${i.party} · ${i.chamber} · <span class="chip blue">Assunto: ${temaDe(i.desc)||'Geral'}</span></div>
  <p class="desc">${corte(i.desc,260)}</p>
- <div class="pills">
-  <button class="pill ${mv==='aprovo'?'on-g':''}" data-acao="votar" data-v="aprovo" data-key="${i.key}" data-tip="Registra que você aprova esta lei">👍 Aprovo</button>
-  <button class="pill ${mv==='nao'?'on-r':''}" data-acao="votar" data-v="nao" data-key="${i.key}" data-tip="Registra que você não aprova esta lei">👎 Não aprovo</button>
- </div>
+ ${botoesVoto(i.key,mv)}
  <div class="bloco"><h4 data-tip="Opinião agregada dos usuários da plataforma (em breve, com backend de votos)">Placar do Povo</h4><div class="bar grey"><span>sem dados ainda — em breve, voto real dos usuários</span></div></div>
  ${pc?`<div class="bloco"><h4>Placar do Congresso <span class="mini" data-tip="Voto a voto dos deputados no plenário (dados oficiais)">voto a voto</span></h4>${barPL(pc)}<p class="mini">não votaram: ${pc.cinza} de ${pc.total}</p></div>`:''}
  ${ladoALado(pc,mv)}
@@ -242,8 +238,8 @@ async function abreSanf(i,v){
  box.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{box.querySelectorAll('[data-f]').forEach(x=>x.classList.remove('on'));b.classList.add('on');const f=b.dataset.f;box.querySelectorAll('.li').forEach(li=>li.style.display=(f==='todos'||li.dataset.t===f)?'':'none')})}
 function buildFila(){
  fila=[];
- PLS.forEach(p=>{const i=infoPL(p);fila.push({tipo:'pl',key:i.key,i,desc:i.desc,url:i.url,tema:temaDe(i.desc),extra:`${i.author}${i.party?' · '+i.party:''} · ${i.chamber}`})});
- VOT.slice(0,10).forEach(v=>{const i=infoVot(v);fila.push({tipo:'vot',key:'VOT:'+i.id,i,desc:i.desc,url:'votacoes.html',tema:temaDe(i.desc),extra:'✅ JÁ VOTADA NO CONGRESSO'+(i.data?' · '+new Date(i.data).toLocaleDateString('pt-BR'):'')})});
+ PLS.forEach(p=>{const i=infoPL(p);fila.push({tipo:'pl',key:i.key,i,desc:i.desc,url:i.url,tema:temaDe(i.desc)||'Geral',extra:`${autorLabel(i)} · ${i.party} · ${i.chamber}`})});
+ VOT.slice(0,10).forEach(v=>{const i=infoVot(v);fila.push({tipo:'vot',key:'VOT:'+i.id,i,desc:i.desc,url:'votacoes.html',tema:temaDe(i.desc)||'Geral',extra:'✅ JÁ VOTADA NO CONGRESSO'+(i.data?' · '+new Date(i.data).toLocaleDateString('pt-BR'):'')})});
 }
 function renderUrna(){
  const mv=meusVotos();const pend=fila.filter(f=>!mv[f.key]);
@@ -253,30 +249,40 @@ function renderUrna(){
  const atual=pend.filter(f=>!pular.includes(f.key))[0]||pend[0];
  if(!atual){$('#urna-corpo').innerHTML=`<div class="vazio">🎉 Você opinou sobre todas as matérias pendentes!</div>`;return}
  ultimaKey=atual.key;
- $('#urna-corpo').innerHTML=`<h3 style="color:var(--gold)">${atual.i.key}</h3><div class="mini">${atual.extra}</div><p class="desc">${corte(atual.desc,160)}</p><a class="link" target="_blank" href="${atual.url}">${atual.tipo==='pl'?'📄 inteiro teor →':'🗳️ ver votação real →'}</a>
+ $('#urna-corpo').innerHTML=`<h3 style="color:var(--gold)">Nº da PL: ${atual.i.key}</h3>
+ <div class="pills"><span class="chip blue" data-tip="Tema principal da matéria">Assunto: ${atual.tema}</span></div>
+ <div class="mini">${atual.extra}</div>
+ <p class="desc">${corte(atual.desc,160)}</p><a class="link" target="_blank" href="${atual.url}">${atual.tipo==='pl'?'📄 inteiro teor →':'🗳️ ver votação real →'}</a>
  <div class="botoes"><button id="bAprovo" data-acao="votar" data-v="aprovo" data-key="${atual.key}" data-tip="Registra que você aprova">👍 APROVO</button><button id="bNao" data-acao="votar" data-v="nao" data-key="${atual.key}" data-tip="Registra que você não aprova">👎 NÃO APROVO</button></div>
  <button class="pill ghost" data-acao="pula" data-tip="Avança sem registrar voto">próxima →</button>`}
 function renderAgenda(){
  const agora=Date.now();
  const avot=PLS.filter(p=>{const i=infoPL(p);return !MAPVOT[i.n+'/'+i.ano]});
- $('#ag-esq').innerHTML=avot.map(p=>{const i=infoPL(p);const mov=p.updatedAt;const parada=mov&&(agora-mov)/864e5>90;
+ $('#ag-esq').innerHTML=avot.map(p=>{const i=infoPL(p);const mv=meusVotos()[i.key];const mov=p.updatedAt;const parada=mov&&(agora-mov)/864e5>90;
   const chip=parada?`<span class="chip grey" data-tip="Sem movimentação registrada há mais de 90 dias">PARADA HÁ +90 DIAS</span>`:`<span class="chip blue" data-tip="Em tramitação, sem data de votação definida">EM ANÁLISE</span>`;
-  return `<div class="item">${chip}<h3 style="margin:6px 0">${i.key}</h3><p class="mini">${corte(i.desc,110)}</p><a class="link" target="_blank" href="${i.url}">📄 inteiro teor →</a></div>`}).join('')||`<div class="vazio">Nada pendente.</div>`;
+  return `<div class="item">${chip}<h3 style="margin:6px 0">${i.key}</h3><p class="mini">${corte(i.desc,110)}</p>
+  <a class="link" target="_blank" href="${i.url}">📄 inteiro teor →</a>
+  ${botoesVoto(i.key,mv)}</div>`}).join('')||`<div class="vazio">Nada pendente.</div>`;
  const votadas=VOT.map(v=>({v,i:infoVot(v)})).filter(x=>{if(!x.i.data)return true;return (agora-new Date(x.i.data))/864e5<=perAtivo}).sort((a,b)=>new Date(b.i.data||0)-new Date(a.i.data||0)).slice(0,10);
  $('#ag-dir').innerHTML=votadas.map(({v,i})=>{const pc=placar(VOTOS[v.id]||[]);const tot=pc.favor+pc.contra;const cong=tot?Math.round(pc.favor/tot*100):0;
   const res=pc.favor>pc.contra?`<span class="chip green" data-tip="Aprovada no plenário">APROVADA</span>`:pc.contra>pc.favor?`<span class="chip red" data-tip="Rejeitada no plenário">REJEITADA</span>`:`<span class="chip grey">SEM MAIORIA</span>`;
   return `<div class="item">${res}<h3 style="margin:6px 0">${corte(i.desc,80)}</h3><p class="mini">Congresso: ${cong}% a favor · 🪑 não votaram: ${pc.cinza}${i.data?' · '+new Date(i.data).toLocaleDateString('pt-BR'):''}</p></div>`}).join('')||`<div class="vazio">Nenhuma votação nominal neste período.</div>`}
 function aplicaFiltro(){
  const q=($('#busca').value||'').toLowerCase();let vis=0;
- $$('#lista .card').forEach(c=>{const ok=c.dataset.busca.includes(q)&&(!temaAtivo||c.dataset.tema===temaAtivo);c.style.display=ok?'':'none';if(ok)vis++});
- $('#lista-vazio').hidden=vis>0}
-function contadores(){
- $$('#pills-tema [data-acao="tema"]').forEach(b=>{const t=b.dataset.t;const n=t?PLS.filter(p=>temaDe(infoPL(p).desc)===t).length:PLS.length;b.textContent=t?`${t} (${n})`:`Todos (${n})`})}
+ $$('#lista .card').forEach(c=>{const t=c.dataset.tema||'Outros';const ok=c.dataset.busca.includes(q)&&(!temaAtivo||t===temaAtivo);c.style.display=ok?'':'none';if(ok)vis++});
+ const vz=$('#lista-vazio');vz.hidden=vis>0;
+ vz.textContent=vis>0?'':(temaAtivo?`Nenhuma PL de ${temaAtivo} em análise agora. Quando entrar, aparece aqui. 🔍`:'Nenhuma PL encontrada pra esse filtro. Aqui quem escolhe é você — use a busca. 🔍')}
+function renderPills(){
+ const ord=['Saúde','Educação','Meio Ambiente','Economia','Segurança','Cultura','Outros'];
+ const ct={};PLS.forEach(p=>{const t=temaDe(infoPL(p).desc)||'Outros';ct[t]=(ct[t]||0)+1});
+ let h=`<button class="pill ${temaAtivo===''?'on':''}" data-acao="tema" data-t="">Todos (${PLS.length})</button>`;
+ ord.forEach(t=>{if(ct[t])h+=`<button class="pill ${temaAtivo===t?'on':''}" data-acao="tema" data-t="${t}">${t} (${ct[t]})</button>`});
+ $('#pills-tema').innerHTML=h}
 function renderTudo(){
  const lista=$('#lista');lista.innerHTML='';
  PLS.forEach(p=>lista.appendChild(cardPL(p)));
  if(!PLS.length)lista.innerHTML=`<div class="vazio">Nenhuma PL carregada. Confira o backend ou recarregue.</div>`;
- contadores();aplicaFiltro();renderAgenda();renderUrna()}
+ renderPills();aplicaFiltro();renderAgenda();renderUrna()}
 async function dna(){
  const mv=meusVotos();const comp=[];let comparadas=0;
  for(const f of fila){
@@ -296,7 +302,7 @@ document.addEventListener('click',e=>{
  else if(a==='pula'){pular.push(ultimaKey);renderUrna()}
  else if(a==='sanf'){const p=PLS.find(x=>cssk(infoPL(x).key)===b.dataset.key);if(p){const i=infoPL(p);abreSanf(i,MAPVOT[i.n+'/'+i.ano])}}
  else if(a==='per'){$$('[data-acao="per"]').forEach(x=>x.classList.remove('on'));b.classList.add('on');perAtivo=+b.dataset.per;renderAgenda()}
- else if(a==='tema'){$$('[data-acao="tema"]').forEach(x=>x.classList.remove('on'));b.classList.add('on');temaAtivo=b.dataset.t;aplicaFiltro()}
+ else if(a==='tema'){$$('[data-acao="tema"]').forEach(x=>x.classList.remove('on'));b.classList.add('on');temaAtivo=b.dataset.t;aplicaFiltro();document.getElementById('anc-lista').scrollIntoView({behavior:'smooth'})}
  else if(a==='dna'){dna()}});
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-compartilhar]');if(!b)return;
