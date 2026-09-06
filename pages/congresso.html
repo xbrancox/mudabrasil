@@ -127,7 +127,7 @@ h2{margin:26px 0 10px}
     <span><i class="dot" style="background:#5b6b82"></i><span data-tip="Estava ausente ou se absteve — não registrou voto">não votou 🪑</span></span>
   </div>
 
-  <input id="busca" class="busca" placeholder="Busque político, partido, PL nº, autor ou tema…">
+  <input id="busca" class="busca" placeholder="🔍 Busque pelo nº da PL, assunto ou parlamentar (ex.: 5183, cultura, MDB)…" data-tip="Digite o número, uma palavra-chave do assunto (saúde, cultura, escola) ou o partido do parlamentar. A Urna também segue a busca.">
   <div class="pills" id="pills-tema"></div>
 
   <div class="card urna" id="urna">
@@ -172,7 +172,7 @@ h2{margin:26px 0 10px}
 const API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){localStorage.setItem(k,JSON.stringify(v))}};
-let PLS=[],VOT=[],VOTOS={},MAPVOT={},POVO={},temaAtivo='',perAtivo=30,pular=[],fila=[],ultimaKey='',forcarVot=false;
+let PLS=[],VOT=[],VOTOS={},MAPVOT={},POVO={},temaAtivo='',perAtivo=30,pular=[],fila=[],ultimaKey='',forcarVot=false,BUSCA='';
 const meusVotos=()=>LS.get('mb_votos_pl',{});
 const meuUid=()=>{let u=LS.get('mb_uid',null);if(!u){u='u'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);LS.set('mb_uid',u)}return u};
 const corte=(t,n=140)=>{t=(t||'').toString().trim();return t.length>n?t.slice(0,n).trim()+'…':t};
@@ -220,7 +220,7 @@ function botoesVoto(key,mv){return `<div class="pills" style="margin-top:8px">
  <button class="pill ${mv==='nao'?'on-r':''}" data-acao="votar" data-v="nao" data-key="${key}" data-tip="Registra que você não aprova esta lei (soma no Placar do Povo)">👎 Não aprovo</button></div>`}
 function cardPL(p){
  const i=infoPL(p),v=MAPVOT[i.n+'/'+i.ano],mv=meusVotos()[i.key],pc=v?placar(VOTOS[v.id]):null;
- const el=document.createElement('div');el.className='card';el.dataset.tema=temaDe(i.desc)||'Outros';el.dataset.busca=(i.key+' '+i.desc+' '+i.party+' '+i.author).toLowerCase();
+ const el=document.createElement('div');el.className='card';el.dataset.tema=temaDe(i.desc)||'Outros';el.dataset.busca=(i.key+' '+i.n+' '+i.ano+' '+i.desc+' '+(temaDe(i.desc)||'')+' '+i.party+' '+i.author).toLowerCase();
  el.innerHTML=`
  <div class="plhead"><h3 data-tip="Número e sigla do projeto (${i.chamber})">${i.key}</h3><a class="link" target="_blank" rel="noopener" href="${i.url}" data-tip="Abre o documento oficial no site da ${i.chamber}">📄 inteiro teor →</a></div>
  <div class="campo"><b>👤 Parlamentar:</b> ${autorNome(i)} · ${i.party} · ${i.chamber}</div>
@@ -259,14 +259,17 @@ function buildFila(){
  PLS.forEach(p=>{const i=infoPL(p);fila.push({tipo:'pl',key:i.key,i,desc:i.desc,url:i.url,tema:temaDe(i.desc)||'Geral'})});
  VOT.slice(0,10).forEach(v=>{const i=infoVot(v);fila.push({tipo:'vot',key:'VOT:'+i.id,i,desc:i.desc,url:'votacoes.html',tema:temaDe(i.desc)||'Geral'})});
 }
+function matchFila(f,q){if(!q)return true;const txt=(f.key+' '+(f.i&&f.i.n||'')+' '+(f.i&&f.i.ano||'')+' '+f.desc+' '+(f.tema||'')+' '+(f.i&&f.i.party||'')+' '+(f.i&&f.i.author||'')).toLowerCase();return txt.includes(q)}
 function renderUrna(){
  const mv=meusVotos();let pend=fila.filter(f=>!mv[f.key]);
  if(forcarVot){const v=pend.find(f=>f.tipo==='vot');if(v)pend=[v,...pend.filter(x=>x!==v)];forcarVot=false}
+ const q=BUSCA.trim().toLowerCase();let buscando=false;
+ if(q){const m=pend.filter(f=>matchFila(f,q));if(m.length){pend=m;buscando=true}}
  const tot=fila.length,done=tot-pend.length;
  $('#urna-prog').innerHTML=`<div style="width:${tot?done/tot*100:0}%"></div>`;
- $('#urna-txt').textContent=`${done} de ${tot} matérias votadas`;
+ $('#urna-txt').textContent=buscando?`🔍 Busca "${BUSCA.trim()}" · ${pend.length} resultado(s) · ${done} de ${tot} matérias votadas`:`${done} de ${tot} matérias votadas`;
  const atual=pend.filter(f=>!pular.includes(f.key))[0]||pend[0];
- if(!atual){$('#urna-corpo').innerHTML=`<div class="vazio">🎉 Você opinou sobre todas as matérias pendentes!</div>`;return}
+ if(!atual){$('#urna-corpo').innerHTML=buscando?`<div class="vazio">🔍 Nenhuma matéria bate com "${BUSCA.trim()}". Limpe a busca pra continuar votando.</div>`:`<div class="vazio">🎉 Você opinou sobre todas as matérias pendentes!</div>`;return}
  ultimaKey=atual.key;
  const parl=atual.tipo==='pl'?autorNome(atual.i):'plenário da Câmara (votação real)';
  $('#urna-corpo').innerHTML=`
@@ -292,10 +295,11 @@ function renderAgenda(){
   const linha=simb?`sem registro nominal voto a voto`:`Congresso: ${cong}% a favor · 🪑 não votaram: ${pc.cinza}`;
   return `<div class="item">${res}<h3 style="margin:6px 0">${corte(i.desc,80)}</h3><p class="mini">${linha}${i.data?' · '+new Date(i.data).toLocaleDateString('pt-BR'):''}</p></div>`}).join('')||`<div class="vazio">Nenhuma votação nominal neste período.</div>`}
 function aplicaFiltro(){
- const q=($('#busca').value||'').toLowerCase();let vis=0;
+ const q=($('#busca').value||'').toLowerCase();BUSCA=q;let vis=0;
  $$('#lista .card').forEach(c=>{const t=c.dataset.tema||'Outros';const ok=c.dataset.busca.includes(q)&&(!temaAtivo||t===temaAtivo);c.style.display=ok?'':'none';if(ok)vis++});
  const vz=$('#lista-vazio');vz.hidden=vis>0;
- vz.textContent=vis>0?'':(temaAtivo?`Nenhuma PL de ${temaAtivo} em análise agora. Quando entrar, aparece aqui. 🔍`:'Nenhuma PL encontrada pra esse filtro. Aqui quem escolhe é você — use a busca. 🔍')}
+ vz.textContent=vis>0?'':(temaAtivo?`Nenhuma PL de ${temaAtivo} em análise agora. Quando entrar, aparece aqui. 🔍`:'Nenhuma PL encontrada pra esse filtro. Aqui quem escolhe é você — use a busca. 🔍');
+ renderUrna()}
 function renderPills(){
  const ord=['Saúde','Educação','Meio Ambiente','Economia','Segurança','Cultura','Outros'];
  const ct={};PLS.forEach(p=>{const t=temaDe(infoPL(p).desc)||'Outros';ct[t]=(ct[t]||0)+1});
