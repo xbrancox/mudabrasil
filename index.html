@@ -618,7 +618,7 @@ function abrirCmp(){if(PINS.length<2)return toast('Fixe pelo menos 2.');
     <div class="stat"><small>🔴 Reclamações</small><b style="color:var(--red)">${rec}</b></div>
     <div class="stat"><small>🟢 Apoios</small><b style="color:var(--green)">${apo}</b></div>
     <div class="stat"><small>🗣️ Respostas</small><b style="color:var(--blueL)">${resp}</b></div>
-    <div class="stat"><small>📚 Projetos</small><b>${(d.props||[]).length}</b></div>
+    <a href="pages/congresso.html?dep=${encodeURIComponent(p.nome)}" class="stat" style="text-decoration:none;display:block" data-tip="Abre a página do Congresso já filtrada nas PLs deste(a) parlamentar"><small>📚 Projetos</small><b style="color:var(--gold)">${(d.props||[]).length} →</b></a>
   </div>
   <div class="badge ${p.selo?'ok':''}">${p.selo?'Verificado':'Sem selo'}</div></div>`}).join('');
   document.getElementById('mCmp').classList.add('open')}
