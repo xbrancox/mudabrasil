@@ -58,7 +58,9 @@
   function hrefDe(item) {
     if (naHome && item.pagina.indexOf('index.html#') === 0) return '#' + item.pagina.split('#')[1];
     if (naHome && item.pagina === 'index.html' && arquivoAtual === 'index.html') return '#';
-    return R + item.pagina;
+    /* FIX: as páginas vivem em /pages/ — o link antigo (R + pagina) apontava p/ a raiz e dava 404 */
+    if (item.pagina.indexOf('index.html') === 0) return R + item.pagina;
+    return R + 'pages/' + item.pagina;
   }
 
   function chaveAtiva() {
