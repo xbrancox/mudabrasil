@@ -1,0 +1,108 @@
+name: Manutenção automática
+
+# Quatro tarefas independentes:
+#   noticias       — diária 09:15 BRT (12:15 UTC): regenera data/noticias.json
+#   tse-candidatos — diária 10:05 BRT (13:05 UTC): baixa CSVs do TSE (espelho)
+#   enriquecimento — segundas 10:30 BRT (13:30 UTC): proposições + presença
+
+on:
+  schedule:
+    - cron: '15 12 * * *'   # noticias
+    - cron: '5 13 * * *'    # tse-candidatos
+    - cron: '30 13 * * 1'   # enriquecimento (segundas)
+  workflow_dispatch:
+    inputs:
+      tarefa:
+        description: 'Tarefa a executar'
+        required: true
+        default: 'noticias'
+        type: choice
+        options:
+          - noticias
+          - tse-candidatos
+          - enriquecimento
+          - tudo
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manutencao
+  cancel-in-progress: false
+
+jobs:
+  noticias:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      (inputs.tarefa == 'noticias' || inputs.tarefa == 'tudo') ||
+      github.event.schedule == '15 12 * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Regenera snapshot de notícias
+        run: node scripts/snapshot-noticias.js
+      - name: Commita se mudou
+        run: |
+          git config user.name  "manutencao[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/noticias.json
+          if git diff --cached --quiet; then echo "sem mudanças"; exit 0; fi
+          git commit -m "chore(data): snapshot de notícias [manutenção]"
+          git pull --rebase origin master
+          git push
+
+  tse-candidatos:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      (inputs.tarefa == 'tse-candidatos' || inputs.tarefa == 'tudo') ||
+      github.event.schedule == '5 13 * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Baixa CSVs do TSE
+        run: node scripts/baixar-candidatos-tse.js
+      - name: Commita se mudou
+        run: |
+          git config user.name  "manutencao[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/candidatos-2026.json
+          if git diff --cached --quiet; then echo "sem mudanças"; exit 0; fi
+          git commit -m "chore(data): TSE 2026 [manutenção]"
+          git pull --rebase origin master
+          git push
+
+  enriquecimento:
+    needs: noticias
+    if: >-
+      always() && !cancelled() &&
+      (github.event_name == 'workflow_dispatch' &&
+       (inputs.tarefa == 'enriquecimento' || inputs.tarefa == 'tudo') ||
+       github.event.schedule == '30 13 * * 1')
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Proposições (incremental)
+        run: node scripts/enriquecer-snapshot.js --skip-done
+      - name: Presença em plenário (total)
+        run: node scripts/enriquecer-presenca.js
+      - name: Commita se mudou
+        run: |
+          git config user.name  "manutencao[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/politicos.json
+          if git diff --cached --quiet; then echo "sem mudanças"; exit 0; fi
+          git commit -m "chore(data): produção legislativa + presença [manutenção]"
+          git pull --rebase origin master
+          git push
