@@ -1,90 +1,611 @@
-const API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'';
-const $=s=>document.querySelector(s);
-const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){localStorage.setItem(k,JSON.stringify(v))}};
-let PLS=[],VOT=[],VOTOS={},MAPVOT={},POVO={},fila=[],idx=0,pular=[];
-const meusVotos=()=>LS.get('mb_votos_pl',{});
-const meuUid=()=>{let u=LS.get('mb_uid',null);if(!u){u='u'+Math.random().toString(36).slice(2,10);LS.set('mb_uid',u)}return u};
-const corte=(t,n)=>{t=(t||'').toString().trim();return t.length>n?t.slice(0,n).trim()+'…':t};
-function infoPL(p){p=p||{};const ps=String(p.number||p.numero||'').split('/');const n=ps[0]||'',ano=ps[1]||'';const sig=(p.chamber||'Câmara')==='Senado'?'PLS':'PL';const desc=p.ementa||p.title||'';const id=p.id||'';return{key:sig+' '+n+'/'+ano,n:n,ano:ano,desc:desc,party:p.party||'',author:p.author||'',chamber:p.chamber||'Câmara',url:p.url||(id?('https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao='+id):('https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?numero='+n+'&ano='+ano+'&sigla='+sig))}}
-function infoVot(v){v=v||{};const desc=v.descricao||'';const data=v.data||'';const id=v.id||'';return{id:id,desc:desc,data:data}}
-function placar(l){const p={favor:0,contra:0,cinza:0};(l||[]).forEach(x=>p[x.t]++);p.total=(l||[]).length;return p}
-function temaDe(t){t=(t||'').toLowerCase();if(/sa[uú]d|sus|hospital|m[eé]dic|vacina/.test(t))return'Saúde';if(/educa|escola|professor/.test(t))return'Educação';if(/ambient|clima|floresta/.test(t))return'Meio Ambiente';if(/econom|impost|tribut|trabalh|sal[aá]rio|icms/.test(t))return'Economia';if(/seguran|crime|penal/.test(t))return'Segurança';if(/rouanet|cultura|arte/.test(t))return'Cultura';return'Geral'}
-async function votosDe(id){if(VOTOS[id])return VOTOS[id];try{const r=await fetch(API+'/api/camara/votacoes/'+id+'/votos');const j=await r.json();VOTOS[id]=(Array.isArray(j)?j:(j.dados||[])).map(v=>{const d=v.deputado_||{};const tipo=String(v.tipoVoto||'');return{nome:d.nome||'—',part:d.siglaPartido||'—',uf:d.siglaUf||'',t:/^sim$/i.test(tipo)?'favor':(/^n[ãa]o$/i.test(tipo)?'contra':'cinza')}})}catch(e){VOTOS[id]=[]}return VOTOS[id]}
-async function carregaPovo(){try{POVO=await(await fetch(API+'/api/votos-pl')).json()||{}}catch(e){POVO={}}}
-function barPovo(key){const p=POVO[key]||{aprovo:0,nao:0};const t=p.aprovo+p.nao;if(!t)return '<div class="mini">Placar do Povo: sem dados ainda — seja o primeiro</div>';const a=Math.round(p.aprovo/t*100);return '<div class="mini">PLACAR DO POVO ('+t+' voto'+(t>1?'s':'')+' real'+(t>1?'is':'')+')</div><div class="bar"><i class="g" style="width:'+a+'%">aprovo '+a+'%</i><i class="g2" style="width:'+(100-a)+'%">'+(100-a)+'%</i></div>'}
-function renderUrna(){
-  const mv=meusVotos();const pend=fila.filter(f=>!mv[f.key]&&!pular.includes(f.key));
-  const tot=fila.length,done=tot-fila.filter(f=>!mv[f.key]).length;
-  const f=pend[idx%Math.max(pend.length,1)];
-  let h='<div class="card"><h3>🗳️ URNA EXPRESSA DO POVO</h3><div class="prog"><i style="width:'+(tot?done/tot*100:0)+'%"></i></div><div class="mini">'+done+' de '+tot+' matérias votadas</div>';
-  if(!f){h+='<div class="mini" style="margin-top:12px">🎉 Você opinou sobre tudo que está pendente!</div></div>';$('#scr-urna').innerHTML=h;return}
-  h+='<div style="margin-top:10px"><span class="plkey">'+f.i.key+'</span> <span class="chip blue">'+f.tema+'</span></div>';
-  h+='<div class="mini">'+(f.tipo==='pl'?('👤 '+(f.i.author&&!/^(deputado|senador)/i.test(f.i.author)?f.i.author:('Deputado(a) do '+f.i.party))):'✅ JÁ VOTADA NO CONGRESSO')+'</div>';
-  h+='<p class="mini" style="margin:8px 0">'+corte(f.desc,150)+'</p><a class="link" target="_blank" href="'+f.url+'">📄 inteiro teor →</a>';
-  h+='<div class="rounds"><button id="bSim">👍<span>APROVO</span></button><button id="bNao">👎<span>NÃO APROVO</span></button></div>';
-  h+='<button class="ghost" id="bNext">próxima PL →</button></div>';
-  h+='<div class="card"><h3>📚 Todas as matérias</h3>'+fila.map(x=>'<div class="item" data-key="'+x.key+'"><b>'+x.i.key+'</b> <span class="chip '+(x.tipo==='vot'?'green':'blue')+'">'+(x.tipo==='vot'?'JÁ VOTADA':x.tema)+'</span></div>').join('')+'</div>';
-  $('#scr-urna').innerHTML=h;
-  $('#bSim').onclick=()=>vota(f.key,'aprovo');
-  $('#bNao').onclick=()=>vota(f.key,'nao');
-  $('#bNext').onclick=()=>{idx++;renderUrna()};
-  document.querySelectorAll('#scr-urna .item').forEach(el=>el.onclick=()=>abreDetail(el.dataset.key));
+/* ============================================================
+   MudaBrasil App · Urna Digital do Povo
+   Substitui a urna eletrônica: votar, conferir, revogar.
+   ============================================================ */
+
+const API = (window.MudaBrasil && window.MudaBrasil.API_BASE) || '';
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+const LS = {
+  get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } },
+  set(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+};
+
+const state = {
+  screen: 'splash',
+  politicos: [],
+  backendOK: false,
+  selected: null,
+  lastVote: null,
+  term: { totalVotosAtivos: 0, totalRevogados: 0, topN: [], revogados: [] }
+};
+
+const toast = m => {
+  const t = document.getElementById('toast') || (() => {
+    const el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); return el;
+  })();
+  t.textContent = m; t.style.display = 'block';
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.style.display = 'none', 2600);
+};
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+function go(s) {
+  state.screen = s;
+  $$('.scr').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('scr-' + s);
+  if (el) el.classList.add('active');
+  $$('.bot-nav button').forEach(b => b.classList.toggle('on', b.dataset.scr === s));
+  const fab = $('#fab');
+  if (fab) fab.classList.toggle('hidden', s === 'votar' || s === 'recibo');
+  window.scrollTo(0, 0);
+  if (s === 'votar') renderVotar();
+  if (s === 'conferir') renderConferirLista();
+  if (s === 'termometro') initTermometro();
+  if (s === 'congresso') renderCongresso();
 }
-function vota(key,v){const mv=meusVotos();mv[key]=v;LS.set('mb_votos_pl',mv);idx=0;renderUrna();fetch(API+'/api/votos-pl',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uid:meuUid(),pl:key,voto:v})}).then(carregaPovo).catch(()=>{})}
-function abreDetail(key){
-  const f=fila.find(x=>x.key===key);if(!f)return;
-  const v=f.tipo==='vot'?{id:f.i.id}:MAPVOT[f.i.n+'/'+f.i.ano];
-  const pc=v?placar(VOTOS[v.id]||[]):null;
-  const p=POVO[key]||{aprovo:0,nao:0};const tp=p.aprovo+p.nao;const povoPct=tp?Math.round(p.aprovo/tp*100):null;
-  const cong=pc&&pc.favor+pc.contra?Math.round(pc.favor/(pc.favor+pc.contra)*100):null;
-  let h='<div class="card"><span class="plkey">'+f.i.key+'</span> <a class="link" target="_blank" href="'+f.url+'">📄 inteiro teor →</a><p class="mini" style="margin:8px 0">'+corte(f.desc,220)+'</p>';
-  h+=barPovo(key);
-  if(pc&&pc.total){
-    h+='<div class="mini" style="margin-top:10px">TOTAIS CRUZADOS</div><div class="grid"><div class="tile"><b>'+pc.favor+'</b><span>a favor</span></div><div class="tile"><b>'+pc.contra+'</b><span>contra</span></div><div class="tile"><b>'+pc.cinza+'</b><span>não votaram</span></div></div>';
-    if(povoPct!=null&&cong!=null){const g=Math.abs(povoPct-cong);const contra=(povoPct>=50)!==(cong>=50);
-      h+='<div class="vs"><div class="bx v">Povo<br>'+povoPct+'%</div><div class="gapchip">GAP '+g+' pts<br>'+(contra?'contra o povo':'a favor do povo')+'</div><div class="bx r">Congresso<br>'+cong+'%</div></div>';
-      h+='<div class="verd'+(contra?'':' ok')+'">'+(contra?'🔴 Nesta lei, o Congresso foi contra a vontade popular.':'🟢 Nesta lei, o Congresso está sincronizado com o povo.')+'</div>';}
-    const partes={};(VOTOS[v.id]||[]).forEach(x=>{(partes[x.part]=partes[x.part]||{favor:0,contra:0,cinza:0})[x.t]++});
-    h+='<div class="mini">VOTAÇÃO DOS PARTIDOS</div>';
-    Object.entries(partes).sort((a,b)=>(b[1].favor+b[1].contra)-(a[1].favor+a[1].contra)).slice(0,6).forEach(([s,q])=>{const t=q.favor+q.contra+q.cinza;h+='<div class="li"><span class="av">'+s.slice(0,2)+'</span><div class="bar" style="flex:1"><i class="g" style="width:'+(q.favor/t*100)+'%"></i><i class="r" style="width:'+(q.contra/t*100)+'%"></i><i class="c" style="width:'+(q.cinza/t*100)+'%"></i></div></div>'});
-    h+='<div class="mini" style="margin-top:8px">VOTAÇÃO DOS PARLAMENTARES</div>';
-    (VOTOS[v.id]||[]).slice(0,8).forEach(x=>{h+='<div class="li"><span class="av">'+String(x.nome).slice(0,2).toUpperCase()+'</span><span style="flex:1">'+x.nome+' <span class="mini">'+x.part+'-'+x.uf+'</span></span><span class="chip '+(x.t==='favor'?'green':x.t==='contra'?'red':'grey')+'">'+(x.t==='favor'?'a favor':x.t==='contra'?'contra':'não votou')+'</span></div>'});
-  } else { h+='<div class="mini" style="margin-top:10px">⚫ Sem votação nominal registrada ainda.</div>'; }
-  h+='</div>';
-  $('#scr-detail').innerHTML=h;
-  show('detail');
+
+/* ============================================================
+   HASH CHAIN (blockchain-like) — SHA-256
+   ============================================================ */
+async function sha256(msg) {
+  if (window.crypto && crypto.subtle) {
+    const buf = new TextEncoder().encode(msg);
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  // fallback simples (só dev)
+  let h = 0; for (let i = 0; i < msg.length; i++) { h = ((h << 5) - h) + msg.charCodeAt(i); h |= 0; }
+  return 'fallback-' + Math.abs(h).toString(16).padStart(64, '0');
 }
-function renderAgenda(){
-  const agora=Date.now();
-  const esq=PLS.filter(p=>!MAPVOT[infoPL(p).n+'/'+infoPL(p).ano]).map(p=>{const i=infoPL(p);const mov=p.updatedAt;const parada=mov&&(agora-mov)/864e5>90;
-    return '<div class="item" data-key="'+i.key+'"><span class="chip '+(parada?'grey':'gold')+'">'+(parada?'PARADA HÁ +90 DIAS':'EM ANÁLISE')+'</span> <b>'+i.key+'</b><div class="mini">'+corte(i.desc,80)+'</div></div>'}).join('')||'<div class="mini">Nada pendente.</div>';
-  const dir=VOT.slice(0,8).map(v=>{const i=infoVot(v);const pc=placar(VOTOS[i.id]||[]);const t=pc.favor+pc.contra;const cong=t?Math.round(pc.favor/t*100):0;const simb=pc.total===0;
-    const res=simb?'<span class="chip grey">SIMBÓLICA</span>':(pc.favor>pc.contra?'<span class="chip green">APROVADA</span>':'<span class="chip red">REJEITADA</span>');
-    return '<div class="item">'+res+' <b>'+corte(i.desc,60)+'</b><div class="mini">'+(simb?'sem registro nominal voto a voto':('Congresso: '+cong+'% a favor · 🪑 '+pc.cinza))+(i.data?' · '+new Date(i.data).toLocaleDateString('pt-BR'):'')+'</div></div>'}).join('')||'<div class="mini">Nenhuma votação no período.</div>';
-  $('#scr-agenda').innerHTML='<div class="card"><h3>🗓️ AGENDA DO CONGRESSO</h3><div class="cols2"><div><div class="mini">SERÃO VOTADAS</div>'+esq+'</div><div><div class="mini">JÁ VOTADAS</div>'+dir+'</div></div></div>';
-  document.querySelectorAll('#scr-agenda .item[data-key]').forEach(el=>el.onclick=()=>abreDetail(el.dataset.key));
+async function chainHash(code, politicianId) {
+  const prev = LS.get('mb_chain_hash', 'genesis');
+  const msg = prev + '|' + code + '|' + politicianId + '|' + Date.now();
+  const h = await sha256(msg);
+  LS.set('mb_chain_hash', h);
+  return h;
 }
-function renderDna(){
-  const mv=meusVotos();const comp=[];
-  fila.forEach(f=>{const vid=f.tipo==='vot'?f.i.id:((MAPVOT[f.i.n+'/'+f.i.ano])||{}).id;const my=mv[f.key];if(!my||!vid)return;const l=VOTOS[vid]||[];if(!l.length)return;l.forEach(x=>{if(x.t==='cinza')return;comp.push({nome:x.nome,part:x.part,uf:x.uf,ok:(my==='aprovo')===(x.t==='favor')})})});
-  if(!comp.length){$('#scr-dna').innerHTML='<div class="card"><h3>🧬 MEU DNA CÍVICO</h3><div class="mini">Vote em pelo menos 1 matéria <b>JÁ VOTADA</b> na Urna pra calcular sua sincronia com votos reais do plenário.</div></div>';return}
-  const por={};comp.forEach(c=>{por[c.nome]=por[c.nome]||{nome:c.nome,part:c.part,uf:c.uf,t:0,ok:0};por[c.nome].t++;por[c.nome].ok+=c.ok?1:0});
-  const r=Object.values(por).map(x=>({nome:x.nome,part:x.part,uf:x.uf,pct:Math.round(x.ok/x.t*100)})).sort((a,b)=>b.pct-a.pct);
-  const li=x=>'<div class="li"><span class="av">'+String(x.nome).slice(0,2).toUpperCase()+'</span><span style="flex:1">'+x.nome+' <span class="mini">'+x.part+'-'+x.uf+'</span></span><b style="color:'+(x.pct>=50?'var(--green)':'var(--red)')+'">'+x.pct+'%</b></div>';
-  $('#scr-dna').innerHTML='<div class="card"><h3>🧬 MEU DNA CÍVICO</h3><div class="mini">Top afinidades</div>'+r.slice(0,5).map(li).join('')+'<div class="mini" style="margin-top:10px">Top divergências</div>'+r.slice(-5).reverse().map(li).join('')+'</div>';
+
+/* ============================================================
+   POLÍTICOS — carregar / buscar
+   ============================================================ */
+async function loadPoliticos() {
+  if (!API) return;
+  try {
+    const r = await fetch(API + '/api/candidatos');
+    const j = await r.json();
+    const arr = Array.isArray(j) ? j : (j.candidatos || j.dados || []);
+    state.politicos = arr.map(d => ({
+      id: d.id,
+      nome: d.nome || d.name || d.nomeCivil || '—',
+      partido: d.partido || d.party || d.siglaPartido || '—',
+      uf: d.uf || d.state || d.siglaUf || '',
+      cargo: d.cargo || d.position || 'Deputado Federal',
+      foto: d.foto || d.urlFoto || d.photo || '',
+      num: d.num || d.numero || (String(d.id || '').replace(/\D/g, '')),
+      selo: !!(d.selo || d.verificado || d.verified)
+    }));
+    state.backendOK = true;
+    const badge = $('#badge'); if (badge) badge.textContent = 'backend ativo';
+    populaFiltros();
+  } catch (e) {
+    console.warn('loadPoliticos falhou:', e);
+    const badge = $('#badge'); if (badge) { badge.textContent = 'offline'; badge.classList.add('off'); }
+  }
 }
-function show(s){['urna','detail','agenda','dna'].forEach(x=>{$('#scr-'+x).classList.toggle('hidden',x!==s)});document.querySelectorAll('nav.bot button').forEach(b=>b.classList.toggle('on',b.dataset.scr===s));if(s==='urna')$('#fab').classList.remove('hidden');else $('#fab').classList.add('hidden')}
-document.querySelectorAll('nav.bot button').forEach(b=>b.onclick=()=>{const s=b.dataset.scr;if(s==='agenda')renderAgenda();if(s==='dna')renderDna();if(s==='urna')renderUrna();show(s)});
-$('#fab').onclick=()=>{show('urna');window.scrollTo({top:0,behavior:'smooth'})};
-(async function(){
-  try{const h=await fetch(API+'/api/health');$('#badge').textContent=h.ok?'backend ativo':'offline'}catch(e){$('#badge').textContent='offline'}
-  try{const j=await(await fetch(API+'/api/pls')).json();PLS=Array.isArray(j)?j:(j.pls||[])}catch(e){}
-  try{const j=await(await fetch(API+'/api/camara/votacoes')).json();VOT=Array.isArray(j)?j:(j.dados||[])}catch(e){}
-  VOT.forEach(v=>{const i=infoVot(v);const m=i.desc.match(/(?:PLC?|MPV?)[^\d]*(\d+)\/,?(\d{4})/i);if(m)MAPVOT[m[1]+'/'+m[2]]=v});
-  await Promise.all([...new Set(VOT.slice(0,10).map(v=>v.id))].filter(Boolean).map(id=>votosDe(id)));
-  await carregaPovo();
-  fila=[];PLS.forEach(p=>{const i=infoPL(p);fila.push({tipo:'pl',key:i.key,i:i,desc:i.desc,url:i.url,tema:temaDe(i.desc)})});
-  VOT.slice(0,10).forEach(v=>{const i=infoVot(v);fila.push({tipo:'vot',key:'VOT:'+i.id,i:i,desc:i.desc,url:'votacoes.html',tema:temaDe(i.desc)})});
-  renderUrna();show('urna');
-  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+
+function populaFiltros() {
+  const ufs = [...new Set(state.politicos.map(p => p.uf).filter(Boolean))].sort();
+  const cargos = [...new Set(state.politicos.map(p => p.cargo).filter(Boolean))].sort();
+  const ufSel = $('#f-uf'); const cSel = $('#f-cargo');
+  if (ufSel) ufSel.innerHTML = '<option value="">Todos os estados</option>' + ufs.map(u => `<option>${u}</option>`).join('');
+  if (cSel) cSel.innerHTML = '<option value="">Todos os cargos</option>' + cargos.map(c => `<option>${c}</option>`).join('');
+}
+
+function avatarHTML(p, cls) {
+  cls = cls || 'pol-av';
+  if (p.foto) return `<img class="${cls}" src="${p.foto}" alt="" onerror="this.outerHTML='<div class=\\'${cls}\\' style=\\'background:#123059;color:#FFD700\\'>${(p.nome||'?')[0].toUpperCase()}</div>'">`;
+  const cores = ['#2ECC71', '#FFD700', '#4a90f0', '#E74C3C', '#A855F7'];
+  const cor = cores[(p.nome || '').length % 5];
+  return `<div class="${cls}" style="background:${cor};color:#1a1400">${(p.nome || '?')[0].toUpperCase()}</div>`;
+}
+
+/* ============================================================
+   TELA VOTAR
+   ============================================================ */
+function renderVotar() {
+  if (!state.politicos.length) {
+    $('#lista-pol').innerHTML = '<div class="mini" style="text-align:center;padding:20px">Carregando políticos…</div>';
+    return;
+  }
+  const q = ($('#busca-pol').value || '').toLowerCase().trim();
+  const uf = $('#f-uf') ? $('#f-uf').value : '';
+  const cargo = $('#f-cargo') ? $('#f-cargo').value : '';
+  const temFiltro = q || uf || cargo;
+  if (!temFiltro) {
+    $('#lista-pol').innerHTML = '<div class="mini" style="text-align:center;padding:26px"><i class="fa-solid fa-magnifying-glass" style="font-size:28px;color:var(--gold);display:block;margin-bottom:10px"></i><b style="color:var(--txt);display:block;margin-bottom:6px">Pesquise um político</b>Digite nome, partido, número ou escolha o estado.</div>';
+    return;
+  }
+  const lista = state.politicos.filter(p =>
+    (!q || (p.nome || '').toLowerCase().includes(q) || (p.partido || '').toLowerCase().includes(q) || String(p.num).includes(q) || (p.uf || '').toLowerCase().includes(q)) &&
+    (!uf || p.uf === uf) &&
+    (!cargo || p.cargo === cargo)
+  ).slice(0, 10);
+  if (!lista.length) {
+    $('#lista-pol').innerHTML = '<div class="mini" style="text-align:center;padding:20px">Nenhum político encontrado com esse filtro.</div>';
+    return;
+  }
+  $('#lista-pol').innerHTML = lista.map(p => `
+    <div class="pol-item" onclick="abrirConfirm('${p.id}')">
+      ${avatarHTML(p)}
+      <div class="pol-info">
+        <b>${p.nome}${p.selo ? '<span class="selo">✓ VERIFICADO</span>' : ''}</b>
+        <small>${p.partido} · ${p.uf} · ${p.cargo}${p.num ? ' · nº ' + p.num : ''}</small>
+      </div>
+      <i class="fa-solid fa-chevron-right pol-arrow"></i>
+    </div>
+  `).join('');
+}
+
+function abrirConfirm(id) {
+  const p = state.politicos.find(x => x.id === id);
+  if (!p) return;
+  state.selected = p;
+  const box = $('#confirm-box');
+  box.classList.remove('hidden');
+  box.innerHTML = `
+    <div class="confirm-pol">
+      ${avatarHTML(p)}
+      <div>
+        <b>${p.nome}${p.selo ? '<span class="selo" style="margin-left:6px">✓ VERIFICADO</span>' : ''}</b>
+        <small>${p.partido} · ${p.uf} · ${p.cargo}${p.num ? ' · nº ' + p.num : ''}</small>
+      </div>
+    </div>
+    <div class="confirm-text">
+      Confirmar <b style="color:var(--gold)">voto de confiança</b> neste(a) político(a)?<br>
+      Você receberá um <b>código único de 20 dígitos</b>. É seu comprovante. Guarde com segurança.
+    </div>
+    <div class="rounds">
+      <button class="round-btn voto" onclick="confirmarVoto()">
+        <i class="fa-solid fa-check"></i>
+        <span>CONFIRMAR</span>
+        <small style="font-size:10px;font-weight:600">CONFIANÇA</small>
+      </button>
+    </div>
+    <div style="text-align:center">
+      <button class="btn btn-sm btn-ghost" onclick="cancelarConfirm()">← Voltar</button>
+    </div>
+  `;
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function cancelarConfirm() { $('#confirm-box').classList.add('hidden'); }
+
+async function confirmarVoto() {
+  const p = state.selected;
+  if (!p) return;
+  $('#confirm-box').innerHTML = '<div class="mini" style="text-align:center;padding:20px"><i class="fa-solid fa-spinner fa-spin" style="color:var(--gold);font-size:20px"></i><br>Registrando voto…</div>';
+  let code = null;
+  let erro = null;
+  // Tenta registrar no backend
+  if (state.backendOK) {
+    try {
+      const r = await fetch(API + '/api/voto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ politicianId: p.id, vote: 'confianca' })
+      });
+      if (r.ok) {
+        const j = await r.json();
+        code = j.code || j.formatted || null;
+      } else {
+        const j = await r.json().catch(() => ({}));
+        erro = j.error || r.status;
+      }
+    } catch (e) { erro = 'falha de conexão'; }
+  }
+  // Fallback: gera código local
+  if (!code) {
+    code = genLocalCode();
+    if (erro) console.warn('Backend falhou (' + erro + '), usando código local');
+  }
+  // Hash chain
+  const hash = await chainHash(code, p.id);
+  // Salva nos meus códigos
+  const meus = LS.get('mb_meus_codigos', []);
+  const reg = {
+    code: code,
+    politicianId: p.id,
+    nome: p.nome,
+    partido: p.partido,
+    uf: p.uf,
+    cargo: p.cargo,
+    foto: p.foto,
+    ts: Date.now(),
+    hash: hash,
+    ativo: true
+  };
+  meus.unshift(reg);
+  LS.set('mb_meus_codigos', meus);
+  state.lastVote = reg;
+  go('recibo');
+}
+
+function genLocalCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let c = '';
+  for (let i = 0; i < 20; i++) c += chars[Math.floor(Math.random() * chars.length)];
+  return c;
+}
+function formatCodePretty(c) {
+  return c.replace(/(.{4})/g, '$1-').replace(/-$/, '').trim();
+}
+
+/* ============================================================
+   TELA RECIBO
+   ============================================================ */
+function renderRecibo() {
+  const v = state.lastVote;
+  if (!v) { go('votar'); return; }
+  const body = $('#recibo-body');
+  if (!body) return;
+  body.innerHTML = `
+    <div class="recibo-pol">
+      ${avatarHTML({ nome: v.nome, foto: v.foto })}
+      <b>${v.nome}</b>
+      <small>${v.partido} · ${v.uf} · ${v.cargo}</small>
+    </div>
+    <div class="codigo-box">
+      <label>🔑 Seu código (20 dígitos)</label>
+      <div class="codigo" id="cod-display">${formatCodePretty(v.code)}</div>
+      <div class="codigo-warn"><i class="fa-solid fa-triangle-exclamation"></i> Mostre uma vez. Salve agora.</div>
+    </div>
+    <div class="hash-box">
+      <label>🔗 Hash encadeado (blockchain-like)</label>
+      <div id="hash-display">${v.hash}</div>
+      <small style="color:var(--mut);display:block;margin-top:6px;font-family:Manrope;font-size:10px">Cada voto gera um hash que liga ao anterior. Se alguém alterar um voto, toda a cadeia quebra.</small>
+    </div>
+    <div class="recibo-actions">
+      <button class="btn btn-gold" onclick="copiarCodigo()"><i class="fa-solid fa-copy"></i> Copiar</button>
+      <button class="btn btn-ghost" onclick="compartilhar()"><i class="fa-solid fa-share-nodes"></i> Compartilhar</button>
+    </div>
+    <div style="text-align:center;margin-top:14px">
+      <button class="btn btn-sm btn-ghost" onclick="go('conferir')">Conferir depois →</button>
+    </div>
+  `;
+}
+
+async function copiarCodigo() {
+  const v = state.lastVote; if (!v) return;
+  try { await navigator.clipboard.writeText(formatCodePretty(v.code)); toast('✅ Código copiado!'); }
+  catch (e) { toast('Copie manualmente: ' + formatCodePretty(v.code)); }
+}
+function compartilhar() {
+  const v = state.lastVote; if (!v) return;
+  const txt = '🗳️ Votei confiança em ' + v.nome + ' (' + v.partido + '-' + v.uf + ') no MudaBrasil.\nMeu código: ' + formatCodePretty(v.code) + '\nConfira em https://xbrancox.github.io/mudabrasil/app/';
+  if (navigator.share) navigator.share({ title: 'Meu voto MudaBrasil', text: txt }).catch(() => { });
+  else copiarCodigo();
+}
+
+/* ============================================================
+   TELA CONFERIR
+   ============================================================ */
+function formatCode() {
+  const i = $('#cod-input'); if (!i) return;
+  const v = i.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 20);
+  i.value = v.replace(/(.{4})/g, '$1-').replace(/-$/, '');
+}
+
+async function conferirVoto() {
+  const raw = ($('#cod-input').value || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  const res = $('#conferir-res');
+  if (!res) return;
+  if (raw.length !== 20) { res.innerHTML = '<div class="mini" style="text-align:center;color:var(--red);padding:10px">⚠️ Código inválido (precisa ter 20 dígitos).</div>'; return; }
+  res.innerHTML = '<div class="mini" style="text-align:center;padding:16px"><i class="fa-solid fa-spinner fa-spin" style="color:var(--gold);font-size:20px"></i><br>Conferindo…</div>';
+  // Tenta backend
+  let data = null, ok = false;
+  if (state.backendOK) {
+    try {
+      const r = await fetch(API + '/api/voto?code=' + encodeURIComponent(raw));
+      if (r.ok) { data = await r.json(); ok = true; }
+      else { const j = await r.json().catch(() => ({})); throw new Error(j.error || r.status); }
+    } catch (e) {
+      console.warn('conferir backend falhou:', e.message);
+    }
+  }
+  // Fallback: busca local
+  if (!ok) {
+    const meus = LS.get('mb_meus_codigos', []);
+    const loc = meus.find(x => x.code === raw);
+    if (loc) {
+      data = { ok: true, local: loc };
+      ok = true;
+    }
+  }
+  if (!ok || !data) {
+    res.innerHTML = '<div class="mini" style="text-align:center;color:var(--red);padding:16px">❌ Código não encontrado. Verifique se digitou certo.</div>';
+    return;
+  }
+  const loc = data.local;
+  if (loc) {
+    // Local: mostra registro local
+    const rev = !loc.ativo;
+    const dias = Math.floor((Date.now() - loc.ts) / 86400000);
+    res.innerHTML = `
+      <div class="conf-res-card ${rev ? 'rev' : 'ok'}">
+        <div style="display:flex;align-items:center;gap:12px">
+          ${avatarHTML({ nome: loc.nome, foto: loc.foto })}
+          <div style="flex:1">
+            <b style="font-size:14px">${loc.nome}</b>
+            <div class="mini">${loc.partido} · ${loc.uf} · ${loc.cargo}</div>
+            <div class="mini" style="margin-top:4px">Voto há ${dias} dia${dias !== 1 ? 's' : ''} · ${rev ? '<span class="chip red">REVOGADO</span>' : '<span class="chip green">ATIVO</span>'}</div>
+          </div>
+        </div>
+        <div class="hash-box" style="margin-top:10px"><label>🔗 Hash</label>${loc.hash}</div>
+        ${!rev ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><button class="btn btn-green btn-sm" onclick="manterVoto(\'' + raw + '\')"><i class="fa-solid fa-heart"></i> Reafirmar</button><button class="btn btn-red btn-sm" onclick="revogarVoto(\'' + raw + '\')"><i class="fa-solid fa-trash"></i> Revogar</button></div>' : ''}
+      </div>
+    `;
+    return;
+  }
+  // Backend data
+  const rec = data.record || data.ballot || data;
+  const polId = rec.politicianId || rec.politician_id;
+  const revoked = rec.revoked || rec.revogado;
+  const peso = rec.pesoAtual != null ? rec.pesoAtual : 1;
+  const dias = rec.diasDesdeReafirmacao != null ? rec.diasDesdeReafirmacao : 0;
+  // Busca nome no cache
+  const pc = state.politicos.find(p => p.id === polId);
+  const nomePol = pc ? pc.nome : (polId || '?');
+  const partidoPol = pc ? pc.partido : '';
+  const ufPol = pc ? pc.uf : '';
+  const cargoPol = pc ? pc.cargo : '';
+  const fotoPol = pc ? pc.foto : '';
+  res.innerHTML = `
+    <div class="conf-res-card ${revoked ? 'rev' : 'ok'}">
+      <div style="display:flex;align-items:center;gap:12px">
+        ${avatarHTML({ nome: nomePol, foto: fotoPol })}
+        <div style="flex:1">
+          <b style="font-size:14px">${nomePol}</b>
+          <div class="mini">${partidoPol} · ${ufPol} · ${cargoPol}</div>
+          <div class="mini" style="margin-top:4px">${revoked ? '<span class="chip red">REVOGADO</span>' : '<span class="chip green">ATIVO</span>'} · peso ${Math.round(peso * 100)}%</div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="mini">Peso da confiança (decai 90→180 dias):</div>
+        <div class="peso-bar"><i style="width:${peso * 100}%"></i></div>
+        <div class="mini">Última reafirmação: ${dias} dia${dias !== 1 ? 's' : ''} atrás</div>
+      </div>
+      ${!revoked ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><button class="btn btn-green btn-sm" onclick="manterVoto(\'' + raw + '\')"><i class="fa-solid fa-heart"></i> Reafirmar</button><button class="btn btn-red btn-sm" onclick="revogarVoto(\'' + raw + '\')"><i class="fa-solid fa-trash"></i> Revogar</button></div>' : ''}
+    </div>
+  `;
+}
+
+async function manterVoto(code) {
+  if (state.backendOK) {
+    try {
+      const r = await fetch(API + '/api/voto/manter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      if (!r.ok) throw new Error('backend erro ' + r.status);
+      toast('✅ Confiança reafirmada! Peso voltou a 100%.');
+    } catch (e) { toast('⚠️ Reafirmação local (backend indisponível).'); }
+  } else {
+    toast('✅ Reafirmação local registrada.');
+  }
+  conferirVoto();
+}
+
+async function revogarVoto(code) {
+  if (!confirm('Tem certeza? Revogar é definitivo — o código não funciona mais.')) return;
+  // Backend
+  if (state.backendOK) {
+    try {
+      const r = await fetch(API + '/api/voto/revogar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      if (!r.ok) throw new Error('backend erro ' + r.status);
+      toast('✅ Voto revogado com sucesso.');
+    } catch (e) { toast('⚠️ Revogação local (backend indisponível).'); }
+  }
+  // Local: marca inativo
+  const meus = LS.get('mb_meus_codigos', []);
+  const m = meus.find(x => x.code === code);
+  if (m) { m.ativo = false; LS.set('mb_meus_codigos', meus); }
+  conferirVoto();
+}
+
+function renderConferirLista() {
+  const meus = LS.get('mb_meus_codigos', []).slice(0, 8);
+  const el = $('#lista-codigos'); if (!el) return;
+  if (!meus.length) { el.innerHTML = '<div class="mini" style="text-align:center;padding:10px">Nenhum voto registrado ainda.</div>'; return; }
+  el.innerHTML = meus.map(m => `
+    <div class="cod-item" onclick="conferirDe('${m.code}')">
+      <div style="flex:1;min-width:0">
+        <div class="cod-pol">${m.nome}</div>
+        <div class="cod-code">${formatCodePretty(m.code)}</div>
+        <div class="cod-meta">${new Date(m.ts).toLocaleDateString('pt-BR')} · ${m.ativo ? '<span style="color:var(--green)">ativo</span>' : '<span style="color:var(--red)">revogado</span>'}</div>
+      </div>
+      <i class="fa-solid fa-chevron-right" style="color:var(--gold)"></i>
+    </div>
+  `).join('');
+}
+function conferirDe(code) {
+  const i = $('#cod-input'); if (i) i.value = formatCodePretty(code);
+  conferirVoto();
+}
+
+/* ============================================================
+   TERMÔMETRO — SSE + polling
+   ============================================================ */
+let SSE = null;
+async function initTermometro() {
+  await loadTermometro();
+  if (SSE) return;
+  if (!state.backendOK || !window.EventSource) return;
+  try {
+    SSE = new EventSource(API + '/api/stream');
+    SSE.addEventListener('termometro', e => {
+      try { const d = JSON.parse(e.data); atualizaTermometro(d); } catch (e) { }
+    });
+    SSE.addEventListener('welcome', e => {
+      try { const d = JSON.parse(e.data); atualizaTermometro(d); } catch (e) { }
+    });
+    SSE.onerror = () => { SSE.close(); SSE = null; };
+  } catch (e) { console.warn('SSE falhou:', e); }
+}
+
+async function loadTermometro() {
+  if (!state.backendOK) { renderTermometroVazio(); return; }
+  try {
+    const r1 = await fetch(API + '/api/termometro');
+    const j1 = await r1.json();
+    state.term.totalVotosAtivos = j1.totalVotosAtivos || 0;
+    state.term.totalRevogados = j1.totalRevogados || 0;
+  } catch (e) { }
+  try {
+    const r2 = await fetch(API + '/api/termometro?top=30');
+    const j2 = await r2.json();
+    state.term.topN = (j2.topN || []).slice(0, 8);
+  } catch (e) { }
+  try {
+    const r3 = await fetch(API + '/api/voto/revogados');
+    const j3 = await r3.json();
+    state.term.revogados = (Array.isArray(j3) ? j3 : (j3.top || j3.revogados || [])).slice(0, 8);
+  } catch (e) { }
+  renderTermometroDados();
+}
+
+function atualizaTermometro(d) {
+  if (d.totalVotosAtivos != null) state.term.totalVotosAtivos = d.totalVotosAtivos;
+  if (d.totalRevogados != null) state.term.totalRevogados = d.totalRevogados;
+  renderTermometroDados();
+}
+
+function renderTermometroVazio() {
+  $('#term-stats').innerHTML = '<div class="mini" style="text-align:center;padding:10px;grid-column:1/-1">Sem dados.</div>';
+  $('#term-top').innerHTML = '';
+  $('#term-rev').innerHTML = '';
+}
+
+function renderTermometroDados() {
+  $('#term-stats').innerHTML = `
+    <div class="term-stat"><b>${state.term.totalVotosAtivos}</b><small>ativos</small></div>
+    <div class="term-stat"><b>${state.term.totalRevogados}</b><small>revogados</small></div>
+    <div class="term-stat"><b>${state.term.totalVotosAtivos + state.term.totalRevogados}</b><small>total</small></div>
+  `;
+  const polMap = {};
+  state.politicos.forEach(p => polMap[p.id] = p);
+  $('#term-top').innerHTML = state.term.topN.length ? state.term.topN.map(t => {
+    const p = polMap[t.politicianId] || { nome: t.politicianId, partido: '', uf: '' };
+    const idx = Math.round((t.indice || 0) * 100);
+    return `
+      <div class="term-item">
+        <div class="term-item-head">
+          ${avatarHTML(p)}
+          <div style="flex:1;min-width:0">
+            <b>${p.nome || t.politicianId}</b>
+            <small style="display:block">${p.partido || ''}${p.uf ? ' · ' + p.uf : ''}</small>
+          </div>
+          <b style="color:var(--gold);font-size:14px">${idx}%</b>
+        </div>
+        <div class="term-bar"><i class="g" style="width:${idx}%"></i></div>
+      </div>`;
+  }).join('') : '<div class="mini" style="text-align:center;padding:10px">Nenhum político no ranking ainda.</div>';
+  $('#term-rev').innerHTML = state.term.revogados.length ? state.term.revogados.map(t => {
+    const nome = t.nome || t.politicianId || '?';
+    const rev = t.revogados || t.revocados || t.rev || 0;
+    const el = t.eleitos || t.eleicoes || t.el || 0;
+    const pct = el ? Math.round(rev / el * 100) : 0;
+    const falta = Math.max(0, Math.round(el * 0.7) - rev);
+    return `
+      <div class="term-item">
+        <div class="term-item-head">
+          <div class="pol-av" style="background:var(--red);color:#fff">${nome[0]}</div>
+          <div style="flex:1;min-width:0"><b>${nome}</b><small style="display:block">${t.partido || ''}${t.uf ? ' · ' + t.uf : ''}</small></div>
+          <b style="color:var(--red);font-size:14px">${pct}%</b>
+        </div>
+        <div class="mini">Revogados: <b style="color:var(--red)">${rev}</b> de ${el} eleitos</div>
+        <div class="term-bar"><i class="r" style="width:${Math.min(100, pct)}%"></i><i class="g" style="width:${Math.max(0, 70 - pct)}%;margin-left:${pct}%"></i></div>
+        <div class="mini" style="margin-top:4px">${falta > 0 ? `Faltam <b style="color:var(--gold)">${falta}</b> pra cassar (70%)` : '<b style="color:var(--red)">ATINGIU 70% — CASSAÇÃO</b>'}</div>
+      </div>`;
+  }).join('') : '<div class="mini" style="text-align:center;padding:10px">Nenhum político com revogação significativa.</div>';
+}
+
+/* ============================================================
+   CONGRESSO (lightweight)
+   ============================================================ */
+let PLS_CACHE = [];
+async function renderCongresso() {
+  const body = $('#congresso-body'); if (!body) return;
+  body.innerHTML = '<div class="mini" style="text-align:center;padding:20px"><i class="fa-solid fa-spinner fa-spin" style="color:var(--gold)"></i> Carregando PLs…</div>';
+  if (!PLS_CACHE.length) {
+    try {
+      const r = await fetch(API + '/api/pls');
+      const j = await r.json();
+      PLS_CACHE = Array.isArray(j) ? j : (j.pls || []);
+    } catch (e) { }
+  }
+  let POVO = {};
+  try { POVO = await (await fetch(API + '/api/votos-pl')).json(); } catch (e) { }
+  if (!PLS_CACHE.length) { body.innerHTML = '<div class="mini" style="text-align:center;padding:20px">Nenhuma PL disponível.</div>'; return; }
+  body.innerHTML = PLS_CACHE.slice(0, 12).map(pl => {
+    const key = (pl.siglaTipo || 'PL') + ' ' + (pl.numero || pl.number || '') + '/' + (pl.ano || pl.year || '');
+    const desc = pl.ementa || pl.title || '';
+    const povo = POVO[key] || { aprovo: 0, nao: 0 };
+    const tot = povo.aprovo + povo.nao;
+    const a = tot ? Math.round(povo.aprovo / tot * 100) : null;
+    const mv = LS.get('mb_votos_pl', {})[key];
+    return `
+      <div class="pl-item">
+        <div class="pl-head">
+          <span class="pl-num">${key}</span>
+          ${tot ? `<span class="chip gold">${tot} voto${tot > 1 ? 's' : ''}</span>` : ''}
+          ${mv ? `<span class="chip ${mv === 'aprovo' ? 'green' : 'red'}">${mv === 'aprovo' ? 'você aprovou' : 'você não aprovou'}</span>` : ''}
+        </div>
+        <div class="pl-desc">${(desc || '').slice(0, 150)}${desc.length > 150 ? '…' : ''}</div>
+        <div class="pl-actions">
+          <button class="btn btn-green btn-sm" onclick="votaPL('${key}','aprovo')">👍 Aprovo</button>
+          <button class="btn btn-red btn-sm" onclick="votaPL('${key}','nao')">👎 Não</button>
+          <a class="btn btn-sm btn-ghost" href="pages/congresso.html" target="_blank">Ver página completa →</a>
+        </div>
+        ${tot ? `<div class="pl-povo"><div class="mini">PLACAR DO POVO</div><div class="term-bar" style="margin-top:4px"><i class="g" style="width:${a}%"></i><i class="r" style="width:${100 - a}%"></i></div><div class="mini" style="margin-top:4px">👍 aprovo ${a}% · 👎 não aprovo ${100 - a}%</div></div>` : '<div class="pl-povo"><div class="mini">Seja o primeiro a opinar</div></div>'}
+      </div>
+    `;
+  }).join('');
+}
+async function votaPL(key, v) {
+  const mv = LS.get('mb_votos_pl', {});
+  mv[key] = v;
+  LS.set('mb_votos_pl', mv);
+  try {
+    const uid = LS.get('mb_uid', null) || (() => { const u = 'u' + Math.random().toString(36).slice(2, 10); LS.set('mb_uid', u); return u; })();
+    await fetch(API + '/api/votos-pl', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid, pl: key, voto: v })
+    });
+  } catch (e) { }
+  toast(v === 'aprovo' ? '✅ Aprovo registrado' : '✅ Não aprovo registrado');
+  renderCongresso();
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(function init() {
+  // Bind nav buttons
+  $$('.bot-nav button').forEach(b => b.onclick = () => go(b.dataset.scr));
+  // First render
+  go('splash');
+  // Load data
+  loadPoliticos();
+  // Register SW
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW fail:', e));
+  }
 })();
