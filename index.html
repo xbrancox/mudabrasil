@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>MudaBrasil · Voto Contínuo e Revogável</title>
+<meta name="description" content="Plataforma cívica de voto contínuo e revogável: confie em deputados e senadores, revogue quando descumprirem, opine nos PLs e acompanhe as Eleições 2026 com dados reais.">
+<link rel="canonical" href="https://xbrancox.github.io/MudaBrZclone280826/">
+<meta property="og:title" content="MudaBrasil · Voto Contínuo e Revogável">
+<meta property="og:description" content="Plataforma cívica de voto contínuo e revogável: confie em deputados e senadores, revogue quando descumprirem, opine nos PLs e acompanhe as Eleições 2026 com dados reais.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xbrancox.github.io/MudaBrZclone280826/">
+<meta property="og:image" content="https://xbrancox.github.io/MudaBrZclone280826/og-image.png">
+<meta property="og:site_name" content="MudaBrasil">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xbrancox.github.io/MudaBrZclone280826/og-image.png">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -102,21 +113,52 @@ textarea{min-height:70px;resize:vertical}
 .ncar::-webkit-scrollbar{height:6px}.ncar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
 .ncar-btn{flex:none;width:42px;border:1px solid var(--line);background:var(--card);color:var(--gold);border-radius:12px;font-size:22px;cursor:pointer;align-self:center}
 .ncar-btn:hover{background:#123059}
-.ncard-new{flex:0 0 320px;max-width:320px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;transition:transform .18s,border-color .18s}
-.ncard-new:hover{transform:translateY(-3px);border-color:var(--gold)}
-.nimg{position:relative;height:140px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#0e3a2e,#0d2242);display:grid;place-items:center}
-.nimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.nimg .nph{color:rgba(46,204,113,.45);font-size:26px}
-.nbadge{display:inline-flex;align-items:center;gap:5px;background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.4);font:800 9.5px Manrope;letter-spacing:.08em;padding:4px 9px;border-radius:999px;text-transform:uppercase;width:max-content}
-.nbadge.uf{background:rgba(255,215,0,.12);color:var(--gold);border-color:rgba(255,215,0,.4)}
-.ncard-new h4{font-size:14.5px;line-height:1.35;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.ncard-new p{color:var(--muted);font-size:12.5px;margin:0;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.nmeta{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:auto;font-size:11px;color:var(--muted);flex-wrap:wrap}
-.nmeta a{color:var(--blueL);font-weight:700;text-decoration:none}
-.nmeta a:hover{text-decoration:underline}
-.nchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.nchips button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:6px 14px;font:700 12px Manrope;cursor:pointer}
-.nchips button.on{background:var(--gold);color:#1a1400;border-color:var(--gold)}
+.ncard-new{flex:0 0 340px;max-width:340px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,border-color .2s,box-shadow .2s}
+.ncard-new:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 12px 30px rgba(0,0,0,.38)}
+.nimg{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#0e3a2e,#0d2242);display:grid;place-items:center;overflow:hidden}
+.nimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.ncard-new:hover .nimg img{transform:scale(1.06)}
+.nimg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,26,58,0) 55%,rgba(6,26,58,.55));pointer-events:none}
+.nimg .nph{color:rgba(46,204,113,.5);font-size:30px;position:relative;z-index:1}
+.nfonte{position:absolute;top:10px;left:10px;z-index:2;background:rgba(6,26,58,.78);backdrop-filter:blur(6px);border:1px solid rgba(255,215,0,.4);color:var(--gold);font:800 10px Manrope;letter-spacing:.06em;padding:5px 10px;border-radius:999px;text-transform:uppercase;max-width:72%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nufb{position:absolute;top:10px;right:10px;z-index:2;background:rgba(6,26,58,.78);backdrop-filter:blur(6px);border:1px solid rgba(90,107,126,.55);color:#eaf1fb;font:800 10px Manrope;padding:5px 10px;border-radius:999px}
+.nbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.ncard-new h4{font-size:15px;line-height:1.35;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ncard-new p{color:var(--muted);font-size:12.5px;margin:0;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nfoot{margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:11.5px;color:var(--muted)}
+.nfoot a{color:var(--gold);font-weight:800;text-decoration:none;white-space:nowrap}
+.nfoot a:hover{text-decoration:underline}
+.nbar{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.npill{border:1px solid var(--gold);background:var(--gold);color:#1a1400;border-radius:999px;padding:9px 20px;font:800 13px Manrope;cursor:pointer;transition:all .15s}
+.npill.off{background:transparent;color:var(--muted);border-color:var(--line)}
+.npill.off:hover{border-color:var(--gold);color:#eaf1fb}
+.nsel{min-width:118px;width:auto;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 34px 9px 16px;color:var(--txt);font:800 13px Manrope;letter-spacing:.06em;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23FFD700' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;transition:border-color .15s}
+.nsel:hover{border-color:var(--gold)}
+.nsel.on{border-color:var(--gold);color:#fff}
+.nct{color:var(--muted);font-size:12px}
+.dk-sec{max-width:1150px;margin:56px auto 0;padding:0 16px}
+.dk-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.dk-toggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.dk-tb{background:transparent;border:none;color:var(--txt);padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.dk-tb.on{background:var(--gold);color:#061a3a;font-weight:800}
+.dk-selects{display:flex;gap:10px;margin:14px 0 4px;flex-wrap:wrap}
+.dk-selects select{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 14px;color:var(--txt);font-size:13px;cursor:pointer;outline:none}
+.dk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:20px}
+.dk-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;position:relative;transition:transform .15s,border-color .15s}
+.dk-card:hover{transform:translateY(-2px);border-color:var(--gold)}
+.dk-card h4{font-family:Montserrat;font-size:.85rem;font-weight:800;margin:0 0 10px;color:#eaf1fb;text-transform:uppercase;letter-spacing:.04em;min-height:34px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.dk-mini{display:flex;flex-direction:column;gap:3px;flex:none}
+.dk-mini button{background:rgba(255,255,255,.06);border:1px solid var(--line);color:#9fb0c8;border-radius:7px;padding:2px 8px;font-size:9px;font-weight:800;cursor:pointer}
+.dk-mini button.on{background:var(--gold);color:#061a3a;border-color:var(--gold)}
+.dk-leg{display:flex;flex-direction:column;gap:5px;margin-top:10px;font-size:.78rem}
+.dk-leg div{display:flex;align-items:center;gap:6px}
+.dk-leg i{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.dk-leg b{margin-left:auto;color:#fff}
+.dk-leg span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
+.dk-empty{height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;padding:0 8px}
+.dk-empty b{font-size:13px;color:#eaf1fb}
+.dk-empty span{font-size:11px;color:var(--muted);line-height:1.4}
+.dk-total{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--green);text-align:center;margin:8px 0 0;text-transform:uppercase}
 @media(max-width:960px){.ncard-new{flex-basis:280px}}
 .news{max-width:420px}
 .ncard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
@@ -137,30 +179,17 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 #toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);color:var(--ink);padding:12px 18px;border-radius:12px;z-index:300;display:none;max-width:90%}
 @media(max-width:960px){#radList{grid-template-columns:1fr}.explore{grid-template-columns:repeat(2,1fr)}.donuts{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}.filtros{grid-template-columns:1fr 1fr}.ft{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}nav{display:none}.ham{display:inline-flex}}
 </style>
+  <script src="js/site-header.js"></script>
 </head>
 <body>
-<header><div class="hd">
-<div class="lg"><div class="ic"><i class="fa-solid fa-layer-group"></i></div><div><b>MudaBrasil</b><small>Participação Cívica</small></div></div>
-<nav id="nav">
-<a data-p="inicio" class="on">Início</a><a data-p="radar">Radar<br>Político</a><a href="pages/congresso.html">PLs no<br>Congresso</a>
-<a href="pages/votacoes.html">Votações</a><a href="pages/eleicoes-2026.html">Eleições<br>2026</a>
-<a data-p="conferir">Conferir<br>Voto</a><a data-p="revogar">Revogar<br>Voto</a><a data-p="revogados">Políticos com<br>votos revogados</a><a data-p="ajuda">Ajuda</a><a data-p="quem">Quem<br>Somos</a>
-</nav>
-<button class="btn sm ham" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-<div class="hact"><span class="badge ok" id="apiStatus" style="display:none">backend ativo</span><button class="btn sm" onclick="abrirLogin()">Entrar</button><button class="btn gold sm" onclick="abrirLogin()">Cadastrar</button></div>
-</div></header>
-<div class="mnav" id="mnav">
-<a onclick="go('inicio');toggleMenu()">Início</a><a onclick="go('radar');toggleMenu()">Radar Político</a><a href="pages/congresso.html" onclick="toggleMenu()">PLs no Congresso</a>
-<a href="pages/votacoes.html" onclick="toggleMenu()">Votações nominais</a><a href="pages/eleicoes-2026.html" onclick="toggleMenu()">Eleições 2026</a>
-<a onclick="go('conferir');toggleMenu()">Conferir Voto</a><a onclick="go('revogar');toggleMenu()">Revogar Voto</a><a onclick="go('revogados');toggleMenu()">Políticos com votos revogados</a><a onclick="go('ajuda');toggleMenu()">Ajuda</a><a onclick="go('quem');toggleMenu()">Quem Somos</a>
-</div>
+
 <main>
 <section class="sec on" id="sec-inicio"><div class="hero">
 <h1>O poder emana do povo</h1>
 <div class="l2"><span class="g">não acaba</span> no <span class="y">dia da eleição.</span></div>
 <div class="l3">Seu voto <span class="g">coloca</span>. Seu voto <span class="r">tira</span>.</div>
 <p>Acompanhe a opinião do Brasil, cobre promessas no Radar Político, <b style="color:var(--ink)">participe dos Projetos de Leis no Congresso</b>, confira seu voto com segurança. Analise o currículo dos candidatos. Tenha a oportunidade de tirar o mal político revogando seu voto.</p>
-<div class="cta"><a class="btn gold" href="app/"><i class="fa-solid fa-check-to-slot"></i> Votar <small>Somente no App</small></a><button class="btn" onclick="go('conferir')">Conferir Voto</button><button class="btn" onclick="go('revogar')">Revogar Voto</button></div>
+<div class="cta"><button class="btn gold" onclick="toast('Votação somente no app.')"><i class="fa-solid fa-check-to-slot"></i> Votar <small>Somente no App</small></button><button class="btn" onclick="go('conferir')">Conferir Voto</button><button class="btn" onclick="go('revogar')">Revogar Voto</button></div>
 <div class="cta" style="margin-top:12px"><span class="badge" id="bVotos">6 votos simulados</span><span class="badge blue" id="bReais">carregando…</span><span class="badge" id="bPls">6 PLs em análise</span></div>
 </div>
 <div class="wrap">
@@ -178,11 +207,40 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div class="exp"><div class="ic" style="background:rgba(231,76,60,.15);color:var(--red)"><i class="fa-regular fa-trash-can"></i></div><h3>Revogar Voto</h3><p>Não cumpriu? Revogue a confiança do seu voto após a posse.</p><a onclick="go('revogados')" style="color:var(--red)">Revogar →</a></div>
 <div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-scale-balanced"></i></div><h3>Comparar</h3><p>Fixe políticos e veja dois (ou mais) lado a lado.</p><a onclick="go('radar')">Comparar →</a></div>
 </div>
-<!-- seção ACOMPANHAMENTO removida em 04/09 (dados sintéticos) -->
-<div style="margin-top:50px"><!-- antigo 02 ACOMPANHAMENTO --></div><!-- seção 02 ACOMPANHAMENTO removida (04/09) -->
+<!-- ===== 02 · ACOMPANHAMENTO — DONUTS POR CARGO (recriada 06/09; distribuição demo rotulada) ===== -->
+<div class="dk-sec" id="acompanhamento">
+  <div class="dk-head">
+    <div>
+      <span class="kick">02 — ACOMPANHAMENTO</span>
+      <h2 style="margin:6px 0 4px">Acompanhe quem está <span style="color:var(--blueL)">na frente</span></h2>
+      <p class="muted">Preferência do eleitorado por cargo (recorte UF / Cidade).</p>
+    </div>
+    <div class="dk-toggle" role="group" aria-label="Recorte UF ou Cidade">
+      <button class="dk-tb on" id="dk-uf-btn" onclick="dkSetModo('uf')">UF</button>
+      <button class="dk-tb" id="dk-cid-btn" onclick="dkSetModo('cidade')">Cidade</button>
+    </div>
+  </div>
+  <div class="dk-selects">
+    <select id="dk-uf" onchange="dkRender()" aria-label="Estado">
+      <option value="BR">Todo o Brasil</option>
+      <option>SP</option><option>RJ</option><option>MG</option><option>BA</option>
+      <option>RS</option><option>PR</option><option>PE</option><option>CE</option>
+      <option>PA</option><option>SC</option><option>GO</option><option>MA</option>
+    </select>
+    <select id="dk-cidade" onchange="dkRender()" aria-label="Cidade" hidden></select>
+  </div>
+  <div class="dk-grid" id="dk-grid"></div>
+  <p class="muted" style="font-size:11px;text-align:center;margin-top:14px">🔴 <b>Senador</b> e <b>Deputado Federal</b>: distribuição real dos votos da plataforma, atualizada ao vivo (a cada novo voto o donut gira). Demais cargos entram nas próximas fases — prefeito e vereador nas eleições municipais.</p>
+</div>
   <div style="margin-top:40px"><h2 style="margin-top:0">Notícias do Congresso e da política</h2>
-  <p class="muted">Direto das fontes oficiais e da grande imprensa — <b>com os devidos créditos</b>. Filtre por recorte: Geral, Brasil ou UF citada na matéria.</p>
-  <div class="nchips" id="nchips"></div>
+  <p class="muted">Só política, direto das fontes oficiais e da grande imprensa — <b>com os devidos créditos</b>. Filtre por Geral (nacional), Brasil ou qualquer um dos 27 estados — com notícias locais buscadas a cada 10 min.</p>
+  <div class="nbar">
+    <button class="npill on" id="nf-geral" onclick="nufSet('GERAL')">Notícias Nacionais</button>
+    <select id="nf-uf" class="nsel" onchange="nufSet(this.value||'GERAL')" aria-label="Selecione seu estado">
+      <option value="">Estado</option>
+    </select>
+    <span class="nct" id="nf-count"></span>
+  </div>
   <div class="ncar-wrap">
     <button class="ncar-btn" onclick="ncarScroll(-1)" aria-label="Anteriores">‹</button>
     <div class="ncar" id="homeNews"></div>
@@ -311,10 +369,23 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 /* API_BASE vem do config.js (carregado no <head>) — não redeclarar aqui, isso quebrava o script todo */
 function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2600)}
 (function(){const qv=new URLSearchParams(location.search);if(qv.has('verificado')){if(qv.get('verificado')==='1')toast('✅ E-mail confirmado! Selo de verificado ativado.');else toast('Falha na confirmação: '+(qv.get('erro')||'token inválido'));history.replaceState({},'',location.pathname)}})();
+/* FIX: âncoras vindas de outras páginas/app (#conferir-voto etc.) — antes caíam no topo da home sem abrir a seção */
+(function(){const h=location.hash.replace('#','');if(!h)return;
+const M={'conferir-voto':'conferir','revogar-voto':'revogar','revogados':'revogados','ajuda':'ajuda','quem-somos':'quem','radar':'radar'};
+if(h==='congresso'){location.replace('pages/congresso.html');return}
+if(M[h]){go(M[h]);history.replaceState({},'',location.pathname)}})();
 function fechar(id){document.getElementById(id).classList.remove('open')}
 function toggleMenu(){document.getElementById('mnav').classList.toggle('open')}
 function go(p){$$('.sec').forEach(s=>s.classList.remove('on'));$('#sec-'+p).classList.add('on');$$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===p));window.scrollTo(0,0);if(p=='radar')renderRad()}
 $$('#nav a').forEach(a=>a.onclick=()=>go(a.dataset.p));
+/* Deep-link: #conferir-voto, #radar, #revogados etc. abrem a seção direto
+   (usado pelos menus das páginas internas: congresso, votações…) */
+(function(){
+  const mapa={'conferir-voto':'conferir','revogar-voto':'revogar','revogados':'revogados','ajuda':'ajuda','quem-somos':'quem','radar':'radar','congresso':'inicio','voto':'revogar'};
+  const h=(location.hash||'').replace('#','');
+  if(mapa[h]!==undefined){setTimeout(()=>go(mapa[h]),50)}
+  window.addEventListener('hashchange',()=>{const hh=(location.hash||'').replace('#','').split('?')[0];if(mapa[hh]!==undefined)go(mapa[hh])});
+})();
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 const CORES=['#2ECC71','#FFD700','#4a90f0','#E74C3C','#A855F7'],NOMES=['Maria','Carlos','Ana','João','Outros'];
 let POL=[],ready=false,PINS=[],SESS=LS.get('mb_sess',null),DET={},FTAB={},REMOTE_REC={},REMOTE_APO={},BACKEND_OK=false,VOT_CACHE={ts:0,list:[]},VOTOS_BY_ID={};
@@ -364,6 +435,9 @@ function initSSE(){
       try {
         const data = JSON.parse(e.data);
         atualizaContadoresSSE(data);
+        /* donuts do 02 ACOMPANHAMENTO: refresh ao vivo (debounce 2s) */
+        clearTimeout(window._dkLiveT);
+        window._dkLiveT = setTimeout(function(){ if (window.dkRefresh) window.dkRefresh(); }, 2000);
       } catch(_){}
     });
     /* 🔴 AO VIVO — nova reclamação de outra janela */
@@ -703,6 +777,14 @@ $('#plsList').innerHTML=l.map(p=>`<div class="card"><b style="color:var(--gold)"
 const DEMO_BAL={'Presidente':'Maria Santos (PT 13)','Governador':'Roberto Lima (MDB 15)','Senador':'BRANCO'};
 function usarDemo(){renderCedula('35001500100212345789',DEMO_BAL)}
 function conferir(){const raw=($('#chk').value||'').replace(/\D/g,'');if(raw.length!==20){toast('Código inválido (20 dígitos).');return}
+/* FIX: o app salva o código em mb_eleicao_codigo (com traços) e os votos em mb_eleicao_votos —
+   o site antes só lia mb_codigo, então nunca localizava o voto feito no app */
+const codeApp=String(LS.get('mb_eleicao_codigo','')||'').replace(/\D/g,'');
+if(codeApp&&codeApp===raw){
+  const votos=LS.get('mb_eleicao_votos',{})||{};const bal={};
+  Object.keys(votos).forEach(c=>{const v=votos[c]||{};
+    bal[c]=v.tipo==='branco'?'BRANCO':v.tipo==='nulo'?('NULO ('+(v.numero||'')+')'):((v.nome||'—')+(v.partido?' ('+v.partido+' '+v.numero+')':''));});
+  renderCedula(raw,bal);return}
 const st=LS.get('mb_codigo',null);const bal=(st&&st.code===raw)?st.ballot:DEMO_BAL;renderCedula(raw,bal)}
 function renderCedula(code,bal){$('#chkRes').innerHTML=`<div class="card" style="margin-top:14px"><b style="color:var(--green)"><i class="fa-solid fa-circle-check"></i> Voto localizado</b>
 <div style="margin-top:10px">${Object.keys(bal).map(c=>`<div class="rank"><div><b style="font-size:13px">${c}</b><div class="muted">${bal[c]}</div></div><span class="badge ok">ativo</span></div>`).join('')}</div></div>`}
@@ -715,24 +797,59 @@ $('#revList').innerHTML=l.map((p,i)=>{const pct=Math.round(p.rev/p.el*100);const
 const FAQ=[['O que é simulação?','A votação/revogação não tem valor jurídico hoje. Notícias, políticos e PLs são reais.'],['Como revogo?','No site, com código + login, só após a posse.'],['Quem pode responder reclamações?','Só o político/candidato com identidade verificada (selo).'],['Posso anexar provas?','Sim — o formulário aceita anexos.'],['O que é a regra dos 70%?','Proposta: 70% dos votos que elegeram = cassação.']];
 $('#faqList').innerHTML=FAQ.map(f=>`<div class="card"><b>${f[0]}</b><p class="muted" style="margin:6px 0 0">${f[1]}</p></div>`).join('');
 let NUF_FILTRO='GERAL';
-async function news(){try{const j=await fetch(API_BASE+'/api/noticias').then(r=>r.json());
- const it=(j.noticias||[]);
- window._NEWS=it;
- renderChipsUF();renderNews();
- $('#nstatus').textContent=it.length?('Atualizado em '+new Date(j.geradoEm).toLocaleTimeString('pt-BR')+' · fontes: '+((j.fontes&&j.fontes.length)?j.fontes.join(', '):'Agência Brasil, G1 Política, Agência Senado')):'Sem notícias disponíveis agora.';
-}catch(e){$('#nstatus').textContent='Não foi possível carregar as notícias agora (backend).';}}
-function renderChipsUF(){const ns=window._NEWS||[];const ufs=[...new Set(ns.map(n=>n.uf).filter(Boolean))];
- const chips=[['GERAL','Geral'],['BR','Brasil'],...ufs.filter(u=>u!=='BR').map(u=>[u,u])];
- $('#nchips').innerHTML=chips.map(c=>`<button class="${NUF_FILTRO===c[0]?'on':''}" onclick="NUF_FILTRO='${c[0]}';renderNews();renderChipsUF()">${c[1]}</button>`).join('');}
-function renderNews(){const ns=window._NEWS||[];const lista=ns.filter(n=>NUF_FILTRO==='GERAL'||NUF_FILTRO==='BR'?true:(n.uf===NUF_FILTRO)).filter(n=>NUF_FILTRO!=='BR'||n.uf==='BR');
+let _newsRetry=0;
+async function news(){
+ /* 1) Snapshot embutido: renderiza na hora — o espaço nunca fica em branco */
+ try{
+  const rs=await fetch('../data/noticias.json');
+  if(rs.ok){
+   const d=await rs.json();
+   if(d.noticias&&d.noticias.length&&!window._NEWS.length){
+    window._NEWS=d.noticias;
+    nufContador();renderNews();
+    $('#nstatus').textContent='Última atualização: '+new Date(d.geradoEm).toLocaleString('pt-BR')+' — buscando ao vivo…';
+   }
+  }
+ }catch(e){}
+ /* 2) Ao vivo (backend) com até 3 tentativas; sucesso substitui o snapshot */
+ for(let tent=1;tent<=3;tent++){
+  try{
+   const j=await fetch(API_BASE+'/api/noticias').then(r=>r.json());
+   const it=(j.noticias||[]);
+   if(it.length){
+    window._NEWS=it;
+    nufContador();renderNews();
+    $('#nstatus').textContent='Atualizado em '+new Date(j.geradoEm).toLocaleTimeString('pt-BR')+' · fontes: '+((j.fontes&&j.fontes.length)?j.fontes.join(', '):'')+' · ao vivo';
+   }
+   _newsRetry=0;return;
+  }catch(e){
+   if(window._NEWS.length){$('#nstatus').textContent='Exibindo o último snapshot — atualização ao vivo indisponível neste momento.';return}
+   $('#nstatus').textContent='Backend acordando (plano gratuito) — tentativa '+tent+' de 3…';
+   await new Promise(r=>setTimeout(r,5000));
+  }
+ }
+ if(!window._NEWS.length){$('#nstatus').innerHTML='Não foi possível carregar as notícias. <button class=\"btn sm gold\" onclick=\"news()\">🔄 Tentar de novo</button>';}
+}
+const UFS_NOME={AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins'};
+function nufContador(){const ns=window._NEWS||[];const ct={};ns.forEach(n=>{if(n.uf&&n.uf!=='BR')ct[n.uf]=(ct[n.uf]||0)+1});
+ const sel=document.getElementById('nf-uf');const atual=sel.value;
+ if(sel.options.length<2){Object.keys(UFS_NOME).forEach(uf=>{const o=document.createElement('option');o.value=uf;o.textContent=uf;sel.appendChild(o)})}
+ [...sel.options].forEach(o=>{if(o.value)o.textContent=o.value;});
+ sel.value=atual;
+ const n=NUF_FILTRO==='GERAL'?ns.length:(ns.filter(x=>x.uf===NUF_FILTRO).length);
+ const c=document.getElementById('nf-count');if(c)c.textContent=(NUF_FILTRO==='GERAL'?'Exibindo tudo':n+' matéria'+(n===1?'':'s'));}
+function renderNews(){const ns=window._NEWS||[];const lista=(NUF_FILTRO==='GERAL'?ns:ns.filter(n=>n.uf===NUF_FILTRO));
  const dtRel=iso=>{if(!iso)return'';const d=(Date.now()-new Date(iso))/1000;if(d<3600)return Math.max(1,Math.floor(d/60))+' min atrás';if(d<86400)return Math.floor(d/3600)+' h atrás';return Math.floor(d/86400)+' d atrás'};
  $('#homeNews').innerHTML=lista.length?lista.map(n=>`<article class="ncard-new">
-  <div class="nimg">${(n.img||n.thumb)?`<img src="${n.img||n.thumb}" alt="" loading="lazy" onerror="this.remove()">`:''}<i class="fa-solid fa-landmark nph"></i></div>
-  <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="nbadge">✓ ${n.fonte}</span>${n.uf&&n.uf!=='BR'?`<span class="nbadge uf">📍 ${n.uf}</span>`:''}${n.uf==='BR'?`<span class="nbadge uf">🇧🇷 Brasil</span>`:''}</div>
-  <h4>${n.t}</h4>${n.res?`<p>${n.res}</p>`:''}
-  <div class="nmeta"><span>${n.dt?dtRel(n.dt):''}</span><a href="${n.l}" target="_blank" rel="noopener">Ler na fonte →</a></div>
- </article>`).join(''):`<p class="muted" style="padding:20px 4px">Nenhuma notícia neste recorte agora — tente "Geral".</p>`;
+  <div class="nimg">${(n.img||n.thumb)?`<img src="${n.img||n.thumb}" alt="" loading="lazy" onerror="this.remove()">`:'<i class="fa-solid fa-landmark nph"></i>'}<span class="nfonte">✓ ${n.fonte}</span>${n.uf?`<span class="nufb">${n.uf==='BR'?'🇧🇷 Brasil':'📌 '+n.uf}</span>`:''}</div>
+  <div class="nbody"><h4>${n.t}</h4>${n.res?`<p>${n.res}</p>`:''}
+  <div class="nfoot"><span>${n.dt?dtRel(n.dt):''}</span><a href="${n.l}" target="_blank" rel="noopener">Ler na fonte →</a></div></div>
+ </article>`).join(''):`<p class="muted" style="padding:20px 4px">Nenhuma notícia ${NUF_FILTRO==='GERAL'?'':NUF_FILTRO==='BR'?'nacional':'de '+NUF_FILTRO} neste momento — as feeds locais atualizam a cada 10 min.</p>`;
 }
+function nufSet(v){NUF_FILTRO=v;const sel=document.getElementById('nf-uf'),g=document.getElementById('nf-geral');
+ if(v==='GERAL'){g.classList.remove('off');sel.classList.remove('on');sel.value=''}
+ else{g.classList.add('off');sel.classList.add('on');sel.value=v}
+ renderNews();nufContador();}
 function ncarScroll(dir){const c=document.getElementById('homeNews');if(c)c.scrollBy({left:dir*360,behavior:'smooth'})}
 async function newsOLD(){try{const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml'));const j=await r.json();const it=(j.items||[]).slice(0,2);
 $('#homeNews').innerHTML=it.map(n=>`<div class="ncard"><div class="th"><span class="cat">${(n.category||'Política').toString().slice(0,14)}</span><i class="fa-solid fa-layer-group"></i></div><div class="bd"><h4>${n.title}</h4><p>${(n.description||'').replace(/<[^>]+>/g,'').slice(0,140)}</p><div style="display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted)"><span class="seal">Fonte verificada</span><span>Agência Brasil</span><a href="${n.link}" target="_blank">Ler →</a></div></div></div>`).join('')}catch(e){$('#homeNews').innerHTML='<div class="ncard"><div class="th"><span class="cat">Política</span><i class="fa-solid fa-layer-group"></i></div><div class="bd"><h4>Brasil promete restaurar 163 mil km² de terras degradadas até 2030</h4><p>O Brasil apresentou as primeiras metas de Neutralidade da Degradação da Terra em evento internacional.</p><div style="display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted)"><span class="seal">Fonte verificada</span><span>Agência Brasil</span><a>Ler →</a></div></div></div>'}}
@@ -746,5 +863,105 @@ setTimeout(initSSE, 2000);
 <button class="btn sm" onclick="document.getElementById('bannerProto').style.display='none';localStorage.setItem('mb_aviso','1')">×</button>
 </div>
 <script>if(!localStorage.getItem('mb_aviso'))document.getElementById('bannerProto').style.display='flex'</script>
+
+<script>
+/* ===== 02 ACOMPANHAMENTO — donuts por cargo (dados REAIS da plataforma) ===== */
+(function(){
+  var DK_CARGOS=[
+    {id:'presidente',nome:'Presidente'},
+    {id:'governador',nome:'Governador'},
+    {id:'senador',nome:'Senador',votavel:true},
+    {id:'dep-federal',nome:'Deputado Federal',votavel:true},
+    {id:'dep-estadual',nome:'Deputado Estadual / Distrital'},
+    {id:'prefeito',nome:'Prefeito'},
+    {id:'vereador',nome:'Vereador'}
+  ];
+  var DK_CORES=['#2ECC71','#FFD700','#4a90d9','#ff7a6e'];
+  var COR_OUTROS='#a78bfa';
+  var DK_CIDADES={SP:['São Paulo','Campinas','Santos'],RJ:['Rio de Janeiro','Niterói'],MG:['Belo Horizonte','Uberlândia'],BA:['Salvador','Feira de Santana'],RS:['Porto Alegre','Caxias do Sul'],PR:['Curitiba','Londrina'],PE:['Recife','Olinda'],CE:['Fortaleza'],PA:['Belém'],SC:['Florianópolis','Joinville'],GO:['Goiânia'],MA:['São Luís']};
+  var DK_CACHE={};
+  var DK_TTL=60000;
+  var DK_SEQ=0;
+  var dkModo='uf';
+  function dkRecorte(){var uf=document.getElementById('dk-uf').value;return dkModo==='uf'?uf:(document.getElementById('dk-cidade').value||'Capital')}
+  function dkDonutSVG(parts){
+    var r=55,cx=70,cy=70,circ=2*Math.PI*r,off=0;
+    var segs=parts.map(function(c){
+      var len=Math.max(0,c.pct)/100*circ;
+      var s='<circle r="'+r+'" cx="'+cx+'" cy="'+cy+'" fill="none" stroke="'+c.cor+'" stroke-width="22" stroke-dasharray="'+len+' '+(circ-len)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 '+cx+' '+cy+')"/>';
+      off+=len;return s}).join('');
+    return '<svg class="dk-svg" viewBox="0 0 140 140" width="150" height="150"><circle r="'+r+'" cx="'+cx+'" cy="'+cy+'" fill="none" stroke="#1f2c45" stroke-width="22"/>'+segs+'</svg>';
+  }
+  function dkMini(){return '<span class="dk-mini"><button class="'+(dkModo==='uf'?'on':'')+'" onclick="dkSetModo(&quot;uf&quot;)" title="Recorte por estado">UF</button><button class="'+(dkModo==='cidade'?'on':'')+'" onclick="dkSetModo(&quot;cidade&quot;)" title="Recorte por cidade">Cidade</button></span>'}
+  function dkCardVazio(nome,titulo,sub){
+    return '<div class="dk-card"><h4>'+nome+dkMini()+'</h4><div class="dk-empty"><b>'+titulo+'</b>'+(sub?'<span>'+sub+'</span>':'')+'</div></div>';
+  }
+  function dkCardReal(nome,d){
+    var parts=d.candidatos.map(function(c,i){return{pct:c.pct,cor:DK_CORES[i]||COR_OUTROS}});
+    if(d.outrosPct>0)parts.push({pct:d.outrosPct,cor:COR_OUTROS});
+    var leg=d.candidatos.map(function(c,i){
+      return '<div><i style="background:'+(DK_CORES[i]||COR_OUTROS)+'"></i><span title="'+c.name+' ('+c.party+'-'+c.state+')">'+c.name+'</span><b>'+c.pct+'%</b></div>';
+    }).join('');
+    if(d.outrosPct>0)leg+='<div><i style="background:'+COR_OUTROS+'"></i><span>Outros</span><b>'+d.outrosPct+'%</b></div>';
+    return '<div class="dk-card"><h4>'+nome+dkMini()+'</h4>'+dkDonutSVG(parts)+
+      '<div class="dk-total">🔴 Real · '+d.totalVotos+' voto'+(d.totalVotos===1?'':'s')+' ativo'+(d.totalVotos===1?'':'s')+'</div>'+
+      '<div class="dk-leg">'+leg+'</div></div>';
+  }
+  function dkCardCarregando(nome){return '<div class="dk-card"><h4>'+nome+dkMini()+'</h4><div class="dk-empty"><b>⏳ Carregando…</b></div></div>'}
+  async function dkRender(){
+    var grid=document.getElementById('dk-grid');if(!grid)return;
+    var rec=dkRecorte();
+    var seq=++DK_SEQ;
+    /* Recorte por cidade: os votos hoje carregam UF — estado honesto, sem dados falsos */
+    if(dkModo==='cidade'){
+      grid.innerHTML=DK_CARGOS.map(function(c){
+        return dkCardVazio(c.nome,'Recorte por cidade: em breve','Os votos por cidade chegam junto com as eleições municipais.');
+      }).join('');
+      return;
+    }
+    var data=DK_CACHE[rec];
+    if(!data||Date.now()-data.ts>DK_TTL){
+      grid.innerHTML=DK_CARGOS.map(dkCardCarregando).join('');
+      try{
+        var r=await fetch(API_BASE+'/api/acompanhamento?uf='+encodeURIComponent(rec));
+        if(!r.ok)throw new Error('HTTP '+r.status);
+        data={ts:Date.now(),j:await r.json()};
+        DK_CACHE[rec]=data;
+      }catch(e){
+        if(seq!==DK_SEQ)return;
+        grid.innerHTML=DK_CARGOS.map(function(c){
+          if(c.votavel)return dkCardVazio(c.nome,'Backend acordando…','<button class="btn sm gold" onclick="dkRefresh()">🔄 Tentar de novo</button>');
+          return dkCardVazio(c.nome,'Votação abre em breve','Este cargo entra na plataforma nas próximas fases.');
+        }).join('');
+        return;
+      }
+    }
+    if(seq!==DK_SEQ)return;
+    var cg=(data.j&&data.j.cargos)||{};
+    grid.innerHTML=DK_CARGOS.map(function(c){
+      if(!c.votavel)return dkCardVazio(c.nome,'Votação abre em breve','Este cargo entra na plataforma nas próximas fases.');
+      var d=cg[c.id];
+      if(!d||!d.totalVotos)return dkCardVazio(c.nome,'Ainda sem votos neste recorte','O primeiro voto pode ser o seu — escolha um parlamentar no radar e confie (ou não).');
+      return dkCardReal(c.nome,d);
+    }).join('');
+  }
+  window.dkRefresh=function(){DK_CACHE={};dkRender()};
+  window.dkSetModo=function(m){
+    dkModo=m;
+    document.getElementById('dk-uf-btn').classList.toggle('on',m==='uf');
+    document.getElementById('dk-cid-btn').classList.toggle('on',m==='cidade');
+    var selUf=document.getElementById('dk-uf'),selC=document.getElementById('dk-cidade');
+    selC.hidden=(m!=='cidade');
+    selUf.hidden=(m==='cidade');
+    if(m==='cidade'){
+      var cidades=DK_CIDADES[selUf.value]||['Capital'];
+      selC.innerHTML=cidades.map(function(c){return '<option>'+c+'</option>'}).join('');
+    }
+    dkRender();
+  };
+  window.dkRender=dkRender;
+  dkRender();
+})();
+</script>
 </body>
 </html>

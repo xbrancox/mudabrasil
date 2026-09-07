@@ -2,9 +2,21 @@
    MUDABRASIL — ENRIQUECIMENTO DE PRESENÇA (snapshot)
    ------------------------------------------------------------
    Complementa data/politicos.json com a atuação em plenário
-   em 2026 das APIs oficiais:
-   - Câmara (513): sessões deliberativas do deputado ÷ total → attendanceRate
-   - Senado (81):  votações com voto registrado em 2026 → votesPlenary2026
+   em 2026, das APIs abertas oficiais:
+
+   - Câmara (513 deputados):
+       sessões deliberativas com participação do deputado
+       (/deputados/{id}/eventos?dataInicio=2026-01-01) ÷ total de
+       sessões deliberativas realizadas no período (/eventos,
+       descricaoTipo="Sessão Deliberativa") → attendanceRate (%).
+       Guarda também o bruto em sessoesDeliberativas2026.
+
+   - Senado (81 senadores):
+       votações do plenário com voto registrado em 2026
+       (/senador/{codigo}/votacoes, SessaoPlenaria.DataSessao)
+       → votesPlenary2026. O Senado não publica % de presença
+       nesta API; o número bruto é honesto e verificável.
+
    Uso:  node scripts/enriquecer-presenca.js [--skip-done]
    ============================================================ */
 
@@ -13,8 +25,9 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const SNAP = path.join(ROOT, 'data', 'politicos.json');
-const UA = 'MudaBrasil/1.0 (plataforma civica de transparencia)';
+const UA = 'MudaBrasil/1.0 (plataforma civica de transparencia; dados abertos)';
 const INICIO = '2026-01-01';
+// Fim do período = hoje: re-rodadas semanais pegam as sessões novas
 const FIM = new Date().toISOString().slice(0, 10);
 const DELAY_MS = 150;
 const SALVAR_A_CADA = 25;
@@ -27,8 +40,11 @@ async function getJson(url) {
   return res.json();
 }
 
+/* A API pode devolver páginas menores que o tamanho sem que seja a
+   última — confiar em `len < 100` subestima o total. Seguimos o
+   link rel="last" e paginamos até a última página (ou lista vazia). */
 async function paginar(urlBase, extrair) {
-  let alvo = 1;
+  let alvo = 1; // atualizado pelo link rel="last" quando presente
   let acumulado = [];
   for (let pag = 1; pag <= alvo && pag <= 100; pag++) {
     const sep = urlBase.includes('?') ? '&' : '?';
@@ -62,7 +78,8 @@ async function sessoesDeliberativasDeputado(id) {
 }
 
 async function votacoes2026Senador(codigo) {
-  const d = await getJson('https://legis.senado.leg.br/dadosabertos/senador/' + encodeURIComponent(codigo) + '/votacoes?formato=json');
+  const d = await getJson('https://legis.senado.leg.br/dadosabertos/senador/' + encodeURIComponent(codigo) +
+    '/votacoes?formato=json');
   const parl = d && d.VotacaoParlamentar && d.VotacaoParlamentar.Parlamentar;
   const vots = parl && parl.Votacoes && parl.Votacoes.Votacao;
   if (!vots) return 0;
@@ -77,9 +94,12 @@ async function main() {
   const skipDone = process.argv.includes('--skip-done');
   const snap = JSON.parse(fs.readFileSync(SNAP, 'utf8'));
   const lista = snap.candidatos;
+  console.log('Contando sessões deliberativas da Câmara em ' + INICIO + '..' + FIM + '…');
   const TOTAL_SESSOES = await totalSessoesDeliberativas();
+  console.log('Total de sessões deliberativas: ' + TOTAL_SESSOES);
 
   let feitos = 0, falhas = 0, pulados = 0;
+  const inicio = Date.now();
 
   for (let i = 0; i < lista.length; i++) {
     const c = lista[i];
@@ -90,15 +110,27 @@ async function main() {
     try {
       if (deputado) {
         const n = await sessoesDeliberativasDeputado(c.id.slice(7));
+        if (TOTAL_SESSOES > 0 && n > TOTAL_SESSOES) {
+          console.error('SANIDADE: ' + c.name + ' tem ' + n + ' sessões, mas o total global é ' + TOTAL_SESSOES + '. Abortando sem gravar.');
+          process.exit(1);
+        }
         c.sessoesDeliberativas2026 = n;
         c.attendanceRate = TOTAL_SESSOES > 0 ? Math.round(100 * n / TOTAL_SESSOES) : null;
+        c.attendanceContext = { ano: 2026, participadas: n, totalSessoes: TOTAL_SESSOES, fonte: 'API de Dados Abertos da Câmara (Sessões Deliberativas)' };
       } else {
-        c.votesPlenary2026 = await votacoes2026Senador(c.id.replace('senado-', ''));
+        const sid = c.id.replace('senado-', '');
+        c.votesPlenary2026 = await votacoes2026Senador(sid);
+        c.votesContext = { ano: 2026, fonte: 'API de Dados Abertos do Senado (votações do senador)' };
       }
       feitos++;
     } catch (e) {
       falhas++;
       console.warn('[' + (i + 1) + '] ' + c.name + ': ' + e.message);
+    }
+
+    if (feitos % 12 === 0) {
+      const s = Math.round((Date.now() - inicio) / 1000);
+      console.log('progresso: ' + (i + 1) + '/' + lista.length + ' (' + feitos + ' ok, ' + falhas + ' falhas, ' + s + 's)');
     }
     if (feitos % SALVAR_A_CADA === 0) fs.writeFileSync(SNAP, JSON.stringify(snap));
     await sleep(DELAY_MS);
@@ -106,7 +138,11 @@ async function main() {
 
   snap.presenceEnrichedAt = new Date().toISOString();
   fs.writeFileSync(SNAP, JSON.stringify(snap));
-  console.log('FIM: ' + feitos + ' ok, ' + pulados + ' já tinham, ' + falhas + ' falhas');
+
+  const dep = lista.filter(c => c.attendanceRate != null).length;
+  const sen = lista.filter(c => c.votesPlenary2026 != null).length;
+  console.log('=== FIM === ' + feitos + ' agora, ' + pulados + ' já tinham, ' + falhas +
+    ' falhas. Deputados com presença: ' + dep + ' · Senadores com votações: ' + sen);
 }
 
-main().catch(e => { console.error('FALHA:', e); process.exit(1); });
+main().catch(e => { console.error('FALHA GERAL:', e); process.exit(1); });

@@ -1,4 +1,4 @@
-const CACHE = 'mb-app-v2';
+const CACHE = 'mb-app-v4'; // bump: invalida cache antigo para celulares receberem o app atualizado
 const SHELL = [
   './',
   './index.html',

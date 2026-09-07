@@ -2,12 +2,21 @@ name: Manutenção automática
 
 # Quatro tarefas independentes:
 #   noticias       — diária 09:15 BRT (12:15 UTC): regenera data/noticias.json
-#   tse-candidatos — diária 10:05 BRT (13:05 UTC): baixa CSVs do TSE (espelho)
-#   enriquecimento — segundas 10:30 BRT (13:30 UTC): proposições + presença
+#                    (snapshot anti-vazio do carrossel de notícias)
+#   backup         — diária 09:45 BRT (12:45 UTC): dump JSON de todas as tabelas
+#                    do SQLite do Railway → artifact privado (14 dias)
+#   tse-candidatos — diária 10:05 BRT (13:05 UTC): baixa os CSVs oficiais do TSE
+#                    (espelho diário leofn/tse-candidatos-2026) e regenera
+#                    data/candidatos-2026.json (~20 mil candidatos, situação de
+#                    julgamento fresca — o TSE julga registros até a véspera)
+#   enriquecimento — segundas 10:30 BRT (13:30 UTC): re-rodada da produção
+#                    legislativa (incremental) e da presença em plenário
+#                    (recálculo total — o denominador de sessões cresce)
 
 on:
   schedule:
     - cron: '15 12 * * *'   # noticias
+    - cron: '45 12 * * *'   # backup
     - cron: '5 13 * * *'    # tse-candidatos
     - cron: '30 13 * * 1'   # enriquecimento (segundas)
   workflow_dispatch:
@@ -19,6 +28,7 @@ on:
         type: choice
         options:
           - noticias
+          - backup
           - tse-candidatos
           - enriquecimento
           - tudo
@@ -50,10 +60,40 @@ jobs:
           git config user.name  "manutencao[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/noticias.json
-          if git diff --cached --quiet; then echo "sem mudanças"; exit 0; fi
-          git commit -m "chore(data): snapshot de notícias [manutenção]"
-          git pull --rebase origin master
+          if git diff --cached --quiet; then echo "snapshot sem mudanças — nada a commitar"; exit 0; fi
+          git commit -m "chore(data): snapshot de notícias atualizado ($(date -u '+%Y-%m-%d %H:%M UTC')) [manutenção automática]"
+          git pull --rebase origin main
           git push
+
+  backup:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      (inputs.tarefa == 'backup' || inputs.tarefa == 'tudo') ||
+      github.event.schedule == '45 12 * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Acorda o backend e baixa o dump
+        env:
+          BASE: https://mudabrasil-redesign-production.up.railway.app
+          TOKEN: ${{ secrets.BACKUP_TOKEN }}
+        run: |
+          curl -fsS --max-time 120 "$BASE/api/health" > /dev/null || echo "health não respondeu, seguindo"
+          sleep 5
+          curl -fsS --retry 3 --retry-delay 15 --max-time 180 \
+               -H "x-backup-token: $TOKEN" "$BASE/api/admin/backup" -o backup.json
+          node -e '
+            const b = require("./backup.json");
+            if (!b.ok) { console.error("backup falhou:", b.error); process.exit(1); }
+            console.log("backup OK ·", b.geradoEm, "·", b.storage);
+            console.log(Object.entries(b.resumo).map(([t, n]) => t + ": " + n).join(" · "));
+          '
+      - name: Guarda como artifact privado (14 dias)
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-sqlite-${{ github.run_number }}
+          path: backup.json
+          retention-days: 14
 
   tse-candidatos:
     if: >-
@@ -67,20 +107,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Baixa CSVs do TSE
+      - name: Baixa CSVs do TSE (espelho diário) e regenera snapshot
         run: node scripts/baixar-candidatos-tse.js
       - name: Commita se mudou
         run: |
           git config user.name  "manutencao[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/candidatos-2026.json
-          if git diff --cached --quiet; then echo "sem mudanças"; exit 0; fi
-          git commit -m "chore(data): TSE 2026 [manutenção]"
-          git pull --rebase origin master
+          if git diff --cached --quiet; then echo "snapshot sem mudanças — nada a commitar"; exit 0; fi
+          git commit -m "chore(data): candidaturas 2026 do TSE atualizadas ($(date -u '+%Y-%m-%d')) [manutenção automática]"
+          git pull --rebase origin main
           git push
 
   enriquecimento:
-    needs: noticias
+    needs: noticias   # serializa os commits para não disputar o push
     if: >-
       always() && !cancelled() &&
       (github.event_name == 'workflow_dispatch' &&
@@ -93,16 +133,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Proposições (incremental)
+      - name: Produção legislativa (incremental)
         run: node scripts/enriquecer-snapshot.js --skip-done
-      - name: Presença em plenário (total)
+      - name: Presença em plenário (recálculo total)
         run: node scripts/enriquecer-presenca.js
+      - name: Sanidade do snapshot
+        run: |
+          node -e '
+            const s = require("./data/politicos.json");
+            const lista = Array.isArray(s) ? s : (s.politicos || s.candidatos || []);
+            if (lista.length < 500) { console.error("politicos.json com " + lista.length + " itens (<500) — abortando"); process.exit(1); }
+            console.log("sanidade OK:", lista.length, "parlamentares no snapshot");
+          '
       - name: Commita se mudou
         run: |
           git config user.name  "manutencao[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/politicos.json
-          if git diff --cached --quiet; then echo "sem mudanças"; exit 0; fi
-          git commit -m "chore(data): produção legislativa + presença [manutenção]"
-          git pull --rebase origin master
+          if git diff --cached --quiet; then echo "snapshot sem mudanças — nada a commitar"; exit 0; fi
+          git commit -m "chore(data): produção legislativa + presença atualizadas ($(date -u '+%Y-%m-%d')) [manutenção automática]"
+          git pull --rebase origin main
           git push

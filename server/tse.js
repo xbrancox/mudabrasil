@@ -17,6 +17,10 @@ const path = require('path');
 
 const DATA_DIR = path.join(__dirname, 'data');
 const CACHE_FILE = path.join(DATA_DIR, 'tse-2026.json');
+/* Snapshot commitado (scripts/baixar-candidatos-tse.js via espelho dos CSVs
+   oficiais do TSE). Vai dentro da imagem do Docker, então funciona no
+   Railway mesmo com o volume montado sobre server/data. */
+const SNAPSHOT_FILE = path.join(__dirname, '..', 'data', 'candidatos-2026.json');
 const TTL_MS = 24 * 3600 * 1000;
 
 const CARGOS = {
@@ -101,12 +105,39 @@ async function ingestReal(){
 }
 */
 
+/* ---------- Snapshot commitado (candidatos reais 2026) ---------- */
+let SNAPSHOT = null; /* em memória após a 1ª leitura */
+function readSnapshot(){
+  if(SNAPSHOT) return SNAPSHOT;
+  try{
+    if(!fs.existsSync(SNAPSHOT_FILE)) return null;
+    const obj = JSON.parse(fs.readFileSync(SNAPSHOT_FILE, 'utf8'));
+    if(obj && Array.isArray(obj.candidatos) && obj.candidatos.length){
+      SNAPSHOT = obj;
+      return SNAPSHOT;
+    }
+  }catch(e){ console.warn('[tse] falha ao ler snapshot:', e.message); }
+  return null;
+}
+
 function getCandidatos(){
+  /* 1) Cache de ingestão ao vivo (se um dia o TSE abrir na rede) */
   const cached = readCache();
   if(cached && cached.candidatos && cached.candidatos.length){
     return { mode: 'real', aviso: null, candidatos: cached.candidatos };
   }
-  // Fallback: incumbentes (deputados/senadores em mandato) rotulados como "MANDATO ATIVO"
+  /* 2) Snapshot commitado dos CSVs oficiais do TSE (espelho diário) */
+  const snap = readSnapshot();
+  if(snap){
+    return {
+      mode: 'real',
+      aviso: null,
+      extraidoEm: snap.extraidoEm,
+      fonte: snap.fonte,
+      candidatos: snap.candidatos
+    };
+  }
+  /* 3) Fallback: incumbentes (deputados/senadores em mandato) rotulados como "MANDATO ATIVO" */
   const inc = getIncumbents();
   if(inc && inc.length){
     const candidatos = inc.map(d => ({

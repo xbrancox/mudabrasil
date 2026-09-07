@@ -959,6 +959,23 @@ function getPoliticianFullDetails(id) {
   };
 }
 
+/* ===== Backup: dump completo de todas as tabelas ===== */
+const DUMP_TABLES = ['ballots', 'politicians', 'verifications', 'complaints',
+  'supports', 'responses', 'voters', 'pls', 'pl_votes', 'vote_codes'];
+function dumpAll() {
+  const out = {};
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    for (const t of DUMP_TABLES) {
+      try { out[t] = db.prepare('SELECT * FROM ' + t).all(); }
+      catch (_) { out[t] = []; }
+    }
+  } else {
+    for (const k of DUMP_TABLES) out[k] = Object.values(jsonReadFile(k) || {});
+  }
+  return out;
+}
+
 module.exports = {
   init, close, backend, file, clear, importAll,
   getBallot, upsertBallot, readAllBallots, countBallots, clearBallots, importAllBallots,
@@ -970,6 +987,6 @@ module.exports = {
   hashVoter, upsertVoter, getVoterById, getVoterByGoogleId, getVoterByPhone, getVoterByHash, getVoterByEmail,
   upsertPl, getPl, readAllPls, getPlsByFilters, castPlVote, getPlVoteForVoter,
   generateVoteCode, getVoteCodesForVoter, verifyVoteCode, markCodeUsed,
-  getRevokedStats,
+  getRevokedStats, dumpAll,
   VOTOS_DB, VOTOS_FILE
 };

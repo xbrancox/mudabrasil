@@ -30,6 +30,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { fetchDeputados } = require('./ingest');
+const { fetchSenadores } = require('./senado');
 const db = require('./db');
 
 const DATA_DIR = path.join(__dirname, 'data');
@@ -110,11 +111,20 @@ function loadStore() {
 let deputiesIndex = null;
 async function getDeputiesIndex() {
   if (deputiesIndex) return deputiesIndex;
-  const { list } = await fetchDeputados();
   const map = new Map();
-  list.forEach(d => map.set(d.id, {
+  const { list } = await fetchDeputados();
+  (list || []).forEach(d => map.set(d.id, {
     id: d.id, name: d.name, party: d.party, state: d.state, photo: d.photo || null
   }));
+  /* Senadores no mesmo índice: hoje o voto neles caía em 404 */
+  try {
+    const { list: sens } = await fetchSenadores();
+    (sens || []).forEach(s => {
+      if (!map.has(s.id)) map.set(s.id, {
+        id: s.id, name: s.name, party: s.party, state: s.state, photo: s.photo || null
+      });
+    });
+  } catch (_) { }
   deputiesIndex = map;
   return map;
 }
@@ -296,6 +306,78 @@ function buildPorUf(store) {
   return porUf;
 }
 
+/* ===== Acompanhamento (02 — home): preferência REAL por cargo =====
+   Agrega os votos ativos da plataforma por cargo (Dep. Federal e
+   Senador — os cargos votáveis hoje) no recorte BR ou UF. Sem
+   sintéticos: cargo sem votos volta vazio e a UI mostra estado
+   honesto ("sem votos ainda"). */
+async function getAcompanhamento({ uf = 'BR' } = {}) {
+  const store = loadStore();
+  const now = Date.now();
+  const recorte = String(uf || 'BR').toUpperCase();
+
+  const index = new Map();
+  try {
+    const { list: deps } = await fetchDeputados();
+    (deps || []).forEach(d => index.set(d.id, {
+      name: d.name, party: d.party, state: d.state, photo: d.photo || null, cargo: 'dep-federal'
+    }));
+  } catch (_) { }
+  try {
+    const { list: sens } = await fetchSenadores();
+    (sens || []).forEach(s => index.set(s.id, {
+      name: s.name, party: s.party, state: s.state, photo: s.photo || null, cargo: 'senador'
+    }));
+  } catch (_) { }
+
+  const agg = { 'dep-federal': new Map(), 'senador': new Map() };
+  let totalAtivos = 0, totalRevogados = 0;
+  for (const b of Object.values(store.ballots)) {
+    const pol = index.get(b.politicianId);
+    if (!pol) continue;
+    const ufVoto = (b.uf || pol.state || '').toUpperCase();
+    if (recorte !== 'BR' && ufVoto !== recorte) continue;
+    const g = agg[pol.cargo].get(b.politicianId) || { votos: 0, revog: 0, peso: 0 };
+    if (b.revoked) { g.revog++; totalRevogados++; }
+    else { g.votos++; g.peso += voteWeight(b.reaffirmedAt || b.createdAt, now); totalAtivos++; }
+    agg[pol.cargo].set(b.politicianId, g);
+  }
+
+  const mkCargo = (map) => {
+    const total = [...map.values()].reduce((a, g) => a + g.votos, 0);
+    const top = [...map.entries()]
+      .sort((a, b) => b[1].votos - a[1].votos || b[1].peso - a[1].peso)
+      .slice(0, 4)
+      .map(([pid, g]) => {
+        const pol = index.get(pid);
+        return {
+          id: pid, name: pol.name, party: pol.party || '—', state: pol.state || '—', photo: pol.photo,
+          votos: g.votos, revogacoes: g.revog,
+          pct: total ? Math.round(g.votos / total * 100) : 0
+        };
+      });
+    const fora = total - top.reduce((a, t) => a + t.votos, 0);
+    return {
+      totalVotos: total,
+      candidatos: top,
+      outrosPct: total ? Math.round(fora / total * 100) : 0
+    };
+  };
+
+  return {
+    ok: true,
+    mode: 'real',
+    recorte: recorte,
+    atualizadoEm: new Date(now).toISOString(),
+    totalVotosAtivos: totalAtivos,
+    totalRevogados: totalRevogados,
+    cargos: {
+      'dep-federal': mkCargo(agg['dep-federal']),
+      'senador': mkCargo(agg['senador'])
+    }
+  };
+}
+
 function round1(n) { return Math.round(n * 10) / 10; }
 function round2(n) { return Math.round(n * 100) / 100; }
 function round4(n) { return Math.round(n * 10000) / 10000; }
@@ -361,7 +443,7 @@ function revokeBallotById(ballotId, ip) {
 }
 
 module.exports = {
-  castVote, revokeVote, reaffirmVote, viewVote, getTermometro,
+  castVote, revokeVote, reaffirmVote, viewVote, getTermometro, getAcompanhamento,
   getRevogados, getBallotsForVoter, revokeBallotById,
   voteWeight, onVoteChange, totals,
   DECADENCIA, ICM, K_SATURACAO, VOTOS_FILE, VOTOS_DB, db

@@ -20,6 +20,7 @@
      GET  /api/termometro         agregação pública irreversível
      GET  /api/stream             SSE: eventos ao vivo (novos votos, etc.)
      GET  /api/health             saúde do serviço (uptime, storage, totais)
+     GET  /api/admin/backup       dump JSON de todas as tabelas (BACKUP_TOKEN)
 
    O frontend continua funcionando 100% estático: se a API não
    responder (ex.: aberto via file://), ele usa o modo DEMO com
@@ -27,6 +28,7 @@
    ============================================================ */
 
 const http = require('http');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { fetchDeputados, enrichBills, DEP_FILE } = require('./ingest');
@@ -188,6 +190,37 @@ const NEWS_FEEDS = [
 ];
 const POLITICS_KW = /\b(pol[ií]t|governo|congresso|senado|c[aâ]mara|tse|stf|stj|elei[çc]|[cç]andidat|deputad|senador|ministr|presidente|governador|prefeito|vereador|partido|plen[aá]rio|vota[çc]|[lL]ei\b|projeto de lei|medida provis[óo]ria|emenda|comiss[aã]o|frente parlamentar|impeachment|cassa[çc]|den[úu]ncia|inqu[éé]rito| Lava Jato|mensal[aã]o|petrol[aã]o|corrup[cç]|improbidade|impeachment)\b/i;
 const UF_LIST = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+/* Feeds LOCAIS por estado (G1 estaduais) — notícias políticas do estado
+   para o recorte UF do carrossel. Tag de UF vem do próprio feed. */
+const NEWS_FEEDS_UF = {
+  AC: 'https://g1.globo.com/rss/g1/ac/acre/',
+  AL: 'https://g1.globo.com/rss/g1/al/alagoas/',
+  AP: 'https://g1.globo.com/rss/g1/ap/amapa/',
+  AM: 'https://g1.globo.com/rss/g1/am/amazonas/',
+  BA: 'https://g1.globo.com/rss/g1/ba/bahia/',
+  CE: 'https://g1.globo.com/rss/g1/ce/ceara/',
+  DF: 'https://g1.globo.com/rss/g1/df/distrito-federal/',
+  ES: 'https://g1.globo.com/rss/g1/es/espirito-santo/',
+  GO: 'https://g1.globo.com/rss/g1/go/goias/',
+  MA: 'https://g1.globo.com/rss/g1/ma/maranhao/',
+  MT: 'https://g1.globo.com/rss/g1/mt/mato-grosso/',
+  MS: 'https://g1.globo.com/rss/g1/ms/mato-grosso-do-sul/',
+  MG: 'https://g1.globo.com/rss/g1/mg/minas-gerais/',
+  PA: 'https://g1.globo.com/rss/g1/pa/para/',
+  PB: 'https://g1.globo.com/rss/g1/pb/paraiba/',
+  PR: 'https://g1.globo.com/rss/g1/pr/parana/',
+  PE: 'https://g1.globo.com/rss/g1/pe/pernambuco/',
+  PI: 'https://g1.globo.com/rss/g1/pi/piaui/',
+  RJ: 'https://g1.globo.com/rss/g1/rj/rio-de-janeiro/',
+  RN: 'https://g1.globo.com/rss/g1/rn/rio-grande-do-norte/',
+  RS: 'https://g1.globo.com/rss/g1/rs/rio-grande-do-sul/',
+  RO: 'https://g1.globo.com/rss/g1/ro/rondonia/',
+  RR: 'https://g1.globo.com/rss/g1/rr/roraima/',
+  SC: 'https://g1.globo.com/rss/g1/sc/santa-catarina/',
+  SP: 'https://g1.globo.com/rss/g1/sp/sao-paulo/',
+  SE: 'https://g1.globo.com/rss/g1/se/sergipe/',
+  TO: 'https://g1.globo.com/rss/g1/to/tocantins/'
+};
 const NEWS_CACHE = { ts: 0, items: [] };
 function stripTags(v) { return String(v || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\s+/g, ' ').trim(); }
 function parseRss(xml, fonte, politicasOnly) {
@@ -233,14 +266,20 @@ async function refreshNoticias(force) {
   const now = Date.now();
   if (!force && now - NEWS_CACHE.ts < 600000 && NEWS_CACHE.items.length) return;
   try {
-    const res = await Promise.all(NEWS_FEEDS.map(f =>
-      fetch(f.url, { headers: { Accept: 'application/rss+xml,application/xml,text/xml', 'User-Agent': 'MudaBrasil/1.0 (+https://mudabrasil.app)' }, signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined })
-        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
-        .then(x => parseRss(x, f.fonte, f.politicas)).catch(err => { console.warn('[noticias] falha em', f.fonte, ':', err.message); return []; })));
-    const items = [].concat(...res).map(n => ({ ...n, uf: detectUF(n.t + ' ' + n.res) }));
+    const cab = { Accept: 'application/rss+xml,application/xml,text/xml', 'User-Agent': 'MudaBrasil/1.0 (+https://mudabrasil.app)' };
+    const fetchFeed = url => fetch(url, { headers: cab, signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); });
+    const nacionais = await Promise.all(NEWS_FEEDS.map(f =>
+      fetchFeed(f.url).then(x => parseRss(x, f.fonte, f.politicas)).catch(err => { console.warn('[noticias] falha em', f.fonte, ':', err.message); return []; })));
+    // Feeds LOCAIS (G1 estaduais): só notícias com teor político, UF fixa do feed
+    const locais = await Promise.all(Object.entries(NEWS_FEEDS_UF).map(([uf, url]) =>
+      fetchFeed(url).then(x => parseRss(x, 'G1 ' + uf, true).map(n => ({ ...n, uf: uf })))
+        .catch(err => { console.warn('[noticias] falha em', uf, ':', err.message); return []; })));
+    const itensLoc = [].concat(...locais);
+    const items = [].concat(...nacionais).map(n => ({ ...n, uf: detectUF(n.t + ' ' + n.res) })).concat(itensLoc);
     items.sort((a, b) => (b.dt || '').localeCompare(a.dt || ''));
-    if (items.length) { NEWS_CACHE.items = items.slice(0, 60); NEWS_CACHE.ts = now; }
-    console.log('[noticias] ' + items.length + ' itens de ' + NEWS_FEEDS.length + ' fontes (cache 10min)');
+    if (items.length) { NEWS_CACHE.items = items.slice(0, 150); NEWS_CACHE.ts = now; }
+    console.log('[noticias] ' + items.length + ' itens (' + itensLoc.length + ' locais) de ' + NEWS_FEEDS.length + ' fontes nacionais + ' + Object.keys(NEWS_FEEDS_UF).length + ' estaduais (cache 10min)');
   } catch (e) { console.warn('[noticias] falha ao atualizar feeds:', e.message); }
 }
 
@@ -325,8 +364,10 @@ async function handleApi(req, res, url) {
         lista = lista.filter(c => {
           const v = String(c.situacao || '').toUpperCase();
           if (sitUpper === 'DEFERIDO') return /DEFERIDO|APTO/.test(v);
+          if (sitUpper === 'AGUARDANDO') return /AGUARDANDO|PENDENTE/.test(v);
           if (sitUpper === 'PENDENTE') return /SUB|PENDENTE/.test(v);
           if (sitUpper === 'INAPTO') return /INAPTO|INDEF|CANCEL|CASSADO/.test(v);
+          if (sitUpper === 'INDEFERIDO') return /INDEFERIDO/.test(v);
           return true;
         });
       }
@@ -338,9 +379,9 @@ async function handleApi(req, res, url) {
           (c.partido || '').toLowerCase().includes(busca)
         );
       }
-      // Paginação
-      const pagina = Math.max(1, parseInt(q.pagina || '1', 10));
-      const porPagina = Math.min(100, Math.max(10, parseInt(q.porPagina || '50', 10)));
+      /* Paginação (aceita pagina/porPagina e os aliases page/pageSize do front) */
+      const pagina = Math.max(1, parseInt(q.pagina || q.page || '1', 10));
+      const porPagina = Math.min(100, Math.max(10, parseInt(q.porPagina || q.pageSize || '50', 10)));
       const total = lista.length;
       const totalPaginas = Math.ceil(total / porPagina);
       const inicio = (pagina - 1) * porPagina;
@@ -350,6 +391,8 @@ async function handleApi(req, res, url) {
         ok: true,
         mode: all.mode,
         aviso: all.aviso,
+        extraidoEm: all.extraidoEm,
+        fonte: all.fonte,
         ano: parseInt(ano || '2026', 10),
         total,
         totalPaginas,
@@ -391,6 +434,26 @@ async function handleApi(req, res, url) {
       totalRevogados: votes.totals().totalRevogados,
       atualizacaoDadosPublicos: 'a cada ' + REFRESH_HOURS + 'h (automática)'
     });
+  }
+
+  /* Backup integral (dump JSON de todas as tabelas) para a manutenção
+     automática da CI. Protegido por BACKUP_TOKEN — sem a env configurada,
+     o endpoint responde 503 e não expõe nada. */
+  if (p === '/api/admin/backup' && req.method === 'GET') {
+    const tok = process.env.BACKUP_TOKEN || '';
+    const given = String(req.headers['x-backup-token'] || q.t || '');
+    const sameLen = given.length === tok.length;
+    const okTok = tok && sameLen &&
+      crypto.timingSafeEqual(Buffer.from(given), Buffer.from(tok));
+    if (!tok) return sendJson(res, 503, { ok: false, error: 'backup desativado (BACKUP_TOKEN não configurado)' });
+    if (!okTok) return sendJson(res, 403, { ok: false, error: 'token inválido' });
+    try {
+      const dump = db.dumpAll();
+      const resumo = Object.fromEntries(Object.entries(dump).map(([t, rows]) => [t, rows.length]));
+      return sendJson(res, 200, { ok: true, geradoEm: new Date().toISOString(), storage: db.backend(), resumo, dump });
+    } catch (e) {
+      return sendJson(res, 500, { ok: false, error: 'falha no dump: ' + e.message });
+    }
   }
 
   if (p === '/api/status') {
@@ -496,6 +559,15 @@ async function handleApi(req, res, url) {
       return sendJson(res, 200, await votes.getTermometro({ topN: parseInt(q.top || '10', 10) }));
     } catch (e) {
       return sendJson(res, 500, { ok: false, error: 'Falha ao computar termômetro: ' + e.message });
+    }
+  }
+
+  /* Donuts do "02 — ACOMPANHAMENTO" (home): preferência real por cargo no recorte BR/UF */
+  if (p === '/api/acompanhamento' && req.method === 'GET') {
+    try {
+      return sendJson(res, 200, await votes.getAcompanhamento({ uf: q.uf || 'BR' }));
+    } catch (e) {
+      return sendJson(res, 500, { ok: false, error: 'Falha ao computar acompanhamento: ' + e.message });
     }
   }
 

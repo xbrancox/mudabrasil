@@ -4,14 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MudaBrasil — Compare Candidatos, Radar Cívico, PLs</title>
+<link rel="canonical" href="https://xbrancox.github.io/MudaBrZclone280826/pages/parlamentares.html">
+<meta property="og:title" content="Radar Político · MudaBrasil">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xbrancox.github.io/MudaBrZclone280826/pages/parlamentares.html">
+<meta property="og:image" content="https://xbrancox.github.io/MudaBrZclone280826/og-image.png">
+<meta property="og:site_name" content="MudaBrasil">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xbrancox.github.io/MudaBrZclone280826/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
   <meta name="description" content="Plataforma cívica de voto contínuo e revogável. Compare candidatos, acompanhe reclamações, vote em PLs e revogue votos.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/parlamentares.css">
+<style>
+
+
+@media(max-width:960px){header nav{display:none}.ham{display:block}.mnav.open{display:flex}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="../js/site-header.js"></script>
 </head>
 <body>
-  <!-- header injetado por ../js/header-unificado.js -->
+  <!-- ===================== HEADER ===================== -->
+  
 
   <!-- ===================== TÍTULO DA PÁGINA ===================== -->
   <section class="mb-hero">
@@ -201,7 +219,7 @@
     <!-- ===================== ABA 4: VOTOS REVOGADOS ===================== -->
     <div class="mb-tab-panel" id="tab-revogados" role="tabpanel">
       <div class="mb-section-header">
-        <h2>⚖️ <strong>Políticos com votos revogados</strong></h2>
+        <h2>⚖️ <strong>Votos Revogados</strong></h2>
         <p class="mb-muted">Acompanhe quem está perto de ter a <strong>legislatura cassada</strong> (limite: 70% dos votos que elegeram).</p>
       </div>
 
@@ -234,7 +252,7 @@
         <h3>📋 Seus candidatos votados</h3>
         <div id="conferir-votes"></div>
         <button class="mb-btn-primary mb-btn-block" id="generate-code-btn" hidden>Gerar código de verificação</button>
-        <p class="mb-muted-sm" id="conferir-no-votes" hidden>Você ainda não votou em ninguém. <a href="../index.html#conferir-voto">Vote aqui</a> primeiro.</p>
+        <p class="mb-muted-sm" id="conferir-no-votes" hidden>Você ainda não votou em ninguém. <a href="meu-voto.html">Vote aqui</a> primeiro.</p>
       </div>
 
       <div class="mb-card mb-conferir-card">
@@ -256,7 +274,7 @@
     <div class="mb-tab-panel" id="tab-revogar" role="tabpanel">
       <div class="mb-section-header">
         <h2>↩️ <strong>Revogar voto</strong></h2>
-        <p class="mb-muted">Aperte "Revogar" no candidato que você deseja retirar seu voto. Após a confirmação, o político recebe essa revogação e vai para a lista de <strong>Políticos com votos revogados</strong>.</p>
+        <p class="mb-muted">Aperte "Revogar" no candidato que você deseja retirar seu voto. Após a confirmação, o político recebe essa revogação e vai para a lista de <strong>Votos Revogados</strong>.</p>
         <div class="mb-warn-banner">
           ⚠️ <strong>Explicação detalhada:</strong> este é apenas uma simulação cívica. Não tem valor legal nem vínculo com eleições oficiais. O MudaBrasil é um protótipo de voto contínuo e revogável.
         </div>
@@ -351,6 +369,5 @@
   <script src="../config.js"></script>
   <script src="../js/parlamentar-auth.js"></script>
   <script src="../js/parlamentares.js"></script>
-<script src="../js/header-unificado.js"></script>
 </body>
 </html>

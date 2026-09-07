@@ -1,11 +1,11 @@
 /* ============================================================
    MudaBrasil — Configuração Global
    -----------------------------------------------------------
-   Backend: https://mudabrasil-production-79eb.up.railway.app
+   Backend: https://mudabrasil-redesign-production.up.railway.app (novo projeto Railway)
    Frontend: https://xbrancox.github.io/mudabrasil/
    ============================================================ */
 
-let API_BASE = 'https://mudabrasil-production-79eb.up.railway.app';
+let API_BASE = 'https://mudabrasil-redesign-production.up.railway.app';
 
 /* Página servida pelo próprio backend (dev localhost ou Railway) = mesma origem.
    Hosts estáticos (GitHub Pages) e file:// continuam apontando pro Railway. */

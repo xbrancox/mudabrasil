@@ -4,6 +4,17 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Votações nominais · MudaBrasil</title>
+<meta name="description" content="Como cada deputado e senador votou nas votações nominais da Câmara e do Senado — histórico completo e verificável.">
+<link rel="canonical" href="https://xbrancox.github.io/MudaBrZclone280826/pages/votacoes.html">
+<meta property="og:title" content="Votações nominais · MudaBrasil">
+<meta property="og:description" content="Como cada deputado e senador votou nas votações nominais da Câmara e do Senado — histórico completo e verificável.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xbrancox.github.io/MudaBrZclone280826/pages/votacoes.html">
+<meta property="og:image" content="https://xbrancox.github.io/MudaBrZclone280826/og-image.png">
+<meta property="og:site_name" content="MudaBrasil">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xbrancox.github.io/MudaBrZclone280826/og-image.png">
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -67,22 +78,9 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:24px 0;margin
 footer a{color:var(--gold)}
 .muted{color:var(--muted);font-size:12.5px}
 </style>
+  <script src="../js/site-header.js"></script>
 </head>
 <body>
-<header><div class="hd">
-<a href="../index.html" class="lg">
-<div class="ic"><i class="fa-solid fa-layer-group"></i></div>
-<div><b>MudaBrasil</b><small>Votações nominais</small></div>
-</a>
-<nav>
-<a href="../index.html">Início</a>
-<a href="../index.html#radar">Radar</a>
-<a href="../index.html#congresso">Congresso</a>
-<a href="votacoes.html" class="on">Votações</a>
-<a href="eleicoes-2026.html">Eleições 2026</a>
-</nav>
-</div></header>
-
 <main class="wrap">
 <section class="hero">
 <span class="kick">VOTAÇÕES NOMINAIS</span>
@@ -115,7 +113,8 @@ footer a{color:var(--gold)}
 </footer>
 
 <script>
-const API_BASE = (window.MudaBrasil && window.MudaBrasil.API_BASE) || 'https://mudabrasil-production-79eb.up.railway.app';
+/* FIX: API_BASE pode ser '' (mesma origem) — não usar ||, que trocaria '' pela URL de produção */
+const API_B = (window.MudaBrasil && typeof window.MudaBrasil.API_BASE === 'string') ? window.MudaBrasil.API_BASE : 'https://mudabrasil-production-79eb.up.railway.app';
 const $ = s => document.querySelector(s);
 
 let VOTS = [];
@@ -129,7 +128,7 @@ async function carregar(retry){
     $('#loader').innerHTML = '<i class="fa-solid fa-spinner"></i> 1ª carga após o deploy — buscando Câmara ao vivo (até 60s)…';
   }, 8000);
   try{
-    const r = await fetch(API_BASE + '/api/camara/votacoes?itens=30&ordem=DESC&ordenarPor=data');
+    const r = await fetch(API_B + '/api/camara/votacoes?itens=30&ordem=DESC&ordenarPor=data');
     if(!r.ok) throw new Error('HTTP ' + r.status);
     const j = await r.json();
     VOTS = (j.dados || []).map(v => ({
@@ -219,7 +218,7 @@ async function toggleVotos(id){
   if(btnEl) btnEl.disabled = true;
   detEl.innerHTML = '<div class="loader" style="padding:16px"><i class="fa-solid fa-spinner"></i> Carregando votos…</div>';
   try{
-    const r = await fetch(API_BASE + '/api/camara/votacoes/' + id + '/votos');
+    const r = await fetch(API_B + '/api/camara/votacoes/' + id + '/votos');
     if(!r.ok) throw new Error('HTTP ' + r.status);
     const j = await r.json();
     const votos = (j.dados && j.dados.votos) || j.votos || [];
@@ -273,6 +272,5 @@ function filtrarDetalhe(id){
 
 carregar();
 </script>
-<script src="../js/header-unificado.js"></script>
 </body>
 </html>
