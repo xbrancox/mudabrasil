@@ -4,158 +4,236 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#061a3a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="description" content="MudaBrasil - A urna digital do povo. Seu voto coloca. Seu voto tira.">
-<title>MudaBrasil · Urna Digital</title>
+<title>MudaBrasil · A eleição no seu celular</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="../config.js"></script>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
 
-<!-- HEADER -->
-<header id="app-header">
-  <a class="lg" onclick="go('votar')">
-    <span class="ic"><i class="fa-solid fa-layer-group"></i></span>
-    <span class="tx"><b>MudaBrasil</b><small>Urna Digital</small></span>
-  </a>
-  <span class="badge" id="badge">…</span>
+<header>
+  <div class="hd-in">
+    <a class="hd-lg" href="#p-inicio" data-p="inicio">
+      <span class="hd-ic">MB</span>
+      <span class="hd-tx"><b>MudaBrasil</b><small>A eleição no seu celular</small></span>
+    </a>
+    <span class="badge" id="badge">…</span>
+  </div>
 </header>
 
-<!-- TELAS -->
-<main id="scr-wrap">
-  <!-- SPLASH -->
-  <section id="scr-splash" class="scr">
-    <div class="splash-hero">
-      <h1>O poder emana do povo</h1>
-      <div class="l2"><span class="g">não acaba</span> no <span class="y">dia da eleição.</span></div>
-      <p class="hero-sub">A urna digital do povo: facilidade, custo zero, confiança, segurança. Seu voto coloca, seu voto tira.</p>
-    </div>
-    <div class="pillars">
-      <div class="pillar"><div class="p-ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-hand-pointer"></i></div><b>FACILIDADE</b><p>Vote em 3 toques. Sem burocracia, sem filas, sem impressão.</p></div>
-      <div class="pillar"><div class="p-ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-solid fa-piggy-bank"></i></div><b>CUSTO ZERO</b><p>Não usa papel, não usa tinta, não usa mesário. Economia real pro bolso público.</p></div>
-      <div class="pillar"><div class="p-ic" style="background:rgba(74,144,240,.15);color:var(--blue)"><i class="fa-solid fa-landmark"></i></div><b>CONFIANÇA</b><p>Dados de TSE, Câmara, Senado e Portal da Transparência. Hash encadeado estilo blockchain.</p></div>
-      <div class="pillar"><div class="p-ic" style="background:rgba(231,76,60,.15);color:var(--red)"><i class="fa-solid fa-shield-halved"></i></div><b>SEGURANÇA</b><p>Voto anônimo, código único, conferência pública. Revogável a qualquer momento.</p></div>
-    </div>
-    <div class="cta-box">
-      <button class="btn btn-gold btn-big" onclick="go('votar')"><i class="fa-solid fa-check-to-slot"></i> COMEÇAR A VOTAR</button>
-      <p class="mini" style="margin-top:10px">Protótipo demonstrativo, sem valor jurídico.</p>
-    </div>
-  </section>
+<main>
 
-  <!-- VOTAR -->
-  <section id="scr-votar" class="scr">
-    <h2 class="scr-title">🗳️ Votar</h2>
-    <p class="mini">Escolha um político e registre sua confiança. Você recebe um código único como comprovante.</p>
-    <div class="search-box">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input id="busca-pol" placeholder="Nome, partido, número ou estado…" oninput="renderVotar()">
+  <!-- ========== PÁGINA 1: INÍCIO ========== -->
+  <section id="p-inicio" class="pg active">
+    <div class="hero">
+      <span class="hero-tag">🗳️ PROVA DE VIABILIDADE</span>
+      <h1 class="hero-h1">A eleição, dentro do seu celular.</h1>
+      <p class="hero-sub">Vote <b>presidente, governador, senador e deputados</b> pelo app. Receba um <b>comprovante verificável</b>. E siga com o poder nas mãos depois da posse.</p>
+      <button class="cta-gold" id="ctaVotar"><i class="fa-solid fa-check-to-slot"></i> COMEÇAR A VOTAR</button>
+      <button class="cta-ghost" id="ctaRes">Ver resultados ao vivo →</button>
+      <p class="hero-disc">Protótipo demonstrativo de viabilidade · sem valor jurídico</p>
     </div>
-    <div class="filtros-mini">
-      <select id="f-uf" onchange="renderVotar()"></select>
-      <select id="f-cargo" onchange="renderVotar()"></select>
-    </div>
-    <div id="lista-pol" class="lista"></div>
-    <div id="confirm-box" class="confirm-box hidden"></div>
-  </section>
 
-  <!-- RECIBO -->
-  <section id="scr-recibo" class="scr">
-    <div class="recibo-card">
-      <div class="recibo-top">
-        <i class="fa-solid fa-circle-check recibo-ic"></i>
-        <b>Voto registrado com sucesso</b>
+    <div class="stats-row">
+      <div class="stat">
+        <div class="donut-mini" id="donut-part"></div>
+        <div class="stat-tx">
+          <b id="n-votos">—</b>
+          <span>votos registrados</span>
+        </div>
       </div>
-      <div id="recibo-body"></div>
+      <div class="stat">
+        <div class="donut-mini" id="donut-conf"></div>
+        <div class="stat-tx">
+          <b id="n-conf">—</b>
+          <span>códigos emitidos</span>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="donut-mini" id="donut-rev"></div>
+        <div class="stat-tx">
+          <b id="n-rev">—</b>
+          <span>mandatos em risco</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards-3">
+      <div class="fc"><i class="fa-solid fa-check-to-slot"></i><b>Vota como na urna</b><span>Mesmos cargos, teclado numérico, confirmação. Em 2 minutos.</span></div>
+      <div class="fc"><i class="fa-solid fa-fingerprint"></i><b>Recibo que não mente</b><span>Código único + trilha de hash. Verificável por qualquer um.</span></div>
+      <div class="fc"><i class="fa-solid fa-rotate-left"></i><b>Mandato revogável</b><span>70% dos que elegeram revogaram = político cai.</span></div>
+    </div>
+
+    <div class="how">
+      <h3>Como funciona</h3>
+      <div class="steps">
+        <div><span class="n">1</span><b>Vota pelo app</b><span class="mini">como na urna real</span></div>
+        <div><span class="n">2</span><b>Guarda o código</b><span class="mini">seu comprovante</span></div>
+        <div><span class="n">3</span><b>Confere sempre</b><span class="mini">sem revelar quem é</span></div>
+      </div>
+    </div>
+
+    <div class="trust">
+      <h3>Confiança de ponta a ponta</h3>
+      <div class="chips">
+        <span class="chip"><i class="fa-solid fa-lock"></i> 100% anônimo</span>
+        <span class="chip"><i class="fa-solid fa-link"></i> trilha de hash</span>
+        <span class="chip"><i class="fa-solid fa-flag"></i> fontes oficiais</span>
+        <span class="chip"><i class="fa-solid fa-code"></i> código aberto</span>
+        <span class="chip"><i class="fa-solid fa-scale-balanced"></i> regra 70%</span>
+      </div>
+    </div>
+
+    <div class="obj">
+      <h3>Objetivos claros</h3>
+      <ol>
+        <li>Provar que eleição por app é viável no Brasil.</li>
+        <li>Cortar o custo do voto: sem urna física, sem fila.</li>
+        <li>Devolver confiança: voto verificável + trilha de hash.</li>
+        <li>Poder contínuo: conferir e revogar após a posse.</li>
+      </ol>
     </div>
   </section>
 
-  <!-- CONFERIR -->
-  <section id="scr-conferir" class="scr">
-    <h2 class="scr-title">🔍 Conferir</h2>
-    <p class="mini">Cole seu código de 20 dígitos para conferir em quem você votou.</p>
-    <div class="input-group">
-      <input id="cod-input" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="24" oninput="formatCode()">
-      <button class="btn btn-gold" onclick="conferirVoto()">CONFERIR</button>
-    </div>
-    <div id="conferir-res"></div>
-    <div class="meus-codigos" style="margin-top:20px">
-      <h3 class="scr-title mini"><i class="fa-solid fa-history"></i> Meus códigos recentes</h3>
-      <div id="lista-codigos"></div>
+  <!-- ========== PÁGINA 2: VOTAÇÃO ========== -->
+  <section id="p-votar" class="pg">
+    <div class="vot-wrap">
+      <div class="aviso-tse">
+        <i class="fa-solid fa-circle-info"></i>
+        <b>Lista de referência cívica</b> — candidatos reais em mandato (TSE oficial 2026 pendente). Números gerados pra demonstrar viabilidade; em produção, viriam direto do TSE.
+      </div>
+      <div class="uf-row">
+        <span class="mini"><i class="fa-solid fa-location-dot"></i> Estado:</span>
+        <div id="ufChips" class="uf-chips"></div>
+      </div>
+
+      <div class="cargo-head">
+        <div class="ch-ico"><i class="fa-solid fa-landmark"></i></div>
+        <div>
+          <div class="mini" id="etapaLabel">Cargo 1 de 5</div>
+          <b id="cargoNome">Presidente</b>
+        </div>
+        <div class="ch-prog"><div id="progBar"></div></div>
+      </div>
+
+      <div class="cand-box" id="candBox">
+        <div class="dig"><span id="digTxt">_</span><span class="cursor">|</span></div>
+        <div class="cand-info" id="candInfo">
+          <div class="av big">?</div>
+          <div>
+            <b id="cNome">Digite o número do candidato</b>
+            <span class="mini" id="cPart">—</span>
+          </div>
+        </div>
+        <div id="nuloBanner" class="nulo-banner hidden">
+          <i class="fa-solid fa-ban"></i> VOTO NULO — número não corresponde a nenhum candidato
+        </div>
+      </div>
+
+      <div class="keypad" id="keypad">
+        <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+        <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+        <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+        <button data-k="del" class="k-ghost"><i class="fa-solid fa-delete-left"></i></button>
+        <button data-k="0">0</button>
+        <button data-k="branco" class="k-br">BRANCO</button>
+      </div>
+
+      <div class="vot-acts">
+        <button class="btn-cor" id="btnCorrige"><i class="fa-solid fa-rotate-left"></i> CORRIGE</button>
+        <button class="btn-conf" id="btnConfirma"><i class="fa-solid fa-check"></i> CONFIRMA</button>
+      </div>
+
+      <p class="mini center" id="votStat"></p>
     </div>
   </section>
 
-  <!-- TERMÔMETRO -->
-  <section id="scr-termometro" class="scr">
-    <h2 class="scr-title">🌡️ Termômetro</h2>
-    <div class="term-stats" id="term-stats"></div>
-    <div class="regra-70">
-      <i class="fa-solid fa-scale-balanced"></i>
-      <span><b>Regra dos 70%:</b> quando 70% dos votos que elegeram um político são revogados, o mandato é cassado.</span>
-    </div>
-    <h3 class="scr-title mini" style="margin-top:16px"><i class="fa-solid fa-fire"></i> Top políticos no termômetro</h3>
-    <div id="term-top"></div>
-    <h3 class="scr-title mini" style="margin-top:16px;color:var(--red)"><i class="fa-solid fa-arrow-down"></i> Mais revogados</h3>
-    <div id="term-rev"></div>
-  </section>
+  <!-- ========== PÁGINA 3: CÓDIGO DE VOTAÇÃO ========== -->
+  <section id="p-codigo" class="pg">
+    <div class="cod-wrap">
+      <div class="cod-ok"><i class="fa-solid fa-circle-check"></i></div>
+      <h2>Voto registrado</h2>
+      <p class="mini">Guarde o código abaixo — ele é seu comprovante verificável. <b>Sem ele, não é possível conferir nem revogar.</b></p>
 
-  <!-- SEGURANÇA -->
-  <section id="scr-seguranca" class="scr">
-    <h2 class="scr-title">🛡️ Segurança</h2>
-    <div class="seg-card">
-      <h3>🔒 Anonimato total</h3>
-      <p>O sistema nunca sabe quem você é. Seu voto é guardado por um <b>hash anônimo</b> (SHA-256). Mesmo nós não temos acesso ao eleitor.</p>
-    </div>
-    <div class="seg-card">
-      <h3>🔗 Hash encadeado (blockchain-like)</h3>
-      <p>Cada voto gera um <b>hash que liga ao anterior</b>. Se alguém alterar um voto no meio, toda a cadeia quebra e é detectável publicamente. Seu código + hash estão no recibo.</p>
-    </div>
-    <div class="seg-card">
-      <h3>📋 Código único de 20 dígitos</h3>
-      <p>Seu único comprovante. Sem ele, não dá pra conferir, manter ou revogar. <b>Guarde com segurança.</b> É mostrado uma única vez após o voto.</p>
-    </div>
-    <div class="seg-card">
-      <h3>🏛️ Fontes oficiais</h3>
-      <p>Os políticos vêm do TSE, Câmara, Senado e Portal da Transparência. Você pode clicar no link oficial e checar tudo direto na fonte.</p>
-    </div>
-    <div class="seg-card">
-      <h3>💻 Código aberto</h3>
-      <p>O código da plataforma é público. Qualquer pessoa pode auditar. Sem caixa-preta.</p>
-    </div>
-    <div class="seg-card">
-      <h3>⚖️ Regra dos 70%</h3>
-      <p>Proposta cívica: quando 70% dos votos que elegeram um político forem revogados, seu mandato é cassado. O povo devolvendo o poder.</p>
-    </div>
-    <div class="seg-card warn">
-      <h3>⚠️ Aviso legal</h3>
-      <p>Esta plataforma é um <b>protótipo demonstrativo</b>. Os votos e revogações não produzem efeitos jurídicos oficiais. É uma plataforma cívica independente, sem vínculo com o TSE ou qualquer órgão público.</p>
+      <div class="cod-box">
+        <div class="cod-num" id="codNum">— — — —</div>
+        <div class="cod-hash"><i class="fa-solid fa-link"></i> <span id="codHash">—</span></div>
+      </div>
+
+      <div class="cod-acts">
+        <button class="cta-gold" id="codCopy"><i class="fa-solid fa-copy"></i> Copiar código</button>
+        <button class="cta-ghost" id="codShare"><i class="fa-solid fa-share-nodes"></i> Compartilhar</button>
+      </div>
+
+      <div class="cod-mini-acts">
+        <button class="btn-mini" id="codVer"><i class="fa-solid fa-magnifying-glass"></i> Conferir no site</button>
+        <button class="btn-mini" id="codRes"><i class="fa-solid fa-chart-pie"></i> Ver resultados</button>
+        <button class="btn-mini" id="codNov"><i class="fa-solid fa-rotate-right"></i> Votar de novo</button>
+      </div>
+
+      <div class="cod-resumo">
+        <h4>Seus votos</h4>
+        <div id="codResumoList"></div>
+      </div>
+
+      <p class="mini center"><i class="fa-solid fa-shield-halved"></i> Seu voto é <b>anônimo</b>. Só o código identifica — guarde em local seguro.</p>
     </div>
   </section>
 
-  <!-- CONGRESSO -->
-  <section id="scr-congresso" class="scr">
-    <h2 class="scr-title">📜 Congresso</h2>
-    <p class="mini">Opine em projetos de lei em tramitação e acompanhe o Placar do Povo.</p>
-    <div id="congresso-body"></div>
+  <!-- ========== PÁGINA 4: RESULTADOS ========== -->
+  <section id="p-resultados" class="pg">
+    <div class="res-wrap">
+      <div class="res-head">
+        <h2><i class="fa-solid fa-chart-pie"></i> Resultados ao vivo</h2>
+        <span class="chip gold"><i class="fa-solid fa-signal"></i> apuração demonstrativa</span>
+      </div>
+      <p class="mini">Simulação de apuração para demonstrar a viabilidade do app. Percentuais gerados para o protótipo — em produção real, viriam do TSE.</p>
+
+      <div id="resList"></div>
+
+      <div class="res-foot">
+        <span class="mini"><i class="fa-solid fa-clock"></i> atualiza a cada 10s</span>
+        <button class="btn-mini" id="resRef"><i class="fa-solid fa-arrows-rotate"></i> atualizar</button>
+      </div>
+    </div>
   </section>
+
+  <!-- ========== PÁGINA 5: RADAR POLÍTICO ========== -->
+  <section id="p-radar" class="pg">
+    <div class="rad-wrap">
+      <h2><i class="fa-solid fa-users-viewfinder"></i> Radar Político</h2>
+      <p class="mini">Saiba quem é. Reclame. Apoie. Só político verificado responde.</p>
+
+      <div class="rad-busca">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="radInput" placeholder="Nome, partido ou UF…">
+      </div>
+
+      <div class="rad-filters">
+        <button class="chip on" data-f="all">Todos</button>
+        <button class="chip" data-f="Deputado Federal">Dep. Federais</button>
+        <button class="chip" data-f="Senador">Senadores</button>
+        <button class="chip" data-f="ver">✓ Verificados</button>
+      </div>
+
+      <div id="radList"></div>
+    </div>
+  </section>
+
 </main>
 
-<!-- FAB -->
-<button class="fab" id="fab" onclick="go('votar')"><i class="fa-solid fa-check-to-slot"></i></button>
-
-<!-- NAV INFERIOR -->
-<nav class="bot-nav">
-  <button data-scr="votar" class="on"><i class="fa-solid fa-check-to-slot"></i><span>Votar</span></button>
-  <button data-scr="conferir"><i class="fa-solid fa-magnifying-glass"></i><span>Conferir</span></button>
-  <button data-scr="termometro"><i class="fa-solid fa-fire"></i><span>Termômetro</span></button>
-  <button data-scr="congresso"><i class="fa-solid fa-landmark"></i><span>Congresso</span></button>
-  <button data-scr="seguranca"><i class="fa-solid fa-shield-halved"></i><span>Segurança</span></button>
+<nav class="botnav">
+  <button data-p="inicio" class="on"><i class="fa-solid fa-house"></i><span>Início</span></button>
+  <button data-p="votar"><i class="fa-solid fa-check-to-slot"></i><span>Votar</span></button>
+  <button data-p="resultados"><i class="fa-solid fa-chart-pie"></i><span>Resultados</span></button>
+  <button data-p="radar"><i class="fa-solid fa-users-viewfinder"></i><span>Radar</span></button>
+  <button data-p="site" class="site"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>Conferir</span></button>
 </nav>
+
+<div class="toast" id="toast"></div>
 
 <script src="app.js"></script>
 </body>

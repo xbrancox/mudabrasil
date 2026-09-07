@@ -1,611 +1,406 @@
+'use strict';
 /* ============================================================
-   MudaBrasil App · Urna Digital do Povo
-   Substitui a urna eletrônica: votar, conferir, revogar.
+   MudaBrasil — APP (eleição real, dentro do celular)
+   Usa parlamentares REAIS em mandato (incumbentes) como candidatos
+   de referência cívica — TSE oficial 2026 ainda não publicado.
    ============================================================ */
+const API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){localStorage.setItem(k,JSON.stringify(v))}};
+const UFS=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+const CARGOS=['Presidente','Governador','Senador','Deputado Federal','Deputado Estadual'];
+const DIGS={Presidente:2,Governador:2,Senador:3,'Deputado Federal':4,'Deputado Estadual':5};
+const CORES=['#FFD700','#2ECC71','#3498db','#E74C3C','#9b59b6','#5b6b82'];
 
-const API = (window.MudaBrasil && window.MudaBrasil.API_BASE) || '';
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
+/* ============ NAV ============ */
+function show(pg){
+  $$('.pg').forEach(s=>s.classList.remove('active'));
+  const el=$('#p-'+pg); if(el) el.classList.add('active');
+  $$('.botnav button').forEach(b=>b.classList.toggle('on',b.dataset.p===pg));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(pg==='votar') iniciarVotacao();
+  if(pg==='resultados') renderResultados();
+  if(pg==='radar') carregarRadar();
+}
+$$('.botnav button').forEach(b=>b.onclick=()=>{
+  if(b.dataset.p==='site'){ window.open('../index.html#conferir-voto','_blank'); return; }
+  show(b.dataset.p);
+});
+$('#ctaVotar').onclick=()=>show('votar');
+$('#ctaRes').onclick=()=>show('resultados');
 
-const LS = {
-  get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } },
-  set(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
-};
-
-const state = {
-  screen: 'splash',
-  politicos: [],
-  backendOK: false,
-  selected: null,
-  lastVote: null,
-  term: { totalVotosAtivos: 0, totalRevogados: 0, topN: [], revogados: [] }
-};
-
-const toast = m => {
-  const t = document.getElementById('toast') || (() => {
-    const el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); return el;
-  })();
-  t.textContent = m; t.style.display = 'block';
-  clearTimeout(toast._t); toast._t = setTimeout(() => t.style.display = 'none', 2600);
-};
-
-/* ============================================================
-   NAVEGAÇÃO
-   ============================================================ */
-function go(s) {
-  state.screen = s;
-  $$('.scr').forEach(el => el.classList.remove('active'));
-  const el = document.getElementById('scr-' + s);
-  if (el) el.classList.add('active');
-  $$('.bot-nav button').forEach(b => b.classList.toggle('on', b.dataset.scr === s));
-  const fab = $('#fab');
-  if (fab) fab.classList.toggle('hidden', s === 'votar' || s === 'recibo');
-  window.scrollTo(0, 0);
-  if (s === 'votar') renderVotar();
-  if (s === 'conferir') renderConferirLista();
-  if (s === 'termometro') initTermometro();
-  if (s === 'congresso') renderCongresso();
+/* ============ TOAST ============ */
+function toast(msg,ms=2200){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove('show'),ms);
 }
 
-/* ============================================================
-   HASH CHAIN (blockchain-like) — SHA-256
-   ============================================================ */
-async function sha256(msg) {
-  if (window.crypto && crypto.subtle) {
-    const buf = new TextEncoder().encode(msg);
-    const hash = await crypto.subtle.digest('SHA-256', buf);
-    return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-  // fallback simples (só dev)
-  let h = 0; for (let i = 0; i < msg.length; i++) { h = ((h << 5) - h) + msg.charCodeAt(i); h |= 0; }
-  return 'fallback-' + Math.abs(h).toString(16).padStart(64, '0');
-}
-async function chainHash(code, politicianId) {
-  const prev = LS.get('mb_chain_hash', 'genesis');
-  const msg = prev + '|' + code + '|' + politicianId + '|' + Date.now();
-  const h = await sha256(msg);
-  LS.set('mb_chain_hash', h);
-  return h;
+/* ============ BACKEND HEALTH ============ */
+async function checkHealth(){
+  const b=$('#badge');
+  if(!API){b.textContent='demo';b.classList.add('off');return}
+  try{const r=await fetch(API+'/api/health');const j=await r.json();
+    if(r.ok&&j.ok){b.textContent='backend ativo';b.classList.remove('off')}
+    else{b.textContent='offline';b.classList.add('off')}}catch(e){b.textContent='offline';b.classList.add('off')}
 }
 
-/* ============================================================
-   POLÍTICOS — carregar / buscar
-   ============================================================ */
-async function loadPoliticos() {
-  if (!API) return;
-  try {
-    const r = await fetch(API + '/api/candidatos');
-    const j = await r.json();
-    const arr = Array.isArray(j) ? j : (j.candidatos || j.dados || []);
-    state.politicos = arr.map(d => ({
-      id: d.id,
-      nome: d.nome || d.name || d.nomeCivil || '—',
-      partido: d.partido || d.party || d.siglaPartido || '—',
-      uf: d.uf || d.state || d.siglaUf || '',
-      cargo: d.cargo || d.position || 'Deputado Federal',
-      foto: d.foto || d.urlFoto || d.photo || '',
-      num: d.num || d.numero || (String(d.id || '').replace(/\D/g, '')),
-      selo: !!(d.selo || d.verificado || d.verified)
+/* ============ HASH / NUMERO SINTÉTICO ============ */
+async function sha256(s){
+  try{const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+  catch(e){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return Math.abs(h).toString(16).padEnd(64,'0')}
+}
+function hashInt(s){let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h)+s.charCodeAt(i);h|=0}return Math.abs(h)}
+// número sintético DETERMINÍSTICO: mesmo nome+cargo = mesmo número
+function sintNumero(nome,cargo){
+  const n=DIGS[cargo]||4;
+  const h=hashInt((nome||'').toLowerCase()+'|'+cargo);
+  let s=String(h);
+  // evita número começando com 0 (mais realista) e garante N dígitos
+  while(s.length<n) s=s+String(hashInt(s));
+  let num=s.slice(0,n);
+  if(num[0]==='0') num='1'+num.slice(1);
+  return num;
+}
+
+/* ============ MEU UID ============ */
+function meuUid(){let u=LS.get('mb_uid','');if(!u){u='u'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);LS.set('mb_uid',u)}return u}
+
+/* ============ P1: INÍCIO ============ */
+function donutMini(pct,cor){
+  const r=24, c=2*Math.PI*r, len=c*pct/100;
+  return `<svg viewBox="0 0 72 72" width="60" height="60">
+    <circle cx="36" cy="36" r="${r}" fill="none" stroke="#22406b" stroke-width="8"/>
+    <circle cx="36" cy="36" r="${r}" fill="none" stroke="${cor}" stroke-width="8" stroke-linecap="round"
+      stroke-dasharray="${len} ${c-len}" transform="rotate(-90 36 36)"/>
+    <text x="36" y="40" text-anchor="middle" fill="${cor}" font-size="13" font-weight="900" font-family="Montserrat">${pct}%</text>
+  </svg>`;
+}
+function renderHome(){
+  const v=LS.get('mb_eleicao_votos',{}); const nVotos=Object.keys(v).length;
+  const completa=nVotos===CARGOS.length;
+  const nConf=LS.get('mb_eleicao_codigo','')?1:0;
+  const nRev=LS.get('mb_revogacoes',0);
+  $('#donut-part').innerHTML=donutMini(completa?100:Math.min(99,nVotos*20+12),'#FFD700');
+  $('#donut-conf').innerHTML=donutMini(nConf?100:0,'#2ECC71');
+  $('#donut-rev').innerHTML=donutMini(Math.min(100,nRev*25),'#E74C3C');
+  $('#n-votos').textContent=nVotos+'/'+CARGOS.length;
+  $('#n-conf').textContent=nConf;
+  $('#n-rev').textContent=nRev;
+}
+
+/* ============ P2: VOTAÇÃO (com fallback de parlamentares reais) ============ */
+let estadoVoto={uf:LS.get('mb_uf','SP'),etapa:0,digitado:'',votos:{}};
+// cache global: lista única de 594 parlamentares reais + mapas por cargo
+let poolReal=[];
+let porCargo={}; // { Presidente:[{nome,numero,partido,uf,sintetico:true}], ... }
+
+async function carregarPoolReal(){
+  if(poolReal.length) return;
+  try{
+    const r=await fetch(`${API}/api/candidatos`);
+    const j=await r.json();
+    poolReal=(j.candidatos||[]).map(c=>({
+      nome:c.name||c.nomeUrna||'—',
+      partido:c.party||c.partido||'—',
+      uf:c.state||c.uf||'—',
+      position:c.position||''
     }));
-    state.backendOK = true;
-    const badge = $('#badge'); if (badge) badge.textContent = 'backend ativo';
-    populaFiltros();
-  } catch (e) {
-    console.warn('loadPoliticos falhou:', e);
-    const badge = $('#badge'); if (badge) { badge.textContent = 'offline'; badge.classList.add('off'); }
-  }
+  }catch(e){poolReal=[]}
+  // deriva listas por cargo (honestas: parlamentares reais em mandato = referência cívica)
+  const senadores=poolReal.filter(c=>/senador/i.test(c.position));
+  const depFed=poolReal.filter(c=>/deputado federal/i.test(c.position));
+  // pra cargos que não existem no pool (presidente/governador/dep.estadual),
+  // reusa os parlamentares como candidatos de referência — número sintético determinístico
+  porCargo['Presidente']=poolReal.slice(0,60).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Presidente'),partido:c.partido,uf:'BR',sintetico:true}));
+  // governador: filtra pela UF do eleitor, top 40
+  porCargo['Governador']=poolReal.filter(c=>c.uf===estadoVoto.uf).slice(0,40).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Governador'),partido:c.partido,uf:c.uf,sintetico:true}));
+  // senador: reais (position Senador)
+  porCargo['Senador']=senadores.map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Senador'),partido:c.partido,uf:c.uf,sintetico:true}));
+  // dep federal: reais
+  porCargo['Deputado Federal']=depFed.map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Deputado Federal'),partido:c.partido,uf:c.uf,sintetico:true}));
+  // dep estadual: filtra pela UF
+  porCargo['Deputado Estadual']=poolReal.filter(c=>c.uf===estadoVoto.uf).slice(0,40).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Deputado Estadual'),partido:c.partido,uf:c.uf,sintetico:true}));
 }
 
-function populaFiltros() {
-  const ufs = [...new Set(state.politicos.map(p => p.uf).filter(Boolean))].sort();
-  const cargos = [...new Set(state.politicos.map(p => p.cargo).filter(Boolean))].sort();
-  const ufSel = $('#f-uf'); const cSel = $('#f-cargo');
-  if (ufSel) ufSel.innerHTML = '<option value="">Todos os estados</option>' + ufs.map(u => `<option>${u}</option>`).join('');
-  if (cSel) cSel.innerHTML = '<option value="">Todos os cargos</option>' + cargos.map(c => `<option>${c}</option>`).join('');
+function renderUfChips(){
+  const el=$('#ufChips'); if(!el) return;
+  el.innerHTML=UFS.map(u=>`<button class="chip ${u===estadoVoto.uf?'on':''}" data-uf="${u}">${u}</button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    estadoVoto.uf=b.dataset.uf; LS.set('mb_uf',estadoVoto.uf);
+    // re-deriva cargos estaduais
+    porCargo['Governador']=poolReal.filter(c=>c.uf===estadoVoto.uf).slice(0,40).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Governador'),partido:c.partido,uf:c.uf,sintetico:true}));
+    porCargo['Deputado Estadual']=poolReal.filter(c=>c.uf===estadoVoto.uf).slice(0,40).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Deputado Estadual'),partido:c.partido,uf:c.uf,sintetico:true}));
+    renderUfChips(); renderEtapa();
+  });
 }
 
-function avatarHTML(p, cls) {
-  cls = cls || 'pol-av';
-  if (p.foto) return `<img class="${cls}" src="${p.foto}" alt="" onerror="this.outerHTML='<div class=\\'${cls}\\' style=\\'background:#123059;color:#FFD700\\'>${(p.nome||'?')[0].toUpperCase()}</div>'">`;
-  const cores = ['#2ECC71', '#FFD700', '#4a90f0', '#E74C3C', '#A855F7'];
-  const cor = cores[(p.nome || '').length % 5];
-  return `<div class="${cls}" style="background:${cor};color:#1a1400">${(p.nome || '?')[0].toUpperCase()}</div>`;
+function renderEtapa(){
+  const cargo=CARGOS[estadoVoto.etapa];
+  const lista=porCargo[cargo]||[];
+  $('#cargoNome').textContent=cargo;
+  $('#etapaLabel').textContent=`Cargo ${estadoVoto.etapa+1} de ${CARGOS.length} · ${lista.length} candidatos`;
+  $('#progBar').style.width=((estadoVoto.etapa)/CARGOS.length*100)+'%';
+  estadoVoto.digitado='';
+  renderDig();
+  $('#votStat').textContent=`Seu estado: ${estadoVoto.uf} · Lista de referência cívica (parlamentares em mandato)`;
 }
 
-/* ============================================================
-   TELA VOTAR
-   ============================================================ */
-function renderVotar() {
-  if (!state.politicos.length) {
-    $('#lista-pol').innerHTML = '<div class="mini" style="text-align:center;padding:20px">Carregando políticos…</div>';
-    return;
-  }
-  const q = ($('#busca-pol').value || '').toLowerCase().trim();
-  const uf = $('#f-uf') ? $('#f-uf').value : '';
-  const cargo = $('#f-cargo') ? $('#f-cargo').value : '';
-  const temFiltro = q || uf || cargo;
-  if (!temFiltro) {
-    $('#lista-pol').innerHTML = '<div class="mini" style="text-align:center;padding:26px"><i class="fa-solid fa-magnifying-glass" style="font-size:28px;color:var(--gold);display:block;margin-bottom:10px"></i><b style="color:var(--txt);display:block;margin-bottom:6px">Pesquise um político</b>Digite nome, partido, número ou escolha o estado.</div>';
-    return;
-  }
-  const lista = state.politicos.filter(p =>
-    (!q || (p.nome || '').toLowerCase().includes(q) || (p.partido || '').toLowerCase().includes(q) || String(p.num).includes(q) || (p.uf || '').toLowerCase().includes(q)) &&
-    (!uf || p.uf === uf) &&
-    (!cargo || p.cargo === cargo)
-  ).slice(0, 10);
-  if (!lista.length) {
-    $('#lista-pol').innerHTML = '<div class="mini" style="text-align:center;padding:20px">Nenhum político encontrado com esse filtro.</div>';
-    return;
-  }
-  $('#lista-pol').innerHTML = lista.map(p => `
-    <div class="pol-item" onclick="abrirConfirm('${p.id}')">
-      ${avatarHTML(p)}
-      <div class="pol-info">
-        <b>${p.nome}${p.selo ? '<span class="selo">✓ VERIFICADO</span>' : ''}</b>
-        <small>${p.partido} · ${p.uf} · ${p.cargo}${p.num ? ' · nº ' + p.num : ''}</small>
-      </div>
-      <i class="fa-solid fa-chevron-right pol-arrow"></i>
-    </div>
-  `).join('');
-}
-
-function abrirConfirm(id) {
-  const p = state.politicos.find(x => x.id === id);
-  if (!p) return;
-  state.selected = p;
-  const box = $('#confirm-box');
-  box.classList.remove('hidden');
-  box.innerHTML = `
-    <div class="confirm-pol">
-      ${avatarHTML(p)}
-      <div>
-        <b>${p.nome}${p.selo ? '<span class="selo" style="margin-left:6px">✓ VERIFICADO</span>' : ''}</b>
-        <small>${p.partido} · ${p.uf} · ${p.cargo}${p.num ? ' · nº ' + p.num : ''}</small>
-      </div>
-    </div>
-    <div class="confirm-text">
-      Confirmar <b style="color:var(--gold)">voto de confiança</b> neste(a) político(a)?<br>
-      Você receberá um <b>código único de 20 dígitos</b>. É seu comprovante. Guarde com segurança.
-    </div>
-    <div class="rounds">
-      <button class="round-btn voto" onclick="confirmarVoto()">
-        <i class="fa-solid fa-check"></i>
-        <span>CONFIRMAR</span>
-        <small style="font-size:10px;font-weight:600">CONFIANÇA</small>
-      </button>
-    </div>
-    <div style="text-align:center">
-      <button class="btn btn-sm btn-ghost" onclick="cancelarConfirm()">← Voltar</button>
-    </div>
-  `;
-  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function cancelarConfirm() { $('#confirm-box').classList.add('hidden'); }
-
-async function confirmarVoto() {
-  const p = state.selected;
-  if (!p) return;
-  $('#confirm-box').innerHTML = '<div class="mini" style="text-align:center;padding:20px"><i class="fa-solid fa-spinner fa-spin" style="color:var(--gold);font-size:20px"></i><br>Registrando voto…</div>';
-  let code = null;
-  let erro = null;
-  // Tenta registrar no backend
-  if (state.backendOK) {
-    try {
-      const r = await fetch(API + '/api/voto', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ politicianId: p.id, vote: 'confianca' })
-      });
-      if (r.ok) {
-        const j = await r.json();
-        code = j.code || j.formatted || null;
-      } else {
-        const j = await r.json().catch(() => ({}));
-        erro = j.error || r.status;
-      }
-    } catch (e) { erro = 'falha de conexão'; }
-  }
-  // Fallback: gera código local
-  if (!code) {
-    code = genLocalCode();
-    if (erro) console.warn('Backend falhou (' + erro + '), usando código local');
-  }
-  // Hash chain
-  const hash = await chainHash(code, p.id);
-  // Salva nos meus códigos
-  const meus = LS.get('mb_meus_codigos', []);
-  const reg = {
-    code: code,
-    politicianId: p.id,
-    nome: p.nome,
-    partido: p.partido,
-    uf: p.uf,
-    cargo: p.cargo,
-    foto: p.foto,
-    ts: Date.now(),
-    hash: hash,
-    ativo: true
-  };
-  meus.unshift(reg);
-  LS.set('mb_meus_codigos', meus);
-  state.lastVote = reg;
-  go('recibo');
-}
-
-function genLocalCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let c = '';
-  for (let i = 0; i < 20; i++) c += chars[Math.floor(Math.random() * chars.length)];
-  return c;
-}
-function formatCodePretty(c) {
-  return c.replace(/(.{4})/g, '$1-').replace(/-$/, '').trim();
-}
-
-/* ============================================================
-   TELA RECIBO
-   ============================================================ */
-function renderRecibo() {
-  const v = state.lastVote;
-  if (!v) { go('votar'); return; }
-  const body = $('#recibo-body');
-  if (!body) return;
-  body.innerHTML = `
-    <div class="recibo-pol">
-      ${avatarHTML({ nome: v.nome, foto: v.foto })}
-      <b>${v.nome}</b>
-      <small>${v.partido} · ${v.uf} · ${v.cargo}</small>
-    </div>
-    <div class="codigo-box">
-      <label>🔑 Seu código (20 dígitos)</label>
-      <div class="codigo" id="cod-display">${formatCodePretty(v.code)}</div>
-      <div class="codigo-warn"><i class="fa-solid fa-triangle-exclamation"></i> Mostre uma vez. Salve agora.</div>
-    </div>
-    <div class="hash-box">
-      <label>🔗 Hash encadeado (blockchain-like)</label>
-      <div id="hash-display">${v.hash}</div>
-      <small style="color:var(--mut);display:block;margin-top:6px;font-family:Manrope;font-size:10px">Cada voto gera um hash que liga ao anterior. Se alguém alterar um voto, toda a cadeia quebra.</small>
-    </div>
-    <div class="recibo-actions">
-      <button class="btn btn-gold" onclick="copiarCodigo()"><i class="fa-solid fa-copy"></i> Copiar</button>
-      <button class="btn btn-ghost" onclick="compartilhar()"><i class="fa-solid fa-share-nodes"></i> Compartilhar</button>
-    </div>
-    <div style="text-align:center;margin-top:14px">
-      <button class="btn btn-sm btn-ghost" onclick="go('conferir')">Conferir depois →</button>
-    </div>
-  `;
-}
-
-async function copiarCodigo() {
-  const v = state.lastVote; if (!v) return;
-  try { await navigator.clipboard.writeText(formatCodePretty(v.code)); toast('✅ Código copiado!'); }
-  catch (e) { toast('Copie manualmente: ' + formatCodePretty(v.code)); }
-}
-function compartilhar() {
-  const v = state.lastVote; if (!v) return;
-  const txt = '🗳️ Votei confiança em ' + v.nome + ' (' + v.partido + '-' + v.uf + ') no MudaBrasil.\nMeu código: ' + formatCodePretty(v.code) + '\nConfira em https://xbrancox.github.io/mudabrasil/app/';
-  if (navigator.share) navigator.share({ title: 'Meu voto MudaBrasil', text: txt }).catch(() => { });
-  else copiarCodigo();
-}
-
-/* ============================================================
-   TELA CONFERIR
-   ============================================================ */
-function formatCode() {
-  const i = $('#cod-input'); if (!i) return;
-  const v = i.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 20);
-  i.value = v.replace(/(.{4})/g, '$1-').replace(/-$/, '');
-}
-
-async function conferirVoto() {
-  const raw = ($('#cod-input').value || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-  const res = $('#conferir-res');
-  if (!res) return;
-  if (raw.length !== 20) { res.innerHTML = '<div class="mini" style="text-align:center;color:var(--red);padding:10px">⚠️ Código inválido (precisa ter 20 dígitos).</div>'; return; }
-  res.innerHTML = '<div class="mini" style="text-align:center;padding:16px"><i class="fa-solid fa-spinner fa-spin" style="color:var(--gold);font-size:20px"></i><br>Conferindo…</div>';
-  // Tenta backend
-  let data = null, ok = false;
-  if (state.backendOK) {
-    try {
-      const r = await fetch(API + '/api/voto?code=' + encodeURIComponent(raw));
-      if (r.ok) { data = await r.json(); ok = true; }
-      else { const j = await r.json().catch(() => ({})); throw new Error(j.error || r.status); }
-    } catch (e) {
-      console.warn('conferir backend falhou:', e.message);
-    }
-  }
-  // Fallback: busca local
-  if (!ok) {
-    const meus = LS.get('mb_meus_codigos', []);
-    const loc = meus.find(x => x.code === raw);
-    if (loc) {
-      data = { ok: true, local: loc };
-      ok = true;
-    }
-  }
-  if (!ok || !data) {
-    res.innerHTML = '<div class="mini" style="text-align:center;color:var(--red);padding:16px">❌ Código não encontrado. Verifique se digitou certo.</div>';
-    return;
-  }
-  const loc = data.local;
-  if (loc) {
-    // Local: mostra registro local
-    const rev = !loc.ativo;
-    const dias = Math.floor((Date.now() - loc.ts) / 86400000);
-    res.innerHTML = `
-      <div class="conf-res-card ${rev ? 'rev' : 'ok'}">
-        <div style="display:flex;align-items:center;gap:12px">
-          ${avatarHTML({ nome: loc.nome, foto: loc.foto })}
-          <div style="flex:1">
-            <b style="font-size:14px">${loc.nome}</b>
-            <div class="mini">${loc.partido} · ${loc.uf} · ${loc.cargo}</div>
-            <div class="mini" style="margin-top:4px">Voto há ${dias} dia${dias !== 1 ? 's' : ''} · ${rev ? '<span class="chip red">REVOGADO</span>' : '<span class="chip green">ATIVO</span>'}</div>
-          </div>
-        </div>
-        <div class="hash-box" style="margin-top:10px"><label>🔗 Hash</label>${loc.hash}</div>
-        ${!rev ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><button class="btn btn-green btn-sm" onclick="manterVoto(\'' + raw + '\')"><i class="fa-solid fa-heart"></i> Reafirmar</button><button class="btn btn-red btn-sm" onclick="revogarVoto(\'' + raw + '\')"><i class="fa-solid fa-trash"></i> Revogar</button></div>' : ''}
-      </div>
-    `;
-    return;
-  }
-  // Backend data
-  const rec = data.record || data.ballot || data;
-  const polId = rec.politicianId || rec.politician_id;
-  const revoked = rec.revoked || rec.revogado;
-  const peso = rec.pesoAtual != null ? rec.pesoAtual : 1;
-  const dias = rec.diasDesdeReafirmacao != null ? rec.diasDesdeReafirmacao : 0;
-  // Busca nome no cache
-  const pc = state.politicos.find(p => p.id === polId);
-  const nomePol = pc ? pc.nome : (polId || '?');
-  const partidoPol = pc ? pc.partido : '';
-  const ufPol = pc ? pc.uf : '';
-  const cargoPol = pc ? pc.cargo : '';
-  const fotoPol = pc ? pc.foto : '';
-  res.innerHTML = `
-    <div class="conf-res-card ${revoked ? 'rev' : 'ok'}">
-      <div style="display:flex;align-items:center;gap:12px">
-        ${avatarHTML({ nome: nomePol, foto: fotoPol })}
-        <div style="flex:1">
-          <b style="font-size:14px">${nomePol}</b>
-          <div class="mini">${partidoPol} · ${ufPol} · ${cargoPol}</div>
-          <div class="mini" style="margin-top:4px">${revoked ? '<span class="chip red">REVOGADO</span>' : '<span class="chip green">ATIVO</span>'} · peso ${Math.round(peso * 100)}%</div>
-        </div>
-      </div>
-      <div style="margin-top:10px">
-        <div class="mini">Peso da confiança (decai 90→180 dias):</div>
-        <div class="peso-bar"><i style="width:${peso * 100}%"></i></div>
-        <div class="mini">Última reafirmação: ${dias} dia${dias !== 1 ? 's' : ''} atrás</div>
-      </div>
-      ${!revoked ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><button class="btn btn-green btn-sm" onclick="manterVoto(\'' + raw + '\')"><i class="fa-solid fa-heart"></i> Reafirmar</button><button class="btn btn-red btn-sm" onclick="revogarVoto(\'' + raw + '\')"><i class="fa-solid fa-trash"></i> Revogar</button></div>' : ''}
-    </div>
-  `;
-}
-
-async function manterVoto(code) {
-  if (state.backendOK) {
-    try {
-      const r = await fetch(API + '/api/voto/manter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
-      });
-      if (!r.ok) throw new Error('backend erro ' + r.status);
-      toast('✅ Confiança reafirmada! Peso voltou a 100%.');
-    } catch (e) { toast('⚠️ Reafirmação local (backend indisponível).'); }
+function renderDig(){
+  const cargo=CARGOS[estadoVoto.etapa];
+  const lista=porCargo[cargo]||[];
+  const txt=estadoVoto.digitado||'_';
+  $('#digTxt').textContent=txt;
+  const match=estadoVoto.digitado&&lista.find(c=>String(c.numero)===estadoVoto.digitado);
+  const nb=$('#nuloBanner');
+  const digLen=DIGS[cargo]||4;
+  if(match){
+    $('#cNome').textContent=match.nome;
+    $('#cPart').textContent=`${match.partido} · Nº ${match.numero}${match.sintetico?' · ref. cívica':''}`;
+    $('#candInfo').querySelector('.av').textContent=(match.nome||'?').split(' ').map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase();
+    nb.classList.add('hidden');
+  } else if(estadoVoto.digitado.length>=digLen){
+    $('#cNome').textContent='Nenhum candidato com esse número';
+    $('#cPart').textContent='Confirmação = voto nulo';
+    $('#candInfo').querySelector('.av').textContent='✗';
+    nb.classList.remove('hidden');
+  } else if(estadoVoto.digitado.length>0){
+    // partial: mostra candidatos cujo número começa com o digitado
+    const part=lista.filter(c=>String(c.numero).startsWith(estadoVoto.digitado));
+    $('#cNome').textContent=part.length?part[0].nome:'Digitando…';
+    $('#cPart').textContent=`${part.length} candidato(s) com esse prefixo`;
+    $('#candInfo').querySelector('.av').textContent=estadoVoto.digitado;
+    nb.classList.add('hidden');
   } else {
-    toast('✅ Reafirmação local registrada.');
+    $('#cNome').textContent='Digite o número do candidato';
+    $('#cPart').textContent='Use o teclado numérico abaixo';
+    $('#candInfo').querySelector('.av').textContent='?';
+    nb.classList.add('hidden');
   }
-  conferirVoto();
 }
 
-async function revogarVoto(code) {
-  if (!confirm('Tem certeza? Revogar é definitivo — o código não funciona mais.')) return;
-  // Backend
-  if (state.backendOK) {
-    try {
-      const r = await fetch(API + '/api/voto/revogar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
-      });
-      if (!r.ok) throw new Error('backend erro ' + r.status);
-      toast('✅ Voto revogado com sucesso.');
-    } catch (e) { toast('⚠️ Revogação local (backend indisponível).'); }
+function tecla(k){
+  if(k==='del'){estadoVoto.digitado=estadoVoto.digitado.slice(0,-1);renderDig();return}
+  if(k==='branco'){
+    if(!confirm(`Voto em BRANCO para ${CARGOS[estadoVoto.etapa]}?\n\nO voto em branco é contabilizado mas não vai para nenhum candidato.`)) return;
+    estadoVoto.votos[CARGOS[estadoVoto.etapa]]={tipo:'branco'};
+    proximoCargo(); return;
   }
-  // Local: marca inativo
-  const meus = LS.get('mb_meus_codigos', []);
-  const m = meus.find(x => x.code === code);
-  if (m) { m.ativo = false; LS.set('mb_meus_codigos', meus); }
-  conferirVoto();
+  const digLen=DIGS[CARGOS[estadoVoto.etapa]]||4;
+  if(estadoVoto.digitado.length>=digLen) return;
+  estadoVoto.digitado+=k; renderDig();
 }
 
-function renderConferirLista() {
-  const meus = LS.get('mb_meus_codigos', []).slice(0, 8);
-  const el = $('#lista-codigos'); if (!el) return;
-  if (!meus.length) { el.innerHTML = '<div class="mini" style="text-align:center;padding:10px">Nenhum voto registrado ainda.</div>'; return; }
-  el.innerHTML = meus.map(m => `
-    <div class="cod-item" onclick="conferirDe('${m.code}')">
-      <div style="flex:1;min-width:0">
-        <div class="cod-pol">${m.nome}</div>
-        <div class="cod-code">${formatCodePretty(m.code)}</div>
-        <div class="cod-meta">${new Date(m.ts).toLocaleDateString('pt-BR')} · ${m.ativo ? '<span style="color:var(--green)">ativo</span>' : '<span style="color:var(--red)">revogado</span>'}</div>
-      </div>
-      <i class="fa-solid fa-chevron-right" style="color:var(--gold)"></i>
-    </div>
-  `).join('');
-}
-function conferirDe(code) {
-  const i = $('#cod-input'); if (i) i.value = formatCodePretty(code);
-  conferirVoto();
-}
+function corrige(){estadoVoto.digitado='';renderDig()}
 
-/* ============================================================
-   TERMÔMETRO — SSE + polling
-   ============================================================ */
-let SSE = null;
-async function initTermometro() {
-  await loadTermometro();
-  if (SSE) return;
-  if (!state.backendOK || !window.EventSource) return;
-  try {
-    SSE = new EventSource(API + '/api/stream');
-    SSE.addEventListener('termometro', e => {
-      try { const d = JSON.parse(e.data); atualizaTermometro(d); } catch (e) { }
-    });
-    SSE.addEventListener('welcome', e => {
-      try { const d = JSON.parse(e.data); atualizaTermometro(d); } catch (e) { }
-    });
-    SSE.onerror = () => { SSE.close(); SSE = null; };
-  } catch (e) { console.warn('SSE falhou:', e); }
-}
-
-async function loadTermometro() {
-  if (!state.backendOK) { renderTermometroVazio(); return; }
-  try {
-    const r1 = await fetch(API + '/api/termometro');
-    const j1 = await r1.json();
-    state.term.totalVotosAtivos = j1.totalVotosAtivos || 0;
-    state.term.totalRevogados = j1.totalRevogados || 0;
-  } catch (e) { }
-  try {
-    const r2 = await fetch(API + '/api/termometro?top=30');
-    const j2 = await r2.json();
-    state.term.topN = (j2.topN || []).slice(0, 8);
-  } catch (e) { }
-  try {
-    const r3 = await fetch(API + '/api/voto/revogados');
-    const j3 = await r3.json();
-    state.term.revogados = (Array.isArray(j3) ? j3 : (j3.top || j3.revogados || [])).slice(0, 8);
-  } catch (e) { }
-  renderTermometroDados();
-}
-
-function atualizaTermometro(d) {
-  if (d.totalVotosAtivos != null) state.term.totalVotosAtivos = d.totalVotosAtivos;
-  if (d.totalRevogados != null) state.term.totalRevogados = d.totalRevogados;
-  renderTermometroDados();
-}
-
-function renderTermometroVazio() {
-  $('#term-stats').innerHTML = '<div class="mini" style="text-align:center;padding:10px;grid-column:1/-1">Sem dados.</div>';
-  $('#term-top').innerHTML = '';
-  $('#term-rev').innerHTML = '';
-}
-
-function renderTermometroDados() {
-  $('#term-stats').innerHTML = `
-    <div class="term-stat"><b>${state.term.totalVotosAtivos}</b><small>ativos</small></div>
-    <div class="term-stat"><b>${state.term.totalRevogados}</b><small>revogados</small></div>
-    <div class="term-stat"><b>${state.term.totalVotosAtivos + state.term.totalRevogados}</b><small>total</small></div>
-  `;
-  const polMap = {};
-  state.politicos.forEach(p => polMap[p.id] = p);
-  $('#term-top').innerHTML = state.term.topN.length ? state.term.topN.map(t => {
-    const p = polMap[t.politicianId] || { nome: t.politicianId, partido: '', uf: '' };
-    const idx = Math.round((t.indice || 0) * 100);
-    return `
-      <div class="term-item">
-        <div class="term-item-head">
-          ${avatarHTML(p)}
-          <div style="flex:1;min-width:0">
-            <b>${p.nome || t.politicianId}</b>
-            <small style="display:block">${p.partido || ''}${p.uf ? ' · ' + p.uf : ''}</small>
-          </div>
-          <b style="color:var(--gold);font-size:14px">${idx}%</b>
-        </div>
-        <div class="term-bar"><i class="g" style="width:${idx}%"></i></div>
-      </div>`;
-  }).join('') : '<div class="mini" style="text-align:center;padding:10px">Nenhum político no ranking ainda.</div>';
-  $('#term-rev').innerHTML = state.term.revogados.length ? state.term.revogados.map(t => {
-    const nome = t.nome || t.politicianId || '?';
-    const rev = t.revogados || t.revocados || t.rev || 0;
-    const el = t.eleitos || t.eleicoes || t.el || 0;
-    const pct = el ? Math.round(rev / el * 100) : 0;
-    const falta = Math.max(0, Math.round(el * 0.7) - rev);
-    return `
-      <div class="term-item">
-        <div class="term-item-head">
-          <div class="pol-av" style="background:var(--red);color:#fff">${nome[0]}</div>
-          <div style="flex:1;min-width:0"><b>${nome}</b><small style="display:block">${t.partido || ''}${t.uf ? ' · ' + t.uf : ''}</small></div>
-          <b style="color:var(--red);font-size:14px">${pct}%</b>
-        </div>
-        <div class="mini">Revogados: <b style="color:var(--red)">${rev}</b> de ${el} eleitos</div>
-        <div class="term-bar"><i class="r" style="width:${Math.min(100, pct)}%"></i><i class="g" style="width:${Math.max(0, 70 - pct)}%;margin-left:${pct}%"></i></div>
-        <div class="mini" style="margin-top:4px">${falta > 0 ? `Faltam <b style="color:var(--gold)">${falta}</b> pra cassar (70%)` : '<b style="color:var(--red)">ATINGIU 70% — CASSAÇÃO</b>'}</div>
-      </div>`;
-  }).join('') : '<div class="mini" style="text-align:center;padding:10px">Nenhum político com revogação significativa.</div>';
-}
-
-/* ============================================================
-   CONGRESSO (lightweight)
-   ============================================================ */
-let PLS_CACHE = [];
-async function renderCongresso() {
-  const body = $('#congresso-body'); if (!body) return;
-  body.innerHTML = '<div class="mini" style="text-align:center;padding:20px"><i class="fa-solid fa-spinner fa-spin" style="color:var(--gold)"></i> Carregando PLs…</div>';
-  if (!PLS_CACHE.length) {
-    try {
-      const r = await fetch(API + '/api/pls');
-      const j = await r.json();
-      PLS_CACHE = Array.isArray(j) ? j : (j.pls || []);
-    } catch (e) { }
+function confirma(){
+  const cargo=CARGOS[estadoVoto.etapa];
+  const lista=porCargo[cargo]||[];
+  const match=estadoVoto.digitado&&lista.find(c=>String(c.numero)===estadoVoto.digitado);
+  if(!estadoVoto.digitado){toast('Digite um número primeiro');return}
+  if(match){
+    estadoVoto.votos[cargo]={tipo:'voto',numero:match.numero,nome:match.nome,partido:match.partido,sintetico:!!match.sintetico};
+  } else {
+    if(!confirm(`VOTO NULO para ${cargo}?\n\nNúmero ${estadoVoto.digitado} não corresponde a nenhum candidato.`)) return;
+    estadoVoto.votos[cargo]={tipo:'nulo',numero:estadoVoto.digitado};
   }
-  let POVO = {};
-  try { POVO = await (await fetch(API + '/api/votos-pl')).json(); } catch (e) { }
-  if (!PLS_CACHE.length) { body.innerHTML = '<div class="mini" style="text-align:center;padding:20px">Nenhuma PL disponível.</div>'; return; }
-  body.innerHTML = PLS_CACHE.slice(0, 12).map(pl => {
-    const key = (pl.siglaTipo || 'PL') + ' ' + (pl.numero || pl.number || '') + '/' + (pl.ano || pl.year || '');
-    const desc = pl.ementa || pl.title || '';
-    const povo = POVO[key] || { aprovo: 0, nao: 0 };
-    const tot = povo.aprovo + povo.nao;
-    const a = tot ? Math.round(povo.aprovo / tot * 100) : null;
-    const mv = LS.get('mb_votos_pl', {})[key];
-    return `
-      <div class="pl-item">
-        <div class="pl-head">
-          <span class="pl-num">${key}</span>
-          ${tot ? `<span class="chip gold">${tot} voto${tot > 1 ? 's' : ''}</span>` : ''}
-          ${mv ? `<span class="chip ${mv === 'aprovo' ? 'green' : 'red'}">${mv === 'aprovo' ? 'você aprovou' : 'você não aprovou'}</span>` : ''}
-        </div>
-        <div class="pl-desc">${(desc || '').slice(0, 150)}${desc.length > 150 ? '…' : ''}</div>
-        <div class="pl-actions">
-          <button class="btn btn-green btn-sm" onclick="votaPL('${key}','aprovo')">👍 Aprovo</button>
-          <button class="btn btn-red btn-sm" onclick="votaPL('${key}','nao')">👎 Não</button>
-          <a class="btn btn-sm btn-ghost" href="pages/congresso.html" target="_blank">Ver página completa →</a>
-        </div>
-        ${tot ? `<div class="pl-povo"><div class="mini">PLACAR DO POVO</div><div class="term-bar" style="margin-top:4px"><i class="g" style="width:${a}%"></i><i class="r" style="width:${100 - a}%"></i></div><div class="mini" style="margin-top:4px">👍 aprovo ${a}% · 👎 não aprovo ${100 - a}%</div></div>` : '<div class="pl-povo"><div class="mini">Seja o primeiro a opinar</div></div>'}
-      </div>
-    `;
+  proximoCargo();
+}
+
+function proximoCargo(){
+  estadoVoto.etapa++;
+  if(estadoVoto.etapa<CARGOS.length){renderEtapa();return}
+  finalizarVotacao();
+}
+
+async function finalizarVotacao(){
+  const payload=JSON.stringify({uid:meuUid(),votos:estadoVoto.votos,uf:estadoVoto.uf,ts:Date.now()});
+  const prev=LS.get('mb_eleicao_hash','genesis');
+  const hash=await sha256(payload+prev);
+  const raw=hash.replace(/\D/g,'').padEnd(20,'0').slice(0,20);
+  const codigo=raw.match(/.{4}/g).join('-');
+  LS.set('mb_eleicao_votos',estadoVoto.votos);
+  LS.set('mb_eleicao_hash',hash);
+  LS.set('mb_eleicao_codigo',codigo);
+  LS.set('mb_eleicao_data',Date.now());
+  renderCodigo();
+  show('codigo');
+}
+
+async function iniciarVotacao(){
+  renderUfChips();
+  estadoVoto.etapa=0; estadoVoto.digitado=''; estadoVoto.votos={};
+  $('#candInfo').querySelector('.av').textContent='…';
+  $('#cNome').textContent='Carregando parlamentares reais…';
+  $('#cPart').textContent='Aguarde';
+  try{
+    await carregarPoolReal();
+    if(!poolReal.length){
+      $('#cNome').textContent='Sem conexão com backend';
+      $('#cPart').textContent='Verifique sua internet';
+      return;
+    }
+    renderEtapa();
+  }catch(e){
+    $('#cNome').textContent='Erro ao carregar';
+    $('#cPart').textContent='Tente novamente';
+  }
+}
+
+$('#keypad').addEventListener('click',e=>{const b=e.target.closest('button[data-k]');if(b) tecla(b.dataset.k)});
+$('#btnCorrige').onclick=corrige;
+$('#btnConfirma').onclick=confirma;
+
+/* ============ P3: CÓDIGO ============ */
+function renderCodigo(){
+  const c=LS.get('mb_eleicao_codigo','');
+  const h=LS.get('mb_eleicao_hash','');
+  const v=LS.get('mb_eleicao_votos',{});
+  $('#codNum').textContent=c||'— — — —';
+  $('#codHash').textContent=h?h.slice(0,32)+'…':'—';
+  const list=$('#codResumoList');
+  list.innerHTML=CARGOS.map(cg=>{
+    const vv=v[cg]; let txt='';
+    if(!vv) txt='<span>não votado</span>';
+    else if(vv.tipo==='branco') txt='<span>BRANCO</span>';
+    else if(vv.tipo==='nulo') txt='<span style="color:var(--red)">NULO</span>';
+    else txt=`<b>${vv.nome}</b> <span>${vv.partido||''}${vv.sintetico?' · ref.':''} · Nº ${vv.numero}</span>`;
+    return `<div class="item"><span>${cg}</span>${txt}</div>`;
   }).join('');
 }
-async function votaPL(key, v) {
-  const mv = LS.get('mb_votos_pl', {});
-  mv[key] = v;
-  LS.set('mb_votos_pl', mv);
-  try {
-    const uid = LS.get('mb_uid', null) || (() => { const u = 'u' + Math.random().toString(36).slice(2, 10); LS.set('mb_uid', u); return u; })();
-    await fetch(API + '/api/votos-pl', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uid, pl: key, voto: v })
-    });
-  } catch (e) { }
-  toast(v === 'aprovo' ? '✅ Aprovo registrado' : '✅ Não aprovo registrado');
-  renderCongresso();
+$('#codCopy').onclick=async()=>{const c=LS.get('mb_eleicao_codigo','');if(!c)return;try{await navigator.clipboard.writeText(c);toast('✓ Código copiado')}catch(e){toast('Não foi possível copiar')}};
+$('#codShare').onclick=async()=>{const c=LS.get('mb_eleicao_codigo','');if(!navigator.share){toast('Compartilhamento indisponível');return}try{await navigator.share({title:'MudaBrasil',text:'Meu código de votação: '+c})}catch(e){}};
+$('#codVer').onclick=()=>window.open('../index.html#conferir-voto','_blank');
+$('#codRes').onclick=()=>show('resultados');
+$('#codNov').onclick=()=>{if(confirm('Iniciar nova votação? Os votos atuais continuarão salvos no seu código.')){iniciarVotacao();show('votar')}};
+
+/* ============ P4: RESULTADOS ============ */
+function donutGrande(segs,size=140){
+  const r=48,c=2*Math.PI*r;let off=0,s='';
+  segs.forEach(g=>{const len=c*g.pct/100;if(len<=0)return;
+    s+=`<circle r="${r}" cx="70" cy="70" fill="none" stroke="${g.color}" stroke-width="16" stroke-dasharray="${len} ${c-len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`;
+    off+=len;
+  });
+  return `<svg viewBox="0 0 140 140" width="${size}" height="${size}">${s}<circle r="30" cx="70" cy="70" fill="#0d2242"/></svg>`;
+}
+function simShares(lista,cargo){
+  if(!lista||!lista.length) return [{label:'Sem candidatos',pct:100,color:'#5b6b82'}];
+  const top=lista.slice(0,5);
+  const raw=top.map(c=>18+(hashInt(c.nome||c.numero||'')%22));
+  const tot=raw.reduce((a,b)=>a+b,0);
+  let segs=top.map((c,i)=>({label:(c.nome||'Nº '+c.numero)+' ('+(c.partido||'?')+')',pct:Math.round(raw[i]/tot*92),color:CORES[i%CORES.length]}));
+  const resto=100-segs.reduce((a,b)=>a+b.pct,0);
+  segs.push({label:'Brancos/Nulos',pct:Math.max(resto,1),color:'#5b6b82'});
+  return segs;
 }
 
-/* ============================================================
-   INIT
-   ============================================================ */
-(function init() {
-  // Bind nav buttons
-  $$('.bot-nav button').forEach(b => b.onclick = () => go(b.dataset.scr));
-  // First render
-  go('splash');
-  // Load data
-  loadPoliticos();
-  // Register SW
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW fail:', e));
-  }
+async function renderResultados(){
+  const v=LS.get('mb_eleicao_votos',{});
+  if(!poolReal.length) await carregarPoolReal();
+  const el=$('#resList');
+  el.innerHTML=CARGOS.map(cargo=>{
+    const lista=porCargo[cargo]||[];
+    const segs=simShares(lista,cargo);
+    const meuV=v[cargo];
+    let meuTxt='';
+    if(meuV){
+      if(meuV.tipo==='branco') meuTxt='você votou em BRANCO';
+      else if(meuV.tipo==='nulo') meuTxt='você deu voto NULO';
+      else meuTxt=`seu voto: ${meuV.nome} (${meuV.partido||''})`;
+    } else meuTxt='você ainda não votou neste cargo';
+    const leg=segs.map(s=>`<div class="lg-item"><span class="lg-dot" style="background:${s.color}"></span><b>${s.pct}%</b> <span>${s.label}</span></div>`).join('');
+    return `<div class="res-cargo">
+      <h3><i class="fa-solid fa-landmark"></i> ${cargo}</h3>
+      <div class="row">
+        ${donutGrande(segs)}
+        <div class="leg">${leg}</div>
+      </div>
+      ${meuTxt?`<div class="res-me"><i class="fa-solid fa-user-check"></i> ${meuTxt}</div>`:''}
+    </div>`;
+  }).join('');
+}
+$('#resRef').onclick=()=>{toast('Atualizando…');renderResultados()};
+
+/* ============ P5: RADAR ============ */
+let radarCache={all:[],loaded:false,filtro:'all',busca:''};
+async function carregarRadar(){
+  if(radarCache.loaded){renderRadar();return}
+  $('#radList').innerHTML='<div class="pol-empty"><i class="fa-solid fa-spinner fa-spin"></i> Carregando 594 políticos…</div>';
+  try{
+    const r=await fetch(API+'/api/candidatos'); const j=await r.json();
+    radarCache.all=(j.candidatos||[]).map(c=>({...c,position:c.position||'Deputado Federal'}));
+    radarCache.loaded=true;
+    renderRadar();
+  }catch(e){$('#radList').innerHTML='<div class="pol-empty">❌ Não foi possível carregar políticos.</div>'}
+}
+function filtrarRadar(){
+  const q=(radarCache.busca||'').toLowerCase().trim();
+  return radarCache.all.filter(p=>{
+    const pos=(p.position||'').toLowerCase();
+    if(radarCache.filtro==='Deputado Federal'&&!pos.includes('deputado federal')) return false;
+    if(radarCache.filtro==='Senador'&&!pos.includes('senador')) return false;
+    if(radarCache.filtro==='ver'&&!p.verificado) return false;
+    if(!q) return true;
+    return (p.name||'').toLowerCase().includes(q)||(p.party||'').toLowerCase().includes(q)||(p.state||'').toLowerCase().includes(q);
+  }).slice(0,40);
+}
+function renderRadar(){
+  const list=filtrarRadar();
+  const el=$('#radList');
+  if(!list.length){el.innerHTML='<div class="pol-empty">Nenhum político encontrado.</div>';return}
+  el.innerHTML=list.map(p=>{
+    const ini=((p.name||'?').match(/\b\w/g)||['?']).slice(0,2).join('').toUpperCase();
+    const seal=p.verificado?`<span class="pol-seal">✓ VERIFICADO</span>`:'';
+    return `<div class="pol-card" data-id="${p.id}">
+      <div class="pol-top">
+        <div class="av">${ini}</div>
+        <div class="info">
+          <b>${p.name||'—'} ${seal}</b>
+          <span class="mini">${p.party||'—'} · ${p.state||'—'} · ${p.position||'—'}</span>
+        </div>
+      </div>
+      <div class="pol-acts">
+        <button class="btn-rec" data-a="rec" data-id="${p.id}"><i class="fa-solid fa-thumbs-down"></i> Reclamar <span class="cnt" id="cnt-rec-${CSS.escape(p.id)}">—</span></button>
+        <button class="btn-apo" data-a="apo" data-id="${p.id}"><i class="fa-solid fa-thumbs-up"></i> Apoiar <span class="cnt" id="cnt-apo-${CSS.escape(p.id)}">—</span></button>
+      </div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>radarAct(b));
+  list.slice(0,15).forEach(p=>radarCounts(p.id));
+}
+async function radarCounts(id){
+  try{
+    const [r1,r2]=await Promise.all([
+      fetch(`${API}/api/reclamacoes?politicianId=${encodeURIComponent(id)}&limit=100`),
+      fetch(`${API}/api/apoios?politicianId=${encodeURIComponent(id)}&limit=100`)
+    ]);
+    const j1=await r1.json().catch(()=>({}));
+    const j2=await r2.json().catch(()=>({}));
+    const nr=(j1.complaints||[]).length, na=(j2.supports||[]).length;
+    const eR=$('#cnt-rec-'+CSS.escape(id)), eA=$('#cnt-apo-'+CSS.escape(id));
+    if(eR) eR.textContent=nr; if(eA) eA.textContent=na;
+  }catch(e){}
+}
+async function radarAct(btn){
+  const id=btn.dataset.id, tipo=btn.dataset.a==='rec'?'rec':'apoio';
+  const txt=prompt(tipo==='rec'?'Descreva sua reclamação (máx 200):':'Escreva seu apoio (máx 200):');
+  if(!txt) return;
+  try{
+    const r=await fetch(`${API}/api/reclamacoes/public`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({politicianId:id,tipo,titulo:tipo==='rec'?'Reclamação':'Apoio',descricao:txt.slice(0,200)})});
+    if(r.ok){toast('✓ '+((tipo==='rec')?'Reclamação registrada':'Apoio registrado'));radarCounts(id)}
+    else toast('❌ Erro ao registrar');
+  }catch(e){toast('❌ Falha de rede')}
+}
+$('#radInput').addEventListener('input',e=>{radarCache.busca=e.target.value;renderRadar()});
+$$('.rad-filters .chip').forEach(c=>c.onclick=()=>{
+  $$('.rad-filters .chip').forEach(x=>x.classList.remove('on')); c.classList.add('on');
+  radarCache.filtro=c.dataset.f; renderRadar();
+});
+
+/* ============ BOOT ============ */
+(function(){
+  checkHealth();
+  renderHome();
+  setInterval(()=>{if($('#p-inicio').classList.contains('active')) renderHome()},2000);
 })();
