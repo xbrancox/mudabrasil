@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /pages/candidatos.html
 
 Sitemap: https://xbrancox.github.io/mudabrasil/sitemap.xml

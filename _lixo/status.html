@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MudaBrasil - Revogar Voto</title>
-  <meta http-equiv="refresh" content="2;url=meu-voto.html#conferir">
+  <title>MudaBrasil - Status</title>
+  <meta http-equiv="refresh" content="2;url=meu-voto.html#termometro">
   <link rel="stylesheet" href="../css/design-system.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,23 +41,23 @@
 <body>
   <div class="redirect-box">
     <div class="spinner"></div>
-    <h2>↩ Revogar está em "Meu Voto"</h2>
+    <h2>📊 Status foi unificado!</h2>
     <p style="color:var(--text-secondary); margin-bottom:var(--space-lg);">
-      A opção de conferir e revogar seu voto agora fica na aba
-      <strong>"Conferir / Revogar"</strong> dentro de <strong>Meu Voto</strong>.
-      É só colar seu código e escolher a ação.
+        A página de Status tinha conteúdo muito parecido com o Termômetro. Agora tudo
+        está organizado em <strong>Meu Voto</strong>, com abas claras pra cada ação.
     </p>
     <p style="font-size:var(--text-sm); color:var(--text-muted);">
       Redirecionando em 2 segundos...
     </p>
-    <a href="meu-voto.html#conferir" class="btn btn-accent" style="display:inline-block; margin-top:var(--space-md);">
+    <a href="meu-voto.html#termometro" class="btn btn-accent" style="display:inline-block; margin-top:var(--space-md);">
       Ir agora →
     </a>
   </div>
   <script>
     setTimeout(function() {
-      window.location.href = 'meu-voto.html#conferir';
+      window.location.href = 'meu-voto.html#termometro';
     }, 2000);
   </script>
+<script src="../js/header-unificado.js"></script>
 </body>
 </html>

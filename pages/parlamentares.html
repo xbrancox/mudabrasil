@@ -11,23 +11,7 @@
   <link rel="stylesheet" href="../css/parlamentares.css">
 </head>
 <body>
-  <!-- ===================== HEADER ===================== -->
-  <header class="mb-header">
-    <a href="../index.html" class="mb-logo" aria-label="MudaBrasil - Início">
-      <span class="mb-logo-mark">M</span>
-      <span class="mb-logo-text">MudaBrasil</span>
-    </a>
-    <nav class="mb-nav" id="mb-nav">
-      <a href="../index.html" class="mb-nav-link">Início</a>
-      <a href="parlamentares.html" class="mb-nav-link active">Parlamentares</a>
-      <a href="meu-voto.html" class="mb-nav-link">Meu Voto</a>
-      <a href="proposta.html" class="mb-nav-link">Proposta</a>
-      <a href="comunidade.html" class="mb-nav-link">Comunidade</a>
-    </nav>
-    <div class="mb-header-actions">
-      <button class="mb-btn-ghost" id="mb-login-btn">Entrar</button>
-    </div>
-  </header>
+  <!-- header injetado por ../js/header-unificado.js -->
 
   <!-- ===================== TÍTULO DA PÁGINA ===================== -->
   <section class="mb-hero">
@@ -250,7 +234,7 @@
         <h3>📋 Seus candidatos votados</h3>
         <div id="conferir-votes"></div>
         <button class="mb-btn-primary mb-btn-block" id="generate-code-btn" hidden>Gerar código de verificação</button>
-        <p class="mb-muted-sm" id="conferir-no-votes" hidden>Você ainda não votou em ninguém. <a href="meu-voto.html">Vote aqui</a> primeiro.</p>
+        <p class="mb-muted-sm" id="conferir-no-votes" hidden>Você ainda não votou em ninguém. <a href="../index.html#conferir-voto">Vote aqui</a> primeiro.</p>
       </div>
 
       <div class="mb-card mb-conferir-card">
@@ -367,5 +351,6 @@
   <script src="../config.js"></script>
   <script src="../js/parlamentar-auth.js"></script>
   <script src="../js/parlamentares.js"></script>
+<script src="../js/header-unificado.js"></script>
 </body>
 </html>

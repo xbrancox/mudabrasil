@@ -1,0 +1,14 @@
+{
+  "name": "MudaBrasil - Voto Continuo",
+  "short_name": "MudaBrasil",
+  "description": "Seu voto coloca. Seu voto tira.",
+  "start_url": "/mudabrasil/app/",
+  "scope": "/mudabrasil/app/",
+  "display": "standalone",
+  "background_color": "#061a3a",
+  "theme_color": "#061a3a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

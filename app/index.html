@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#061a3a">
+<title>MudaBrasil · App</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<script src="../config.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header><b>MudaBrasil</b><span class="badge" id="badge">…</span><a class="btn-gold" href="../index.html">Cadastrar</a></header>
+<main>
+  <section id="scr-urna"></section>
+  <section id="scr-detail" class="hidden"></section>
+  <section id="scr-agenda" class="hidden"></section>
+  <section id="scr-dna" class="hidden"></section>
+</main>
+<button class="fab" id="fab" title="Votar nas PLs">🗳️</button>
+<nav class="bot">
+  <button data-scr="urna" class="on">🗳️ Urna</button>
+  <button data-scr="agenda">🗓️ Agenda</button>
+  <button data-scr="dna">🧬 DNA</button>
+</nav>
+<script src="app.js"></script>
+</body>
+</html>
