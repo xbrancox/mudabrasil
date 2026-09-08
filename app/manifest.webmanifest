@@ -1,7 +1,7 @@
 {
-  "name": "MudaBrasil · A eleição, dentro do seu celular",
-  "short_name": "MudaBrasil",
-  "description": "Seu voto coloca. Seu voto tira. Protótipo de viabilidade, sem valor jurídico.",
+  "name": "VotaBrasil - Urna Digital",
+  "short_name": "VotaBrasil",
+  "description": "VotaBrasil: seu voto coloca, seu voto tira. Protótipo de viabilidade, sem valor jurídico.",
   "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
@@ -11,7 +11,7 @@
   "categories": ["politics", "government"],
   "lang": "pt-BR",
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+    { "src": "logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
   ]
 }

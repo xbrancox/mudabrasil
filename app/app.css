@@ -164,3 +164,6 @@ nav.bot button.on{background:linear-gradient(180deg,rgba(255,215,0,.18) 0%,rgba(
 .diad{margin-top:14px}.diad b{display:block;color:var(--gold);font-size:14px;letter-spacing:1.5px;margin-bottom:8px}.diad small{display:block;margin-top:6px;cursor:help;border-bottom:1px dotted var(--mut)}.diad .tile{text-align:center;background:var(--c2);padding:10px;border-radius:10px}.diad .tile b{font-size:22px;font-family:Montserrat;color:var(--gold)}.diad .tile span{font-size:11px;color:#c3d0e4}.participacao{font-size:12px;color:#c3d0e4;text-align:center;margin:4px 0 10px;padding:6px 10px;background:var(--c2);border-radius:8px;cursor:help}.gloss{margin-top:10px}.gloss b{display:block;color:var(--gold);font-size:13px;letter-spacing:1.5px;margin-bottom:6px}.gloss .chips span{cursor:help}
 
 [data-tip]{position:relative;cursor:help;border-bottom:1px dotted #8a97ab}[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#0a1a33;border:1px solid var(--line);color:#eaf1fb;padding:8px 10px;border-radius:8px;font-size:12px;width:max-content;max-width:240px;z-index:99;box-shadow:0 4px 14px rgba(0,0,0,.5);line-height:1.4;white-space:normal}
+
+/* LOGO */
+header .logo{width:32px;height:32px;border-radius:8px;margin-right:4px}
