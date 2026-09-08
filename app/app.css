@@ -1,4 +1,4 @@
-:root{--bg:#061a3a;--c1:#0d2242;--c2:#123059;--line:#1d3a66;--gold:#FFD700;--gold2:#FFA500;--green:#2ECC71;--red:#E74C3C;--txt:#eaf1fb;--mut:#9fb0c8;--warn:#F59E0B}
+﻿:root{--bg:#061a3a;--c1:#0d2242;--c2:#123059;--line:#1d3a66;--gold:#FFD700;--gold2:#FFA500;--green:#2ECC71;--red:#E74C3C;--txt:#eaf1fb;--mut:#9fb0c8;--warn:#F59E0B}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{background:radial-gradient(900px 500px at 80% -10%,#0d2b57 0%,var(--bg) 55%) fixed var(--bg);color:var(--txt);font-family:Manrope,system-ui,sans-serif;font-size:15px;line-height:1.45;padding-bottom:80px}
@@ -16,7 +16,7 @@ header b{font-size:18px;font-family:Montserrat}
 .badge.off{border-color:var(--mut);color:var(--mut)}
 
 /* BUTTONS */
-.btn-gold{background:linear-gradient(180deg,#FFE47A 0%,#FFD700 40%,#FFA500 100%);color:#061a3a;border-radius:999px;padding:12px 20px;font-weight:800;font-size:13px;letter-spacing:.3px;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 14px rgba(255,215,0,.25);transition:transform .1s}
+.btn-gold{background:linear-gradient(180deg,#FFE9A0 0%,#F3CE6B 35%,#D9A83C 70%,#C08A22 100%);color:#241a05;border:1px solid #F8E3A1;border-radius:999px;padding:12px 20px;font-weight:800;font-size:13px;letter-spacing:.3px;box-shadow:0 0 0 3px rgba(255,215,0,.16),inset 0 1px 0 rgba(255,255,255,.6),0 6px 16px rgba(0,0,0,.45);text-shadow:0 1px 0 rgba(255,255,255,.35);transition:transform .1s}
 .btn-gold:hover{transform:scale(1.02)}
 .btn-gold.wide{width:100%;padding:16px;font-size:15px}
 .btn-gold:disabled{filter:grayscale(.6);opacity:.7}
@@ -46,7 +46,7 @@ main{max-width:560px;margin:0 auto;padding:16px 16px 24px}
 /* PILLS */
 .pills{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .pill{background:var(--c2);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:12px;color:var(--txt);font-weight:600}
-.pill.on{background:linear-gradient(180deg,#FFE47A 0%,#FFD700 40%,#FFA500 100%);color:#061a3a;border-color:#FFD700;font-weight:800;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.pill.on{background:linear-gradient(180deg,#FFE9A0 0%,#F3CE6B 35%,#D9A83C 70%,#C08A22 100%);color:#241a05;border-color:#F8E3A1;font-weight:800;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
 
 /* NAV */
 nav.bot{position:fixed;bottom:0;left:0;right:0;background:rgba(6,26,58,.97);border-top:1px solid var(--line);display:flex;z-index:50;padding:6px 4px env(safe-area-inset-bottom)}
@@ -108,7 +108,7 @@ nav.bot button.on{background:linear-gradient(180deg,rgba(255,215,0,.18) 0%,rgba(
 .code-box .hash{font-family:monospace;font-size:9px;color:var(--mut);margin-top:8px;word-break:break-all}
 .receipt .btn-gold{width:100%;margin-top:8px}
 
-/* APURAÇÕES */
+/* APURAÃ‡Ã•ES */
 .donut-grid{display:grid;grid-template-columns:1fr;gap:10px}
 .donut{background:var(--c1);border:1px solid var(--line);border-radius:16px;padding:14px}
 .donut h4{font-size:14px;margin-bottom:10px}
@@ -157,3 +157,4 @@ nav.bot button.on{background:linear-gradient(180deg,rgba(255,215,0,.18) 0%,rgba(
 .chip-rv{background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:99px;font-weight:800}
 
 @media(max-width:380px){.hero h1{font-size:20px}.hero h2{font-size:16px}.grid2{grid-template-columns:1fr}.code-box .dig{font-size:16px;letter-spacing:2px}}
+
