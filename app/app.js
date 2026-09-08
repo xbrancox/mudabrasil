@@ -28,7 +28,7 @@ const CARGOS=[
 let LOCAL=LS.get('mb_local',null);
 let BALLOTS=LS.get('mb_ballots',[]);
 let CAND=[];
-let VOTA={passo:0,esc:{},selTemp:null,code:'',hash:''};
+'''',hash:''};
 let APUR={recorte:'nacional',uf:'',cidade:''};
 let RADAR={q:'',filtro:''};
 let CIDADES={};
@@ -118,11 +118,11 @@ function listaCandidatos(i){
 
 function telaCargo(i){
   const ci=cargoInfo(i);
-  const lista=listaCandidatos(i);
+  let lista=listaCandidatos(i);const qq=(VOTA.q||
   const sel=VOTA.selTemp;
   const aviso=(lista.length?'':'<small class="hint">Nenhum candidato real carregado pra este UF ainda (TSE pendente).</small>')+'<small class="hint">Toque no candidato pra selecionar, depois use CORRIGE/BRANCO/NULO/CONFIRMA.</small>';
   return progHTML(i)+`
-<div class="cargo-tit"><b>${esc(ci.rot.toUpperCase())}</b><small>Toque no candidato (ou branco / nulo)</small></div>
+<div class="cargo-tit"><b>${esc(ci.rot.toUpperCase())}</b><small>Toque no candidato (ou branco / nulo)</small></div><input type="search" class="search-mini" id="cargo-q" placeholder="🔍 filtrar por nome ou partido…" value="${esc(VOTA.q||
 ${lista.map((x,k)=>{
   const id='c'+i+'-'+k;
   const selCls=(sel&&sel.tipo==='cand'&&sel.k===k)?'sel':'';
@@ -151,7 +151,7 @@ function telaRevisao(){
 }
 
 function telaAviso(){return progHTML(5)+`
-<div class="aviso"><b style="color:var(--gold)">â„¹ï¸ Mandato revogÃ¡vel</b><p style="margin-top:6px">VocÃª poderÃ¡ <b>revogar</b> apÃ³s a posse se o eleito nÃ£o corresponder â€” regra dos 70%: se 70% dos eleitores que elegeram revogam, cai o mandato.</p></div>
+<div class="aviso"><b style="color:var(--gold)">â„¹ï¸ Mandato revogÃ¡vel</b><p style="margin-top:6px">VocÃª poderÃ¡ <b>revogar</b> apÃ³s a posse se o eleito nÃ£o corresponder â€” regra dos ${Math.round(((window.MudaBrasil&&window.MudaBrasil.REGRA_REVOGACAO||{percentual_cassacao:0.7}).percentual_cassacao)*100)}%: se esse percentual dos eleitores que elegeram revogam, cai o mandato.</p></div>
 <button class="btn-gold wide" data-acao="gerar">ENTENDI, GERAR MEU CÃ“DIGO</button>`}
 
 async function registrarVoto(){
@@ -349,7 +349,7 @@ function bindAll(){
   /* apuraÃ§Ãµes */
   $$('[data-apur]').forEach(b=>b.onclick=()=>{APUR.recorte=b.dataset.apur;render();if(APUR.recorte==='estado'||APUR.recorte==='cidade'){setTimeout(()=>{const s=$('#a-uf');if(s){s.onchange=()=>{APUR.uf=s.value;APUR.cidade='';render()};carregarCidades(s.value)}const sc=$('#a-cid');if(sc)sc.onchange=()=>{APUR.cidade=sc.value}},30)}});
   /* radar */
-  const rq=$('#radar-q');if(rq){rq.oninput=()=>{RADAR.q=rq.value;render();const nq=$('#radar-q');if(nq){nq.focus();nq.setSelectionRange(nq.value.length,nq.value.length)}}}
+  '#radar-q');if(rq){rq.oninput=()=>{RADAR.q=rq.value;render();const nq=$('#radar-q');if(nq){nq.focus();nq.setSelectionRange(nq.value.length,nq.value.length)}}}
   $$('[data-rfiltro]').forEach(b=>b.onclick=()=>{RADAR.filtro=b.dataset.rfiltro;render()});
   $$('[data-pol]').forEach(el=>el.onclick=()=>modalPolitico(el.dataset.pol));
   $$('[data-apoio]').forEach(el=>{el.onclick=(e)=>{e.stopPropagation();modalForm(el.dataset.apoio,'apoio')}});
@@ -373,11 +373,11 @@ function acaoClick(e){
   if(a==='voltar'){VOTA.passo=Math.max(0,VOTA.passo-1);VOTA.selTemp=null;render()}
   else if(a==='corrige'){VOTA.selTemp=null;render()}
   else if(a==='confirma'){
-    const i=VOTA.passo-1;const lista=listaCandidatos(i);
+    const i=VOTA.passo-1;let lista=listaCandidatos(i);const qq=(VOTA.q||
     if(!VOTA.selTemp){toast('Selecione uma opÃ§Ã£o antes de CONFIRMAR');return}
     if(VOTA.selTemp.tipo==='cand'){const c=lista[VOTA.selTemp.k];VOTA.esc[CARGOS[i].id]={tipo:'cand',nome:c.nome,part:c.part,num:c.num||''}}
     else{VOTA.esc[CARGOS[i].id]={tipo:VOTA.selTemp.tipo}}
-    VOTA.selTemp=null;VOTA.passo=Math.min(6,VOTA.passo+1);render();
+    VOTA.selTemp=null;VOTA.passo=Math.min(6,VOTA.passo+1);try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}render();
   }
   else if(a==='r3'){VOTA.passo=7;render()}
   else if(a==='gerar'){startCountdown()}
@@ -391,7 +391,9 @@ function acaoClick(e){
     if(v.replace(/\D/g,'').length!==20){toast('CÃ³digo precisa de 20 dÃ­gitos');return}
     window.open('../index.html#conferir-voto?code='+encodeURIComponent(v),'_blank');
   }
+  else if(a==='exemplo'){const b=BALLOTS[BALLOTS.length-1];const c=b?b.code:'16948051304534262993';('.cf-in').forEach((inp,i)=>inp.value=c.slice(i*4,i*4+4));toast('Exemplo preenchido')}
   else if(a==='vSiteV'){window.open('../index.html#conferir-voto','_blank')}
+  else if(a==='fonte'){document.body.classList.toggle('fonteg');LS.set('mb_fonteg',document.body.classList.contains('fonteg'));toast(document.body.classList.contains('fonteg')?'Fonte grande ativada':'Fonte padrão')}
   else if(a==='novo'){VOTA={passo:0,esc:{},selTemp:null,code:'',hash:''};render()}
 }
 
@@ -421,7 +423,7 @@ async function pedirGeo(){
       LS.set('mb_local',LOCAL);
       toast('Local detectado: '+uf+(cidade?' Â· '+cidade:''));
       VOTA.passo=1;render();
-    }catch(e){toast('Falha ao resolver UF â€” escolha manualmente')}
+    }'''Falha ao resolver UF â€” escolha manualmente')}
   },(err)=>{toast('PermissÃ£o negada â€” escolha manualmente')},{timeout:12000,enableHighAccuracy:false});
 }
 
@@ -455,7 +457,7 @@ async function carregaCAND(){
   }catch(e){CAND=[]}
 }
 
-async function enviarForm(pid,tipo){
+async function flushFila(){if(!navigator.onLine)return;const fila=LS.get(
   const tit=$('#f-tit').value.trim();const desc=$('#f-desc').value.trim();
   if(!tit||!desc){toast('Preencha tÃ­tulo e descriÃ§Ã£o');return}
   const btn=$('[data-enviar]');btn.disabled=true;btn.textContent='Enviandoâ€¦';
@@ -464,7 +466,7 @@ async function enviarForm(pid,tipo){
     if(!r.ok)throw new Error('HTTP '+r.status);
     toast(tipo==='apoio'?'Apoio registrado!':'ReclamaÃ§Ã£o registrada!');
     closeModal();
-  }catch(e){toast('Erro: '+e.message);btn.disabled=false;btn.textContent='Enviar'}
+  }'''Erro: '+e.message);btn.disabled=false;btn.textContent='Enviar'}
 }
 
 /* ------------------ LOGIN + AVISO ------------------ */
@@ -489,7 +491,7 @@ function bindLogin(){
    try{const r=await fetch(API+rota,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(LG.modo==='phone'?{phone:id}:{email:id})});
      const j=await r.json().catch(()=>({}));
      if(j&&j.code)toast('Código protótipo: '+j.code);else toast('Código simulado no protótipo: 123456');
-   }catch(e){toast('Código simulado no protótipo: 123456')}
+   }'''Código simulado no protótipo: 123456')}
    $('#lg-code').classList.remove('hidden');$('#lg-ok').classList.remove('hidden');
  };
  const ok=$('#lg-ok');if(ok)ok.onclick=async()=>{
@@ -514,9 +516,10 @@ function popupSimulacao(){
 (function boot(){
   render();
   carregaCAND().catch(()=>{});
-  popupSimulacao();
+  popupSimulacao();`r`n  if(LS.get(
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 })();
+
 
 
 
