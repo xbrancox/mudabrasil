@@ -111,7 +111,7 @@ function listaCandidatos(i){
   const ci=cargoInfo(i);
   if(ci.demo){return DEMO[ci.demo].map(x=>({nome:x.nome,part:x.part,num:String(x.num),demo:true}))}
   const uf=LOCAL?LOCAL.uf:'';
-  const list=CAND.filter(c=>(c.position===ci.real||c.position===ci.real.replace(' Federal',''))&&(!uf||c.state===uf)).slice(0,24);
+  const list=CAND.filter(c=>(c.position===ci.real||c.position===ci.real.replace(' Federal',''))&&(!uf||c.state===uf)).slice(0,12);
   if(!list.length){return []}
   return list.map(c=>({nome:c.name,part:c.party,num:String(c.number||''),id:c.id,demo:false}))
 }
@@ -128,7 +128,7 @@ ${lista.map((x,k)=>{
   const selCls=(sel&&sel.tipo==='cand'&&sel.k===k)?'sel':'';
   return `<div class="cand ${selCls}" data-sel="${i}:${k}"><span class="av" style="background:${corAvatar(x.nome)}">${iniciais(x.nome)}</span><div class="nm"><b>${esc(x.nome)} ${x.demo?'<span class="chip-demo">TSE pendente</span>':''}</b><small>${esc(x.part)} Â· ${esc(x.num||'â€”')}</small></div><span class="radio"></span></div>`
 }).join('')}
-<div class="urbar">
+<small class="hint">Os botões de voto ficam FIXOS aqui embaixo.</small><div class="urbar">
   <button class="brn" data-ur="branco">BRANCO</button>
   <button class="nul" data-ur="nulo">NULO</button>
 </div>
@@ -517,5 +517,6 @@ function popupSimulacao(){
   popupSimulacao();
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 })();
+
 
 

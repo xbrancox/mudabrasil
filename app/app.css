@@ -1,11 +1,11 @@
-﻿:root{--bg:#061a3a;--c1:#0d2242;--c2:#123059;--line:#1d3a66;--gold:#FFD700;--gold2:#FFA500;--green:#2ECC71;--red:#E74C3C;--txt:#eaf1fb;--mut:#9fb0c8;--warn:#F59E0B}
+:root{--bg:#061a3a;--c1:#0d2242;--c2:#123059;--line:#1d3a66;--gold:#FFD700;--gold2:#FFA500;--green:#2ECC71;--red:#E74C3C;--txt:#eaf1fb;--mut:#9fb0c8;--warn:#F59E0B}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{background:radial-gradient(900px 500px at 80% -10%,#0d2b57 0%,var(--bg) 55%) fixed var(--bg);color:var(--txt);font-family:Manrope,system-ui,sans-serif;font-size:15px;line-height:1.45;padding-bottom:80px}
+body{background:radial-gradient(900px 500px at 80% -10%,#0d2b57 0%,var(--bg) 55%) fixed var(--bg);color:var(--txt);font-family:Manrope,system-ui,sans-serif;font-size:16px;line-height:1.5;padding-bottom:80px}
 h1,h2,h3,h4{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.15}
 button{font-family:inherit;cursor:pointer;border:none}
 a{color:var(--gold);text-decoration:none}
-small{color:var(--mut);font-size:12px}
+small{color:#c3d0e4;font-size:13px}
 .hidden{display:none!important}
 
 /* HEADER */
@@ -67,27 +67,27 @@ nav.bot button.on{background:linear-gradient(180deg,rgba(255,215,0,.18) 0%,rgba(
 .row2 label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mut);font-weight:600}
 .row2 select,.row2 input,input,input[type=text],input[type=search]{width:100%;background:var(--c2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:12px;font-family:inherit;font-size:14px}
 .warn{color:var(--warn);font-size:12px;margin:10px 0;padding:8px 10px;background:rgba(245,158,11,.08);border-radius:8px;border-left:3px solid var(--warn)}
-.hint{color:var(--mut);font-size:12px;text-align:center;margin-top:6px}
+.hint{color:#c3d0e4;font-size:13px;text-align:center;margin-top:6px}
 
 /* CARGO / CANDIDATOS */
 .cargo-tit{text-align:center;padding:10px 0 6px}
 .cargo-tit b{font-size:14px;letter-spacing:3px;color:var(--gold);display:block}
-.cargo-tit small{color:var(--mut);font-size:12px}
+.cargo-tit small{color:#c3d0e4;font-size:13px}
 .cand{background:var(--c1);border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all .15s}
 .cand.sel{border-color:var(--gold);background:linear-gradient(180deg,rgba(255,215,0,.08) 0%,rgba(255,215,0,.02) 100%)}
 .av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-family:Montserrat;font-size:16px;flex:none}
 .cand .nm{flex:1}
-.cand .nm b{display:block;font-size:15px}
+.cand .nm b{display:block;font-size:16px}
 .cand .nm small{color:var(--mut)}
 .cand .nm .chip-demo{display:inline-block;background:var(--warn);color:#061a3a;font-size:9px;padding:1px 6px;border-radius:99px;font-weight:800;margin-left:4px;vertical-align:middle}
 .radio{width:24px;height:24px;border:2px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
 .cand.sel .radio{border-color:var(--gold)}
 .cand.sel .radio::after{content:'';width:12px;height:12px;border-radius:50%;background:var(--gold)}
-.urbar{display:flex;gap:8px;justify-content:center;margin:10px 0}
-.urbar button{padding:10px 18px;border-radius:12px;font-weight:800;font-size:12px;letter-spacing:1px}
+.urbar{display:flex;gap:8px;justify-content:center;margin:10px 0;position:sticky;bottom:112px;background:var(--bg);padding:8px 0;z-index:40}
+.urbar button{padding:12px 18px;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:.5px}
 .brn{background:var(--c2);border:1px solid var(--line);color:var(--txt)}
 .nul{background:transparent;border:1.5px solid var(--red);color:var(--red)}
-.barAcoes{display:flex;gap:10px;margin-top:12px;justify-content:center}
+.barAcoes{display:flex;gap:10px;margin-top:6px;justify-content:center;position:sticky;bottom:56px;background:var(--bg);padding:8px 0 12px;z-index:41;box-shadow:0 -10px 18px rgba(6,26,58,.95)}
 .barAcoes .btn-gold,.barAcoes .btn-ghost{min-width:130px}
 
 /* REVISAO */
@@ -157,4 +157,5 @@ nav.bot button.on{background:linear-gradient(180deg,rgba(255,215,0,.18) 0%,rgba(
 .chip-rv{background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:99px;font-weight:800}
 
 @media(max-width:380px){.hero h1{font-size:20px}.hero h2{font-size:16px}.grid2{grid-template-columns:1fr}.code-box .dig{font-size:16px;letter-spacing:2px}}
+
 
