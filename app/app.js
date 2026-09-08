@@ -30,7 +30,7 @@ let BALLOTS=LS.get('mb_ballots',[]);
 let CAND=[];
 '''',hash:''};
 let APUR={recorte:'nacional',uf:'',cidade:''};
-let RADAR={q:'',filtro:''};
+let RADAR={q:'',filtro:'',fixados:LS.get('mb_fix',[])};
 let CIDADES={};
 let SESSAO=LS.get('mb_session',null);let scr=SESSAO?'inicio':'login';
 
@@ -46,6 +46,7 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.remove('hi
 const NAV=[['inicio','ðŸ ','InÃ­cio'],['votar','ðŸ—³ï¸','Votar'],['apuracoes','ðŸ“Š','ApuraÃ§Ãµes'],['radar','ðŸ‘¤','Radar'],['conferir','ðŸ”','Conferir']];
 function navHTML(){return '<nav class="bot">'+NAV.map(n=>'<button data-scr="'+n[0]+'" class="'+(scr===n[0]?'on':'')+'"><span>'+n[1]+'</span><span>'+n[2]+'</span></button>').join('')+'</nav>'}
 function headerHTML(t,back){return '<header><button class="hback" '+(back?'data-back="1"':'style="visibility:hidden"')+'>â†</button><b>'+esc(t)+'</b><span class="badge" id="badge">â€¦</span></header>'}
+function renderDiaD(){var a1=new Date('2026-10-04T08:00:00-03:00');var a2=new Date('2026-10-25T08:00:00-03:00');var ag=new Date();function dd(a){var x=Math.ceil((a-ag)/864e5);return x>=0?x:0}var el=document.getElementById('diad-dados');if(!el)return;el.innerHTML='<div class="tile"><b>'+dd(a1)+'</b><span>dias pro 1º turno (04/10)</span></div><div class="tile"><b>'+dd(a2)+'</b><span>dias pro 2º turno (25/10)</span></div>';}
 function render(){
   const m=$('#app');let h='';
   if(scr==='inicio')h=headerHTML('MudaBrasil',false)+telaInicio();
@@ -55,7 +56,7 @@ function render(){
   else if(scr==='login')h=telaLogin();
   else h=headerHTML('Conferir Voto',false)+telaConferir();
   m.innerHTML=h+navHTML();
-  bindAll();badge();
+  bindAll();badge();renderDiaD();
 }
 async function badge(){
   const b=$('#badge');if(!b||!API)return;
@@ -116,13 +117,13 @@ function listaCandidatos(i){
   return list.map(c=>({nome:c.name,part:c.party,num:String(c.number||''),id:c.id,demo:false}))
 }
 
-function telaCargo(i){
+function telaCargo(i){var ufTag=(LOCAL&&LOCAL.uf)?('<div class="participacao" title="Só contador anônimo de cédulas — suas escolhas nunca saem do aparelho">👥 Participação em '+LOCAL.uf+': <b>'+BALLOTS.filter(function(b){return b.uf===LOCAL.uf}).length+' cédulas</b></div>'):'';
   const ci=cargoInfo(i);
   let lista=listaCandidatos(i);const qq=(VOTA.q||
   const sel=VOTA.selTemp;
   const aviso=(lista.length?'':'<small class="hint">Nenhum candidato real carregado pra este UF ainda (TSE pendente).</small>')+'<small class="hint">Toque no candidato pra selecionar, depois use CORRIGE/BRANCO/NULO/CONFIRMA.</small>';
   return progHTML(i)+`
-<div class="cargo-tit"><b>${esc(ci.rot.toUpperCase())}</b><small>Toque no candidato (ou branco / nulo)</small></div><input type="search" class="search-mini" id="cargo-q" placeholder="🔍 filtrar por nome ou partido…" value="${esc(VOTA.q||
+${ufTag}<div class="cargo-tit"><b>${esc(ci.rot.toUpperCase())}</b><small>Toque no candidato (ou branco / nulo)</small></div><input type="search" class="search-mini" id="cargo-q" placeholder="🔍 filtrar por nome ou partido…" value="${esc(VOTA.q||
 ${lista.map((x,k)=>{
   const id='c'+i+'-'+k;
   const selCls=(sel&&sel.tipo==='cand'&&sel.k===k)?'sel':'';
@@ -271,13 +272,13 @@ function telaRadar(){
   if(f==='ok')list=list.filter(c=>c.selo);
   const cards=list.slice(0,40).map(c=>{
     const chip=c.selo?'<span class="chip-ok">âœ“ VERIFICADO</span>':'';
-    return `<div class="pol-card"><span class="av" style="background:${corAvatar(c.name)}">${iniciais(c.name)}</span><div class="nm" data-pol="${esc(c.id)}"><b>${esc(c.name)} ${chip}</b><small>${esc(c.party||'')} Â· ${esc(c.state||'')}</small></div><div class="acts"><button class="btn-green" data-apoio="${esc(c.id)}">APOIAR</button><button class="btn-red" data-recl="${esc(c.id)}">RECLAMAR</button></div></div>`
+    return `<div class="pol-card"><span class="av" style="background:${corAvatar(c.name)}">${iniciais(c.name)}</span><div class="nm" data-pol="${esc(c.id)}"><b>${esc(c.name)} ${chip}</b><small>${esc(c.party||'')} Â· ${esc(c.state||'')}</small></div><div class="acts"><button class="btn-green" data-apoio="${esc(c.id)}">APOIAR</button><button class="btn-red" data-recl="${esc(c.id)}">RECLAMAR</button><button class="btn-ghost" data-fix="${esc(c.id)}" title="Fixar pra comparar (máx. 2)">${RADAR.fixados.includes(c.id)?'📌':'📍'}</button></div></div>`
   }).join('')||'<small class="hint">Nenhum polÃ­tico encontrado. Tente outra busca.</small>';
   return `
 <input type="search" class="search-mini" id="radar-q" placeholder="ðŸ” buscar por nome, partido ou UFâ€¦" value="${esc(q)}">
 <div class="pills">${pills.map(p=>'<button class="pill '+(f===p[0]?'on':'')+'" data-rfiltro="'+p[0]+'">'+p[1]+'</button>').join('')}</div>
 ${!CAND.length?'<small class="hint">Carregando polÃ­ticos reaisâ€¦</small>':''}
-${cards}`;
+${cards}${RADAR.fixados.length>=2?'<button class="btn-gold wide" style="margin-top:10px" data-acao="comparar">🆚 Comparar lado a lado</button>':'}`;
 }
 
 /* ------------------ CONFERIR ------------------ */
@@ -351,7 +352,7 @@ function bindAll(){
   $$('[data-apur]').forEach(b=>b.onclick=()=>{APUR.recorte=b.dataset.apur;render();if(APUR.recorte==='estado'||APUR.recorte==='cidade'){setTimeout(()=>{const s=$('#a-uf');if(s){s.onchange=()=>{APUR.uf=s.value;APUR.cidade='';render()};carregarCidades(s.value)}const sc=$('#a-cid');if(sc)sc.onchange=()=>{APUR.cidade=sc.value}},30)}});
   /* radar */
   '#radar-q');if(rq){rq.oninput=()=>{RADAR.q=rq.value;render();const nq=$('#radar-q');if(nq){nq.focus();nq.setSelectionRange(nq.value.length,nq.value.length)}}}
-  $$('[data-rfiltro]').forEach(b=>b.onclick=()=>{RADAR.filtro=b.dataset.rfiltro;render()});
+  $$('[data-rfiltro]').forEach(b=>b.onclick=()=>{RADAR.filtro=b.dataset.rfiltro;render()}); $$('[data-fix]').forEach(b=>b.onclick=function(e){e.stopPropagation();var id=b.dataset.fix;var k=RADAR.fixados.indexOf(id);if(k>=0){RADAR.fixados.splice(k,1)}else if(RADAR.fixados.length<2){RADAR.fixados.push(id)}else{toast('Máximo 2 políticos fixados');return}LS.set('mb_fix',RADAR.fixados);render()});
   $$('[data-pol]').forEach(el=>el.onclick=()=>modalPolitico(el.dataset.pol));
   $$('[data-apoio]').forEach(el=>{el.onclick=(e)=>{e.stopPropagation();modalForm(el.dataset.apoio,'apoio')}});
   $$('[data-recl]').forEach(el=>{el.onclick=(e)=>{e.stopPropagation();modalForm(el.dataset.recl,'rec')}});
@@ -395,6 +396,7 @@ function acaoClick(e){
   else if(a==='exemplo'){const b=BALLOTS[BALLOTS.length-1];const c=b?b.code:'16948051304534262993';('.cf-in').forEach((inp,i)=>inp.value=c.slice(i*4,i*4+4));toast('Exemplo preenchido')}
   else if(a==='vSiteV'){window.open('../index.html#conferir-voto','_blank')}
   else if(a==='fonte'){document.body.classList.toggle('fonteg');LS.set('mb_fonteg',document.body.classList.contains('fonteg'));toast(document.body.classList.contains('fonteg')?'Fonte grande ativada':'Fonte padrão')}
+  else if(a==='comparar'){var cs=RADAR.fixados.map(function(id){return CAND.find(function(c){return c.id===id})}).filter(Boolean);if(cs.length<2){toast('Fixe 2 políticos primeiro (toque no 📍)');return}openModal('<h3>🆚 Comparação lado a lado</h3><div class="cols2">'+cs.map(function(c){return '<div class="card"><b>'+esc(c.name)+'</b><small>'+esc(c.party||'')+' · '+esc(c.state||'')+'</small><a class="btn-gold" style="display:block;text-align:center;margin-top:8px" target="_blank" href="../pages/parlamentares.html?dep='+encodeURIComponent(c.name)+'">Ver ficha no site →</a></div>'}).join('')+'</div><div class="row"><button class="btn-ghost" data-close="1">Fechar</button></div>')}
   else if(a==='novo'){VOTA={passo:0,esc:{},selTemp:null,code:'',hash:''};render()}
 }
 
@@ -520,6 +522,7 @@ function popupSimulacao(){
   popupSimulacao();`r`n  if(LS.get(
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 })();
+
 
 
 
