@@ -184,7 +184,7 @@ function telaRecibo(){
   <p class="ok-check">âœ… VOTO REGISTRADO</p>
   <div class="code-box">
     <div class="label">SEU COMPROVANTE</div>
-    <div class="dig" data-acao="copiar" style="cursor:pointer">${esc(blocos)}</div><small class="hint">👆 toque no código para copiar</small>
+    <div class="dig" data-acao="copiar" style="cursor:pointer">${esc(blocos)}</div><p style="font-size:12px;color:#c3d0e4;margin:10px 0">🔒 VOTO SECRETO: suas escolhas nunca saem deste aparelho. O código comprova participação, não o conteúdo do voto.</p><small class="hint">👆 toque no código para copiar</small>
     <div class="hash">${esc(VOTA.hash.slice(0,32))}â€¦${esc(VOTA.hash.slice(-8))}</div>
   </div>
   <p style="font-size:12px;color:var(--mut);margin-bottom:10px">Guarde este cÃ³digo: Ã© seu Ãºnico comprovante.</p>
@@ -522,6 +522,7 @@ function popupSimulacao(){
   popupSimulacao();`r`n  if(LS.get(
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 })();
+
 
 
 
