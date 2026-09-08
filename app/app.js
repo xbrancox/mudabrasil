@@ -325,6 +325,7 @@ function modalForm(pid,tipo){
 <div class="row"><button class="btn-ghost" data-close="1">Cancelar</button><button class="${cor}" data-enviar="${esc(pid)}" data-tipo="${tipo}">Enviar</button></div>`);
 }
 
+function modalCedula(b){const d=new Date(b.ts);openModal('<h3>🔍 CÉDULA ENCONTRADA NESTE APARELHO</h3><small>Registrada em '+d.toLocaleString('pt-BR')+' · '+esc(b.uf||'')+(b.cidade?' · '+esc(b.cidade):'')+'</small>'+CARGOS.map((c,i)=>{const e=b.esc[c.id];const t=e?(e.tipo==='cand'?esc(e.nome)+' ('+esc(e.part)+' · '+esc(e.num||'—')+')':(e.tipo==='branco'?'VOTO EM BRANCO':'VOTO NULO')):'(não votado)';return '<div class="rev-row"><div class="crg"><b>'+esc(cargoInfo(i).rot)+'</b><small>'+t+'</small></div></div>'}).join('')+'<p style="margin:10px 0;font-size:12px;color:#c3d0e4">🔒 Exibida somente neste aparelho. Nada foi enviado a servidores.</p><div class="row"><button class="btn-ghost" data-close="1">Fechar</button></div>');}
 /* ------------------ binders ------------------ */
 function bindAll(){
   bindLogin();
@@ -389,7 +390,7 @@ function acaoClick(e){
   else if(a==='confV'){
     const v=$$('.cf-in').map(i=>i.value).join('');
     if(v.replace(/\D/g,'').length!==20){toast('CÃ³digo precisa de 20 dÃ­gitos');return}
-    window.open('../index.html#conferir-voto?code='+encodeURIComponent(v),'_blank');
+    const b=BALLOTS.find(x=>x.code===v);if(b){modalCedula(b)}else{window.open('../index.html#conferir-voto?code='+encodeURIComponent(v),'_blank')}
   }
   else if(a==='exemplo'){const b=BALLOTS[BALLOTS.length-1];const c=b?b.code:'16948051304534262993';('.cf-in').forEach((inp,i)=>inp.value=c.slice(i*4,i*4+4));toast('Exemplo preenchido')}
   else if(a==='vSiteV'){window.open('../index.html#conferir-voto','_blank')}
@@ -510,7 +511,7 @@ function abreForm(modo){LG.modo=modo;const f=$('#lg-form');if(!f)return;f.classL
  $('#lg-code').classList.add('hidden');$('#lg-ok').classList.add('hidden');}
 function popupSimulacao(){
  if(LS.get('mb_aviso_sim',0))return;
- openModal('<h3>🧪 PROTÓTIPO EM TESTE</h3><p style="margin:8px 0">O MudaBrasil é uma <b>simulação demonstrativa</b> de votação pelo celular — nada aqui tem valor jurídico ou eleitoral.</p><p style="margin:8px 0">Se implantado oficialmente, o login será feito com <b>gov.br, blockchain ou outro meio oficial de identificação</b>, com total segurança, sigilo do voto e auditabilidade completa.</p><div class="row"><button class="btn-gold" id="aviso-ok">ENTENDI, COMEÇAR</button></div>');
+ openModal('<h3>🧪 PROTÓTIPO EM TESTE</h3><p style="margin:8px 0">O MudaBrasil é uma <b>simulação demonstrativa</b> de votação pelo celular — nada aqui tem valor jurídico ou eleitoral.</p><p style="margin:8px 0">Se implantado oficialmente, o login será feito com <b>gov.br, blockchain ou outro meio oficial de identificação</b>, com total segurança, <b>voto secreto</b> e auditabilidade completa.</p><p style="margin:8px 0">No protótipo, suas escolhas <b>nunca saem do aparelho</b>: o código comprova participação, não o conteúdo.</p><div class="row"><button class="btn-gold" id="aviso-ok">ENTENDI, COMEÇAR</button></div>');
  const b=$('#aviso-ok');if(b)b.onclick=()=>{LS.set('mb_aviso_sim',1);closeModal()};
 }/* ------------------ boot ------------------ */
 (function boot(){
@@ -519,6 +520,7 @@ function popupSimulacao(){
   popupSimulacao();`r`n  if(LS.get(
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 })();
+
 
 
 
