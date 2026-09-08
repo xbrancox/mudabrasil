@@ -1,534 +1,80 @@
-/* ============================================================
-   MudaBrasil App â€” Urna Digital do Povo (protÃ³tipo de viabilidade)
-   ============================================================ */
-const API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'';
-const $=(s)=>document.querySelector(s);
-const $$=(s)=>[...document.querySelectorAll(s)];
-const LS={
-  get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},
-  set(k,v){localStorage.setItem(k,JSON.stringify(v))}
+/* MudaBrasil App - Urna Digital do Povo (prototipo) */
+var API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'';
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.from(document.querySelectorAll(s))};
+var LS={
+  get:function(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},
+  set:function(k,v){localStorage.setItem(k,JSON.stringify(v))}
 };
-const UFS=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
-
-/* Candidatos de REFERÃŠNCIA (demonstrativos) â€” TSE 2026 pendente */
-const DEMO={
+var UFS=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+var DEMO={
   presidente:[{nome:'Ana Fontes',part:'PV',num:51},{nome:'Otto Prado',part:'PL',num:22},{nome:'Cida Moraes',part:'PT',num:13},{nome:'Rui Bacelar',part:'PSD',num:55}],
-  governador:[{nome:'Tereza Kahn',part:'NOVO',num:30},{nome:'LÃ©o Sampaio',part:'PT',num:13},{nome:'Marcos Vela',part:'PL',num:22},{nome:'Duda Nunes',part:'MDB',num:15}],
-  estadual:[{nome:'Caio Bittar',part:'Cidadania',num:23},{nome:'Rita Campos',part:'PSOL',num:50},{nome:'Ivo Leite',part:'UNIÃƒO',num:44},{nome:'Sofia Prado',part:'PT',num:13}]
+  governador:[{nome:'Tereza Kahn',part:'NOVO',num:30},{nome:'Leo Sampaio',part:'PT',num:13},{nome:'Marcos Vela',part:'PL',num:22},{nome:'Duda Nunes',part:'MDB',num:15}],
+  estadual:[{nome:'Caio Bittar',part:'Cidadania',num:23},{nome:'Rita Campos',part:'PSOL',num:50},{nome:'Ivo Leite',part:'UNIAO',num:44},{nome:'Sofia Prado',part:'PT',num:13}]
 };
-
-const CARGOS=[
+var CARGOS=[
   {id:'presidente',rot:'Presidente',demo:'presidente'},
   {id:'governador',rot:'Governador',demo:'governador',ufLabel:true},
   {id:'senador',rot:'Senador',real:'Senador Federal'},
   {id:'depfed',rot:'Deputado Federal',real:'Deputado Federal'},
   {id:'estadual',rot:'Deputado Estadual/Distrital',demo:'estadual',ufLabel:true}
 ];
-
-let LOCAL=LS.get('mb_local',null);
-let BALLOTS=LS.get('mb_ballots',[]);
-let CAND=[];
-'''',hash:''};
-let APUR={recorte:'nacional',uf:'',cidade:''};
-let RADAR={q:'',filtro:'',fixados:LS.get('mb_fix',[])};
-let CIDADES={};
-let SESSAO=LS.get('mb_session',null);let scr=SESSAO?'inicio':'login';
-
-/* ------------------ util ------------------ */
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function iniciais(n){return String(n||'?').trim().split(/\s+/).map(p=>p[0]).filter(Boolean).join('').slice(0,2).toUpperCase()}
-function corAvatar(n){let h=0;for(const c of String(n||''))h=(h*31+c.charCodeAt(0))%360;return 'hsl('+h+',55%,45%)'}
+var LOCAL=LS.get('mb_local',null);
+var BALLOTS=LS.get('mb_ballots',[]);
+var CAND=[];
+var VOTA={passo:0,esc:{},selTemp:null,code:'',hash:'',q:''};
+var APUR={recorte:'nacional',uf:'',cidade:''};
+var RADAR={q:'',filtro:'',fixados:LS.get('mb_fix',[])};
+var CIDADES={};
+var SESSAO=LS.get('mb_session',null);
+var scr=SESSAO?'inicio':'login';
+var NAV=[['inicio','\u{1F3E0}','Inicio'],['votar','\u{1F5F3}','Votar'],['apuracoes','\u{1F4CA}','Apuracoes'],['radar','\u{1F464}','Radar'],['conferir','\u{1F50D}','Conferir']];
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function iniciais(n){return String(n||'?').trim().split(/\s+/).map(function(p){return p[0]}).filter(Boolean).join('').slice(0,2).toUpperCase()}
+function corAvatar(n){var h=0;var s=String(n||'');for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return 'hsl('+h+',55%,45%)'}
 function fmtCode(d){return d.replace(/(.{4})/g,'$1 ').trim()}
-async function sha(txt){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=5381;for(const c of String(txt))h=((h<<5)+h+c.charCodeAt(0))>>>0;return h.toString(16).padStart(16,'0').repeat(4).slice(0,64)}}
-function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),2400)}
-
-/* ------------------ navegaÃ§Ã£o / shell ------------------ */
-const NAV=[['inicio','ðŸ ','InÃ­cio'],['votar','ðŸ—³ï¸','Votar'],['apuracoes','ðŸ“Š','ApuraÃ§Ãµes'],['radar','ðŸ‘¤','Radar'],['conferir','ðŸ”','Conferir']];
-function navHTML(){return '<nav class="bot">'+NAV.map(n=>'<button data-scr="'+n[0]+'" class="'+(scr===n[0]?'on':'')+'"><span>'+n[1]+'</span><span>'+n[2]+'</span></button>').join('')+'</nav>'}
-function headerHTML(t,back){return '<header><button class="hback" '+(back?'data-back="1"':'style="visibility:hidden"')+'>â†</button><b>'+esc(t)+'</b><span class="badge" id="badge">â€¦</span></header>'}
-function renderDiaD(){var a1=new Date('2026-10-04T08:00:00-03:00');var a2=new Date('2026-10-25T08:00:00-03:00');var ag=new Date();function dd(a){var x=Math.ceil((a-ag)/864e5);return x>=0?x:0}var el=document.getElementById('diad-dados');if(!el)return;el.innerHTML='<div class="tile"><b>'+dd(a1)+'</b><span>dias pro 1º turno (04/10)</span></div><div class="tile"><b>'+dd(a2)+'</b><span>dias pro 2º turno (25/10)</span></div>';}
-function render(){
-  const m=$('#app');let h='';
-  if(scr==='inicio')h=headerHTML('MudaBrasil',false)+telaInicio();
-  else if(scr==='votar')h=headerHTML('Votar',VOTA.passo>0)+telaVotar();
-  else if(scr==='apuracoes')h=headerHTML('ApuraÃ§Ãµes',false)+telaApur();
-  else if(scr==='radar')h=headerHTML('Radar PolÃ­tico',false)+telaRadar();
-  else if(scr==='login')h=telaLogin();
-  else h=headerHTML('Conferir Voto',false)+telaConferir();
-  m.innerHTML=h+navHTML();
-  bindAll();badge();renderDiaD();
-}
-async function badge(){
-  const b=$('#badge');if(!b||!API)return;
-  try{const r=await fetch(API+'/api/health',{cache:'no-store'});if(r.ok){b.textContent='sistema no ar';b.classList.remove('off')}else throw 0}
-  catch(e){b.textContent='sem conexão';b.classList.add('off')}
-}
-
-/* ------------------ INÃCIO ------------------ */
-function telaInicio(){return `
-<section class="hero">
-  <h1>O PODER EMANA DO POVO<br>NÃƒO ACABA NO DIA DA ELEIÃ‡ÃƒO.</h1>
-  <h2>Seu voto coloca. Seu voto tira.</h2>
-  <p>EleiÃ§Ã£o pelo celular com comprovante verificÃ¡vel.<br>ProtÃ³tipo de viabilidade, sem valor jurÃ­dico.</p>
-</section>
-<div class="card gloss"><b>📖 GLOSSÁRIO ELEITORAL</b><div class="chips"><span data-tip="Voto válido sem preferência — conta no total, não elege ninguém">VOTO EM BRANCO</span><span data-tip="Voto inválido ou de protesto — não elege ninguém">VOTO NULO</span><span data-tip="Mínimo de parlamentares presentes pra votação valer">QUÓRUM</span><span data-tip="Perda do mandato — no MudaBrasil: regra dos 70%">CASSAÇÃO</span><span data-tip="Início oficial do mandato">POSSE</span></div></div><h3 class="sect">PÃGINAS DO APP</h3>
-<div class="grid2">
-  <div class="card"><b>ðŸ—³ï¸ VOTAÃ‡ÃƒO</b><small>Teclado estilo urna, 5 cargos</small><button class="btn-gold" data-go="votar">VOTAR AGORA</button></div>
-  <div class="card"><b>ðŸ“Š APURAÃ‡Ã•ES</b><small>Veja quem estÃ¡ na frente</small><button class="btn-gold" data-go="apuracoes">VER AGORA</button></div>
-  <div class="card"><b>ðŸ‘¤ RADAR POLÃTICO</b><small>Quem Ã©, reclamar e apoiar</small><button class="btn-gold" data-go="radar">ABRIR RADAR</button></div>
-  <div class="card"><b>ðŸ” CONFERIR VOTO</b><small>Seu cÃ³digo de 20 dÃ­gitos no site</small><button class="btn-gold" data-go="conferir">CONFERIR</button></div>
-</div>
-<div class="chips"><span>ðŸ”’ 100% anÃ´nimo</span><span>ðŸ”— trilha de hash</span><span>ðŸ‡§ðŸ‡· fontes oficiais</span><span>âš–ï¸ regra dos 70%</span></div>
-`}
-
-/* ------------------ VOTAR ------------------ */
-function progHTML(at){let h='<div class="prog5">';for(let i=0;i<5;i++)h+='<i class="'+(i<at?'on':'')+'"></i>';return h+'</div>'}
-function telaVotar(){
-  if(VOTA.passo===0)return telaLocal();
-  if(VOTA.passo>=1&&VOTA.passo<=5)return telaCargo(VOTA.passo-1);
-  if(VOTA.passo===6)return telaRevisao();
-  if(VOTA.passo===7)return telaAviso();
-  return telaRecibo();
-}
-
-function telaLocal(){
-  const ufSel=LOCAL?LOCAL.uf:(UFS.find(u=>u==='RJ')||UFS[0]);
-  return progHTML(0)+`
-<div class="card loc">
-  <b>ðŸ“ ONDE VOCÃŠ VOTA?</b>
-  <small>A eleiÃ§Ã£o usa seu local pra montar os cargos de estado e municÃ­pio.</small>
-  <button class="btn-gold wide" id="geo">ðŸ›°ï¸ ATIVAR MINHA LOCALIZAÃ‡ÃƒO</button>
-  <div class="row2">
-    <label>Estado<select id="uf">${UFS.map(u=>'<option '+(u===ufSel?'selected':'')+'>'+u+'</option>').join('')}</select></label>
-    <label>Cidade<select id="cid"><option value="">escolha o estadoâ€¦</option></select></label>
-  </div>
-  <input id="cidLivre" placeholder="ou digite a cidade se nÃ£o achar">
-  <p class="warn">âš ï¸ EstÃ¡ fora do seu domicÃ­lio eleitoral? Vale o local escolhido aqui.</p>
-  <button class="btn-gold wide" id="okLocal">CONFIRMAR LOCAL DE VOTAÃ‡ÃƒO</button>
-</div>`}
-
-function cargoInfo(i){const c=CARGOS[i];let rot=c.rot;if(c.ufLabel)rot=c.rot+' â€” '+(LOCAL?LOCAL.uf:'BR');return {rot,demo:c.demo,real:c.real}}
-function listaCandidatos(i){
-  const ci=cargoInfo(i);
-  if(ci.demo){return DEMO[ci.demo].map(x=>({nome:x.nome,part:x.part,num:String(x.num),demo:true}))}
-  const uf=LOCAL?LOCAL.uf:'';
-  const list=CAND.filter(c=>(c.position===ci.real||c.position===ci.real.replace(' Federal',''))&&(!uf||c.state===uf)).slice(0,12);
-  if(!list.length){return []}
-  return list.map(c=>({nome:c.name,part:c.party,num:String(c.number||''),id:c.id,demo:false}))
-}
-
-function participacaoHTML(){if(!LOCAL||!LOCAL.uf)return '';var n=BALLOTS.filter(function(b){return b.uf===LOCAL.uf}).length;return '<div class="participacao" data-tip="Contador anônimo de cédulas — suas escolhas nunca saem do aparelho">👥 Participação em '+LOCAL.uf+': <b>'+n+' cédula(s)</b></div>'}
-function telaCargo(i){var ufTag=(LOCAL&&LOCAL.uf)?('<div class="participacao" title="Só contador anônimo de cédulas — suas escolhas nunca saem do aparelho">👥 Participação em '+LOCAL.uf+': <b>'+BALLOTS.filter(function(b){return b.uf===LOCAL.uf}).length+' cédulas</b></div>'):'';
-  const ci=cargoInfo(i);
-  let lista=listaCandidatos(i);const qq=(VOTA.q||
-  const sel=VOTA.selTemp;
-  const aviso=(lista.length?'':'<small class="hint">Nenhum candidato real carregado pra este UF ainda (TSE pendente).</small>')+'<small class="hint">Toque no candidato pra selecionar, depois use CORRIGE/BRANCO/NULO/CONFIRMA.</small>';
-  return progHTML(i)+`
-${ufTag}${participacaoHTML()}<div class="cargo-tit"><b>${esc(ci.rot.toUpperCase())}</b><small>Toque no candidato (ou branco / nulo)</small></div><input type="search" class="search-mini" id="cargo-q" placeholder="🔍 filtrar por nome ou partido…" value="${esc(VOTA.q||
-${lista.map((x,k)=>{
-  const id='c'+i+'-'+k;
-  const selCls=(sel&&sel.tipo==='cand'&&sel.k===k)?'sel':'';
-  return `<div class="cand ${selCls}" data-sel="${i}:${k}"><span class="av" style="background:${corAvatar(x.nome)}">${iniciais(x.nome)}</span><div class="nm"><b>${esc(x.nome)} ${x.demo?'<span class="chip-demo">TSE pendente</span>':''}</b><small>${esc(x.part)} Â· ${esc(x.num||'â€”')}</small></div><span class="radio"></span></div>`
-}).join('')}
-<small class="hint">Os botões de voto ficam FIXOS aqui embaixo.</small><div class="urbar">
-  <button class="brn" data-ur="branco">BRANCO</button>
-  <button class="nul" data-ur="nulo">NULO</button>
-</div>
-<div class="barAcoes"><button class="btn-ghost" data-acao="voltar">← VOLTAR</button>
-  <button class="btn-ghost" data-acao="corrige">CORRIGE</button>
-  <button class="btn-gold" data-acao="confirma" ${!sel?'disabled':''}>CONFIRMA</button>
-</div>
-${aviso}`
-}
-
-function telaRevisao(){
-  const rows=CARGOS.map((c,i)=>{
-    const escolha=VOTA.esc[c.id];
-    const texto=escolha?(escolha.tipo==='branco'?'VOTO EM BRANCO':escolha.tipo==='nulo'?'VOTO NULO':escolha.nome+' ('+escolha.part+' Â· '+escolha.num+')'):'(nÃ£o votado)';
-    return `<div class="rev-row"><div class="crg"><b>${esc(cargoInfo(i).rot)}</b><small>${esc(texto)}</small></div><button class="trocar" data-trocar="${i}">trocar</button></div>`
-  }).join('');
-  return progHTML(5)+`
-<div class="card"><h3 style="color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:10px">REVISE SUA CÃ‰DULA</h3>${rows}
-<button class="btn-gold wide" data-acao="r3" style="margin-top:14px">CONFIRMAR</button></div>`
-}
-
-function telaAviso(){return progHTML(5)+`
-<div class="aviso"><b style="color:var(--gold)">â„¹ï¸ Mandato revogÃ¡vel</b><p style="margin-top:6px">VocÃª poderÃ¡ <b>revogar</b> apÃ³s a posse se o eleito nÃ£o corresponder â€” regra dos ${Math.round(((window.MudaBrasil&&window.MudaBrasil.REGRA_REVOGACAO||{percentual_cassacao:0.7}).percentual_cassacao)*100)}%: se esse percentual dos eleitores que elegeram revogam, cai o mandato.</p></div>
-<button class="btn-gold wide" data-acao="gerar">ENTENDI, GERAR MEU CÃ“DIGO</button>`}
-
-async function registrarVoto(){
-  const digits=Array.from(crypto.getRandomValues(new Uint8Array(20))).map(x=>x%10).join('');
-  const prev=BALLOTS.length?BALLOTS[BALLOTS.length-1].hash:('0'.repeat(64));
-  const payload=JSON.stringify({digits,esc:VOTA.esc,uf:LOCAL?LOCAL.uf:'',cidade:LOCAL?LOCAL.cidade:'',ts:Date.now(),prev});
-  const hash=await sha(payload);
-  BALLOTS.push({code:digits,hash:hash,esc:VOTA.esc,uf:LOCAL?LOCAL.uf:'',cidade:LOCAL?LOCAL.cidade:'',ts:Date.now()});
-  LS.set('mb_ballots',BALLOTS);
-  VOTA.code=digits;VOTA.hash=hash;
-}
-
-function startCountdown(){
-  const ov=$('#overlay');ov.classList.remove('hidden');
-  let n=8;
-  ov.innerHTML='<div class="num">'+n+'</div><small>Registrando sua cÃ©dulaâ€¦<br>Toque pra concluir agora</small>';
-  const tick=setInterval(()=>{n--;ov.querySelector('.num').textContent=n;if(n<=0){clearInterval(tick);finalize()}},1000);
-  ov.onclick=()=>{clearInterval(tick);finalize()};
-  async function finalize(){
-    try{await registrarVoto()}catch(e){console.error(e)}
-    ov.classList.add('hidden');ov.onclick=null;VOTA.passo=8;render();
-  }
-}
-
-function telaRecibo(){
-  const blocos=(VOTA.code.match(/.{1,4}/g)||[]).join(' ');
-  return `
-<div class="receipt">
-  <p class="ok-check">âœ… VOTO REGISTRADO</p>
-  <div class="code-box">
-    <div class="label">SEU COMPROVANTE</div>
-    <div class="dig" data-acao="copiar" style="cursor:pointer">${esc(blocos)}</div><p style="font-size:12px;color:#c3d0e4;margin:10px 0">🔒 VOTO SECRETO: suas escolhas nunca saem deste aparelho. O código comprova participação, não o conteúdo do voto.</p><small class="hint">👆 toque no código para copiar</small>
-    <div class="hash">${esc(VOTA.hash.slice(0,32))}â€¦${esc(VOTA.hash.slice(-8))}</div>
-  </div>
-  <p style="font-size:12px;color:var(--mut);margin-bottom:10px">Guarde este cÃ³digo: Ã© seu Ãºnico comprovante.</p>
-  <button class="btn-gold" data-acao="copiar">COPIAR CÃ“DIGO</button>
-  <button class="btn-ghost" data-acao="vsite" style="width:100%;margin-top:8px">CONFERIR NO SITE â†’</button>
-  <button class="btn-ghost" data-acao="novo" style="width:100%;margin-top:8px">Votar de novo (demonstração)</button>
-</div>`}
-
-/* ------------------ APURAÃ‡Ã•ES ------------------ */
-function donutHTML(data){
-  /* data = [[nome,votos],...] */
-  const cores=['#2ECC71','#FFD700','#4A90D9','#E74C3C','#9B59B6'];
-  const top=data.slice(0,4);const outros=data.slice(4).reduce((a,x)=>a+x[1],0);
-  const total=top.reduce((a,x)=>a+x[1],0)+outros;if(!total)return '<small class="hint">Sem votos ainda.</small>';
-  const parts=[];let deg=0;
-  top.forEach((x,i)=>{const p=x[1]/total*360;parts.push(`${cores[i]} ${deg}deg ${deg+p}deg`);deg+=p});
-  if(outros>0){parts.push(`${cores[4]} ${deg}deg ${360}deg`)}
-  const grad=`conic-gradient(${parts.join(',')})`;
-  const leg=top.map((x,i)=>`<li><i style="background:${cores[i]}"></i>${esc(x[0])} <small>Â· ${Math.round(x[1]/total*100)}%</small></li>`).join('');
-  const legExtra=outros>0?`<li><i style="background:${cores[4]}"></i>Outros <small>Â· ${Math.round(outros/total*100)}%</small></li>`:'';
-  return `<div class="donut-row"><div class="donut-plot" style="background:${grad}"></div><ul class="donut-leg">${leg}${legExtra}</ul></div>`
-}
-
-function agregaApur(){
-  /* seed demo + votos deste aparelho */
-  const seed={
-    presidente:[['Ana Fontes',34],['Otto Prado',29],['Cida Moraes',21],['Rui Bacelar',16]],
-    governador:[['Tereza Kahn',31],['LÃ©o Sampaio',27],['Marcos Vela',24],['Duda Nunes',18]],
-    senador:[['Caio Bittar',38],['Rita Campos',26],['Ivo Leite',20],['Sofia Prado',16]],
-    depfed:[['Caio Bittar',33],['Rita Campos',28],['Ivo Leite',22],['Sofia Prado',17]],
-    estadual:[['Caio Bittar',36],['Rita Campos',25],['Ivo Leite',21],['Sofia Prado',18]]
-  };
-  const uf=APUR.uf;const cid=APUR.cidade;
-  const out={};
-  CARGOS.forEach((c)=>{
-    const map={};
-    (seed[c.id]||[]).forEach(x=>map[x[0]]=(map[x[0]]||0)+x[1]);
-    BALLOTS.forEach(b=>{
-      if(APUR.recorte==='estado'&&b.uf!==uf)return;
-      if(APUR.recorte==='cidade'&&(b.uf!==uf||b.cidade!==cid))return;
-      const e=b.esc[c.id];if(!e)return;
-      const nome=e.tipo==='cand'?e.nome:(e.tipo==='branco'?'Voto branco':'Voto nulo');
-      map[nome]=(map[nome]||0)+1;
-    });
-    const arr=Object.entries(map).sort((a,b)=>b[1]-a[1]);
-    out[c.id]=arr;
-  });
-  return out;
-}
-
-function telaApur(){
-  const pills=['nacional','estado','cidade'];
-  const rotMap={nacional:'NACIONAL',estado:'ESTADO',cidade:'CIDADE'};
-  const selUF=APUR.uf||(UFS.find(u=>u==='RJ')||UFS[0]);
-  let selects='';
-  if(APUR.recorte==='estado'||APUR.recorte==='cidade'){
-    selects+='<div class="row2"><label>Estado<select id="a-uf">'+UFS.map(u=>'<option '+(u===selUF?'selected':'')+'>'+u+'</option>').join('')+'</select></label>';
-    if(APUR.recorte==='cidade'){
-      const lista=CIDADES[selUF]||[];
-      selects+='<label>Cidade<select id="a-cid">'+(lista.length?lista.map(c=>'<option '+(c===APUR.cidade?'selected':'')+'>'+c+'</option>').join(''):'<option value="">carregandoâ€¦</option>')+'</select></label>';
-    } else selects+='<label></label>';
-    selects+='</div>';
-  }
-  const dados=agregaApur();
-  const cards=CARGOS.map(c=>{
-    const arr=dados[c.id]||[];const rot=cargoInfo(CARGOS.indexOf(c)).rot;
-    return `<div class="donut"><h4>${esc(rot)} <span class="badge-parc">apuraÃ§Ã£o parcial</span></h4>${donutHTML(arr)}</div>`;
-  }).join('');
-  const n=BALLOTS.length;
-  return `
-<div class="pills">${pills.map(p=>'<button class="pill '+(APUR.recorte===p?'on':'')+'" data-apur="'+p+'">'+rotMap[p]+'</button>').join('')}</div>
-${selects}
-<small class="hint">ApuraÃ§Ã£o parcial: demonstrativa (TSE pendente) + ${n} voto(s) registrado(s) neste aparelho${APUR.recorte!=='nacional'?' Â· filtrado por '+(APUR.recorte==='estado'?uf:'cidade'):''}.</small>
-<div class="donut-grid">${cards}</div>`;
-}
-
-/* ------------------ RADAR ------------------ */
-function telaRadar(){
-  const q=RADAR.q;const f=RADAR.filtro;
-  const pills=[['','Todos'],['dep','Dep. Federais'],['sen','Senadores'],['ok','Verificados']];
-  let list=CAND.slice();
-  if(q){const qq=q.toLowerCase();list=list.filter(c=>(c.name||'').toLowerCase().includes(qq)||(c.party||'').toLowerCase().includes(qq)||(c.state||'').toLowerCase().includes(qq))}
-  if(f==='dep')list=list.filter(c=>c.position==='Deputado Federal');
-  if(f==='sen')list=list.filter(c=>c.position==='Senador Federal');
-  if(f==='ok')list=list.filter(c=>c.selo);
-  const cards=list.slice(0,40).map(c=>{
-    const chip=c.selo?'<span class="chip-ok">âœ“ VERIFICADO</span>':'';
-    return `<div class="pol-card"><span class="av" style="background:${corAvatar(c.name)}">${iniciais(c.name)}</span><div class="nm" data-pol="${esc(c.id)}"><b>${esc(c.name)} ${chip}</b><small>${esc(c.party||'')} Â· ${esc(c.state||'')}</small></div><div class="acts"><button class="btn-green" data-apoio="${esc(c.id)}">APOIAR</button><button class="btn-red" data-recl="${esc(c.id)}">RECLAMAR</button><button class="btn-ghost" data-fix="${esc(c.id)}" title="Fixar pra comparar (máx. 2)">${RADAR.fixados.includes(c.id)?'📌':'📍'}</button></div></div>`
-  }).join('')||'<small class="hint">Nenhum polÃ­tico encontrado. Tente outra busca.</small>';
-  return `
-<input type="search" class="search-mini" id="radar-q" placeholder="ðŸ” buscar por nome, partido ou UFâ€¦" value="${esc(q)}">
-<div class="pills">${pills.map(p=>'<button class="pill '+(f===p[0]?'on':'')+'" data-rfiltro="'+p[0]+'">'+p[1]+'</button>').join('')}</div>
-${!CAND.length?'<small class="hint">Carregando polÃ­ticos reaisâ€¦</small>':''}
-${cards}${RADAR.fixados.length>=2?'<button class="btn-gold wide" style="margin-top:10px" data-acao="comparar">🆚 Comparar lado a lado</button>':'}`;
-}
-
-/* ------------------ CONFERIR ------------------ */
-function telaConferir(){
-  const blocos=[0,1,2,3,4].map(i=>'<input class="cf-in" data-cf="'+i+'" maxlength="4" inputmode="numeric" placeholder="0000">').join('');
-  const hist=BALLOTS.slice().reverse().map((b,i)=>{
-    const d=new Date(b.ts);
-    return `<div class="hist-item" data-fill="${esc(b.code)}"><span class="cc">${esc(fmtCode(b.code))}</span><span class="dt">${d.toLocaleDateString('pt-BR')}</span><span class="chip-at">NO APARELHO</span></div>`
-  }).join('')||'<small class="hint">Nenhum cÃ³digo registrado neste aparelho.</small>';
-  return `
-<div class="card">
-  <h3 style="color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:6px">CONFERIR MEU VOTO</h3>
-  <small>Cole seu cÃ³digo de 20 dÃ­gitos e verifique no site oficial.</small>
-  <div class="conf-inp">${blocos}</div>
-  <button class="btn-gold wide" data-acao="confV">CONFERIR NO SITE</button>
-  <button class="btn-ghost wide" data-acao="vSiteV" style="width:100%;margin-top:8px">ABRIR SEM CÃ“DIGO</button>
-</div>
-<div class="card"><h3 style="color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:6px">MEUS CÃ“DIGOS NESTE APARELHO</h3>${hist}</div>
-<small class="hint" style="display:block;text-align:center;margin-top:8px">A verificaÃ§Ã£o completa abre no site oficial MudaBrasil.</small>`;
-}
-
-/* ------------------ MODAL ------------------ */
-function openModal(html){const m=$('#modal');m.innerHTML='<div class="box">'+html+'</div>';m.classList.remove('hidden');m.onclick=(e)=>{if(e.target===m)closeModal()}}
-function closeModal(){$('#modal').classList.add('hidden');$('#modal').innerHTML=''}
-function modalPolitico(id){
-  const c=CAND.find(x=>x.id===id);if(!c)return;
-  openModal(`
-<h3>${esc(c.name)} ${c.selo?'<span class="chip-ok">âœ“ VERIFICADO</span>':''}</h3>
-<small>${esc(c.position||'')} Â· ${esc(c.party||'')} Â· ${esc(c.state||'')}</small>
-<div style="margin:12px 0;display:flex;gap:8px">
-  <button class="btn-green" data-apoio="${esc(c.id)}" style="flex:1">ðŸ‘ APOIAR</button>
-  <button class="btn-red" data-recl="${esc(c.id)}" style="flex:1">ðŸ‘Ž RECLAMAR</button>
-</div>
-<a class="btn-gold" style="display:block;text-align:center;width:100%" target="_blank" rel="noopener" href="../pages/parlamentares.html?dep=${encodeURIComponent(c.name)}">Ver ficha completa no site â†’</a>
-<div class="row"><button class="btn-ghost" data-close="1">Fechar</button></div>`);
-}
-function modalForm(pid,tipo){
-  const titulo=tipo==='apoio'?'APOIAR':'RECLAMAR';
-  const cor=tipo==='apoio'?'btn-green-fill':'btn-red-fill';
-  openModal(`
-<h3>${titulo}</h3>
-<small>PolÃ­tico: ${esc(pid)}</small>
-<input type="text" id="f-tit" placeholder="TÃ­tulo (curto)" style="margin-top:10px">
-<textarea id="f-desc" placeholder="${tipo==='apoio'?'Por que vocÃª apoia?':'Descreva o problema com evidÃªncias (se tiver).'}"></textarea>
-<div class="row"><button class="btn-ghost" data-close="1">Cancelar</button><button class="${cor}" data-enviar="${esc(pid)}" data-tipo="${tipo}">Enviar</button></div>`);
-}
-
-function modalCedula(b){const d=new Date(b.ts);openModal('<h3>🔍 CÉDULA ENCONTRADA NESTE APARELHO</h3><small>Registrada em '+d.toLocaleString('pt-BR')+' · '+esc(b.uf||'')+(b.cidade?' · '+esc(b.cidade):'')+'</small>'+CARGOS.map((c,i)=>{const e=b.esc[c.id];const t=e?(e.tipo==='cand'?esc(e.nome)+' ('+esc(e.part)+' · '+esc(e.num||'—')+')':(e.tipo==='branco'?'VOTO EM BRANCO':'VOTO NULO')):'(não votado)';return '<div class="rev-row"><div class="crg"><b>'+esc(cargoInfo(i).rot)+'</b><small>'+t+'</small></div></div>'}).join('')+'<p style="margin:10px 0;font-size:12px;color:#c3d0e4">🔒 Exibida somente neste aparelho. Nada foi enviado a servidores.</p><div class="row"><button class="btn-ghost" data-close="1">Fechar</button></div>');}
-/* ------------------ binders ------------------ */
-function bindAll(){
-  bindLogin();
-  /* nav */
-  $$('nav.bot button').forEach(b=>b.onclick=()=>{scr=b.dataset.scr;if(scr==='radar'&&!CAND.length)carregaCAND();render()});
-  /* go/back */
-  $$('[data-go]').forEach(b=>b.onclick=()=>{scr=b.dataset.go;if(scr==='radar'&&!CAND.length)carregaCAND();render()});
-  $$('[data-back]').forEach(b=>b.onclick=()=>{
-    if(scr==='votar'){VOTA.passo=Math.max(0,VOTA.passo-1);VOTA.selTemp=null;render();return}
-    scr='inicio';render();
-  });
-  /* local */
-  const geo=$('#geo');if(geo)geo.onclick=pedirGeo;
-  const ufSel=$('#uf');if(ufSel){ufSel.onchange=()=>carregarCidades(ufSel.value);carregarCidades(ufSel.value)}
-  const okL=$('#okLocal');if(okL)okL.onclick=confirmarLocal;
-  /* candidatos */
-  $$('[data-sel]').forEach(el=>el.onclick=()=>{const[i,k]=el.dataset.sel.split(':');VOTA.selTemp={tipo:'cand',k:+k};render()});
-  $$('[data-ur]').forEach(el=>el.onclick=()=>{VOTA.selTemp={tipo:el.dataset.ur};render()});
-  $$('[data-acao]').forEach(b=>b.onclick=acaoClick);
-  /* revisÃ£o */
-  $$('[data-trocar]').forEach(b=>b.onclick=()=>{const i=+b.dataset.trocar;VOTA.passo=i+1;VOTA.selTemp=null;render()});
-  /* apuraÃ§Ãµes */
-  $$('[data-apur]').forEach(b=>b.onclick=()=>{APUR.recorte=b.dataset.apur;render();if(APUR.recorte==='estado'||APUR.recorte==='cidade'){setTimeout(()=>{const s=$('#a-uf');if(s){s.onchange=()=>{APUR.uf=s.value;APUR.cidade='';render()};carregarCidades(s.value)}const sc=$('#a-cid');if(sc)sc.onchange=()=>{APUR.cidade=sc.value}},30)}});
-  /* radar */
-  '#radar-q');if(rq){rq.oninput=()=>{RADAR.q=rq.value;render();const nq=$('#radar-q');if(nq){nq.focus();nq.setSelectionRange(nq.value.length,nq.value.length)}}}
-  $$('[data-rfiltro]').forEach(b=>b.onclick=()=>{RADAR.filtro=b.dataset.rfiltro;render()}); $$('[data-fix]').forEach(b=>b.onclick=function(e){e.stopPropagation();var id=b.dataset.fix;var k=RADAR.fixados.indexOf(id);if(k>=0){RADAR.fixados.splice(k,1)}else if(RADAR.fixados.length<2){RADAR.fixados.push(id)}else{toast('Máximo 2 políticos fixados');return}LS.set('mb_fix',RADAR.fixados);render()});
-  $$('[data-pol]').forEach(el=>el.onclick=()=>modalPolitico(el.dataset.pol));
-  $$('[data-apoio]').forEach(el=>{el.onclick=(e)=>{e.stopPropagation();modalForm(el.dataset.apoio,'apoio')}});
-  $$('[data-recl]').forEach(el=>{el.onclick=(e)=>{e.stopPropagation();modalForm(el.dataset.recl,'rec')}});
-  $$('[data-close]').forEach(b=>b.onclick=closeModal);
-  $$('[data-enviar]').forEach(b=>b.onclick=()=>enviarForm(b.dataset.enviar,b.dataset.tipo));
-  /* conferir */
-  const cfins=$$('.cf-in');
-  cfins.forEach((inp,i)=>{
-    inp.oninput=()=>{
-      inp.value=inp.value.replace(/\D/g,'').slice(0,4);
-      if(inp.value.length===4&&i<4)cfins[i+1].focus();
-    };
-    inp.onkeydown=(e)=>{if(e.key==='Backspace'&&!inp.value&&i>0){cfins[i-1].focus();cfins[i-1].value=''}}
-  });
-  $$('[data-fill]').forEach(el=>el.onclick=()=>{const c=el.dataset.fill;cfins.forEach((inp,i)=>inp.value=c.slice(i*4,i*4+4))});
-}
-
-function acaoClick(e){
-  const a=e.currentTarget.dataset.acao;
-  if(a==='voltar'){VOTA.passo=Math.max(0,VOTA.passo-1);VOTA.selTemp=null;render()}
-  else if(a==='corrige'){VOTA.selTemp=null;render()}
-  else if(a==='confirma'){
-    const i=VOTA.passo-1;let lista=listaCandidatos(i);const qq=(VOTA.q||
-    if(!VOTA.selTemp){toast('Selecione uma opÃ§Ã£o antes de CONFIRMAR');return}
-    if(VOTA.selTemp.tipo==='cand'){const c=lista[VOTA.selTemp.k];VOTA.esc[CARGOS[i].id]={tipo:'cand',nome:c.nome,part:c.part,num:c.num||''}}
-    else{VOTA.esc[CARGOS[i].id]={tipo:VOTA.selTemp.tipo}}
-    VOTA.selTemp=null;VOTA.passo=Math.min(6,VOTA.passo+1);try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}render();
-  }
-  else if(a==='r3'){VOTA.passo=7;render()}
-  else if(a==='gerar'){startCountdown()}
-  else if(a==='copiar'){
-    const txt=VOTA.code;
-    try{navigator.clipboard.writeText(txt).then(()=>toast('CÃ³digo copiado!'))}catch(e){const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();toast('CÃ³digo copiado!')}
-  }
-  else if(a==='vsite'){window.open('../index.html#conferir-voto?code='+encodeURIComponent(VOTA.code),'_blank')}
-  else if(a==='confV'){
-    const v=$$('.cf-in').map(i=>i.value).join('');
-    if(v.replace(/\D/g,'').length!==20){toast('CÃ³digo precisa de 20 dÃ­gitos');return}
-    const b=BALLOTS.find(x=>x.code===v);if(b){modalCedula(b)}else{window.open('../index.html#conferir-voto?code='+encodeURIComponent(v),'_blank')}
-  }
-  else if(a==='exemplo'){const b=BALLOTS[BALLOTS.length-1];const c=b?b.code:'16948051304534262993';('.cf-in').forEach((inp,i)=>inp.value=c.slice(i*4,i*4+4));toast('Exemplo preenchido')}
-  else if(a==='vSiteV'){window.open('../index.html#conferir-voto','_blank')}
-  else if(a==='fonte'){document.body.classList.toggle('fonteg');LS.set('mb_fonteg',document.body.classList.contains('fonteg'));toast(document.body.classList.contains('fonteg')?'Fonte grande ativada':'Fonte padrão')}
-  else if(a==='comparar'){var cs=RADAR.fixados.map(function(id){return CAND.find(function(c){return c.id===id})}).filter(Boolean);if(cs.length<2){toast('Fixe 2 políticos primeiro (toque no 📍)');return}openModal('<h3>🆚 Comparação lado a lado</h3><div class="cols2">'+cs.map(function(c){return '<div class="card"><b>'+esc(c.name)+'</b><small>'+esc(c.party||'')+' · '+esc(c.state||'')+'</small><a class="btn-gold" style="display:block;text-align:center;margin-top:8px" target="_blank" href="../pages/parlamentares.html?dep='+encodeURIComponent(c.name)+'">Ver ficha no site →</a></div>'}).join('')+'</div><div class="row"><button class="btn-ghost" data-close="1">Fechar</button></div>')}
-  else if(a==='novo'){VOTA={passo:0,esc:{},selTemp:null,code:'',hash:''};render()}
-}
-
-function confirmarLocal(){
-  const uf=$('#uf').value;
-  const cidSel=$('#cid');
-  const cidL=$('#cidLivre').value.trim();
-  const cid=cidL||(cidSel?cidSel.value:'');
-  if(!cid){toast('Escolha uma cidade ou digite');return}
-  LOCAL={uf:uf,cidade:cid,fonte:cidL?'manual':(LOCAL&&LOCAL.fonte||'manual')};
-  LS.set('mb_local',LOCAL);
-  VOTA.passo=1;render();
-}
-
-async function pedirGeo(){
-  if(!navigator.geolocation){toast('GeolocalizaÃ§Ã£o indisponÃ­vel neste aparelho');return}
-  toast('Buscando sua localizaÃ§Ã£oâ€¦');
-  navigator.geolocation.getCurrentPosition(async(pos)=>{
-    try{
-      const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&localityLanguage=pt`);
-      const j=await r.json();
-      const ufRaw=(j.principalSubdivisionCode||'').replace(/^BR-/,'');
-      const uf=UFS.includes(ufRaw)?ufRaw:(j.principalSubdivision||'').toUpperCase().slice(0,2);
-      const cidade=j.city||j.locality||'';
-      if(!UFS.includes(uf)){toast('UF nÃ£o identificada â€” escolha manualmente');return}
-      LOCAL={uf:uf,cidade:cidade||'',fonte:'gps'};
-      LS.set('mb_local',LOCAL);
-      toast('Local detectado: '+uf+(cidade?' Â· '+cidade:''));
-      VOTA.passo=1;render();
-    }'''Falha ao resolver UF â€” escolha manualmente')}
-  },(err)=>{toast('PermissÃ£o negada â€” escolha manualmente')},{timeout:12000,enableHighAccuracy:false});
-}
-
-async function carregarCidades(uf){
-  if(!uf)return;
-  if(CIDADES[uf]){const s=$('#cid');if(s)preencherSel(s,CIDADES[uf]);return}
-  try{
-    const r=await fetch(`https://servicosdados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderby=nome`);
-    const j=await r.json();
-    const arr=(j||[]).map(m=>m.nome);
-    CIDADES[uf]=arr;
-    const s=$('#cid');if(s)preencherSel(s,arr);
-    const sa=$('#a-cid');if(sa)preencherSel(sa,arr);
-  }catch(e){
-    const s=$('#cid');if(s)s.innerHTML='<option value="">erro ao carregar â€” digite abaixo</option>';
-  }
-}
-function preencherSel(sel,arr){
-  sel.innerHTML='<option value="">escolhaâ€¦</option>'+arr.map(c=>'<option>'+c+'</option>').join('');
-  if(LOCAL && (sel.id==='cid') && LOCAL.cidade && arr.includes(LOCAL.cidade)){sel.value=LOCAL.cidade}
-}
-
-async function carregaCAND(){
-  if(CAND.length)return;
-  if(!API){CAND=[];return}
-  try{
-    const r=await fetch(API+'/api/candidatos');
-    const j=await r.json();
-    CAND=(j.candidatos||[]).map(c=>({id:c.id,name:c.name,party:c.party,state:c.state,position:c.position,selo:!!c.selo}));
-    render();
-  }catch(e){CAND=[]}
-}
-
-async function flushFila(){if(!navigator.onLine)return;const fila=LS.get(
-  const tit=$('#f-tit').value.trim();const desc=$('#f-desc').value.trim();
-  if(!tit||!desc){toast('Preencha tÃ­tulo e descriÃ§Ã£o');return}
-  const btn=$('[data-enviar]');btn.disabled=true;btn.textContent='Enviandoâ€¦';
-  try{
-    const r=await fetch(API+'/api/reclamacoes/public',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({politicianId:pid,tipo:tipo,titulo:tit,descricao:desc})});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    toast(tipo==='apoio'?'Apoio registrado!':'ReclamaÃ§Ã£o registrada!');
-    closeModal();
-  }'''Erro: '+e.message);btn.disabled=false;btn.textContent='Enviar'}
-}
-
-/* ------------------ LOGIN + AVISO ------------------ */
-function telaLogin(){return `
-<section class="hero"><h1>ENTRAR</h1><p>Identifique-se pra votar com segurança.<br>No protótipo, você também pode entrar como convidado (anônimo).</p></section>
-<div class="card"><button class="btn-gold wide" id="lg-g">G · ENTRAR COM GOOGLE</button>
-<button class="btn-ghost wide" id="lg-tel" style="width:100%;margin-top:8px">📱 ENTRAR COM TELEFONE</button>
-<button class="btn-ghost wide" id="lg-mail" style="width:100%;margin-top:8px">✉️ ENTRAR COM E-MAIL</button>
-<button class="btn-ghost wide" id="lg-guest" style="width:100%;margin-top:8px">Continuar como convidado (anônimo)</button>
-<small class="hint" style="display:block;margin-top:10px">Se implantado oficialmente: entrada via gov.br, blockchain ou outro meio oficial, com total segurança.</small></div>
-<div class="card hidden" id="lg-form"><small id="lg-label"></small><input id="lg-id" placeholder="" style="margin-top:8px"><button class="btn-gold wide" id="lg-send" style="margin-top:8px">ENVIAR CÓDIGO</button><input id="lg-code" class="hidden" placeholder="código recebido" style="margin-top:8px"><button class="btn-gold wide hidden" id="lg-ok" style="margin-top:8px">CONFIRMAR</button></div>`}
-let LG={modo:''};
-function bindLogin(){
- const g=$('#lg-g');if(g)g.onclick=()=>{toast('Google ativa na versão implantada — use convidado ou código no protótipo');abreForm('google')};
- const t=$('#lg-tel');if(t)t.onclick=()=>abreForm('phone');
- const m=$('#lg-mail');if(m)m.onclick=()=>abreForm('email');
- const gu=$('#lg-guest');if(gu)gu.onclick=()=>{SESSAO={nome:'Convidado',tipo:'guest'};LS.set('mb_session',SESSAO);scr='inicio';render()};
- const s=$('#lg-send');if(s)s.onclick=async()=>{
-   const id=$('#lg-id').value.trim();if(!id){toast('Preencha');return}
-   LG.id=id;
-   const rota=LG.modo==='phone'?'/api/auth/otp/send':'/api/auth/email/send';
-   try{const r=await fetch(API+rota,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(LG.modo==='phone'?{phone:id}:{email:id})});
-     const j=await r.json().catch(()=>({}));
-     if(j&&j.code)toast('Código protótipo: '+j.code);else toast('Código simulado no protótipo: 123456');
-   }'''Código simulado no protótipo: 123456')}
-   $('#lg-code').classList.remove('hidden');$('#lg-ok').classList.remove('hidden');
- };
- const ok=$('#lg-ok');if(ok)ok.onclick=async()=>{
-   const code=$('#lg-code').value.trim();
-   const rota=LG.modo==='phone'?'/api/auth/otp/verify':'/api/auth/email/verify';
-   let nome=LG.id;
-   try{const r=await fetch(API+rota,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(LG.modo==='phone'?{phone:LG.id,code}:{email:LG.id,code})});
-     const j=await r.json().catch(()=>({}));if(j&&j.name)nome=j.name;if(j&&j.token)LG.token=j.token;
-   }catch(e){}
-   SESSAO={nome:nome,tipo:LG.modo,token:LG.token||''};LS.set('mb_session',SESSAO);scr='inicio';render();toast('Bem-vindo(a), '+nome);
- };
-}
-function abreForm(modo){LG.modo=modo;const f=$('#lg-form');if(!f)return;f.classList.remove('hidden');
- $('#lg-label').textContent=modo==='phone'?'Digite seu celular (DDD+número)':'Digite seu e-mail';
- $('#lg-id').placeholder=modo==='phone'?'21 99999-9999':'voce@email.com';
- $('#lg-code').classList.add('hidden');$('#lg-ok').classList.add('hidden');}
-function popupSimulacao(){
- if(LS.get('mb_aviso_sim',0))return;
- openModal('<h3>🧪 PROTÓTIPO EM TESTE</h3><p style="margin:8px 0">O MudaBrasil é uma <b>simulação demonstrativa</b> de votação pelo celular — nada aqui tem valor jurídico ou eleitoral.</p><p style="margin:8px 0">Se implantado oficialmente, o login será feito com <b>gov.br, blockchain ou outro meio oficial de identificação</b>, com total segurança, <b>voto secreto</b> e auditabilidade completa.</p><p style="margin:8px 0">No protótipo, suas escolhas <b>nunca saem do aparelho</b>: o código comprova participação, não o conteúdo.</p><div class="row"><button class="btn-gold" id="aviso-ok">ENTENDI, COMEÇAR</button></div>');
- const b=$('#aviso-ok');if(b)b.onclick=()=>{LS.set('mb_aviso_sim',1);closeModal()};
-}/* ------------------ boot ------------------ */
-(function boot(){
-  render();
-  carregaCAND().catch(()=>{});
-  popupSimulacao();`r`n  if(LS.get(
-  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
-})();
-
-
-
-
-
-
-
-
-
+async function sha(txt){try{var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}catch(e){var h=5381;var s=String(txt);for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return h.toString(16).padStart(16,'0').repeat(4).slice(0,64)}}
+function toast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.add('hidden')},2400)}
+function navHTML(){var h='<nav class="bot">';for(var i=0;i<NAV.length;i++){var n=NAV[i];h+='<button data-scr="'+n[0]+'" class="'+(scr===n[0]?'on':'')+'"><span>'+n[1]+'</span><span>'+n[2]+'</span></button>'}return h+'</nav>'}
+function headerHTML(t,back){return '<header><button class="hback" '+(back?'data-back="1"':'style="visibility:hidden"')+'>&#8592;</button><button class="hback" id="fontbtn" data-acao="fonte" title="Fonte grande">A+</button><b>'+esc(t)+'</b><span class="badge" id="badge">\u2026</span></header>'}
+function renderDiaD(){var a1=new Date('2026-10-04T08:00:00-03:00');var a2=new Date('2026-10-25T08:00:00-03:00');var ag=new Date();function dd(a){var x=Math.ceil((a-ag)/864e5);return x>=0?x:0}var el=document.getElementById('diad-dados');if(!el)return;el.innerHTML='<div class="tile"><b>'+dd(a1)+'</b><span>dias pro 1o turno (04/10)</span></div><div class="tile"><b>'+dd(a2)+'</b><span>dias pro 2o turno (25/10)</span></div>'}
+function render(){var m=document.getElementById('app');var h='';if(scr==='inicio')h=headerHTML('MudaBrasil',false)+telaInicio();else if(scr==='login')h=telaLogin();else if(scr==='votar')h=headerHTML('Votar',VOTA.passo>0)+telaVotar();else if(scr==='apuracoes')h=headerHTML('Apuracoes',false)+telaApur();else if(scr==='radar')h=headerHTML('Radar Politico',false)+telaRadar();else h=headerHTML('Conferir Voto',false)+telaConferir();m.innerHTML=h+navHTML();bindAll();badge();renderDiaD();if(LS.get('mb_fonteg',0))document.body.classList.add('fonteg');else document.body.classList.remove('fonteg')}
+async function badge(){var b=document.getElementById('badge');if(!b||!API)return;try{var r=await fetch(API+'/api/health',{cache:'no-store'});if(r.ok){b.textContent='sistema no ar';b.classList.remove('off')}else throw 0}catch(e){b.textContent='sem conexao';b.classList.add('off')}}
+function telaInicio(){var d1=new Date('2026-10-04T08:00:00-03:00');var d2=new Date('2026-10-25T08:00:00-03:00');var ag=new Date();function dd(a){var x=Math.ceil((a-ag)/864e5);return x>=0?x:0}var h='<section class="hero"><h1>O PODER EMANA DO POVO<br>NAO ACABA NO DIA DA ELEICAO.</h1><h2>Seu voto coloca. Seu voto tira.</h2><p>Eleicao pelo celular com comprovante verificavel.<br>Prototipo de viabilidade, sem valor juridico.</p></section>';h+='<div class="card diad"><b>\u{1F4C5} DIA D</b><div class="grid2" id="diad-dados"><div class="tile"><b>'+dd(d1)+'</b><span>dias pro 1o turno (04/10)</span></div><div class="tile"><b>'+dd(d2)+'</b><span>dias pro 2o turno (25/10)</span></div></div><small data-tip="Datas fixas da Constituicao (art. 77): 1o e 2o domingos de outubro">\u2139 datas constitucionais</small></div>';h+='<div class="card gloss"><b>\u{1F4D6} GLOSSARIO ELEITORAL</b><div class="chips"><span data-tip="Voto valido sem preferencia - conta no total, nao elege ninguem">VOTO EM BRANCO</span><span data-tip="Voto invalido ou de protesto - nao elege ninguem">VOTO NULO</span><span data-tip="Minimo de parlamentares presentes pra votacao valer">QUORUM</span><span data-tip="Perda do mandato - no MudaBrasil: regra dos 70%">CASSACAO</span><span data-tip="Inicio oficial do mandato">POSSE</span></div></div>';h+='<h3 class="sect">PAGINAS DO APLICATIVO</h3><div class="grid2">';h+='<div class="card"><b>VOTACAO</b><small>Estilo urna, 5 cargos</small><button class="btn-gold" data-go="votar">VOTAR AGORA</button></div>';h+='<div class="card"><b>APURACOES</b><small>Veja quem esta na frente</small><button class="btn-gold" data-go="apuracoes">VER AGORA</button></div>';h+='<div class="card"><b>RADAR POLITICO</b><small>Quem e, reclamar e apoiar</small><button class="btn-gold" data-go="radar">ABRIR RADAR</button></div>';h+='<div class="card"><b>CONFERIR VOTO</b><small>Seu codigo de 20 digitos no site</small><button class="btn-gold" data-go="conferir">CONFERIR</button></div>';h+='</div>';h+='<div class="chips"><span>\u{1F512} 100% anonimo</span><span>\u{1F517} registro inviolavel</span><span>\u{1F1E7}\u{1F1F7} fontes oficiais</span><span>\u2696 regra dos 70%</span></div>';return h}
+function progHTML(at){var h='<div class="prog5">';for(var i=0;i<5;i++)h+='<i class="'+(i<at?'on':'')+'"></i>';return h+'</div>'}
+function telaVotar(){if(VOTA.passo===0)return telaLocal();if(VOTA.passo>=1&&VOTA.passo<=5)return telaCargo(VOTA.passo-1);if(VOTA.passo===6)return telaRevisao();if(VOTA.passo===7)return telaAviso();return telaRecibo()}
+function telaLocal(){var ufSel=LOCAL?LOCAL.uf:(UFS.indexOf('RJ')>=0?'RJ':UFS[0]);var h=progHTML(0);h+='<div class="card loc"><b>ONDE VOCE VOTA?</b><small>A eleicao usa seu local pra montar os cargos de estado e municipio.</small>';h+='<button class="btn-gold wide" id="geo">\u{1F6F0} ATIVAR MINHA LOCALIZACAO</button>';h+='<div class="row2"><label>Estado<select id="uf">';for(var i=0;i<UFS.length;i++)h+='<option '+(UFS[i]===ufSel?'selected':'')+'>'+UFS[i]+'</option>';h+='</select></label>';h+='<label>Cidade<select id="cid"><option value="">escolha o estado...</option></select></label></div>';h+='<input id="cidLivre" placeholder="ou digite a cidade se nao achar">';h+='<p class="warn">\u26A0 Esta fora do seu domicilio eleitoral? Vale o local escolhido aqui.</p>';h+='<button class="btn-gold wide" id="okLocal">CONFIRMAR LOCAL DE VOTACAO</button></div>';return h}
+function cargoInfo(i){var c=CARGOS[i];var rot=c.rot;if(c.ufLabel)rot=c.rot+' \u2014 '+(LOCAL?LOCAL.uf:'BR');return {rot:rot,demo:c.demo,real:c.real}}
+function listaCandidatos(i){var ci=cargoInfo(i);if(ci.demo){return DEMO[ci.demo].map(function(x){return {nome:x.nome,part:x.part,num:String(x.num),demo:true}})}var uf=LOCAL?LOCAL.uf:'';var list=CAND.filter(function(c){return (c.position===ci.real||c.position===ci.real.replace(' Federal',''))&&(!uf||c.state===uf)}).slice(0,12);if(!list.length)return [];return list.map(function(c){return {nome:c.name,part:c.party,num:String(c.number||''),id:c.id,demo:false}})}
+function participacaoHTML(){if(!LOCAL||!LOCAL.uf)return '';var n=BALLOTS.filter(function(b){return b.uf===LOCAL.uf}).length;return '<div class="participacao" data-tip="Contador anonimo de cedulas - suas escolhas nunca saem do aparelho">\u{1F465} Participacao em '+LOCAL.uf+': <b>'+n+' cedula(s)</b></div>'}
+function telaCargo(i){var ci=cargoInfo(i);var lista=listaCandidatos(i);var qq=(VOTA.q||'').toLowerCase();if(qq){lista=lista.filter(function(x){return (x.nome||'').toLowerCase().indexOf(qq)>=0||(x.part||'').toLowerCase().indexOf(qq)>=0})}var sel=VOTA.selTemp;var h=progHTML(i);h+=participacaoHTML();h+='<div class="cargo-tit"><b>'+esc(ci.rot.toUpperCase())+'</b><small>Toque no candidato (ou branco / nulo)</small></div>';h+='<input type="search" class="search-mini" id="cargo-q" placeholder="\u{1F50D} filtrar por nome ou partido..." value="'+esc(VOTA.q||'')+'">';if(!lista.length)h+='<small class="hint">Nenhum candidato real carregado pra este UF ainda (TSE pendente).</small>';for(var k=0;k<lista.length;k++){var x=lista[k];var selCls=(sel&&sel.tipo==='cand'&&sel.k===k)?'sel':'';h+='<div class="cand '+selCls+'" data-sel="'+i+':'+k+'"><span class="av" style="background:'+corAvatar(x.nome)+'">'+iniciais(x.nome)+'</span><div class="nm"><b>'+esc(x.nome)+' '+(x.demo?'<span class="chip-demo">TSE pendente</span>':'')+'</b><small>'+esc(x.part)+' \u00B7 '+esc(x.num||'\u2014')+'</small></div><span class="radio"></span></div>'}h+='<small class="hint">Os botoes de voto ficam FIXOS aqui embaixo.</small>';h+='<div class="urbar"><button class="brn" data-ur="branco">BRANCO</button><button class="nul" data-ur="nulo">NULO</button></div>';h+='<div class="barAcoes"><button class="btn-ghost" data-acao="voltar">\u2190 VOLTAR</button><button class="btn-ghost" data-acao="corrige">CORRIGE</button><button class="btn-gold" data-acao="confirma" '+(!sel?'disabled':'')+'>CONFIRMA</button></div>';h+='<small class="hint">Toque no candidato pra selecionar, depois use CORRIGE/BRANCO/NULO/CONFIRMA.</small>';return h}
+function telaRevisao(){var rows='';for(var i=0;i<CARGOS.length;i++){var c=CARGOS[i];var escolha=VOTA.esc[c.id];var texto=escolha?(escolha.tipo==='branco'?'VOTO EM BRANCO':escolha.tipo==='nulo'?'VOTO NULO':escolha.nome+' ('+escolha.part+' \u00B7 '+escolha.num+')'):'(nao votado)';rows+='<div class="rev-row"><div class="crg"><b>'+esc(cargoInfo(i).rot)+'</b><small>'+esc(texto)+'</small></div><button class="trocar" data-trocar="'+i+'">trocar</button></div>'}var h=progHTML(5);h+='<div class="card"><h3 style="color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:10px">REVISE SUA CEDULA</h3>'+rows;h+='<button class="btn-gold wide" data-acao="r3" style="margin-top:14px">CONFIRMAR</button></div>';return h}
+function telaAviso(){var pct=Math.round(((window.MudaBrasil&&window.MudaBrasil.REGRA_REVOGACAO||{percentual_cassacao:0.7}).percentual_cassacao)*100);var h=progHTML(5);h+='<div class="aviso"><b style="color:var(--gold)">\u2139 Mandato revogavel</b><p style="margin-top:6px">Voce podera <b>revogar</b> apos a posse se o eleito nao corresponder \u2014 regra dos '+pct+'%: se esse percentual dos eleitores que elegeram revogam, cai o mandato.</p></div>';h+='<button class="btn-gold wide" data-acao="gerar">ENTENDI, GERAR MEU CODIGO</button>';return h}
+async function registrarVoto(){var digits=Array.from(crypto.getRandomValues(new Uint8Array(20))).map(function(x){return x%10}).join('');var prev=BALLOTS.length?BALLOTS[BALLOTS.length-1].hash:('0'.repeat(64));var payload=JSON.stringify({digits:digits,esc:VOTA.esc,uf:LOCAL?LOCAL.uf:'',cidade:LOCAL?LOCAL.cidade:'',ts:Date.now(),prev:prev});var hash=await sha(payload);BALLOTS.push({code:digits,hash:hash,esc:VOTA.esc,uf:LOCAL?LOCAL.uf:'',cidade:LOCAL?LOCAL.cidade:'',ts:Date.now()});LS.set('mb_ballots',BALLOTS);VOTA.code=digits;VOTA.hash=hash}
+function startCountdown(){var ov=document.getElementById('overlay');ov.classList.remove('hidden');var n=8;ov.innerHTML='<div class="num">'+n+'</div><small>Registrando sua cedula...<br>Toque pra concluir agora</small>';var tick=setInterval(function(){n--;ov.querySelector('.num').textContent=n;if(n<=0){clearInterval(tick);finalize()}},1000);ov.onclick=function(){clearInterval(tick);finalize()};async function finalize(){try{await registrarVoto()}catch(e){console.error(e)}ov.classList.add('hidden');ov.onclick=null;VOTA.passo=8;render()}}
+function telaRecibo(){var blocos=(VOTA.code.match(/.{1,4}/g)||[]).join(' ');var h='<div class="receipt"><p class="ok-check">\u2705 VOTO REGISTRADO</p>';h+='<div class="code-box"><div class="label">SEU COMPROVANTE</div><div class="dig" data-acao="copiar" style="cursor:pointer">'+esc(blocos)+'</div>';h+='<small class="hint">\u{1F446} toque no codigo para copiar</small>';h+='<div class="hash">'+esc(VOTA.hash.slice(0,32))+'\u2026'+esc(VOTA.hash.slice(-8))+'</div></div>';h+='<p style="font-size:12px;color:var(--mut);margin-bottom:6px">Guarde este codigo: e seu unico comprovante.</p>';h+='<p style="font-size:12px;color:#c3d0e4;margin-bottom:10px">\u{1F512} VOTO SECRETO: suas escolhas nunca saem deste aparelho. O codigo comprova participacao, nao o conteudo do voto.</p>';h+='<button class="btn-gold" data-acao="copiar">COPIAR CODIGO</button>';h+='<button class="btn-ghost" data-acao="vsite" style="width:100%;margin-top:8px">CONFERIR NO SITE \u2192</button>';h+='<button class="btn-ghost" data-acao="novo" style="width:100%;margin-top:8px">Votar de novo (demonstracao)</button></div>';return h}
+function donutHTML(data){var cores=['#2ECC71','#FFD700','#4A90D9','#E74C3C','#9B59B6'];var top=data.slice(0,4);var outros=0;for(var i=4;i<data.length;i++)outros+=data[i][1];var total=0;for(var j=0;j<top.length;j++)total+=top[j][1];total+=outros;if(!total)return '<small class="hint">Sem votos ainda.</small>';var parts=[];var deg=0;for(var i=0;i<top.length;i++){var p=top[i][1]/total*360;parts.push(cores[i]+' '+deg+'deg '+(deg+p)+'deg');deg+=p}if(outros>0){parts.push(cores[4]+' '+deg+'deg 360deg')}var grad='conic-gradient('+parts.join(',')+')';var leg='';for(var i=0;i<top.length;i++){leg+='<li><i style="background:'+cores[i]+'"></i>'+esc(top[i][0])+' <small>\u00B7 '+Math.round(top[i][1]/total*100)+'%</small></li>'}if(outros>0)leg+='<li><i style="background:'+cores[4]+'"></i>Outros <small>\u00B7 '+Math.round(outros/total*100)+'%</small></li>';return '<div class="donut-row"><div class="donut-plot" style="background:'+grad+'"></div><ul class="donut-leg">'+leg+'</ul></div>'}
+function agregaApur(){var seed={presidente:[['Ana Fontes',34],['Otto Prado',29],['Cida Moraes',21],['Rui Bacelar',16]],governador:[['Tereza Kahn',31],['Leo Sampaio',27],['Marcos Vela',24],['Duda Nunes',18]],senador:[['Caio Bittar',38],['Rita Campos',26],['Ivo Leite',20],['Sofia Prado',16]],depfed:[['Caio Bittar',33],['Rita Campos',28],['Ivo Leite',22],['Sofia Prado',17]],estadual:[['Caio Bittar',36],['Rita Campos',25],['Ivo Leite',21],['Sofia Prado',18]]};var uf=APUR.uf;var cid=APUR.cidade;var out={};for(var k=0;k<CARGOS.length;k++){var c=CARGOS[k];var map={};var s=seed[c.id]||[];for(var j=0;j<s.length;j++)map[s[j][0]]=(map[s[j][0]]||0)+s[j][1];for(var j=0;j<BALLOTS.length;j++){var b=BALLOTS[j];if(APUR.recorte==='estado'&&b.uf!==uf)continue;if(APUR.recorte==='cidade'&&(b.uf!==uf||b.cidade!==cid))continue;var e=b.esc[c.id];if(!e)continue;var nome=e.tipo==='cand'?e.nome:(e.tipo==='branco'?'Voto branco':'Voto nulo');map[nome]=(map[nome]||0)+1}var arr=Object.entries(map).sort(function(a,b){return b[1]-a[1]});out[c.id]=arr}return out}
+function telaApur(){var pills=['nacional','estado','cidade'];var rotMap={nacional:'NACIONAL',estado:'ESTADO',cidade:'CIDADE'};var selUF=APUR.uf||(UFS.indexOf('RJ')>=0?'RJ':UFS[0]);var selects='';if(APUR.recorte==='estado'||APUR.recorte==='cidade'){selects+='<div class="row2"><label>Estado<select id="a-uf">';for(var i=0;i<UFS.length;i++)selects+='<option '+(UFS[i]===selUF?'selected':'')+'>'+UFS[i]+'</option>';selects+='</select></label>';if(APUR.recorte==='cidade'){var lista=CIDADES[selUF]||[];selects+='<label>Cidade<select id="a-cid">';if(lista.length){for(var j=0;j<lista.length;j++)selects+='<option '+(lista[j]===APUR.cidade?'selected':'')+'>'+lista[j]+'</option>'}else{selects+='<option value="">carregando...</option>'}selects+='</select></label>'}else selects+='<label></label>';selects+='</div>'}var dados=agregaApur();var cards='';for(var k=0;k<CARGOS.length;k++){var c=CARGOS[k];var arr=dados[c.id]||[];cards+='<div class="donut"><h4>'+esc(c.rot)+' <span class="badge-parc">apuracao parcial</span></h4>'+donutHTML(arr)+'</div>'}var n=BALLOTS.length;var h='<div class="pills">';for(var i=0;i<pills.length;i++)h+='<button class="pill '+(APUR.recorte===pills[i]?'on':'')+'" data-apur="'+pills[i]+'">'+rotMap[pills[i]]+'</button>';h+='</div>'+selects;h+='<small class="hint">Apuracao parcial: demonstrativa (TSE pendente) + '+n+' voto(s) registrado(s) neste aparelho'+(APUR.recorte!=='nacional'?' \u00B7 filtrado por '+(APUR.recorte==='estado'?uf:'cidade'):'')+'.</small>';h+='<div class="donut-grid">'+cards+'</div>';return h}
+function telaRadar(){var q=RADAR.q;var f=RADAR.filtro;var pills=[['','Todos'],['dep','Dep. Federais'],['sen','Senadores'],['ok','Verificados']];var list=CAND.slice();if(q){var qq=q.toLowerCase();list=list.filter(function(c){return (c.name||'').toLowerCase().indexOf(qq)>=0||(c.party||'').toLowerCase().indexOf(qq)>=0||(c.state||'').toLowerCase().indexOf(qq)>=0})}if(f==='dep')list=list.filter(function(c){return c.position==='Deputado Federal'});if(f==='sen')list=list.filter(function(c){return c.position==='Senador Federal'});if(f==='ok')list=list.filter(function(c){return c.selo});var cards='';for(var k=0;k<Math.min(list.length,40);k++){var c=list[k];var chip=c.selo?'<span class="chip-ok">\u2713 VERIFICADO</span>':'';var fixado=RADAR.fixados.indexOf(c.id)>=0;cards+='<div class="pol-card"><span class="av" style="background:'+corAvatar(c.name)+'">'+iniciais(c.name)+'</span><div class="nm" data-pol="'+esc(c.id)+'"><b>'+esc(c.name)+' '+chip+'</b><small>'+esc(c.party||'')+' \u00B7 '+esc(c.state||'')+'</small></div><div class="acts"><button class="btn-green" data-apoio="'+esc(c.id)+'">APOIAR</button><button class="btn-red" data-recl="'+esc(c.id)+'">RECLAMAR</button><button class="btn-ghost" data-fix="'+esc(c.id)+'" title="Fixar pra comparar (max. 2)">'+(fixado?'\u{1F4CC}':'\u{1F4CD}')+'</button></div></div>'}if(!cards)cards='<small class="hint">Nenhum politico encontrado. Tente outra busca.</small>';var comp=RADAR.fixados.length>=2?'<button class="btn-gold wide" style="margin-top:10px" data-acao="comparar">\u{1F19A} Comparar lado a lado</button>':'';var h='<input type="search" class="search-mini" id="radar-q" placeholder="\u{1F50D} buscar por nome, partido ou UF..." value="'+esc(q)+'">';h+='<div class="pills">';for(var i=0;i<pills.length;i++)h+='<button class="pill '+(f===pills[i][0]?'on':'')+'" data-rfiltro="'+pills[i][0]+'">'+pills[i][1]+'</button>';h+='</div>';h+=(!CAND.length?'<small class="hint">Carregando politicos reais...</small>':'');h+=cards+comp;return h}
+function telaConferir(){var blocos='';for(var i=0;i<5;i++)blocos+='<input class="cf-in" data-cf="'+i+'" maxlength="4" inputmode="numeric" placeholder="0000">';var hist='';for(var i=BALLOTS.length-1;i>=0;i--){var b=BALLOTS[i];var d=new Date(b.ts);hist+='<div class="hist-item" data-fill="'+esc(b.code)+'"><span class="cc">'+esc(fmtCode(b.code))+'</span><span class="dt">'+d.toLocaleDateString('pt-BR')+'</span><span class="chip-at">NO APARELHO</span></div>'}if(!hist)hist='<small class="hint">Nenhum codigo registrado neste aparelho.</small>';var h='<div class="card"><h3 style="color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:6px">CONFERIR MEU VOTO</h3><small>Cole seu codigo de 20 digitos e verifique no site oficial.</small><div class="conf-inp">'+blocos+'</div>';h+='<button class="btn-gold wide" data-acao="confV">CONFERIR NO SITE</button>';h+='<button class="btn-ghost wide" data-acao="exemplo" style="width:100%;margin-top:8px">Testar com um exemplo</button>';h+='<button class="btn-ghost wide" data-acao="vSiteV" style="width:100%;margin-top:8px">ABRIR SEM CODIGO</button></div>';h+='<div class="card"><h3 style="color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:6px">MEUS CODIGOS NESTE APARELHO</h3>'+hist+'</div>';h+='<small class="hint" style="display:block;text-align:center;margin-top:8px">A verificacao completa abre no site oficial MudaBrasil.</small>';return h}
+function openModal(html){var m=document.getElementById('modal');m.innerHTML='<div class="box">'+html+'</div>';m.classList.remove('hidden');m.onclick=function(e){if(e.target===m)closeModal()}}
+function closeModal(){document.getElementById('modal').classList.add('hidden');document.getElementById('modal').innerHTML=''}
+function modalPolitico(id){var c=null;for(var i=0;i<CAND.length;i++)if(CAND[i].id===id)c=CAND[i];if(!c)return;var html='<h3>'+esc(c.name)+' '+(c.selo?'<span class="chip-ok">\u2713 VERIFICADO</span>':'')+'</h3><small>'+esc(c.position||'')+' \u00B7 '+esc(c.party||'')+' \u00B7 '+esc(c.state||'')+'</small>';html+='<div style="margin:12px 0;display:flex;gap:8px"><button class="btn-green" data-apoio="'+esc(c.id)+'" style="flex:1">\u{1F44D} APOIAR</button><button class="btn-red" data-recl="'+esc(c.id)+'" style="flex:1">\u{1F44E} RECLAMAR</button></div>';html+='<a class="btn-gold" style="display:block;text-align:center;width:100%" target="_blank" rel="noopener" href="../pages/parlamentares.html?dep='+encodeURIComponent(c.name)+'">Ver ficha completa no site \u2192</a>';html+='<div class="row"><button class="btn-ghost" data-close="1">Fechar</button></div>';openModal(html)}
+function modalForm(pid,tipo){var titulo=tipo==='apoio'?'APOIAR':'RECLAMAR';var cor=tipo==='apoio'?'btn-green-fill':'btn-red-fill';var html='<h3>'+titulo+'</h3><small>Politico: '+esc(pid)+'</small><input type="text" id="f-tit" placeholder="Titulo (curto)" style="margin-top:10px">';html+='<textarea id="f-desc" placeholder="'+(tipo==='apoio'?'Por que voce apoia?':'Descreva o problema com evidencias (se tiver).')+'"></textarea>';html+='<div class="row"><button class="btn-ghost" data-close="1">Cancelar</button><button class="'+cor+'" data-enviar="'+esc(pid)+'" data-tipo="'+tipo+'">Enviar</button></div>';openModal(html)}
+function modalCedula(b){var d=new Date(b.ts);var rows='';for(var i=0;i<CARGOS.length;i++){var c=CARGOS[i];var e=b.esc[c.id];var t=e?(e.tipo==='cand'?esc(e.nome)+' ('+esc(e.part)+' \u00B7 '+esc(e.num||'\u2014')+')':(e.tipo==='branco'?'VOTO EM BRANCO':'VOTO NULO')):'(nao votado)';rows+='<div class="rev-row"><div class="crg"><b>'+esc(cargoInfo(i).rot)+'</b><small>'+t+'</small></div></div>'}var html='<h3>\u{1F50D} CEDULA NESTE APARELHO</h3><small>Registrada em '+d.toLocaleString('pt-BR')+' \u00B7 '+esc(b.uf||'')+(b.cidade?' \u00B7 '+esc(b.cidade):'')+'</small>'+rows;html+='<p style="margin:10px 0;font-size:12px;color:#c3d0e4">\u{1F512} Exibida somente neste aparelho. Nada foi enviado a servidores.</p>';html+='<div class="row"><button class="btn-ghost" data-close="1">Fechar</button></div>';openModal(html)}
+function telaLogin(){var h='<section class="hero"><h1>ENTRAR</h1><p>Identifique-se pra votar com seguranca.<br>No prototipo, voce tambem pode entrar como convidado (anonimo).</p></section>';h+='<div class="card"><button class="btn-gold wide" id="lg-g">G \u00B7 ENTRAR COM GOOGLE</button>';h+='<button class="btn-ghost wide" id="lg-tel" style="width:100%;margin-top:8px">\u{1F4F1} ENTRAR COM TELEFONE</button>';h+='<button class="btn-ghost wide" id="lg-mail" style="width:100%;margin-top:8px">\u2709 ENTRAR COM E-MAIL</button>';h+='<button class="btn-ghost wide" id="lg-guest" style="width:100%;margin-top:8px">Continuar como convidado (anonimo)</button>';h+='<small class="hint" style="display:block;margin-top:10px">Se implantado oficialmente: entrada via gov.br, blockchain ou outro meio oficial, com total seguranca.</small></div>';h+='<div class="card hidden" id="lg-form"><small id="lg-label"></small><input id="lg-id" placeholder="" style="margin-top:8px"><button class="btn-gold wide" id="lg-send" style="margin-top:8px">ENVIAR CODIGO</button><input id="lg-code" class="hidden" placeholder="codigo recebido" style="margin-top:8px"><button class="btn-gold wide hidden" id="lg-ok" style="margin-top:8px">CONFIRMAR</button></div>';return h}
+var LG={modo:''};
+function abreForm(modo){LG.modo=modo;var f=document.getElementById('lg-form');if(!f)return;f.classList.remove('hidden');document.getElementById('lg-label').textContent=modo==='phone'?'Digite seu celular (DDD+numero)':'Digite seu e-mail';document.getElementById('lg-id').placeholder=modo==='phone'?'21 99999-9999':'voce@email.com';document.getElementById('lg-code').classList.add('hidden');document.getElementById('lg-ok').classList.add('hidden')}
+function bindLogin(){var g=document.getElementById('lg-g');if(g)g.onclick=function(){toast('Google ativa na versao implantada - use convidado ou codigo no prototipo');abreForm('google')};var t=document.getElementById('lg-tel');if(t)t.onclick=function(){abreForm('phone')};var m=document.getElementById('lg-mail');if(m)m.onclick=function(){abreForm('email')};var gu=document.getElementById('lg-guest');if(gu)gu.onclick=function(){SESSAO={nome:'Convidado',tipo:'guest'};LS.set('mb_session',SESSAO);scr='inicio';render()};var s=document.getElementById('lg-send');if(s)s.onclick=async function(){var id=document.getElementById('lg-id').value.trim();if(!id){toast('Preencha');return}LG.id=id;var rota=LG.modo==='phone'?'/api/auth/otp/send':'/api/auth/email/send';try{var r=await fetch(API+rota,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(LG.modo==='phone'?{phone:id}:{email:id})});var j=await r.json().catch(function(){return {}});if(j&&j.code)toast('Codigo prototipo: '+j.code);else toast('Codigo simulado no prototipo: 123456')}catch(e){toast('Codigo simulado no prototipo: 123456')}document.getElementById('lg-code').classList.remove('hidden');document.getElementById('lg-ok').classList.remove('hidden')};var ok=document.getElementById('lg-ok');if(ok)ok.onclick=async function(){var code=document.getElementById('lg-code').value.trim();var rota=LG.modo==='phone'?'/api/auth/otp/verify':'/api/auth/email/verify';var nome=LG.id;try{var r=await fetch(API+rota,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(LG.modo==='phone'?{phone:LG.id,code:code}:{email:LG.id,code:code})});var j=await r.json().catch(function(){return {}});if(j&&j.name)nome=j.name;if(j&&j.token)LG.token=j.token}catch(e){}SESSAO={nome:nome,tipo:LG.modo,token:LG.token||''};LS.set('mb_session',SESSAO);scr='inicio';render();toast('Bem-vindo(a), '+nome)}}
+function popupSimulacao(){if(LS.get('mb_aviso_sim',0))return;var html='<h3>\u{1F9EA} PROTOTIPO EM TESTE</h3>';html+='<p style="margin:8px 0">O MudaBrasil e uma <b>simulacao demonstrativa</b> de votacao pelo celular \u2014 nada aqui tem valor juridico ou eleitoral.</p>';html+='<p style="margin:8px 0">Se implantado oficialmente, o login sera feito com <b>gov.br, blockchain ou outro meio oficial de identificacao</b>, com total seguranca, <b>voto secreto</b> e auditabilidade completa.</p>';html+='<p style="margin:8px 0">No prototipo, suas escolhas <b>nunca saem do aparelho</b>: o codigo comprova participacao, nao o conteudo.</p>';html+='<div class="row"><button class="btn-gold" id="aviso-ok">ENTENDI, COMECAR</button></div>';openModal(html);var b=document.getElementById('aviso-ok');if(b)b.onclick=function(){LS.set('mb_aviso_sim',1);closeModal()}}
+function bindAll(){bindLogin();var navBtns=$$('nav.bot button');for(var i=0;i<navBtns.length;i++){(function(b){b.onclick=function(){scr=b.dataset.scr;if(scr==='radar'&&!CAND.length)carregaCAND();render()}})(navBtns[i])}var goBtns=$$('[data-go]');for(var i=0;i<goBtns.length;i++){(function(b){b.onclick=function(){scr=b.dataset.go;if(scr==='radar'&&!CAND.length)carregaCAND();render()}})(goBtns[i])}var backBtns=$$('[data-back]');for(var i=0;i<backBtns.length;i++){backBtns[i].onclick=function(){if(scr==='votar'){VOTA.passo=Math.max(0,VOTA.passo-1);VOTA.selTemp=null;render();return}scr='inicio';render()}}var geo=document.getElementById('geo');if(geo)geo.onclick=pedirGeo;var ufSel=document.getElementById('uf');if(ufSel){ufSel.onchange=function(){carregarCidades(ufSel.value)};carregarCidades(ufSel.value)}var okL=document.getElementById('okLocal');if(okL)okL.onclick=confirmarLocal;var selBtns=$$('[data-sel]');for(var i=0;i<selBtns.length;i++){(function(el){el.onclick=function(){var p=el.dataset.sel.split(':');VOTA.selTemp={tipo:'cand',k:+p[1]};render()}})(selBtns[i])}var urBtns=$$('[data-ur]');for(var i=0;i<urBtns.length;i++){(function(el){el.onclick=function(){VOTA.selTemp={tipo:el.dataset.ur};render()}})(urBtns[i])}var acBtns=$$('[data-acao]');for(var i=0;i<acBtns.length;i++){(function(b){b.onclick=acaoClick})(acBtns[i])}var trBtns=$$('[data-trocar]');for(var i=0;i<trBtns.length;i++){(function(b){b.onclick=function(){var i=+b.dataset.trocar;VOTA.passo=i+1;VOTA.selTemp=null;render()}})(trBtns[i])}var apBtns=$$('[data-apur]');for(var i=0;i<apBtns.length;i++){(function(b){b.onclick=function(){APUR.recorte=b.dataset.apur;render();if(APUR.recorte==='estado'||APUR.recorte==='cidade'){setTimeout(function(){var s=document.getElementById('a-uf');if(s){s.onchange=function(){APUR.uf=s.value;APUR.cidade='';render()};carregarCidades(s.value)}var sc=document.getElementById('a-cid');if(sc)sc.onchange=function(){APUR.cidade=sc.value}},30)}}})(apBtns[i])}var cq=document.getElementById('cargo-q');if(cq)cq.oninput=function(){VOTA.q=cq.value;render();var n=document.getElementById('cargo-q');if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}};var rq=document.getElementById('radar-q');if(rq)rq.oninput=function(){RADAR.q=rq.value;render();var n=document.getElementById('radar-q');if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}};var rfBtns=$$('[data-rfiltro]');for(var i=0;i<rfBtns.length;i++){(function(b){b.onclick=function(){RADAR.filtro=b.dataset.rfiltro;render()}})(rfBtns[i])}var fxBtns=$$('[data-fix]');for(var i=0;i<fxBtns.length;i++){(function(b){b.onclick=function(e){e.stopPropagation();var id=b.dataset.fix;var k=RADAR.fixados.indexOf(id);if(k>=0){RADAR.fixados.splice(k,1)}else if(RADAR.fixados.length<2){RADAR.fixados.push(id)}else{toast('Maximo 2 politicos fixados');return}LS.set('mb_fix',RADAR.fixados);render()}})(fxBtns[i])}var polBtns=$$('[data-pol]');for(var i=0;i<polBtns.length;i++){(function(el){el.onclick=function(){modalPolitico(el.dataset.pol)}})(polBtns[i])}var apBtns2=$$('[data-apoio]');for(var i=0;i<apBtns2.length;i++){(function(el){el.onclick=function(e){e.stopPropagation();modalForm(el.dataset.apoio,'apoio')}})(apBtns2[i])}var rcBtns=$$('[data-recl]');for(var i=0;i<rcBtns.length;i++){(function(el){el.onclick=function(e){e.stopPropagation();modalForm(el.dataset.recl,'rec')}})(rcBtns[i])}var clBtns=$$('[data-close]');for(var i=0;i<clBtns.length;i++){clBtns[i].onclick=closeModal}var enBtns=$$('[data-enviar]');for(var i=0;i<enBtns.length;i++){(function(b){b.onclick=function(){enviarForm(b.dataset.enviar,b.dataset.tipo)}})(enBtns[i])}var cfins=$$('.cf-in');for(var i=0;i<cfins.length;i++){(function(inp,i){inp.oninput=function(){inp.value=inp.value.replace(/\D/g,'').slice(0,4);if(inp.value.length===4&&i<4)cfins[i+1].focus()};inp.onkeydown=function(e){if(e.key==='Backspace'&&!inp.value&&i>0){cfins[i-1].focus();cfins[i-1].value=''}}})(cfins[i],i)}var flBtns=$$('[data-fill]');for(var i=0;i<flBtns.length;i++){(function(el){el.onclick=function(){var c=el.dataset.fill;for(var j=0;j<cfins.length;j++)cfins[j].value=c.slice(j*4,j*4+4)}})(flBtns[i])}var tipEls=$$('[data-tip]');for(var i=0;i<tipEls.length;i++){(function(el){el.onclick=function(e){e.stopPropagation();toast(el.getAttribute('data-tip'))}})(tipEls[i])}}
+function acaoClick(e){var a=e.currentTarget.dataset.acao;if(a==='voltar'){VOTA.passo=Math.max(0,VOTA.passo-1);VOTA.selTemp=null;render()}else if(a==='corrige'){VOTA.selTemp=null;render()}else if(a==='confirma'){var i=VOTA.passo-1;var lista=listaCandidatos(i);var qq=(VOTA.q||'').toLowerCase();if(qq)lista=lista.filter(function(x){return (x.nome||'').toLowerCase().indexOf(qq)>=0||(x.part||'').toLowerCase().indexOf(qq)>=0});if(!VOTA.selTemp){toast('Selecione uma opcao antes de CONFIRMAR');return}if(VOTA.selTemp.tipo==='cand'){var c=lista[VOTA.selTemp.k];VOTA.esc[CARGOS[i].id]={tipo:'cand',nome:c.nome,part:c.part,num:c.num||''}}else{VOTA.esc[CARGOS[i].id]={tipo:VOTA.selTemp.tipo}}VOTA.selTemp=null;VOTA.passo=Math.min(6,VOTA.passo+1);try{if(navigator.vibrate)navigator.vibrate(60)}catch(e2){}render()}else if(a==='r3'){VOTA.passo=7;render()}else if(a==='gerar'){startCountdown()}else if(a==='copiar'){var txt=VOTA.code;try{navigator.clipboard.writeText(txt).then(function(){toast('Codigo copiado!')})}catch(e2){var t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();toast('Codigo copiado!')}}else if(a==='vsite'){window.open('../index.html#conferir-voto?code='+encodeURIComponent(VOTA.code),'_blank')}else if(a==='confV'){var v='';var inps=$$('.cf-in');for(var i=0;i<inps.length;i++)v+=inps[i].value;if(v.replace(/\D/g,'').length!==20){toast('Codigo precisa de 20 digitos');return}var b=null;for(var i=0;i<BALLOTS.length;i++)if(BALLOTS[i].code===v)b=BALLOTS[i];if(b){modalCedula(b)}else{window.open('../index.html#conferir-voto?code='+encodeURIComponent(v),'_blank')}}else if(a==='exemplo'){var b=BALLOTS.length?BALLOTS[BALLOTS.length-1]:null;var c=b?b.code:'16948051304534262993';var inps=$$('.cf-in');for(var i=0;i<inps.length;i++)inps[i].value=c.slice(i*4,i*4+4);toast('Exemplo preenchido')}else if(a==='vSiteV'){window.open('../index.html#conferir-voto','_blank')}else if(a==='fonte'){document.body.classList.toggle('fonteg');LS.set('mb_fonteg',document.body.classList.contains('fonteg'));toast(document.body.classList.contains('fonteg')?'Fonte grande ativada':'Fonte padrao')}else if(a==='comparar'){var cs=[];for(var i=0;i<RADAR.fixados.length;i++){for(var j=0;j<CAND.length;j++)if(CAND[j].id===RADAR.fixados[i]){cs.push(CAND[j]);break}}if(cs.length<2){toast('Fixe 2 politicos primeiro (toque no \u{1F4CD})');return}var html='<h3>\u{1F19A} Comparacao lado a lado</h3><div class="cols2">';for(var i=0;i<cs.length;i++){var c=cs[i];html+='<div class="card"><b>'+esc(c.name)+'</b><small>'+esc(c.party||'')+' \u00B7 '+esc(c.state||'')+'</small><a class="btn-gold" style="display:block;text-align:center;margin-top:8px" target="_blank" href="../pages/parlamentares.html?dep='+encodeURIComponent(c.name)+'">Ver ficha no site \u2192</a></div>'}html+='</div><div class="row"><button class="btn-ghost" data-close="1">Fechar</button></div>';openModal(html)}else if(a==='novo'){VOTA={passo:0,esc:{},selTemp:null,code:'',hash:'',q:''};render()}}
+function confirmarLocal(){var uf=document.getElementById('uf').value;var cidSel=document.getElementById('cid');var cidL=document.getElementById('cidLivre').value.trim();var cid=cidL||(cidSel?cidSel.value:'');if(!cid){toast('Escolha uma cidade ou digite');return}LOCAL={uf:uf,cidade:cid,fonte:cidL?'manual':(LOCAL&&LOCAL.fonte||'manual')};LS.set('mb_local',LOCAL);VOTA.passo=1;render()}
+async function pedirGeo(){if(!navigator.geolocation){toast('Geolocalizacao indisponivel neste aparelho');return}toast('Buscando sua localizacao...');navigator.geolocation.getCurrentPosition(async function(pos){try{var r=await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude='+pos.coords.latitude+'&longitude='+pos.coords.longitude+'&localityLanguage=pt');var j=await r.json();var ufRaw=(j.principalSubdivisionCode||'').replace(/^BR-/,'');var uf=UFS.indexOf(ufRaw)>=0?ufRaw:(j.principalSubdivision||'').toUpperCase().slice(0,2);var cidade=j.city||j.locality||'';if(UFS.indexOf(uf)<0){toast('UF nao identificada - escolha manualmente');return}LOCAL={uf:uf,cidade:cidade||'',fonte:'gps'};LS.set('mb_local',LOCAL);toast('Local detectado: '+uf+(cidade?' \u00B7 '+cidade:''));VOTA.passo=1;render()}catch(e2){toast('Falha ao resolver UF - escolha manualmente')}},function(err){toast('Permissao negada - escolha manualmente')},{timeout:12000,enableHighAccuracy:false})}
+async function carregarCidades(uf){if(!uf)return;if(CIDADES[uf]){var s=document.getElementById('cid');if(s)preencherSel(s,CIDADES[uf]);return}try{var r=await fetch('https://servicosdados.ibge.gov.br/api/v1/localidades/estados/'+uf+'/municipios?orderby=nome');var j=await r.json();var arr=(j||[]).map(function(m){return m.nome});CIDADES[uf]=arr;var s=document.getElementById('cid');if(s)preencherSel(s,arr);var sa=document.getElementById('a-cid');if(sa)preencherSel(sa,arr)}catch(e){var s=document.getElementById('cid');if(s)s.innerHTML='<option value="">erro ao carregar - digite abaixo</option>'}}
+function preencherSel(sel,arr){var h='<option value="">escolha...</option>';for(var i=0;i<arr.length;i++)h+='<option>'+arr[i]+'</option>';sel.innerHTML=h;if(LOCAL&&sel.id==='cid'&&LOCAL.cidade&&arr.indexOf(LOCAL.cidade)>=0)sel.value=LOCAL.cidade}
+async function carregaCAND(){if(CAND.length)return;if(!API){CAND=[];return}try{var r=await fetch(API+'/api/candidatos');var j=await r.json();CAND=(j.candidatos||[]).map(function(c){return {id:c.id,name:c.name,party:c.party,state:c.state,position:c.position,selo:!!c.selo}});render()}catch(e){CAND=[]}}
+async function flushFila(){if(!navigator.onLine)return;var fila=LS.get('mb_fila',[]);if(!fila.length)return;var rest=[];for(var x=0;x<fila.length;x++){var q=fila[x];try{await fetch(API+'/api/reclamacoes/public',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({politicianId:q.pid,tipo:q.tipo,titulo:q.titulo,descricao:q.descricao})})}catch(e){rest.push(q)}}LS.set('mb_fila',rest);if(rest.length<fila.length)toast('Pendente enviado!')}
+async function enviarForm(pid,tipo){var tit=document.getElementById('f-tit').value.trim();var desc=document.getElementById('f-desc').value.trim();if(!tit||!desc){toast('Preencha titulo e descricao');return}var btn=document.querySelector('[data-enviar]');btn.disabled=true;btn.textContent='Enviando...';try{var r=await fetch(API+'/api/reclamacoes/public',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({politicianId:pid,tipo:tipo,titulo:tit,descricao:desc})});if(!r.ok)throw new Error('HTTP '+r.status);toast(tipo==='apoio'?'Apoio registrado!':'Reclamacao registrada!');closeModal()}catch(e2){var fila=LS.get('mb_fila',[]);fila.push({pid:pid,tipo:tipo,titulo:tit,descricao:desc});LS.set('mb_fila',fila);closeModal();toast('Sem conexao: guardado, envia ao reconectar');btn.disabled=false;btn.textContent='Enviar'}}
+(function boot(){render();carregaCAND().catch(function(){});popupSimulacao();if(LS.get('mb_fonteg',0))document.body.classList.add('fonteg');window.addEventListener('online',flushFila);flushFila();if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}})();
