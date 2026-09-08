@@ -3,6 +3,7 @@
    ============================================================ */
 const API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'';
 const $=(s)=>document.querySelector(s);
+const $$=(s)=>[...document.querySelectorAll(s)];
 const LS={
   get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},
   set(k,v){localStorage.setItem(k,JSON.stringify(v))}
@@ -139,8 +140,8 @@ ${aviso}`
 
 function telaRevisao(){
   const rows=CARGOS.map((c,i)=>{
-    const esc=VOTA.esc[c.id];
-    const texto=esc?(esc.tipo==='branco'?'VOTO EM BRANCO':esc.tipo==='nulo'?'VOTO NULO':esc.nome+' ('+esc.part+' · '+esc.num+')'):'(não votado)';
+    const escolha=VOTA.esc[c.id];
+    const texto=escolha?(escolha.tipo==='branco'?'VOTO EM BRANCO':escolha.tipo==='nulo'?'VOTO NULO':escolha.nome+' ('+escolha.part+' · '+escolha.num+')'):'(não votado)';
     return `<div class="rev-row"><div class="crg"><b>${esc(cargoInfo(i).rot)}</b><small>${esc(texto)}</small></div><button class="trocar" data-trocar="${i}">trocar</button></div>`
   }).join('');
   return progHTML(5)+`
