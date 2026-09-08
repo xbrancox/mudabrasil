@@ -71,7 +71,7 @@ function telaInicio(){return `
   <h2>Seu voto coloca. Seu voto tira.</h2>
   <p>EleiÃ§Ã£o pelo celular com comprovante verificÃ¡vel.<br>ProtÃ³tipo de viabilidade, sem valor jurÃ­dico.</p>
 </section>
-<h3 class="sect">PÃGINAS DO APP</h3>
+<div class="card gloss"><b>📖 GLOSSÁRIO ELEITORAL</b><div class="chips"><span data-tip="Voto válido sem preferência — conta no total, não elege ninguém">VOTO EM BRANCO</span><span data-tip="Voto inválido ou de protesto — não elege ninguém">VOTO NULO</span><span data-tip="Mínimo de parlamentares presentes pra votação valer">QUÓRUM</span><span data-tip="Perda do mandato — no MudaBrasil: regra dos 70%">CASSAÇÃO</span><span data-tip="Início oficial do mandato">POSSE</span></div></div><h3 class="sect">PÃGINAS DO APP</h3>
 <div class="grid2">
   <div class="card"><b>ðŸ—³ï¸ VOTAÃ‡ÃƒO</b><small>Teclado estilo urna, 5 cargos</small><button class="btn-gold" data-go="votar">VOTAR AGORA</button></div>
   <div class="card"><b>ðŸ“Š APURAÃ‡Ã•ES</b><small>Veja quem estÃ¡ na frente</small><button class="btn-gold" data-go="apuracoes">VER AGORA</button></div>
@@ -522,6 +522,7 @@ function popupSimulacao(){
   popupSimulacao();`r`n  if(LS.get(
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 })();
+
 
 
 
