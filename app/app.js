@@ -117,13 +117,14 @@ function listaCandidatos(i){
   return list.map(c=>({nome:c.name,part:c.party,num:String(c.number||''),id:c.id,demo:false}))
 }
 
+function participacaoHTML(){if(!LOCAL||!LOCAL.uf)return '';var n=BALLOTS.filter(function(b){return b.uf===LOCAL.uf}).length;return '<div class="participacao" data-tip="Contador anônimo de cédulas — suas escolhas nunca saem do aparelho">👥 Participação em '+LOCAL.uf+': <b>'+n+' cédula(s)</b></div>'}
 function telaCargo(i){var ufTag=(LOCAL&&LOCAL.uf)?('<div class="participacao" title="Só contador anônimo de cédulas — suas escolhas nunca saem do aparelho">👥 Participação em '+LOCAL.uf+': <b>'+BALLOTS.filter(function(b){return b.uf===LOCAL.uf}).length+' cédulas</b></div>'):'';
   const ci=cargoInfo(i);
   let lista=listaCandidatos(i);const qq=(VOTA.q||
   const sel=VOTA.selTemp;
   const aviso=(lista.length?'':'<small class="hint">Nenhum candidato real carregado pra este UF ainda (TSE pendente).</small>')+'<small class="hint">Toque no candidato pra selecionar, depois use CORRIGE/BRANCO/NULO/CONFIRMA.</small>';
   return progHTML(i)+`
-${ufTag}<div class="cargo-tit"><b>${esc(ci.rot.toUpperCase())}</b><small>Toque no candidato (ou branco / nulo)</small></div><input type="search" class="search-mini" id="cargo-q" placeholder="🔍 filtrar por nome ou partido…" value="${esc(VOTA.q||
+${ufTag}${participacaoHTML()}<div class="cargo-tit"><b>${esc(ci.rot.toUpperCase())}</b><small>Toque no candidato (ou branco / nulo)</small></div><input type="search" class="search-mini" id="cargo-q" placeholder="🔍 filtrar por nome ou partido…" value="${esc(VOTA.q||
 ${lista.map((x,k)=>{
   const id='c'+i+'-'+k;
   const selCls=(sel&&sel.tipo==='cand'&&sel.k===k)?'sel':'';
@@ -522,6 +523,7 @@ function popupSimulacao(){
   popupSimulacao();`r`n  if(LS.get(
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 })();
+
 
 
 
