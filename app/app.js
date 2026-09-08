@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    MudaBrasil App â€” Urna Digital do Povo (protÃ³tipo de viabilidade)
    ============================================================ */
 const API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'';
@@ -59,8 +59,8 @@ function render(){
 }
 async function badge(){
   const b=$('#badge');if(!b||!API)return;
-  try{const r=await fetch(API+'/api/health',{cache:'no-store'});if(r.ok){b.textContent='backend ativo';b.classList.remove('off')}else throw 0}
-  catch(e){b.textContent='offline';b.classList.add('off')}
+  try{const r=await fetch(API+'/api/health',{cache:'no-store'});if(r.ok){b.textContent='sistema no ar';b.classList.remove('off')}else throw 0}
+  catch(e){b.textContent='sem conexão';b.classList.add('off')}
 }
 
 /* ------------------ INÃCIO ------------------ */
@@ -111,7 +111,7 @@ function listaCandidatos(i){
   const ci=cargoInfo(i);
   if(ci.demo){return DEMO[ci.demo].map(x=>({nome:x.nome,part:x.part,num:String(x.num),demo:true}))}
   const uf=LOCAL?LOCAL.uf:'';
-  const list=CAND.filter(c=>c.position===ci.real&&(!uf||c.state===uf)).slice(0,24);
+  const list=CAND.filter(c=>(c.position===ci.real||c.position===ci.real.replace(' Federal',''))&&(!uf||c.state===uf)).slice(0,24);
   if(!list.length){return []}
   return list.map(c=>({nome:c.name,part:c.party,num:String(c.number||''),id:c.id,demo:false}))
 }
@@ -132,7 +132,7 @@ ${lista.map((x,k)=>{
   <button class="brn" data-ur="branco">BRANCO</button>
   <button class="nul" data-ur="nulo">NULO</button>
 </div>
-<div class="barAcoes">
+<div class="barAcoes"><button class="btn-ghost" data-acao="voltar">← VOLTAR</button>
   <button class="btn-ghost" data-acao="corrige">CORRIGE</button>
   <button class="btn-gold" data-acao="confirma" ${!sel?'disabled':''}>CONFIRMA</button>
 </div>
@@ -189,7 +189,7 @@ function telaRecibo(){
   <p style="font-size:12px;color:var(--mut);margin-bottom:10px">Guarde este cÃ³digo: Ã© seu Ãºnico comprovante.</p>
   <button class="btn-gold" data-acao="copiar">COPIAR CÃ“DIGO</button>
   <button class="btn-ghost" data-acao="vsite" style="width:100%;margin-top:8px">CONFERIR NO SITE â†’</button>
-  <button class="btn-ghost" data-acao="novo" style="width:100%;margin-top:8px">Votar de novo (demo)</button>
+  <button class="btn-ghost" data-acao="novo" style="width:100%;margin-top:8px">Votar de novo (demonstração)</button>
 </div>`}
 
 /* ------------------ APURAÃ‡Ã•ES ------------------ */
@@ -285,7 +285,7 @@ function telaConferir(){
   const blocos=[0,1,2,3,4].map(i=>'<input class="cf-in" data-cf="'+i+'" maxlength="4" inputmode="numeric" placeholder="0000">').join('');
   const hist=BALLOTS.slice().reverse().map((b,i)=>{
     const d=new Date(b.ts);
-    return `<div class="hist-item" data-fill="${esc(b.code)}"><span class="cc">${esc(fmtCode(b.code))}</span><span class="dt">${d.toLocaleDateString('pt-BR')}</span><span class="chip-at">ATIVO</span></div>`
+    return `<div class="hist-item" data-fill="${esc(b.code)}"><span class="cc">${esc(fmtCode(b.code))}</span><span class="dt">${d.toLocaleDateString('pt-BR')}</span><span class="chip-at">NO APARELHO</span></div>`
   }).join('')||'<small class="hint">Nenhum cÃ³digo registrado neste aparelho.</small>';
   return `
 <div class="card">
@@ -370,7 +370,8 @@ function bindAll(){
 
 function acaoClick(e){
   const a=e.currentTarget.dataset.acao;
-  if(a==='corrige'){VOTA.selTemp=null;render()}
+  if(a==='voltar'){VOTA.passo=Math.max(0,VOTA.passo-1);VOTA.selTemp=null;render()}
+  else if(a==='corrige'){VOTA.selTemp=null;render()}
   else if(a==='confirma'){
     const i=VOTA.passo-1;const lista=listaCandidatos(i);
     if(!VOTA.selTemp){toast('Selecione uma opÃ§Ã£o antes de CONFIRMAR');return}
@@ -473,7 +474,7 @@ function telaLogin(){return `
 <button class="btn-ghost wide" id="lg-tel" style="width:100%;margin-top:8px">📱 ENTRAR COM TELEFONE</button>
 <button class="btn-ghost wide" id="lg-mail" style="width:100%;margin-top:8px">✉️ ENTRAR COM E-MAIL</button>
 <button class="btn-ghost wide" id="lg-guest" style="width:100%;margin-top:8px">Continuar como convidado (anônimo)</button>
-<small class="hint" style="display:block;margin-top:10px">Se implantado oficialmente: login via gov.br, blockchain ou outro meio oficial, com total segurança.</small></div>
+<small class="hint" style="display:block;margin-top:10px">Se implantado oficialmente: entrada via gov.br, blockchain ou outro meio oficial, com total segurança.</small></div>
 <div class="card hidden" id="lg-form"><small id="lg-label"></small><input id="lg-id" placeholder="" style="margin-top:8px"><button class="btn-gold wide" id="lg-send" style="margin-top:8px">ENVIAR CÓDIGO</button><input id="lg-code" class="hidden" placeholder="código recebido" style="margin-top:8px"><button class="btn-gold wide hidden" id="lg-ok" style="margin-top:8px">CONFIRMAR</button></div>`}
 let LG={modo:''};
 function bindLogin(){
@@ -516,4 +517,5 @@ function popupSimulacao(){
   popupSimulacao();
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 })();
+
 
