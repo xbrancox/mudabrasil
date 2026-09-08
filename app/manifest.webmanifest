@@ -1,16 +1,17 @@
 {
-  "name": "MudaBrasil - Urna Digital do Povo",
+  "name": "MudaBrasil · A eleição, dentro do seu celular",
   "short_name": "MudaBrasil",
-  "description": "A urna digital do povo. Vote, confira, revogue. Seu voto coloca. Seu voto tira.",
-  "start_url": "./index.html",
+  "description": "Seu voto coloca. Seu voto tira. Protótipo de viabilidade, sem valor jurídico.",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#061a3a",
   "theme_color": "#061a3a",
+  "categories": ["politics", "government"],
+  "lang": "pt-BR",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
-  ],
-  "categories": ["utilities", "productivity"]
+  ]
 }

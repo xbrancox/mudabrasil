@@ -1,406 +1,471 @@
-'use strict';
 /* ============================================================
-   MudaBrasil — APP (eleição real, dentro do celular)
-   Usa parlamentares REAIS em mandato (incumbentes) como candidatos
-   de referência cívica — TSE oficial 2026 ainda não publicado.
+   MudaBrasil App — Urna Digital do Povo (protótipo de viabilidade)
    ============================================================ */
 const API=(window.MudaBrasil&&window.MudaBrasil.API_BASE)||'';
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){localStorage.setItem(k,JSON.stringify(v))}};
+const $=(s)=>document.querySelector(s);
+const LS={
+  get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},
+  set(k,v){localStorage.setItem(k,JSON.stringify(v))}
+};
 const UFS=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
-const CARGOS=['Presidente','Governador','Senador','Deputado Federal','Deputado Estadual'];
-const DIGS={Presidente:2,Governador:2,Senador:3,'Deputado Federal':4,'Deputado Estadual':5};
-const CORES=['#FFD700','#2ECC71','#3498db','#E74C3C','#9b59b6','#5b6b82'];
 
-/* ============ NAV ============ */
-function show(pg){
-  $$('.pg').forEach(s=>s.classList.remove('active'));
-  const el=$('#p-'+pg); if(el) el.classList.add('active');
-  $$('.botnav button').forEach(b=>b.classList.toggle('on',b.dataset.p===pg));
-  window.scrollTo({top:0,behavior:'smooth'});
-  if(pg==='votar') iniciarVotacao();
-  if(pg==='resultados') renderResultados();
-  if(pg==='radar') carregarRadar();
-}
-$$('.botnav button').forEach(b=>b.onclick=()=>{
-  if(b.dataset.p==='site'){ window.open('../index.html#conferir-voto','_blank'); return; }
-  show(b.dataset.p);
-});
-$('#ctaVotar').onclick=()=>show('votar');
-$('#ctaRes').onclick=()=>show('resultados');
+/* Candidatos de REFERÊNCIA (demonstrativos) — TSE 2026 pendente */
+const DEMO={
+  presidente:[{nome:'Ana Fontes',part:'PV',num:51},{nome:'Otto Prado',part:'PL',num:22},{nome:'Cida Moraes',part:'PT',num:13},{nome:'Rui Bacelar',part:'PSD',num:55}],
+  governador:[{nome:'Tereza Kahn',part:'NOVO',num:30},{nome:'Léo Sampaio',part:'PT',num:13},{nome:'Marcos Vela',part:'PL',num:22},{nome:'Duda Nunes',part:'MDB',num:15}],
+  estadual:[{nome:'Caio Bittar',part:'Cidadania',num:23},{nome:'Rita Campos',part:'PSOL',num:50},{nome:'Ivo Leite',part:'UNIÃO',num:44},{nome:'Sofia Prado',part:'PT',num:13}]
+};
 
-/* ============ TOAST ============ */
-function toast(msg,ms=2200){
-  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove('show'),ms);
-}
+const CARGOS=[
+  {id:'presidente',rot:'Presidente',demo:'presidente'},
+  {id:'governador',rot:'Governador',demo:'governador',ufLabel:true},
+  {id:'senador',rot:'Senador',real:'Senador Federal'},
+  {id:'depfed',rot:'Deputado Federal',real:'Deputado Federal'},
+  {id:'estadual',rot:'Deputado Estadual/Distrital',demo:'estadual',ufLabel:true}
+];
 
-/* ============ BACKEND HEALTH ============ */
-async function checkHealth(){
-  const b=$('#badge');
-  if(!API){b.textContent='demo';b.classList.add('off');return}
-  try{const r=await fetch(API+'/api/health');const j=await r.json();
-    if(r.ok&&j.ok){b.textContent='backend ativo';b.classList.remove('off')}
-    else{b.textContent='offline';b.classList.add('off')}}catch(e){b.textContent='offline';b.classList.add('off')}
-}
+let LOCAL=LS.get('mb_local',null);
+let BALLOTS=LS.get('mb_ballots',[]);
+let CAND=[];
+let VOTA={passo:0,esc:{},selTemp:null,code:'',hash:''};
+let APUR={recorte:'nacional',uf:'',cidade:''};
+let RADAR={q:'',filtro:''};
+let CIDADES={};
+let scr='inicio';
 
-/* ============ HASH / NUMERO SINTÉTICO ============ */
-async function sha256(s){
-  try{const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
-    return Array.from(new Uint8Array(buf)).map(x=>x.toString(16).padStart(2,'0')).join('')}
-  catch(e){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return Math.abs(h).toString(16).padEnd(64,'0')}
+/* ------------------ util ------------------ */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function iniciais(n){return String(n||'?').trim().split(/\s+/).map(p=>p[0]).filter(Boolean).join('').slice(0,2).toUpperCase()}
+function corAvatar(n){let h=0;for(const c of String(n||''))h=(h*31+c.charCodeAt(0))%360;return 'hsl('+h+',55%,45%)'}
+function fmtCode(d){return d.replace(/(.{4})/g,'$1 ').trim()}
+async function sha(txt){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(txt));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=5381;for(const c of String(txt))h=((h<<5)+h+c.charCodeAt(0))>>>0;return h.toString(16).padStart(16,'0').repeat(4).slice(0,64)}}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),2400)}
+
+/* ------------------ navegação / shell ------------------ */
+const NAV=[['inicio','🏠','Início'],['votar','🗳️','Votar'],['apuracoes','📊','Apurações'],['radar','👤','Radar'],['conferir','🔍','Conferir']];
+function navHTML(){return '<nav class="bot">'+NAV.map(n=>'<button data-scr="'+n[0]+'" class="'+(scr===n[0]?'on':'')+'"><span>'+n[1]+'</span><span>'+n[2]+'</span></button>').join('')+'</nav>'}
+function headerHTML(t,back){return '<header><button class="hback" '+(back?'data-back="1"':'style="visibility:hidden"')+'>←</button><b>'+esc(t)+'</b><span class="badge" id="badge">…</span></header>'}
+function render(){
+  const m=$('#app');let h='';
+  if(scr==='inicio')h=headerHTML('MudaBrasil',false)+telaInicio();
+  else if(scr==='votar')h=headerHTML('Votar',VOTA.passo>0)+telaVotar();
+  else if(scr==='apuracoes')h=headerHTML('Apurações',false)+telaApur();
+  else if(scr==='radar')h=headerHTML('Radar Político',false)+telaRadar();
+  else h=headerHTML('Conferir Voto',false)+telaConferir();
+  m.innerHTML=h+navHTML();
+  bindAll();badge();
 }
-function hashInt(s){let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h)+s.charCodeAt(i);h|=0}return Math.abs(h)}
-// número sintético DETERMINÍSTICO: mesmo nome+cargo = mesmo número
-function sintNumero(nome,cargo){
-  const n=DIGS[cargo]||4;
-  const h=hashInt((nome||'').toLowerCase()+'|'+cargo);
-  let s=String(h);
-  // evita número começando com 0 (mais realista) e garante N dígitos
-  while(s.length<n) s=s+String(hashInt(s));
-  let num=s.slice(0,n);
-  if(num[0]==='0') num='1'+num.slice(1);
-  return num;
+async function badge(){
+  const b=$('#badge');if(!b||!API)return;
+  try{const r=await fetch(API+'/api/health',{cache:'no-store'});if(r.ok){b.textContent='backend ativo';b.classList.remove('off')}else throw 0}
+  catch(e){b.textContent='offline';b.classList.add('off')}
 }
 
-/* ============ MEU UID ============ */
-function meuUid(){let u=LS.get('mb_uid','');if(!u){u='u'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);LS.set('mb_uid',u)}return u}
+/* ------------------ INÍCIO ------------------ */
+function telaInicio(){return `
+<section class="hero">
+  <h1>O PODER EMANA DO POVO<br>NÃO ACABA NO DIA DA ELEIÇÃO.</h1>
+  <h2>Seu voto coloca. Seu voto tira.</h2>
+  <p>Eleição pelo celular com comprovante verificável.<br>Protótipo de viabilidade, sem valor jurídico.</p>
+</section>
+<h3 class="sect">PÁGINAS DO APP</h3>
+<div class="grid2">
+  <div class="card"><b>🗳️ VOTAÇÃO</b><small>Teclado estilo urna, 5 cargos</small><button class="btn-gold" data-go="votar">VOTAR AGORA</button></div>
+  <div class="card"><b>📊 APURAÇÕES</b><small>Veja quem está na frente</small><button class="btn-gold" data-go="apuracoes">VER AGORA</button></div>
+  <div class="card"><b>👤 RADAR POLÍTICO</b><small>Quem é, reclamar e apoiar</small><button class="btn-gold" data-go="radar">ABRIR RADAR</button></div>
+  <div class="card"><b>🔍 CONFERIR VOTO</b><small>Seu código de 20 dígitos no site</small><button class="btn-gold" data-go="conferir">CONFERIR</button></div>
+</div>
+<div class="chips"><span>🔒 100% anônimo</span><span>🔗 trilha de hash</span><span>🇧🇷 fontes oficiais</span><span>⚖️ regra dos 70%</span></div>
+`}
 
-/* ============ P1: INÍCIO ============ */
-function donutMini(pct,cor){
-  const r=24, c=2*Math.PI*r, len=c*pct/100;
-  return `<svg viewBox="0 0 72 72" width="60" height="60">
-    <circle cx="36" cy="36" r="${r}" fill="none" stroke="#22406b" stroke-width="8"/>
-    <circle cx="36" cy="36" r="${r}" fill="none" stroke="${cor}" stroke-width="8" stroke-linecap="round"
-      stroke-dasharray="${len} ${c-len}" transform="rotate(-90 36 36)"/>
-    <text x="36" y="40" text-anchor="middle" fill="${cor}" font-size="13" font-weight="900" font-family="Montserrat">${pct}%</text>
-  </svg>`;
+/* ------------------ VOTAR ------------------ */
+function progHTML(at){let h='<div class="prog5">';for(let i=0;i<5;i++)h+='<i class="'+(i<at?'on':'')+'"></i>';return h+'</div>'}
+function telaVotar(){
+  if(VOTA.passo===0)return telaLocal();
+  if(VOTA.passo>=1&&VOTA.passo<=5)return telaCargo(VOTA.passo-1);
+  if(VOTA.passo===6)return telaRevisao();
+  if(VOTA.passo===7)return telaAviso();
+  return telaRecibo();
 }
-function renderHome(){
-  const v=LS.get('mb_eleicao_votos',{}); const nVotos=Object.keys(v).length;
-  const completa=nVotos===CARGOS.length;
-  const nConf=LS.get('mb_eleicao_codigo','')?1:0;
-  const nRev=LS.get('mb_revogacoes',0);
-  $('#donut-part').innerHTML=donutMini(completa?100:Math.min(99,nVotos*20+12),'#FFD700');
-  $('#donut-conf').innerHTML=donutMini(nConf?100:0,'#2ECC71');
-  $('#donut-rev').innerHTML=donutMini(Math.min(100,nRev*25),'#E74C3C');
-  $('#n-votos').textContent=nVotos+'/'+CARGOS.length;
-  $('#n-conf').textContent=nConf;
-  $('#n-rev').textContent=nRev;
+
+function telaLocal(){
+  const ufSel=LOCAL?LOCAL.uf:(UFS.find(u=>u==='RJ')||UFS[0]);
+  return progHTML(0)+`
+<div class="card loc">
+  <b>📍 ONDE VOCÊ VOTA?</b>
+  <small>A eleição usa seu local pra montar os cargos de estado e município.</small>
+  <button class="btn-gold wide" id="geo">🛰️ ATIVAR MINHA LOCALIZAÇÃO</button>
+  <div class="row2">
+    <label>Estado<select id="uf">${UFS.map(u=>'<option '+(u===ufSel?'selected':'')+'>'+u+'</option>').join('')}</select></label>
+    <label>Cidade<select id="cid"><option value="">escolha o estado…</option></select></label>
+  </div>
+  <input id="cidLivre" placeholder="ou digite a cidade se não achar">
+  <p class="warn">⚠️ Está fora do seu domicílio eleitoral? Vale o local escolhido aqui.</p>
+  <button class="btn-gold wide" id="okLocal">CONFIRMAR LOCAL DE VOTAÇÃO</button>
+</div>`}
+
+function cargoInfo(i){const c=CARGOS[i];let rot=c.rot;if(c.ufLabel)rot=c.rot+' — '+(LOCAL?LOCAL.uf:'BR');return {rot,demo:c.demo,real:c.real}}
+function listaCandidatos(i){
+  const ci=cargoInfo(i);
+  if(ci.demo){return DEMO[ci.demo].map(x=>({nome:x.nome,part:x.part,num:String(x.num),demo:true}))}
+  const uf=LOCAL?LOCAL.uf:'';
+  const list=CAND.filter(c=>c.position===ci.real&&(!uf||c.state===uf)).slice(0,24);
+  if(!list.length){return DEMO[ci.demo==='senador'?'estadual':'estadual'].map(x=>({nome:x.nome,part:x.part,num:String(x.num),demo:true}))}
+  return list.map(c=>({nome:c.name,part:c.party,num:String(c.number||''),id:c.id,demo:false}))
 }
 
-/* ============ P2: VOTAÇÃO (com fallback de parlamentares reais) ============ */
-let estadoVoto={uf:LS.get('mb_uf','SP'),etapa:0,digitado:'',votos:{}};
-// cache global: lista única de 594 parlamentares reais + mapas por cargo
-let poolReal=[];
-let porCargo={}; // { Presidente:[{nome,numero,partido,uf,sintetico:true}], ... }
+function telaCargo(i){
+  const ci=cargoInfo(i);
+  const lista=listaCandidatos(i);
+  const sel=VOTA.selTemp;
+  const aviso='<small class="hint">Toque no candidato pra selecionar, depois use CORRIGE/BRANCO/NULO/CONFIRMA.</small>';
+  return progHTML(i)+`
+<div class="cargo-tit"><b>${esc(ci.rot.toUpperCase())}</b><small>Toque no candidato (ou branco / nulo)</small></div>
+${lista.map((x,k)=>{
+  const id='c'+i+'-'+k;
+  const selCls=(sel&&sel.tipo==='cand'&&sel.k===k)?'sel':'';
+  return `<div class="cand ${selCls}" data-sel="${i}:${k}"><span class="av" style="background:${corAvatar(x.nome)}">${iniciais(x.nome)}</span><div class="nm"><b>${esc(x.nome)} ${x.demo?'<span class="chip-demo">TSE pendente</span>':''}</b><small>${esc(x.part)} · ${esc(x.num||'—')}</small></div><span class="radio"></span></div>`
+}).join('')}
+<div class="urbar">
+  <button class="brn" data-ur="branco">BRANCO</button>
+  <button class="nul" data-ur="nulo">NULO</button>
+</div>
+<div class="barAcoes">
+  <button class="btn-ghost" data-acao="corrige">CORRIGE</button>
+  <button class="btn-gold" data-acao="confirma" ${!sel?'disabled':''}>CONFIRMA</button>
+</div>
+${aviso}`
+}
 
-async function carregarPoolReal(){
-  if(poolReal.length) return;
+function telaRevisao(){
+  const rows=CARGOS.map((c,i)=>{
+    const esc=VOTA.esc[c.id];
+    const texto=esc?(esc.tipo==='branco'?'VOTO EM BRANCO':esc.tipo==='nulo'?'VOTO NULO':esc.nome+' ('+esc.part+' · '+esc.num+')'):'(não votado)';
+    return `<div class="rev-row"><div class="crg"><b>${esc(cargoInfo(i).rot)}</b><small>${esc(texto)}</small></div><button class="trocar" data-trocar="${i}">trocar</button></div>`
+  }).join('');
+  return progHTML(5)+`
+<div class="card"><h3 style="color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:10px">REVISE SUA CÉDULA</h3>${rows}
+<button class="btn-gold wide" data-acao="r3" style="margin-top:14px">CONFIRMAR</button></div>`
+}
+
+function telaAviso(){return progHTML(5)+`
+<div class="aviso"><b style="color:var(--gold)">ℹ️ Mandato revogável</b><p style="margin-top:6px">Você poderá <b>revogar</b> após a posse se o eleito não corresponder — regra dos 70%: se 70% dos eleitores que elegeram revogam, cai o mandato.</p></div>
+<button class="btn-gold wide" data-acao="gerar">ENTENDI, GERAR MEU CÓDIGO</button>`}
+
+async function registrarVoto(){
+  const digits=Array.from(crypto.getRandomValues(new Uint8Array(20))).map(x=>x%10).join('');
+  const prev=BALLOTS.length?BALLOTS[BALLOTS.length-1].hash:('0'.repeat(64));
+  const payload=JSON.stringify({digits,esc:VOTA.esc,uf:LOCAL?LOCAL.uf:'',cidade:LOCAL?LOCAL.cidade:'',ts:Date.now(),prev});
+  const hash=await sha(payload);
+  BALLOTS.push({code:digits,hash:hash,esc:VOTA.esc,uf:LOCAL?LOCAL.uf:'',cidade:LOCAL?LOCAL.cidade:'',ts:Date.now()});
+  LS.set('mb_ballots',BALLOTS);
+  VOTA.code=digits;VOTA.hash=hash;
+}
+
+function startCountdown(){
+  const ov=$('#overlay');ov.classList.remove('hidden');
+  let n=8;
+  ov.innerHTML='<div class="num">'+n+'</div><small>Registrando sua cédula…<br>Toque pra concluir agora</small>';
+  const tick=setInterval(()=>{n--;ov.querySelector('.num').textContent=n;if(n<=0){clearInterval(tick);finalize()}},1000);
+  ov.onclick=()=>{clearInterval(tick);finalize()};
+  async function finalize(){
+    try{await registrarVoto()}catch(e){console.error(e)}
+    ov.classList.add('hidden');ov.onclick=null;VOTA.passo=8;render();
+  }
+}
+
+function telaRecibo(){
+  const blocos=(VOTA.code.match(/.{1,4}/g)||[]).join(' ');
+  return `
+<div class="receipt">
+  <p class="ok-check">✅ VOTO REGISTRADO</p>
+  <div class="code-box">
+    <div class="label">SEU COMPROVANTE</div>
+    <div class="dig">${esc(blocos)}</div>
+    <div class="hash">${esc(VOTA.hash.slice(0,32))}…${esc(VOTA.hash.slice(-8))}</div>
+  </div>
+  <p style="font-size:12px;color:var(--mut);margin-bottom:10px">Guarde este código: é seu único comprovante.</p>
+  <button class="btn-gold" data-acao="copiar">COPIAR CÓDIGO</button>
+  <button class="btn-ghost" data-acao="vsite" style="width:100%;margin-top:8px">CONFERIR NO SITE →</button>
+  <button class="btn-ghost" data-acao="novo" style="width:100%;margin-top:8px">Votar de novo (demo)</button>
+</div>`}
+
+/* ------------------ APURAÇÕES ------------------ */
+function donutHTML(data){
+  /* data = [[nome,votos],...] */
+  const cores=['#2ECC71','#FFD700','#4A90D9','#E74C3C','#9B59B6'];
+  const top=data.slice(0,4);const outros=data.slice(4).reduce((a,x)=>a+x[1],0);
+  const total=top.reduce((a,x)=>a+x[1],0)+outros;if(!total)return '<small class="hint">Sem votos ainda.</small>';
+  const parts=[];let deg=0;
+  top.forEach((x,i)=>{const p=x[1]/total*360;parts.push(`${cores[i]} ${deg}deg ${deg+p}deg`);deg+=p});
+  if(outros>0){parts.push(`${cores[4]} ${deg}deg ${360}deg`)}
+  const grad=`conic-gradient(${parts.join(',')})`;
+  const leg=top.map((x,i)=>`<li><i style="background:${cores[i]}"></i>${esc(x[0])} <small>· ${Math.round(x[1]/total*100)}%</small></li>`).join('');
+  const legExtra=outros>0?`<li><i style="background:${cores[4]}"></i>Outros <small>· ${Math.round(outros/total*100)}%</small></li>`:'';
+  return `<div class="donut-row"><div class="donut-plot" style="background:${grad}"></div><ul class="donut-leg">${leg}${legExtra}</ul></div>`
+}
+
+function agregaApur(){
+  /* seed demo + votos deste aparelho */
+  const seed={
+    presidente:[['Ana Fontes',34],['Otto Prado',29],['Cida Moraes',21],['Rui Bacelar',16]],
+    governador:[['Tereza Kahn',31],['Léo Sampaio',27],['Marcos Vela',24],['Duda Nunes',18]],
+    senador:[['Caio Bittar',38],['Rita Campos',26],['Ivo Leite',20],['Sofia Prado',16]],
+    depfed:[['Caio Bittar',33],['Rita Campos',28],['Ivo Leite',22],['Sofia Prado',17]],
+    estadual:[['Caio Bittar',36],['Rita Campos',25],['Ivo Leite',21],['Sofia Prado',18]]
+  };
+  const uf=APUR.uf;const cid=APUR.cidade;
+  const out={};
+  CARGOS.forEach((c)=>{
+    const map={};
+    (seed[c.id]||[]).forEach(x=>map[x[0]]=(map[x[0]]||0)+x[1]);
+    BALLOTS.forEach(b=>{
+      if(APUR.recorte==='estado'&&b.uf!==uf)return;
+      if(APUR.recorte==='cidade'&&(b.uf!==uf||b.cidade!==cid))return;
+      const e=b.esc[c.id];if(!e)return;
+      const nome=e.tipo==='cand'?e.nome:(e.tipo==='branco'?'Voto branco':'Voto nulo');
+      map[nome]=(map[nome]||0)+1;
+    });
+    const arr=Object.entries(map).sort((a,b)=>b[1]-a[1]);
+    out[c.id]=arr;
+  });
+  return out;
+}
+
+function telaApur(){
+  const pills=['nacional','estado','cidade'];
+  const rotMap={nacional:'NACIONAL',estado:'ESTADO',cidade:'CIDADE'};
+  const selUF=APUR.uf||(UFS.find(u=>u==='RJ')||UFS[0]);
+  let selects='';
+  if(APUR.recorte==='estado'||APUR.recorte==='cidade'){
+    selects+='<div class="row2"><label>Estado<select id="a-uf">'+UFS.map(u=>'<option '+(u===selUF?'selected':'')+'>'+u+'</option>').join('')+'</select></label>';
+    if(APUR.recorte==='cidade'){
+      const lista=CIDADES[selUF]||[];
+      selects+='<label>Cidade<select id="a-cid">'+(lista.length?lista.map(c=>'<option '+(c===APUR.cidade?'selected':'')+'>'+c+'</option>').join(''):'<option value="">carregando…</option>')+'</select></label>';
+    } else selects+='<label></label>';
+    selects+='</div>';
+  }
+  const dados=agregaApur();
+  const cards=CARGOS.map(c=>{
+    const arr=dados[c.id]||[];const rot=cargoInfo(CARGOS.indexOf(c)).rot;
+    return `<div class="donut"><h4>${esc(rot)} <span class="badge-parc">apuração parcial</span></h4>${donutHTML(arr)}</div>`;
+  }).join('');
+  const n=BALLOTS.length;
+  return `
+<div class="pills">${pills.map(p=>'<button class="pill '+(APUR.recorte===p?'on':'')+'" data-apur="'+p+'">'+rotMap[p]+'</button>').join('')}</div>
+${selects}
+<small class="hint">Apuração parcial: demonstrativa (TSE pendente) + ${n} voto(s) registrado(s) neste aparelho${APUR.recorte!=='nacional'?' · filtrado por '+(APUR.recorte==='estado'?uf:'cidade'):''}.</small>
+<div class="donut-grid">${cards}</div>`;
+}
+
+/* ------------------ RADAR ------------------ */
+function telaRadar(){
+  const q=RADAR.q;const f=RADAR.filtro;
+  const pills=[['','Todos'],['dep','Dep. Federais'],['sen','Senadores'],['ok','Verificados']];
+  let list=CAND.slice();
+  if(q){const qq=q.toLowerCase();list=list.filter(c=>(c.name||'').toLowerCase().includes(qq)||(c.party||'').toLowerCase().includes(qq)||(c.state||'').toLowerCase().includes(qq))}
+  if(f==='dep')list=list.filter(c=>c.position==='Deputado Federal');
+  if(f==='sen')list=list.filter(c=>c.position==='Senador Federal');
+  if(f==='ok')list=list.filter(c=>c.selo);
+  const cards=list.slice(0,40).map(c=>{
+    const chip=c.selo?'<span class="chip-ok">✓ VERIFICADO</span>':'';
+    return `<div class="pol-card"><span class="av" style="background:${corAvatar(c.name)}">${iniciais(c.name)}</span><div class="nm" data-pol="${esc(c.id)}"><b>${esc(c.name)} ${chip}</b><small>${esc(c.party||'')} · ${esc(c.state||'')}</small></div><div class="acts"><button class="btn-green" data-apoio="${esc(c.id)}">APOIAR</button><button class="btn-red" data-recl="${esc(c.id)}">RECLAMAR</button></div></div>`
+  }).join('')||'<small class="hint">Nenhum político encontrado. Tente outra busca.</small>';
+  return `
+<input type="search" class="search-mini" id="radar-q" placeholder="🔍 buscar por nome, partido ou UF…" value="${esc(q)}">
+<div class="pills">${pills.map(p=>'<button class="pill '+(f===p[0]?'on':'')+'" data-rfiltro="'+p[0]+'">'+p[1]+'</button>').join('')}</div>
+${!CAND.length?'<small class="hint">Carregando políticos reais…</small>':''}
+${cards}`;
+}
+
+/* ------------------ CONFERIR ------------------ */
+function telaConferir(){
+  const blocos=[0,1,2,3,4].map(i=>'<input class="cf-in" data-cf="'+i+'" maxlength="4" inputmode="numeric" placeholder="0000">').join('');
+  const hist=BALLOTS.slice().reverse().map((b,i)=>{
+    const d=new Date(b.ts);
+    return `<div class="hist-item" data-fill="${esc(b.code)}"><span class="cc">${esc(fmtCode(b.code))}</span><span class="dt">${d.toLocaleDateString('pt-BR')}</span><span class="chip-at">ATIVO</span></div>`
+  }).join('')||'<small class="hint">Nenhum código registrado neste aparelho.</small>';
+  return `
+<div class="card">
+  <h3 style="color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:6px">CONFERIR MEU VOTO</h3>
+  <small>Cole seu código de 20 dígitos e verifique no site oficial.</small>
+  <div class="conf-inp">${blocos}</div>
+  <button class="btn-gold wide" data-acao="confV">CONFERIR NO SITE</button>
+  <button class="btn-ghost wide" data-acao="vSiteV" style="width:100%;margin-top:8px">ABRIR SEM CÓDIGO</button>
+</div>
+<div class="card"><h3 style="color:var(--gold);font-size:14px;letter-spacing:2px;margin-bottom:6px">MEUS CÓDIGOS NESTE APARELHO</h3>${hist}</div>
+<small class="hint" style="display:block;text-align:center;margin-top:8px">A verificação completa abre no site oficial MudaBrasil.</small>`;
+}
+
+/* ------------------ MODAL ------------------ */
+function openModal(html){const m=$('#modal');m.innerHTML='<div class="box">'+html+'</div>';m.classList.remove('hidden');m.onclick=(e)=>{if(e.target===m)closeModal()}}
+function closeModal(){$('#modal').classList.add('hidden');$('#modal').innerHTML=''}
+function modalPolitico(id){
+  const c=CAND.find(x=>x.id===id);if(!c)return;
+  openModal(`
+<h3>${esc(c.name)} ${c.selo?'<span class="chip-ok">✓ VERIFICADO</span>':''}</h3>
+<small>${esc(c.position||'')} · ${esc(c.party||'')} · ${esc(c.state||'')}</small>
+<div style="margin:12px 0;display:flex;gap:8px">
+  <button class="btn-green" data-apoio="${esc(c.id)}" style="flex:1">👍 APOIAR</button>
+  <button class="btn-red" data-recl="${esc(c.id)}" style="flex:1">👎 RECLAMAR</button>
+</div>
+<a class="btn-gold" style="display:block;text-align:center;width:100%" target="_blank" rel="noopener" href="../pages/parlamentares.html?dep=${encodeURIComponent(c.name)}">Ver ficha completa no site →</a>
+<div class="row"><button class="btn-ghost" data-close="1">Fechar</button></div>`);
+}
+function modalForm(pid,tipo){
+  const titulo=tipo==='apoio'?'APOIAR':'RECLAMAR';
+  const cor=tipo==='apoio'?'btn-green-fill':'btn-red-fill';
+  openModal(`
+<h3>${titulo}</h3>
+<small>Político: ${esc(pid)}</small>
+<input type="text" id="f-tit" placeholder="Título (curto)" style="margin-top:10px">
+<textarea id="f-desc" placeholder="${tipo==='apoio'?'Por que você apoia?':'Descreva o problema com evidências (se tiver).'}"></textarea>
+<div class="row"><button class="btn-ghost" data-close="1">Cancelar</button><button class="${cor}" data-enviar="${esc(pid)}" data-tipo="${tipo}">Enviar</button></div>`);
+}
+
+/* ------------------ binders ------------------ */
+function bindAll(){
+  /* nav */
+  $$('nav.bot button').forEach(b=>b.onclick=()=>{scr=b.dataset.scr;if(scr==='radar'&&!CAND.length)carregaCAND();render()});
+  /* go/back */
+  $$('[data-go]').forEach(b=>b.onclick=()=>{scr=b.dataset.go;if(scr==='radar'&&!CAND.length)carregaCAND();render()});
+  $$('[data-back]').forEach(b=>b.onclick=()=>{
+    if(scr==='votar'){VOTA.passo=Math.max(0,VOTA.passo-1);VOTA.selTemp=null;render();return}
+    scr='inicio';render();
+  });
+  /* local */
+  const geo=$('#geo');if(geo)geo.onclick=pedirGeo;
+  const ufSel=$('#uf');if(ufSel){ufSel.onchange=()=>carregarCidades(ufSel.value);carregarCidades(ufSel.value)}
+  const okL=$('#okLocal');if(okL)okL.onclick=confirmarLocal;
+  /* candidatos */
+  $$('[data-sel]').forEach(el=>el.onclick=()=>{const[i,k]=el.dataset.sel.split(':');VOTA.selTemp={tipo:'cand',k:+k};render()});
+  $$('[data-ur]').forEach(el=>el.onclick=()=>{VOTA.selTemp={tipo:el.dataset.ur};render()});
+  $$('[data-acao]').forEach(b=>b.onclick=acaoClick);
+  /* revisão */
+  $$('[data-trocar]').forEach(b=>b.onclick=()=>{const i=+b.dataset.trocar;VOTA.passo=i+1;VOTA.selTemp=null;render()});
+  /* apurações */
+  $$('[data-apur]').forEach(b=>b.onclick=()=>{APUR.recorte=b.dataset.apur;render();if(APUR.recorte==='estado'||APUR.recorte==='cidade'){setTimeout(()=>{const s=$('#a-uf');if(s){s.onchange=()=>{APUR.uf=s.value;APUR.cidade='';render()};carregarCidades(s.value)}const sc=$('#a-cid');if(sc)sc.onchange=()=>{APUR.cidade=sc.value}},30)}});
+  /* radar */
+  const rq=$('#radar-q');if(rq){rq.oninput=()=>{RADAR.q=rq.value;render();const nq=$('#radar-q');if(nq){nq.focus();nq.setSelectionRange(nq.value.length,nq.value.length)}}}
+  $$('[data-rfiltro]').forEach(b=>b.onclick=()=>{RADAR.filtro=b.dataset.rfiltro;render()});
+  $$('[data-pol]').forEach(el=>el.onclick=()=>modalPolitico(el.dataset.pol));
+  $$('[data-apoio]').forEach(el=>{el.onclick=(e)=>{e.stopPropagation();modalForm(el.dataset.apoio,'apoio')}});
+  $$('[data-recl]').forEach(el=>{el.onclick=(e)=>{e.stopPropagation();modalForm(el.dataset.recl,'rec')}});
+  $$('[data-close]').forEach(b=>b.onclick=closeModal);
+  $$('[data-enviar]').forEach(b=>b.onclick=()=>enviarForm(b.dataset.enviar,b.dataset.tipo));
+  /* conferir */
+  const cfins=$$('.cf-in');
+  cfins.forEach((inp,i)=>{
+    inp.oninput=()=>{
+      inp.value=inp.value.replace(/\D/g,'').slice(0,4);
+      if(inp.value.length===4&&i<4)cfins[i+1].focus();
+    };
+    inp.onkeydown=(e)=>{if(e.key==='Backspace'&&!inp.value&&i>0){cfins[i-1].focus();cfins[i-1].value=''}}
+  });
+  $$('[data-fill]').forEach(el=>el.onclick=()=>{const c=el.dataset.fill;cfins.forEach((inp,i)=>inp.value=c.slice(i*4,i*4+4))});
+}
+
+function acaoClick(e){
+  const a=e.currentTarget.dataset.acao;
+  if(a==='corrige'){VOTA.selTemp=null;render()}
+  else if(a==='confirma'){
+    const i=VOTA.passo-1;const lista=listaCandidatos(i);
+    if(!VOTA.selTemp){toast('Selecione uma opção antes de CONFIRMAR');return}
+    if(VOTA.selTemp.tipo==='cand'){const c=lista[VOTA.selTemp.k];VOTA.esc[CARGOS[i].id]={tipo:'cand',nome:c.nome,part:c.part,num:c.num||''}}
+    else{VOTA.esc[CARGOS[i].id]={tipo:VOTA.selTemp.tipo}}
+    VOTA.selTemp=null;VOTA.passo=Math.min(6,VOTA.passo+1);render();
+  }
+  else if(a==='r3'){VOTA.passo=7;render()}
+  else if(a==='gerar'){startCountdown()}
+  else if(a==='copiar'){
+    const txt=VOTA.code;
+    try{navigator.clipboard.writeText(txt).then(()=>toast('Código copiado!'))}catch(e){const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();toast('Código copiado!')}
+  }
+  else if(a==='vsite'){window.open('../index.html#conferir-voto?code='+encodeURIComponent(VOTA.code),'_blank')}
+  else if(a==='confV'){
+    const v=$$('.cf-in').map(i=>i.value).join('');
+    if(v.replace(/\D/g,'').length!==20){toast('Código precisa de 20 dígitos');return}
+    window.open('../index.html#conferir-voto?code='+encodeURIComponent(v),'_blank');
+  }
+  else if(a==='vSiteV'){window.open('../index.html#conferir-voto','_blank')}
+  else if(a==='novo'){VOTA={passo:0,esc:{},selTemp:null,code:'',hash:''};render()}
+}
+
+function confirmarLocal(){
+  const uf=$('#uf').value;
+  const cidSel=$('#cid');
+  const cidL=$('#cidLivre').value.trim();
+  const cid=cidL||(cidSel?cidSel.value:'');
+  if(!cid){toast('Escolha uma cidade ou digite');return}
+  LOCAL={uf:uf,cidade:cid,fonte:cidL?'manual':(LOCAL&&LOCAL.fonte||'manual')};
+  LS.set('mb_local',LOCAL);
+  VOTA.passo=1;render();
+}
+
+async function pedirGeo(){
+  if(!navigator.geolocation){toast('Geolocalização indisponível neste aparelho');return}
+  toast('Buscando sua localização…');
+  navigator.geolocation.getCurrentPosition(async(pos)=>{
+    try{
+      const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&localityLanguage=pt`);
+      const j=await r.json();
+      const ufRaw=(j.principalSubdivisionCode||'').replace(/^BR-/,'');
+      const uf=UFS.includes(ufRaw)?ufRaw:(j.principalSubdivision||'').toUpperCase().slice(0,2);
+      const cidade=j.city||j.locality||'';
+      if(!UFS.includes(uf)){toast('UF não identificada — escolha manualmente');return}
+      LOCAL={uf:uf,cidade:cidade||'',fonte:'gps'};
+      LS.set('mb_local',LOCAL);
+      toast('Local detectado: '+uf+(cidade?' · '+cidade:''));
+      VOTA.passo=1;render();
+    }catch(e){toast('Falha ao resolver UF — escolha manualmente')}
+  },(err)=>{toast('Permissão negada — escolha manualmente')},{timeout:12000,enableHighAccuracy:false});
+}
+
+async function carregarCidades(uf){
+  if(!uf)return;
+  if(CIDADES[uf]){const s=$('#cid');if(s)preencherSel(s,CIDADES[uf]);return}
   try{
-    const r=await fetch(`${API}/api/candidatos`);
+    const r=await fetch(`https://servicosdados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderby=nome`);
     const j=await r.json();
-    poolReal=(j.candidatos||[]).map(c=>({
-      nome:c.name||c.nomeUrna||'—',
-      partido:c.party||c.partido||'—',
-      uf:c.state||c.uf||'—',
-      position:c.position||''
-    }));
-  }catch(e){poolReal=[]}
-  // deriva listas por cargo (honestas: parlamentares reais em mandato = referência cívica)
-  const senadores=poolReal.filter(c=>/senador/i.test(c.position));
-  const depFed=poolReal.filter(c=>/deputado federal/i.test(c.position));
-  // pra cargos que não existem no pool (presidente/governador/dep.estadual),
-  // reusa os parlamentares como candidatos de referência — número sintético determinístico
-  porCargo['Presidente']=poolReal.slice(0,60).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Presidente'),partido:c.partido,uf:'BR',sintetico:true}));
-  // governador: filtra pela UF do eleitor, top 40
-  porCargo['Governador']=poolReal.filter(c=>c.uf===estadoVoto.uf).slice(0,40).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Governador'),partido:c.partido,uf:c.uf,sintetico:true}));
-  // senador: reais (position Senador)
-  porCargo['Senador']=senadores.map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Senador'),partido:c.partido,uf:c.uf,sintetico:true}));
-  // dep federal: reais
-  porCargo['Deputado Federal']=depFed.map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Deputado Federal'),partido:c.partido,uf:c.uf,sintetico:true}));
-  // dep estadual: filtra pela UF
-  porCargo['Deputado Estadual']=poolReal.filter(c=>c.uf===estadoVoto.uf).slice(0,40).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Deputado Estadual'),partido:c.partido,uf:c.uf,sintetico:true}));
-}
-
-function renderUfChips(){
-  const el=$('#ufChips'); if(!el) return;
-  el.innerHTML=UFS.map(u=>`<button class="chip ${u===estadoVoto.uf?'on':''}" data-uf="${u}">${u}</button>`).join('');
-  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    estadoVoto.uf=b.dataset.uf; LS.set('mb_uf',estadoVoto.uf);
-    // re-deriva cargos estaduais
-    porCargo['Governador']=poolReal.filter(c=>c.uf===estadoVoto.uf).slice(0,40).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Governador'),partido:c.partido,uf:c.uf,sintetico:true}));
-    porCargo['Deputado Estadual']=poolReal.filter(c=>c.uf===estadoVoto.uf).slice(0,40).map(c=>({nome:c.nome,numero:sintNumero(c.nome,'Deputado Estadual'),partido:c.partido,uf:c.uf,sintetico:true}));
-    renderUfChips(); renderEtapa();
-  });
-}
-
-function renderEtapa(){
-  const cargo=CARGOS[estadoVoto.etapa];
-  const lista=porCargo[cargo]||[];
-  $('#cargoNome').textContent=cargo;
-  $('#etapaLabel').textContent=`Cargo ${estadoVoto.etapa+1} de ${CARGOS.length} · ${lista.length} candidatos`;
-  $('#progBar').style.width=((estadoVoto.etapa)/CARGOS.length*100)+'%';
-  estadoVoto.digitado='';
-  renderDig();
-  $('#votStat').textContent=`Seu estado: ${estadoVoto.uf} · Lista de referência cívica (parlamentares em mandato)`;
-}
-
-function renderDig(){
-  const cargo=CARGOS[estadoVoto.etapa];
-  const lista=porCargo[cargo]||[];
-  const txt=estadoVoto.digitado||'_';
-  $('#digTxt').textContent=txt;
-  const match=estadoVoto.digitado&&lista.find(c=>String(c.numero)===estadoVoto.digitado);
-  const nb=$('#nuloBanner');
-  const digLen=DIGS[cargo]||4;
-  if(match){
-    $('#cNome').textContent=match.nome;
-    $('#cPart').textContent=`${match.partido} · Nº ${match.numero}${match.sintetico?' · ref. cívica':''}`;
-    $('#candInfo').querySelector('.av').textContent=(match.nome||'?').split(' ').map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase();
-    nb.classList.add('hidden');
-  } else if(estadoVoto.digitado.length>=digLen){
-    $('#cNome').textContent='Nenhum candidato com esse número';
-    $('#cPart').textContent='Confirmação = voto nulo';
-    $('#candInfo').querySelector('.av').textContent='✗';
-    nb.classList.remove('hidden');
-  } else if(estadoVoto.digitado.length>0){
-    // partial: mostra candidatos cujo número começa com o digitado
-    const part=lista.filter(c=>String(c.numero).startsWith(estadoVoto.digitado));
-    $('#cNome').textContent=part.length?part[0].nome:'Digitando…';
-    $('#cPart').textContent=`${part.length} candidato(s) com esse prefixo`;
-    $('#candInfo').querySelector('.av').textContent=estadoVoto.digitado;
-    nb.classList.add('hidden');
-  } else {
-    $('#cNome').textContent='Digite o número do candidato';
-    $('#cPart').textContent='Use o teclado numérico abaixo';
-    $('#candInfo').querySelector('.av').textContent='?';
-    nb.classList.add('hidden');
-  }
-}
-
-function tecla(k){
-  if(k==='del'){estadoVoto.digitado=estadoVoto.digitado.slice(0,-1);renderDig();return}
-  if(k==='branco'){
-    if(!confirm(`Voto em BRANCO para ${CARGOS[estadoVoto.etapa]}?\n\nO voto em branco é contabilizado mas não vai para nenhum candidato.`)) return;
-    estadoVoto.votos[CARGOS[estadoVoto.etapa]]={tipo:'branco'};
-    proximoCargo(); return;
-  }
-  const digLen=DIGS[CARGOS[estadoVoto.etapa]]||4;
-  if(estadoVoto.digitado.length>=digLen) return;
-  estadoVoto.digitado+=k; renderDig();
-}
-
-function corrige(){estadoVoto.digitado='';renderDig()}
-
-function confirma(){
-  const cargo=CARGOS[estadoVoto.etapa];
-  const lista=porCargo[cargo]||[];
-  const match=estadoVoto.digitado&&lista.find(c=>String(c.numero)===estadoVoto.digitado);
-  if(!estadoVoto.digitado){toast('Digite um número primeiro');return}
-  if(match){
-    estadoVoto.votos[cargo]={tipo:'voto',numero:match.numero,nome:match.nome,partido:match.partido,sintetico:!!match.sintetico};
-  } else {
-    if(!confirm(`VOTO NULO para ${cargo}?\n\nNúmero ${estadoVoto.digitado} não corresponde a nenhum candidato.`)) return;
-    estadoVoto.votos[cargo]={tipo:'nulo',numero:estadoVoto.digitado};
-  }
-  proximoCargo();
-}
-
-function proximoCargo(){
-  estadoVoto.etapa++;
-  if(estadoVoto.etapa<CARGOS.length){renderEtapa();return}
-  finalizarVotacao();
-}
-
-async function finalizarVotacao(){
-  const payload=JSON.stringify({uid:meuUid(),votos:estadoVoto.votos,uf:estadoVoto.uf,ts:Date.now()});
-  const prev=LS.get('mb_eleicao_hash','genesis');
-  const hash=await sha256(payload+prev);
-  const raw=hash.replace(/\D/g,'').padEnd(20,'0').slice(0,20);
-  const codigo=raw.match(/.{4}/g).join('-');
-  LS.set('mb_eleicao_votos',estadoVoto.votos);
-  LS.set('mb_eleicao_hash',hash);
-  LS.set('mb_eleicao_codigo',codigo);
-  LS.set('mb_eleicao_data',Date.now());
-  renderCodigo();
-  show('codigo');
-}
-
-async function iniciarVotacao(){
-  renderUfChips();
-  estadoVoto.etapa=0; estadoVoto.digitado=''; estadoVoto.votos={};
-  $('#candInfo').querySelector('.av').textContent='…';
-  $('#cNome').textContent='Carregando parlamentares reais…';
-  $('#cPart').textContent='Aguarde';
-  try{
-    await carregarPoolReal();
-    if(!poolReal.length){
-      $('#cNome').textContent='Sem conexão com backend';
-      $('#cPart').textContent='Verifique sua internet';
-      return;
-    }
-    renderEtapa();
+    const arr=(j||[]).map(m=>m.nome);
+    CIDADES[uf]=arr;
+    const s=$('#cid');if(s)preencherSel(s,arr);
+    const sa=$('#a-cid');if(sa)preencherSel(sa,arr);
   }catch(e){
-    $('#cNome').textContent='Erro ao carregar';
-    $('#cPart').textContent='Tente novamente';
+    const s=$('#cid');if(s)s.innerHTML='<option value="">erro ao carregar — digite abaixo</option>';
   }
 }
-
-$('#keypad').addEventListener('click',e=>{const b=e.target.closest('button[data-k]');if(b) tecla(b.dataset.k)});
-$('#btnCorrige').onclick=corrige;
-$('#btnConfirma').onclick=confirma;
-
-/* ============ P3: CÓDIGO ============ */
-function renderCodigo(){
-  const c=LS.get('mb_eleicao_codigo','');
-  const h=LS.get('mb_eleicao_hash','');
-  const v=LS.get('mb_eleicao_votos',{});
-  $('#codNum').textContent=c||'— — — —';
-  $('#codHash').textContent=h?h.slice(0,32)+'…':'—';
-  const list=$('#codResumoList');
-  list.innerHTML=CARGOS.map(cg=>{
-    const vv=v[cg]; let txt='';
-    if(!vv) txt='<span>não votado</span>';
-    else if(vv.tipo==='branco') txt='<span>BRANCO</span>';
-    else if(vv.tipo==='nulo') txt='<span style="color:var(--red)">NULO</span>';
-    else txt=`<b>${vv.nome}</b> <span>${vv.partido||''}${vv.sintetico?' · ref.':''} · Nº ${vv.numero}</span>`;
-    return `<div class="item"><span>${cg}</span>${txt}</div>`;
-  }).join('');
-}
-$('#codCopy').onclick=async()=>{const c=LS.get('mb_eleicao_codigo','');if(!c)return;try{await navigator.clipboard.writeText(c);toast('✓ Código copiado')}catch(e){toast('Não foi possível copiar')}};
-$('#codShare').onclick=async()=>{const c=LS.get('mb_eleicao_codigo','');if(!navigator.share){toast('Compartilhamento indisponível');return}try{await navigator.share({title:'MudaBrasil',text:'Meu código de votação: '+c})}catch(e){}};
-$('#codVer').onclick=()=>window.open('../index.html#conferir-voto','_blank');
-$('#codRes').onclick=()=>show('resultados');
-$('#codNov').onclick=()=>{if(confirm('Iniciar nova votação? Os votos atuais continuarão salvos no seu código.')){iniciarVotacao();show('votar')}};
-
-/* ============ P4: RESULTADOS ============ */
-function donutGrande(segs,size=140){
-  const r=48,c=2*Math.PI*r;let off=0,s='';
-  segs.forEach(g=>{const len=c*g.pct/100;if(len<=0)return;
-    s+=`<circle r="${r}" cx="70" cy="70" fill="none" stroke="${g.color}" stroke-width="16" stroke-dasharray="${len} ${c-len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`;
-    off+=len;
-  });
-  return `<svg viewBox="0 0 140 140" width="${size}" height="${size}">${s}<circle r="30" cx="70" cy="70" fill="#0d2242"/></svg>`;
-}
-function simShares(lista,cargo){
-  if(!lista||!lista.length) return [{label:'Sem candidatos',pct:100,color:'#5b6b82'}];
-  const top=lista.slice(0,5);
-  const raw=top.map(c=>18+(hashInt(c.nome||c.numero||'')%22));
-  const tot=raw.reduce((a,b)=>a+b,0);
-  let segs=top.map((c,i)=>({label:(c.nome||'Nº '+c.numero)+' ('+(c.partido||'?')+')',pct:Math.round(raw[i]/tot*92),color:CORES[i%CORES.length]}));
-  const resto=100-segs.reduce((a,b)=>a+b.pct,0);
-  segs.push({label:'Brancos/Nulos',pct:Math.max(resto,1),color:'#5b6b82'});
-  return segs;
+function preencherSel(sel,arr){
+  sel.innerHTML='<option value="">escolha…</option>'+arr.map(c=>'<option>'+c+'</option>').join('');
+  if(LOCAL && (sel.id==='cid') && LOCAL.cidade && arr.includes(LOCAL.cidade)){sel.value=LOCAL.cidade}
 }
 
-async function renderResultados(){
-  const v=LS.get('mb_eleicao_votos',{});
-  if(!poolReal.length) await carregarPoolReal();
-  const el=$('#resList');
-  el.innerHTML=CARGOS.map(cargo=>{
-    const lista=porCargo[cargo]||[];
-    const segs=simShares(lista,cargo);
-    const meuV=v[cargo];
-    let meuTxt='';
-    if(meuV){
-      if(meuV.tipo==='branco') meuTxt='você votou em BRANCO';
-      else if(meuV.tipo==='nulo') meuTxt='você deu voto NULO';
-      else meuTxt=`seu voto: ${meuV.nome} (${meuV.partido||''})`;
-    } else meuTxt='você ainda não votou neste cargo';
-    const leg=segs.map(s=>`<div class="lg-item"><span class="lg-dot" style="background:${s.color}"></span><b>${s.pct}%</b> <span>${s.label}</span></div>`).join('');
-    return `<div class="res-cargo">
-      <h3><i class="fa-solid fa-landmark"></i> ${cargo}</h3>
-      <div class="row">
-        ${donutGrande(segs)}
-        <div class="leg">${leg}</div>
-      </div>
-      ${meuTxt?`<div class="res-me"><i class="fa-solid fa-user-check"></i> ${meuTxt}</div>`:''}
-    </div>`;
-  }).join('');
-}
-$('#resRef').onclick=()=>{toast('Atualizando…');renderResultados()};
-
-/* ============ P5: RADAR ============ */
-let radarCache={all:[],loaded:false,filtro:'all',busca:''};
-async function carregarRadar(){
-  if(radarCache.loaded){renderRadar();return}
-  $('#radList').innerHTML='<div class="pol-empty"><i class="fa-solid fa-spinner fa-spin"></i> Carregando 594 políticos…</div>';
+async function carregaCAND(){
+  if(CAND.length)return;
+  if(!API){CAND=[];return}
   try{
-    const r=await fetch(API+'/api/candidatos'); const j=await r.json();
-    radarCache.all=(j.candidatos||[]).map(c=>({...c,position:c.position||'Deputado Federal'}));
-    radarCache.loaded=true;
-    renderRadar();
-  }catch(e){$('#radList').innerHTML='<div class="pol-empty">❌ Não foi possível carregar políticos.</div>'}
+    const r=await fetch(API+'/api/candidatos');
+    const j=await r.json();
+    CAND=(j.candidatos||[]).map(c=>({id:c.id,name:c.name,party:c.party,state:c.state,position:c.position,selo:!!c.selo}));
+    render();
+  }catch(e){CAND=[]}
 }
-function filtrarRadar(){
-  const q=(radarCache.busca||'').toLowerCase().trim();
-  return radarCache.all.filter(p=>{
-    const pos=(p.position||'').toLowerCase();
-    if(radarCache.filtro==='Deputado Federal'&&!pos.includes('deputado federal')) return false;
-    if(radarCache.filtro==='Senador'&&!pos.includes('senador')) return false;
-    if(radarCache.filtro==='ver'&&!p.verificado) return false;
-    if(!q) return true;
-    return (p.name||'').toLowerCase().includes(q)||(p.party||'').toLowerCase().includes(q)||(p.state||'').toLowerCase().includes(q);
-  }).slice(0,40);
-}
-function renderRadar(){
-  const list=filtrarRadar();
-  const el=$('#radList');
-  if(!list.length){el.innerHTML='<div class="pol-empty">Nenhum político encontrado.</div>';return}
-  el.innerHTML=list.map(p=>{
-    const ini=((p.name||'?').match(/\b\w/g)||['?']).slice(0,2).join('').toUpperCase();
-    const seal=p.verificado?`<span class="pol-seal">✓ VERIFICADO</span>`:'';
-    return `<div class="pol-card" data-id="${p.id}">
-      <div class="pol-top">
-        <div class="av">${ini}</div>
-        <div class="info">
-          <b>${p.name||'—'} ${seal}</b>
-          <span class="mini">${p.party||'—'} · ${p.state||'—'} · ${p.position||'—'}</span>
-        </div>
-      </div>
-      <div class="pol-acts">
-        <button class="btn-rec" data-a="rec" data-id="${p.id}"><i class="fa-solid fa-thumbs-down"></i> Reclamar <span class="cnt" id="cnt-rec-${CSS.escape(p.id)}">—</span></button>
-        <button class="btn-apo" data-a="apo" data-id="${p.id}"><i class="fa-solid fa-thumbs-up"></i> Apoiar <span class="cnt" id="cnt-apo-${CSS.escape(p.id)}">—</span></button>
-      </div>
-    </div>`;
-  }).join('');
-  el.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>radarAct(b));
-  list.slice(0,15).forEach(p=>radarCounts(p.id));
-}
-async function radarCounts(id){
-  try{
-    const [r1,r2]=await Promise.all([
-      fetch(`${API}/api/reclamacoes?politicianId=${encodeURIComponent(id)}&limit=100`),
-      fetch(`${API}/api/apoios?politicianId=${encodeURIComponent(id)}&limit=100`)
-    ]);
-    const j1=await r1.json().catch(()=>({}));
-    const j2=await r2.json().catch(()=>({}));
-    const nr=(j1.complaints||[]).length, na=(j2.supports||[]).length;
-    const eR=$('#cnt-rec-'+CSS.escape(id)), eA=$('#cnt-apo-'+CSS.escape(id));
-    if(eR) eR.textContent=nr; if(eA) eA.textContent=na;
-  }catch(e){}
-}
-async function radarAct(btn){
-  const id=btn.dataset.id, tipo=btn.dataset.a==='rec'?'rec':'apoio';
-  const txt=prompt(tipo==='rec'?'Descreva sua reclamação (máx 200):':'Escreva seu apoio (máx 200):');
-  if(!txt) return;
-  try{
-    const r=await fetch(`${API}/api/reclamacoes/public`,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({politicianId:id,tipo,titulo:tipo==='rec'?'Reclamação':'Apoio',descricao:txt.slice(0,200)})});
-    if(r.ok){toast('✓ '+((tipo==='rec')?'Reclamação registrada':'Apoio registrado'));radarCounts(id)}
-    else toast('❌ Erro ao registrar');
-  }catch(e){toast('❌ Falha de rede')}
-}
-$('#radInput').addEventListener('input',e=>{radarCache.busca=e.target.value;renderRadar()});
-$$('.rad-filters .chip').forEach(c=>c.onclick=()=>{
-  $$('.rad-filters .chip').forEach(x=>x.classList.remove('on')); c.classList.add('on');
-  radarCache.filtro=c.dataset.f; renderRadar();
-});
 
-/* ============ BOOT ============ */
-(function(){
-  checkHealth();
-  renderHome();
-  setInterval(()=>{if($('#p-inicio').classList.contains('active')) renderHome()},2000);
+async function enviarForm(pid,tipo){
+  const tit=$('#f-tit').value.trim();const desc=$('#f-desc').value.trim();
+  if(!tit||!desc){toast('Preencha título e descrição');return}
+  const btn=$('[data-enviar]');btn.disabled=true;btn.textContent='Enviando…';
+  try{
+    const r=await fetch(API+'/api/reclamacoes/public',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({politicianId:pid,tipo:tipo,titulo:tit,descricao:desc})});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    toast(tipo==='apoio'?'Apoio registrado!':'Reclamação registrada!');
+    closeModal();
+  }catch(e){toast('Erro: '+e.message);btn.disabled=false;btn.textContent='Enviar'}
+}
+
+/* ------------------ boot ------------------ */
+(function boot(){
+  render();
+  carregaCAND().catch(()=>{});
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 })();
