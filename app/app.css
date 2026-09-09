@@ -156,7 +156,7 @@ nav.bot button.on{background:linear-gradient(180deg,rgba(255,215,0,.18) 0%,rgba(
 .chip-at{background:var(--green);color:#04122b;font-size:9px;padding:2px 7px;border-radius:99px;font-weight:800}
 .chip-rv{background:var(--red);color:#fff;font-size:9px;padding:2px 7px;border-radius:99px;font-weight:800}
 
-@media(max-width:380px){.hero h1{font-size:20px}.hero h2{font-size:16px}.grid2{grid-template-columns:1fr}.code-box .dig{font-size:16px;letter-spacing:2px}}
+@media(max-width:380px){.hero h1{font-size:20px}.hero h2{font-size:16px}.grid2{grid-template-columns:1fr 1fr}.code-box .dig{font-size:16px;letter-spacing:2px}}
 
 
 
@@ -176,3 +176,4 @@ header .logo{width:32px;height:32px;border-radius:8px;flex:none}
 .card.c-row .btn-gold{margin-top:8px}
 nav.bot button.on{border:1.5px solid var(--gold);border-radius:12px}
 .hero h1{font-size:26px}
+
