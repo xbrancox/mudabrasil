@@ -167,3 +167,12 @@ nav.bot button.on{background:linear-gradient(180deg,rgba(255,215,0,.18) 0%,rgba(
 
 /* LOGO */
 header .logo{width:32px;height:32px;border-radius:8px;margin-right:4px}
+
+/* VB-OVERRIDE */
+header .logo{width:32px;height:32px;border-radius:8px;flex:none}
+.card.c-row{display:flex;gap:10px;align-items:flex-start}
+.card.c-row .c-ico{font-size:22px;line-height:1.1}
+.card.c-row .c-body{flex:1}
+.card.c-row .btn-gold{margin-top:8px}
+nav.bot button.on{border:1.5px solid var(--gold);border-radius:12px}
+.hero h1{font-size:26px}
