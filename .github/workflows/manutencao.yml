@@ -62,7 +62,7 @@ jobs:
           git add data/noticias.json
           if git diff --cached --quiet; then echo "snapshot sem mudanças — nada a commitar"; exit 0; fi
           git commit -m "chore(data): snapshot de notícias atualizado ($(date -u '+%Y-%m-%d %H:%M UTC')) [manutenção automática]"
-          git pull --rebase origin main
+          git pull --rebase origin master
           git push
 
   backup:
@@ -116,7 +116,7 @@ jobs:
           git add data/candidatos-2026.json
           if git diff --cached --quiet; then echo "snapshot sem mudanças — nada a commitar"; exit 0; fi
           git commit -m "chore(data): candidaturas 2026 do TSE atualizadas ($(date -u '+%Y-%m-%d')) [manutenção automática]"
-          git pull --rebase origin main
+          git pull --rebase origin master
           git push
 
   enriquecimento:
@@ -152,5 +152,5 @@ jobs:
           git add data/politicos.json
           if git diff --cached --quiet; then echo "snapshot sem mudanças — nada a commitar"; exit 0; fi
           git commit -m "chore(data): produção legislativa + presença atualizadas ($(date -u '+%Y-%m-%d')) [manutenção automática]"
-          git pull --rebase origin main
+          git pull --rebase origin master
           git push
