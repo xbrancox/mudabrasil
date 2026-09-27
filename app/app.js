@@ -1,7 +1,7 @@
 /* ============================================================
-   VotaBrasil — App PWA
+   MeuVoto — App PWA
    ============================================================ */
-const MB = window.VotaBrasil || {};
+const MB = window.MeuVoto || {};
 const API_BASE = MB.API_BASE || '';
 const LS_VOTOS = 'mb_votos';
 const LS_RECL = 'mb_reclamacoes';
@@ -9,7 +9,7 @@ const LS_COMP = 'mb_comparacao';
 const LS_PLOP = 'mb_pl_opinioes';
 
 if (API_BASE) document.getElementById('badge').style.display = 'flex';
-console.log('%c🟡 VotaBrasil v22', 'font-size:16px;font-weight:bold;color:#FFD700');
+console.log('%c🟡 MeuVoto v22', 'font-size:16px;font-weight:bold;color:#FFD700');
 console.log('Modo: ' + MB.MODO + ' | Backend: ' + (API_BASE || '(nenhum)'));
 
 /* ===== STATE ===== */
@@ -98,7 +98,7 @@ function ir(id) {
   document.querySelectorAll('.sec,.flow').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) el.classList.add('active');
-  document.getElementById('h-title').textContent = 'VotaBrasil';
+  document.getElementById('h-title').textContent = 'MeuVoto';
   document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
   const nb = document.querySelector('.nav button[data-s="' + id + '"]');
   if (nb) nb.classList.add('active');

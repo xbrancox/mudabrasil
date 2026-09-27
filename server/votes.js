@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL - MOTOR DE REVOGAÇÃO DO VOTO
+   MEUVOTO - MOTOR DE REVOGAÇÃO DO VOTO
    ------------------------------------------------------------
    O coração da plataforma: um "termômetro de confiança" em que o
    cidadão expressa VOTO DE CONFIANÇA em um parlamentar e pode
@@ -265,7 +265,7 @@ async function getTermometro({ topN = 10 } = {}) {
   return {
     mode: 'real',
     ok: true,
-    metodo: 'Índice de Confiança VotaBrasil (ICM) — componente de confiança',
+    metodo: 'Índice de Confiança MeuVoto (ICM) — componente de confiança',
     icm: ICM,
     decadencia: DECADENCIA,
     atualizadoEm: new Date(now).toISOString(),

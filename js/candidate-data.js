@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL - CAMADA DE DADOS DE CANDIDATOS
+   MEUVOTO - CAMADA DE DADOS DE CANDIDATOS
    ------------------------------------------------------------
    Este módulo modela a estrutura de dados de candidatos
    baseando-se em FONTES PÚBLICAS oficiais. Cada candidato

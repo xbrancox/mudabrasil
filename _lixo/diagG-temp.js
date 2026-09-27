@@ -1,5 +1,5 @@
 const fs = require('fs');
-const h = fs.readFileSync('C:/Users/euler/MudaBrasil/index.html', 'utf8');
+const h = fs.readFileSync('C:/Users/euler/MeuVoto/index.html', 'utf8');
 const lines = h.split('\n');
 const idx = [];
 lines.forEach((l, i) => { if (l.includes('homeNews') || l.includes('carregaHomeNews') || l.includes('ncard')) idx.push(i + 1); });

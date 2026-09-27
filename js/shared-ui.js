@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL - UI COMPARTILHADA
+   MEUVOTO - UI COMPARTILHADA
    Funções comuns a todas as páginas: menu mobile, modal de
    login e revelação de elementos ao rolar a tela.
    ============================================================ */

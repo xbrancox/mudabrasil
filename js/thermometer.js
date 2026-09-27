@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL - TERMÔMETRO DE CONFIANÇA (revogação do voto)
+   MEUVOTO - TERMÔMETRO DE CONFIANÇA (revogação do voto)
    ------------------------------------------------------------
    Regra "tudo real": só dados oficiais. O antigo bloco DEMO com
    nomes sintéticos foi removido — sem backend acessível a tela
@@ -26,8 +26,8 @@
 
   /* Base da API: absoluta em file:// (config.local.js aponta p/ Railway),
      relativa ('') quando servido por http(s) na mesma origem do backend. */
-  const API = (window.VotaBrasil && typeof window.VotaBrasil.API_BASE === 'string')
-    ? window.VotaBrasil.API_BASE
+  const API = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string')
+    ? window.MeuVoto.API_BASE
     : 'https://mudabrasil-production-79eb.up.railway.app';
 
   /* ---------- ESTADO ---------- */

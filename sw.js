@@ -1,4 +1,4 @@
-/* VotaBrasil SW - shell offline + runtime cache */
+/* MeuVoto SW - shell offline + runtime cache */
 var SHELL='vb-shell-v1';
 var PRE=['./','./index.html','./config.js','./js/cache.js','./js/offline.js'];
 self.addEventListener('install',function(e){e.waitUntil(caches.open(SHELL).then(function(c){return c.addAll(PRE);}).then(function(){return self.skipWaiting();}));});

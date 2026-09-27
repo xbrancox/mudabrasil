@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL — PARLAMENTARES
+   MEUVOTO — PARLAMENTARES
    Aba unificada: Candidatos + Radar + PLs + Revogados + Conferir + Revogar
    Alinhado com os .docx do projeto
    ============================================================ */
@@ -14,8 +14,8 @@
 
   /* Base da API: mesma origem quando servida pelo backend; Railway quando estática/file://.
      NUNCA usar || com API_BASE — o valor '' (mesma origem) é válido e sumiria. */
-  const API = (window.VotaBrasil && typeof window.VotaBrasil.API_BASE === 'string')
-    ? window.VotaBrasil.API_BASE
+  const API = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string')
+    ? window.MeuVoto.API_BASE
     : 'https://mudabrasil-production-79eb.up.railway.app';
 
   const session = () => {
@@ -661,7 +661,7 @@
         <li>📖 <a href="${escapeHtml(urlFEFC)}" target="_blank" rel="noopener">Como o FEFC é dividido entre os partidos (TSE) ↗</a></li>
         <li>🧾 <a href="${escapeHtml(urlPC)}" target="_blank" rel="noopener">Prestação de contas eleitorais 2026 (TSE) ↗</a></li>
         <li>📊 <a href="${escapeHtml(urlDA)}" target="_blank" rel="noopener">Dados abertos — receitas por candidato (CSV) ↗</a></li>
-        <li>💰 <a href="fundo-eleitoral.html">Ranking completo do Fundo Eleitoral no VotaBrasil →</a></li>
+        <li>💰 <a href="fundo-eleitoral.html">Ranking completo do Fundo Eleitoral no MeuVoto →</a></li>
       </ul>
       <p class="mb-src-footer">Fonte: ${escapeHtml(d.fontePorPolitico || d.fonte || 'TSE Dados Abertos')}${quando ? ' · snapshot de ' + esc(quando) : ''}. Dados públicos, reproduzidos sem alteração.</p>`;
   }
@@ -1131,7 +1131,7 @@
   function erroConferir() {
     const out = $('#conferir-result');
     out.className = 'mb-conferir-result error';
-    out.innerHTML = `ℹ️ <strong>Verificação indisponível no modo site</strong><br>Consultar a base de votos exige o servidor do VotaBrasil em execução (localmente: <code>node server/index.js</code>). Seu código continua válido e guardado por você.`;
+    out.innerHTML = `ℹ️ <strong>Verificação indisponível no modo site</strong><br>Consultar a base de votos exige o servidor do MeuVoto em execução (localmente: <code>node server/index.js</code>). Seu código continua válido e guardado por você.`;
   }
 
   async function generateCode() {

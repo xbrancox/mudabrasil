@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL — HEADER COMPARTILHADO
+   MEUVOTO — HEADER COMPARTILHADO
    Injeta navbar oficial em todas as páginas.
    Deve ser incluido no <head> de cada pagina antes de
    qualquer outro script.

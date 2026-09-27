@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>VotaBrasil · Cobre, Revogue, Vote</title>
+<meta name="description" content="Plataforma cívica de revogação do voto: confie em deputados e senadores, revogue quando descumprirem, opine nos PLs e acompanhe as Eleições 2026 com dados reais.">
+<link rel="canonical" href="https://votabrasil.app/">
+<meta property="og:title" content="VotaBrasil · Cobre, Revogue, Vote">
+<meta property="og:description" content="Plataforma cívica de revogação do voto: confie em deputados e senadores, revogue quando descumprirem, opine nos PLs e acompanhe as Eleições 2026 com dados reais.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://votabrasil.app/">
+<meta property="og:image" content="https://votabrasil.app/og-image.png">
+<meta property="og:site_name" content="VotaBrasil">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://votabrasil.app/og-image.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="config.local.js?v=2"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--blue:#115FCB;--blueL:#4a90f0;--green:#2ECC71;--red:#E74C3C;--r:14px}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),radial-gradient(ellipse at bottom left,rgba(255,215,0,.05),transparent 40%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif}
+h1,h2,h3,h4{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.15}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:11px 18px;cursor:pointer;transition:.15s}
+.btn:hover{filter:brightness(1.1)}
+.btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
+.btn.green{background:var(--green);border:none;color:#fff}
+.btn.red{background:transparent;border-color:var(--red);color:var(--red)}
+.btn.blue{background:var(--blue);border:none;color:#fff}
+.btn.sm{padding:7px 12px;font-size:12px}
+header{position:sticky;top:0;z-index:100;background:rgba(6,26,58,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;gap:14px;padding:10px 20px;max-width:1280px;margin:0 auto;flex-wrap:wrap}
+.lg{display:flex;align-items:center;gap:10px}
+.lg .ic{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#2ECC71,#FFD700);display:grid;place-items:center;color:#061a3a;font-size:18px}
+.lg b{font-size:18px;font-family:Montserrat}.lg small{display:block;color:var(--muted);font-size:11px}
+nav{margin-left:auto;display:flex;gap:2px;flex-wrap:wrap;align-items:center}
+nav a{color:var(--muted);font:700 12.5px Manrope;padding:7px 11px;border-radius:8px;cursor:pointer;text-align:center;line-height:1.2}
+nav a.on{background:var(--gold);color:#1a1400}
+.hact{display:flex;gap:8px;align-items:center}
+.ham{display:none}
+.mnav{position:fixed;top:64px;left:0;right:0;background:#0d2242;border-bottom:1px solid var(--line);z-index:150;display:none;flex-direction:column;padding:10px}
+.mnav.open{display:flex}
+.mnav a{padding:12px;color:var(--ink);font:700 14px Manrope;border-bottom:1px solid var(--line);cursor:pointer}
+.sec{display:none;padding:40px 0 70px}.sec.on{display:block}
+.kick{color:var(--gold);font:800 11px Manrope;letter-spacing:.2em;text-transform:uppercase}
+.hero{text-align:center;padding:46px 20px 16px}
+.hero h1{font-size:clamp(34px,6vw,56px);font-weight:900}
+.hero .l2{font-size:clamp(18px,3vw,24px);font-weight:800;margin-top:20px}
+.hero .l2 .g{color:var(--green)}.hero .l2 .y{color:var(--gold)}
+.hero .l3{font-size:clamp(16px,2.4vw,20px);font-weight:800;margin-top:12px}
+.hero .l3 .g{color:var(--green)}.hero .l3 .r{color:var(--red)}
+.hero p{color:var(--muted);max-width:640px;margin:20px auto}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.tag{display:inline-block;background:var(--green);color:#fff;font:800 10px Manrope;letter-spacing:.12em;padding:6px 14px;border-radius:999px;text-transform:uppercase}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;text-align:center}
+.step .n{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;margin:0 auto 14px;font-weight:800;color:#fff}
+.explore{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:22px}
+.exp{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.exp .ic{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-size:17px;margin-bottom:14px}
+.exp h3{font-size:15px;margin-bottom:8px}.exp p{color:var(--muted);font-size:12.5px}.exp a{font-size:12.5px;font-weight:800;cursor:pointer}
+.donuts{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px}
+.don{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;position:relative}
+.don h4{font-size:14px;padding-right:70px}
+.pills{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:4px}
+.pill{font:800 9px Manrope;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);cursor:pointer;background:var(--card2)}
+.pill.on{border-color:var(--gold);color:var(--gold)}
+.dchart{height:150px;margin:10px 0 6px;display:grid;place-items:center}
+.donut{width:120px;height:120px;border-radius:50%;position:relative}
+.donut::after{content:"";position:absolute;inset:26%;background:var(--card);border-radius:50%}
+.leg{display:flex;flex-wrap:wrap;gap:8px;font-size:10.5px;color:var(--muted);justify-content:center}
+.leg i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:4px}
+.filtros{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+input,select,textarea{background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px 12px;font:500 14px Manrope;width:100%}
+textarea{min-height:70px;resize:vertical}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;position:relative}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}
+.muted{color:var(--muted);font-size:12.5px}
+.av{width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:top center;background:var(--card2)}
+.avXL{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top center;background:var(--card2)}
+.badge{font:800 10px Manrope;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.badge.ok{color:var(--green);border-color:rgba(46,204,113,.4)}
+.badge.blue{color:var(--blueL);border-color:rgba(74,144,240,.4)}
+.rank{display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.rank .pos{font:900 16px Montserrat;color:var(--gold);width:26px;flex:none}
+.quote{border-left:3px solid var(--red);background:rgba(231,76,60,.08);border-radius:6px;padding:5px 9px;margin-top:6px;font-size:12px;color:var(--muted)}
+.quote.ok{border-color:var(--green);background:rgba(46,204,113,.08)}
+.quote.info{border-color:var(--blueL);background:rgba(74,144,240,.08)}
+.bar70{height:10px;border-radius:6px;background:var(--card2);position:relative;overflow:hidden;margin:8px 0 4px}
+.bar70 i{display:block;height:100%;border-radius:6px}
+.bar70 .mk{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--gold)}
+.pin{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--muted);display:grid;place-items:center;cursor:pointer;font-size:14px;z-index:5}
+.pin.on{background:var(--gold);color:#1a1400;border-color:var(--gold)}
+.cmpbar{position:fixed;bottom:0;left:0;right:0;background:rgba(6,26,58,.96);border-top:1px solid var(--gold);padding:12px 16px;display:none;align-items:center;justify-content:space-between;gap:10px;z-index:160}
+.cmpbar.on{display:flex}
+#radList{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.cmpgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.stat{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px}
+.stat small{color:var(--muted);font-size:9.5px;display:block}
+.stat b{font-size:13px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:10px 0}
+.tabs button{background:none;border:none;color:var(--muted);font:700 12px Manrope;padding:8px 12px;cursor:pointer;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--gold);border-color:var(--gold)}
+[data-tip]{position:relative;cursor:help}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:125%;left:50%;transform:translateX(-50%);background:#000;color:#fff;font:600 11px Manrope;padding:6px 10px;border-radius:8px;white-space:normal;width:max-content;max-width:220px;z-index:99}
+.ncar-wrap{display:flex;align-items:stretch;gap:10px;margin-top:18px}
+.ncar{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:6px 2px 14px;flex:1;scrollbar-width:thin}
+.ncar::-webkit-scrollbar{height:6px}.ncar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.ncar-btn{flex:none;width:42px;border:1px solid var(--line);background:var(--card);color:var(--gold);border-radius:12px;font-size:22px;cursor:pointer;align-self:center}
+.ncar-btn:hover{background:#123059}
+.ncard-new{flex:0 0 340px;max-width:340px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,border-color .2s,box-shadow .2s}
+.ncard-new:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 12px 30px rgba(0,0,0,.38)}
+.nimg{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#0e3a2e,#0d2242);display:grid;place-items:center;overflow:hidden}
+.nimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.ncard-new:hover .nimg img{transform:scale(1.06)}
+.nimg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,26,58,0) 55%,rgba(6,26,58,.55));pointer-events:none}
+.nimg .nph{color:rgba(46,204,113,.5);font-size:30px;position:relative;z-index:1}
+.nfonte{position:absolute;top:10px;left:10px;z-index:2;background:rgba(6,26,58,.78);backdrop-filter:blur(6px);border:1px solid rgba(255,215,0,.4);color:var(--gold);font:800 10px Manrope;letter-spacing:.06em;padding:5px 10px;border-radius:999px;text-transform:uppercase;max-width:72%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nufb{position:absolute;top:10px;right:10px;z-index:2;background:rgba(6,26,58,.78);backdrop-filter:blur(6px);border:1px solid rgba(90,107,126,.55);color:#eaf1fb;font:800 10px Manrope;padding:5px 10px;border-radius:999px}
+.nbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.ncard-new h4{font-size:15px;line-height:1.35;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ncard-new p{color:var(--muted);font-size:12.5px;margin:0;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nfoot{margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:11.5px;color:var(--muted)}
+.nfoot a{color:var(--gold);font-weight:800;text-decoration:none;white-space:nowrap}
+.nfoot a:hover{text-decoration:underline}
+.nbar{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.npill{border:1px solid var(--gold);background:var(--gold);color:#1a1400;border-radius:999px;padding:9px 20px;font:800 13px Manrope;cursor:pointer;transition:all .15s}
+.npill.off{background:transparent;color:var(--muted);border-color:var(--line)}
+.npill.off:hover{border-color:var(--gold);color:#eaf1fb}
+.nsel{min-width:118px;width:auto;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 34px 9px 16px;color:var(--txt);font:800 13px Manrope;letter-spacing:.06em;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23FFD700' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;transition:border-color .15s}
+.nsel:hover{border-color:var(--gold)}
+.nsel.on{border-color:var(--gold);color:#fff}
+.nct{color:var(--muted);font-size:12px}
+.dk-sec{max-width:1150px;margin:56px auto 0;padding:0 16px}
+.dk-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.dk-toggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.dk-tb{background:transparent;border:none;color:var(--txt);padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.dk-tb.on{background:var(--gold);color:#061a3a;font-weight:800}
+.dk-selects{display:flex;gap:10px;margin:14px 0 4px;flex-wrap:wrap}
+.dk-selects select{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 14px;color:var(--txt);font-size:13px;cursor:pointer;outline:none}
+.dk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:20px}
+.dk-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;position:relative;transition:transform .15s,border-color .15s}
+.dk-card:hover{transform:translateY(-2px);border-color:var(--gold)}
+.dk-card h4{font-family:Montserrat;font-size:.85rem;font-weight:800;margin:0 0 10px;color:#eaf1fb;text-transform:uppercase;letter-spacing:.04em;min-height:34px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.dk-mini{display:flex;flex-direction:column;gap:3px;flex:none}
+.dk-mini button{background:rgba(255,255,255,.06);border:1px solid var(--line);color:#9fb0c8;border-radius:7px;padding:2px 8px;font-size:9px;font-weight:800;cursor:pointer}
+.dk-mini button.on{background:var(--gold);color:#061a3a;border-color:var(--gold)}
+.dk-leg{display:flex;flex-direction:column;gap:5px;margin-top:10px;font-size:.78rem}
+.dk-leg div{display:flex;align-items:center;gap:6px}
+.dk-leg i{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.dk-leg b{margin-left:auto;color:#fff}
+.dk-leg span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
+.dk-empty{height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;padding:0 8px}
+.dk-empty b{font-size:13px;color:#eaf1fb}
+.dk-empty span{font-size:11px;color:var(--muted);line-height:1.4}
+.dk-total{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--green);text-align:center;margin:8px 0 0;text-transform:uppercase}
+@media(max-width:960px){.ncard-new{flex-basis:280px}}
+.news{max-width:420px}
+.ncard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.ncard .th{height:160px;background:linear-gradient(135deg,#0e3a2e,#0d2242);display:grid;place-items:center;color:#2ECC71;font-size:28px;position:relative}
+.ncard .cat{position:absolute;top:12px;left:12px;background:var(--green);color:#fff;font:800 9px Manrope;letter-spacing:.1em;padding:5px 10px;border-radius:999px;text-transform:uppercase}
+.ncard .bd{padding:18px}.ncard h4{font-size:15px}.ncard p{color:var(--muted);font-size:12.5px;margin:10px 0}
+.seal{background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.4);font:800 10px Manrope;padding:5px 10px;border-radius:8px}
+.ctabox{background:linear-gradient(135deg,#0d2242,#123059);border:1px solid var(--line);border-radius:20px;padding:44px 26px;text-align:center;margin-top:50px}
+footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;margin-top:60px}
+.ft{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:26px}
+.ft h5{font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+.ft a{display:block;color:var(--muted);font-size:13px;padding:4px 0;cursor:pointer}
+.fbot{border-top:1px solid var(--line);margin-top:30px;padding-top:16px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:11.5px}
+.doss{display:grid;gap:10px}.doss .blk{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--card2)}
+.overlay{position:fixed;inset:0;background:rgba(4,8,20,.85);backdrop-filter:blur(5px);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
+.overlay.open{display:flex}
+.modal{background:var(--bg);border:1px solid var(--line);border-radius:20px;max-width:760px;width:100%;max-height:90vh;overflow:auto;padding:24px}
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);color:var(--ink);padding:12px 18px;border-radius:12px;z-index:300;display:none;max-width:90%}
+@media(max-width:960px){#radList{grid-template-columns:1fr}.explore{grid-template-columns:repeat(2,1fr)}.donuts{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}.filtros{grid-template-columns:1fr 1fr}.ft{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}nav{display:none}.ham{display:inline-flex}}
+</style>
+  <script src="js/site-header.js?v=3"></script>
+<link rel="icon" type="image/svg+xml" href="/assets/icon.svg">
+<link rel="manifest" href="/manifest.json">
+</head>
+<body>
+
+<main>
+<section class="sec on" id="sec-inicio"><div class="hero">
+<h1>O poder emana do povo</h1>
+<div class="l2"><span class="g">não acaba</span> no <span class="y">dia da eleição.</span></div>
+<div class="l3">Seu voto <span class="g">coloca</span>. Seu voto <span class="r">tira</span>.</div>
+<p>Acompanhe a opinião do Brasil, cobre promessas no Radar Político, <b style="color:var(--ink)">participe dos Projetos de Leis no Congresso</b>, confira seu voto com segurança. Analise o currículo dos candidatos. Tenha a oportunidade de tirar o mal político revogando seu voto.</p>
+<div class="cta"><a class="btn gold" href="app/" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px"><i class="fa-solid fa-mobile-screen-button"></i> Abrir o App <small>Cédula no celular</small></a><button class="btn" onclick="go('conferir')">Conferir Voto</button><button class="btn" onclick="go('revogar')">Revogar Voto</button></div>
+<div class="cta" style="margin-top:12px"><span class="badge" id="bVotos">6 votos simulados</span><span class="badge blue" id="bReais">carregando…</span><span class="badge" id="bPls">6 PLs em análise</span></div>
+</div>
+<div class="wrap">
+<div style="text-align:center"><span class="tag">COMO FUNCIONA</span><h2 style="margin-top:14px">Três passos, zero burocracia</h2></div>
+<div class="steps">
+<div class="step"><div class="n" style="background:var(--green)">1</div><h3>Escolha no app</h3><p class="muted">Escolha seus candidatos, vote com total segurança.</p></div>
+<div class="step"><div class="n" style="background:var(--blue)">2</div><h3>Guarde o código</h3><p class="muted">Cada voto gera um código de 20 dígitos. É o seu comprovante.</p></div>
+<div class="step"><div class="n" style="background:var(--gold);color:#1a1400">3</div><h3>Confira aqui</h3><p class="muted">No site, você cola o código e confere em quem votou.</p></div>
+</div>
+<div style="text-align:center;margin-top:50px"><h2>Explore o VotaBrasil</h2><p class="muted">Tudo o que você precisa para uma participação cívica informada e ativa.</p></div>
+<div class="explore">
+<div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-regular fa-clock"></i></div><h3>Radar Político</h3><p>Ficha completa com dados reais, reclamações e comparação lado a lado.</p><a onclick="go('radar')">Acessar →</a></div>
+<div class="exp"><div class="ic" style="background:rgba(59,130,246,.15);color:var(--blueL)"><i class="fa-regular fa-file-lines"></i></div><h3>PLs no Congresso</h3><p>Opine sobre leis em tramitação no congresso nacional.</p><a href="pages/congresso.html">Ir ao Congresso →</a></div>
+<div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-solid fa-check"></i></div><h3>Conferir Voto</h3><p>Cole o código e confira os candidatos em quem votou.</p><a onclick="go('conferir')">Verificar →</a></div>
+<div class="exp"><div class="ic" style="background:rgba(231,76,60,.15);color:var(--red)"><i class="fa-regular fa-trash-can"></i></div><h3>Revogar Voto</h3><p>Não cumpriu? Revogue a confiança do seu voto após a posse.</p><a onclick="go('revogados')" style="color:var(--red)">Revogar →</a></div>
+<div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-scale-balanced"></i></div><h3>Comparar</h3><p>Fixe políticos e veja dois (ou mais) lado a lado.</p><a onclick="go('radar')">Comparar →</a></div>
+<div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-sack-dollar"></i></div><h3>Fundo Eleitoral</h3><p>Dados públicos do TSE: quanto cada partido recebeu de dinheiro público de campanha.</p><a href="pages/fundo-eleitoral.html">Ver dados →</a></div>
+</div>
+<!-- ===== 02 · ACOMPANHAMENTO — DONUTS POR CARGO (recriada 06/09; distribuição demo rotulada) ===== -->
+<div class="dk-sec" id="acompanhamento">
+  <div class="dk-head">
+    <div>
+      <span class="kick">02 — ACOMPANHAMENTO</span>
+      <h2 style="margin:6px 0 4px">Acompanhe quem está <span style="color:var(--blueL)">na frente</span></h2>
+      <p class="muted">Preferência do eleitorado por cargo (recorte UF / Cidade).</p>
+    </div>
+    <div class="dk-toggle" role="group" aria-label="Recorte UF ou Cidade">
+      <button class="dk-tb on" id="dk-uf-btn" onclick="dkSetModo('uf')">UF</button>
+      <button class="dk-tb" id="dk-cid-btn" onclick="dkSetModo('cidade')">Cidade</button>
+    </div>
+  </div>
+  <div class="dk-selects">
+    <select id="dk-uf" onchange="dkRender()" aria-label="Estado">
+      <option value="BR">Todo o Brasil</option>
+      <option>SP</option><option>RJ</option><option>MG</option><option>BA</option>
+      <option>RS</option><option>PR</option><option>PE</option><option>CE</option>
+      <option>PA</option><option>SC</option><option>GO</option><option>MA</option>
+    </select>
+    <select id="dk-cidade" onchange="dkRender()" aria-label="Cidade" hidden></select>
+  </div>
+  <div class="dk-grid" id="dk-grid"></div>
+  <p class="muted" style="font-size:11px;text-align:center;margin-top:14px">🔴 <b>Senador</b> e <b>Deputado Federal</b>: distribuição real dos votos da plataforma, atualizada ao vivo (a cada novo voto o donut gira). Demais cargos entram nas próximas fases — prefeito e vereador nas eleições municipais.</p>
+</div>
+  <div style="margin-top:40px"><h2 style="margin-top:0">Notícias do Congresso e da política</h2>
+  <p class="muted">Só política, direto das fontes oficiais e da grande imprensa — <b>com os devidos créditos</b>. Filtre por Geral (nacional), Brasil ou qualquer um dos 27 estados — com notícias locais buscadas a cada 10 min.</p>
+  <div class="nbar">
+    <button class="npill on" id="nf-geral" onclick="nufSet('GERAL')">Notícias Nacionais</button>
+    <select id="nf-uf" class="nsel" onchange="nufSet(this.value||'GERAL')" aria-label="Selecione seu estado">
+      <option value="">Estado</option>
+    </select>
+    <span class="nct" id="nf-count"></span>
+  </div>
+  <div class="ncar-wrap">
+    <button class="ncar-btn" onclick="ncarScroll(-1)" aria-label="Anteriores">‹</button>
+    <div class="ncar" id="homeNews"></div>
+    <button class="ncar-btn" onclick="ncarScroll(1)" aria-label="Próximas">›</button>
+  </div>
+  <div id="nstatus" class="muted" style="font-size:12px;margin-top:8px">Carregando notícias…</div>
+<div class="ctabox"><h2>Sua voz faz a <span style="color:var(--blueL)">diferença</span></h2>
+<p class="muted">Participe ativamente da democracia brasileira. Acompanhe, opine, vote e fiscalize. O poder está em suas mãos.</p>
+<div class="cta" style="margin-top:8px;justify-content:center"><input id="eml" placeholder="seu@email.com" style="max-width:260px"/><button class="btn gold" onclick="toast('E-mail cadastrado! (fase final)')">OK</button></div>
+<div class="cta" style="margin-top:8px"><button class="btn gold" onclick="go('radar')">Começar Agora</button><button class="btn" onclick="go('quem')">Conhecer Mais</button></div></div>
+</div></section>
+<section class="sec" id="sec-conferir"><div class="wrap" style="max-width:640px">
+<span class="kick">CONFERIR VOTO</span><h2 style="margin:8px 0 6px">Conferir voto</h2>
+<p class="muted">Local onde você prova que seu voto existe e confirma em quem realmente votou.</p>
+<div class="card" style="margin-top:18px"><label class="muted">Cole seu codigo de verificacao</label>
+<input id="chk" placeholder="0000 0000 0000 0000 0000" style="text-align:center;letter-spacing:2px;margin:10px 0"/>
+<button class="btn gold" style="width:100%" onclick="conferir()"><i class="fa-solid fa-magnifying-glass"></i> Conferir</button>
+<button class="btn sm" style="width:100%;margin-top:8px" onclick="usarDemo()">Testar com um exemplo</button></div>
+<div id="chkRes"></div>
+</div></section>
+<section class="sec" id="sec-revogar"><div class="wrap" style="max-width:640px">
+<span class="kick" style="color:var(--red)">REVOGAR VOTO</span><h2 style="margin:8px 0 6px">Não cumpriu? Revogue.</h2>
+<p class="muted">A revogação abre <b>a partir da posse</b> e fica aberta durante o mandato.</p>
+<div class="card" style="margin-top:18px"><p class="muted"><i class="fa-solid fa-lock" style="color:var(--red)"></i> Janela travada até a posse. Cole seu código no <b>Conferir Voto</b>.</p>
+<button class="btn red" style="width:100%" onclick="go('conferir')">Ir para Conferir Voto</button></div>
+</div></section>
+<section class="sec" id="sec-revogados"><div class="wrap">
+<span class="kick" style="color:var(--red)">POLÍTICOS COM VOTOS REVOGADOS</span><h2 style="margin:8px 0 6px">O povo devolvendo o poder</h2>
+<p class="muted">Regra: <b>70%</b> dos votos que elegeram = cassação. Top-10 que mais receberam revogação.</p>
+<div class="filtros" style="grid-template-columns:1fr"><input id="revBusca" placeholder="nome, numero, partido, estado…" oninput="renderRevogados()"/></div>
+<div id="revList" class="grid g2"></div>
+</div></section>
+<section class="sec" id="sec-ajuda"><div class="wrap" style="max-width:700px">
+<span class="kick">AJUDA</span><h2 style="margin:8px 0 14px">Perguntas frequentes</h2>
+<div id="faqList" class="grid"></div>
+</div></section>
+<section class="sec" id="sec-quem"><div class="wrap" style="max-width:700px">
+<span class="kick">QUEM SOMOS</span><h2 style="margin:8px 0 14px">VotaBrasil</h2>
+<div class="card"><p>Plataforma cívica de <b>revogação do voto</b> (protótipo demonstrativo, sem valor jurídico). O poder emana do povo — e não acaba no dia da eleição.</p>
+<p style="color:var(--gold);font-weight:800">"Seu voto coloca, seu voto tira."</p></div>
+</div></section>
+</main>
+<footer><div class="wrap"><div class="ft">
+<div><div class="lg"><div class="ic"><img src="icon.svg" alt="VotaBrasil" width="40" height="40" style="border-radius:10px;display:block"></div><b>VotaBrasil</b></div>
+<p class="muted" style="margin:12px 0">Plataforma de opinião e participação para um Brasil com mais transparência, voz e poder de voto real.</p>
+<p style="color:var(--gold);font-weight:800;font-size:13px">"Seu voto coloca, seu voto tira."</p></div>
+<div><h5>Navegar</h5><a onclick="go('radar')">Radar Político</a><a href="pages/fundo-eleitoral.html">Fundo Eleitoral</a><a href="pages/congresso.html">PLs no Congresso</a><a onclick="go('conferir')">Conferir Voto</a><a onclick="go('revogados')">Revogados</a></div>
+<div><h5>Participar</h5><a onclick="go('conferir')">Meus Votos</a><a onclick="go('radar')">Reclame Aqui</a><a onclick="abrirForm(-1,'rec')">📝 Reclamar ou 👍 Apoiar</a><a onclick="abrirLogin()">Sou Político/Candidato</a></div>
+<div><h5>Institucional</h5><a href="app/">📱 App de Votação</a><a onclick="go('quem')">Sobre Nós</a><a href="termos.html">Termos de Uso</a><a href="privacidade.html">Política de Privacidade</a><a>Contato</a></div>
+</div><div class="fbot"><span>© 2026 VotaBrasil. Protótipo demonstrativo.</span><span>votabrasil.app</span></div></div></footer>
+<div class="cmpbar" id="cmpbar"><span id="cmpcount" class="muted">0 fixados</span><div style="display:flex;gap:8px"><button class="btn sm" onclick="limparPin()">Limpar</button><button class="btn gold sm" onclick="abrirCmp()">Comparar lado a lado</button></div></div>
+<div class="overlay" id="mCmp"><div class="modal"><h3 style="margin-bottom:12px">🆚 Comparação lado a lado</h3><div id="cmpBody" class="cmpgrid"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mCmp')">Fechar</button></div></div>
+<div class="overlay" id="mForm"><div class="modal"><h3 id="fTitle" style="margin-bottom:12px">📝 Fazer reclamação</h3>
+<label class="muted">Político</label><select id="fPol" style="margin:6px 0 10px"></select>
+<label class="muted">Título</label><input id="fTitulo" maxlength="120" placeholder="Resumo breve (máx. 120)" style="margin:6px 0 10px"/>
+<label class="muted">Descrição</label><textarea id="fDesc" placeholder="Descreva com fonte/data, links de notícias ou promessas. Ou mande um elogio/apoio."></textarea>
+<label class="muted" style="display:block;margin:10px 0 4px"><i class="fa-solid fa-paperclip"></i> Anexar arquivos</label>
+<input type="file" id="fFile" multiple style="padding:8px"/>
+<div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end"><button class="btn" onclick="fechar('mForm')">Cancelar</button><button class="btn gold" onclick="enviaForm()"><i class="fa-solid fa-paper-plane"></i> Enviar</button></div></div></div>
+<div class="overlay" id="mDados"><div class="modal"><div id="dadosBody"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mDados')">Fechar</button></div></div>
+<div class="overlay" id="mLogin"><div class="modal"><h3 style="margin-bottom:10px">Entrar</h3>
+<button class="btn blue" style="width:100%;margin-bottom:10px" onclick="entrarCidadao()"><i class="fa-solid fa-user"></i> Sou cidadão (simulado)</button>
+<button class="btn gold" style="width:100%" onclick="souPolitico()"><i class="fa-solid fa-landmark"></i> Sou político ou candidato</button>
+<p class="muted" style="margin-top:10px">Político/Candidato = verificação REAL via backend (e-mail institucional ou TSE).</p>
+<button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mLogin')">Fechar</button></div></div>
+<div class="overlay" id="mVerif"><div class="modal"><h3 style="margin-bottom:10px">🔐 Verificação de identidade</h3>
+<div id="verifAlvo" class="muted" style="margin-bottom:8px"></div>
+<div id="verifPasso1">
+<label class="muted">E-mail institucional (@camara.leg.br / @senado.leg.br) ou registro TSE</label>
+<input id="vEmail" placeholder="nome@camara.leg.br" style="margin:6px 0 10px"/>
+<button class="btn gold" style="width:100%" onclick="solicitarCodigo()"><i class="fa-solid fa-envelope"></i> Enviar código</button>
+</div>
+<div id="verifPasso2" style="display:none">
+<label class="muted">Token do link recebido</label>
+<input id="vCodigo" placeholder="cole o token aqui" style="margin:6px 0 10px;text-align:center"/>
+<div id="verifDev" class="quote ok" style="display:none;margin:8px 0"></div>
+<button class="btn green" style="width:100%" onclick="confirmarCodigo()"><i class="fa-solid fa-circle-check"></i> Confirmar e obter selo</button>
+</div>
+<button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mVerif')">Fechar</button></div></div>
+<div class="overlay" id="mVotos"><div class="modal"><div id="votosBody" style="max-height:70vh;overflow-y:auto"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mVotos')">Fechar</button></div></div>
+<div class="overlay" id="mDisclaimer"><div class="modal">
+<h3 style="margin-bottom:10px;color:var(--gold)">⚖️ Aviso Legal e Termos de Uso</h3>
+<div class="doss">
+<div class="blk"><b>1. Natureza da plataforma</b><p class="muted">O <b>VotaBrasil</b> é uma plataforma cívica independente, em fase de <b>protótipo demonstrativo</b>, sem qualquer vínculo com o Poder Executivo, o Congresso Nacional, o TSE, partidos políticos ou qualquer outro órgão público ou entidade privada. Não possui fins eleitorais, partidários ou promocionais de candidatos.</p></div>
+<div class="blk"><b>2. Ausência de efeitos jurídicos</b><p class="muted">Os votos, apoios, reclamações e revogações realizadas nesta plataforma têm caráter exclusivamente <b>declaratório, opinativo e demonstrativo</b>, <b>não produzindo qualquer efeito jurídico</b>, não substituindo mecanismos eleitorais ou institucionais oficiais e não afetando, em nenhuma hipótese, mandatos, direitos, deveres ou a investidura de agentes públicos. A proposta de "revogação do voto" e a "regra dos 70%" constituem <b>propostas cívicas de debate (de lege ferenda)</b>, não previstas no ordenamento jurídico brasileiro vigente.</p></div>
+<div class="blk"><b>3. Dados públicos e fontes oficiais</b><p class="muted">As informações sobre parlamentares, projetos de lei, votações nominais, composição partidária, frentes parlamentares, ocupações e histórico institucional são obtidas de <b>fontes públicas oficiais</b> (Câmara dos Deputados, Senado Federal, TSE, Portal da Transparência e CNJ), sob licenças de dados abertos. A plataforma as reproduz como disponíveis, sem alterar seu conteúdo, e não garante imediatismo ou completude absoluta. Para fins oficiais, <b>consulte sempre a fonte original</b> indicada no rodapé de cada página.</p></div>
+<div class="blk"><b>4. Liberdade de expressão e responsabilidade do usuário</b><p class="muted">Reclamações, apoios e demais manifestações constituem <b>opinião pessoal dos usuários</b>, que são <b>civil e criminalmente responsáveis</b> por seu teor, inclusive quanto a eventuais ofensas, calúnias, difamações, injúrias, discriminação, falsidade ideológica ou violações de direito autoral. <b>A plataforma não realiza revisão editorial prévia</b>, mas poderá remover conteúdo mediante comunicação fundamentada ou decisão judicial. É vedada a postagem de conteúdo que incite violência, ódio ou discriminação, conforme art. 5º, IV, da Constituição Federal e legislação aplicável.</p></div>
+<div class="blk"><b>5. Direito de resposta</b><p class="muted">Parlamentares e candidatos que tiverem sua identidade verificada por e-mail institucional (@camara.leg.br, @senado.leg.br) ou registro TSE possuem <b>direito de resposta</b> no mesmo registro, em igualdade de condições de visualização, nos moldes do art. 5º, V, da CF/88. A verificação concede apenas o <b>selo "Verificado"</b> e a possibilidade de responder; não implica endosso, afiliação ou patrocínio pela plataforma.</p></div>
+<div class="blk"><b>6. Privacidade e LGPD</b><p class="muted">A plataforma <b>não vende, aluga ou compartilha dados com terceiros</b> para fins publicitários ou comerciais. O envio de dados pessoais e de arquivos anexos é <b>voluntário</b>. Os titulares podem solicitar, a qualquer tempo, <b>acesso, correção, portabilidade e exclusão</b> de seus dados via <b>contato@votabrasil.app</b>, nos termos da Lei nº 13.709/2018 (LGPD). Dados agregados anonimizados poderão ser utilizados para fins estatísticos e de pesquisa cívica. <a href="privacidade.html" target="_blank">Leia a Política de Privacidade completa →</a></p></div>
+<div class="blk"><b>7. Propriedade intelectual</b><p class="muted">O nome "VotaBrasil", a identidade visual, o logotipo, o layout e o código-fonte são de titularidade do projeto. Os dados públicos reproduzidos permanecem em <b>domínio público</b>. Marcas de terceiros citadas pertencem aos seus respectivos titulares.</p></div>
+<div class="blk"><b>8. Disponibilidade e garantias</b><p class="muted">O serviço é fornecido <b>"no estado em que se encontra" (as is)</b>, sem garantias de disponibilidade ininterrupta, precisão absoluta ou adequação a finalidade específica, dada sua natureza de protótipo. O usuário reconhece que eventuais indisponibilidades não geram direito a indenização.</p></div>
+<div class="blk"><b>9. Modificações</b><p class="muted">Este Aviso Legal poderá ser atualizado periodicamente. Versões anteriores ficam arquivadas no histórico do repositório público.</p></div>
+<div class="blk"><b>10. Contato e notificações</b><p class="muted"><b>Geral:</b> contato@votabrasil.app · <b>Imprensa:</b> imprensa@votabrasil.app · <b>Parcerias:</b> anuncie@votabrasil.app · <b>LGPD/Exclusão:</b> contato@votabrasil.app</p></div>
+</div>
+<p class="muted" style="margin-top:10px;font-size:11px;text-align:center">Vigência: setembro de 2026 · Última atualização: 05/09/2026</p>
+<button class="btn gold" style="width:100%;margin-top:12px" onclick="fechar('mDisclaimer')">Li e entendi</button>
+</div></div>
+<div id="toast"></div>
+<script>
+if('serviceWorker' in navigator&&location.protocol!=='file:'){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}
+if(window.caches){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+/* API_BASE vem do config.local.js (carregado no <head>) — não redeclarar aqui, isso quebrava o script todo */
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2600)}
+(function(){const qv=new URLSearchParams(location.search);if(qv.has('verificado')){if(qv.get('verificado')==='1')toast('✅ E-mail confirmado! Selo de verificado ativado.');else toast('Falha na confirmação: '+(qv.get('erro')||'token inválido'));history.replaceState({},'',location.pathname)}})();
+/* FIX: âncoras vindas de outras páginas/app (#conferir-voto etc.) — antes caíam no topo da home sem abrir a seção */
+(function(){const h=location.hash.replace('#','');if(!h)return;
+const M={'conferir-voto':'conferir','revogar-voto':'revogar','revogados':'revogados','ajuda':'ajuda','quem-somos':'quem'};
+if(h==='congresso'||h==='radar'){location.replace('pages/parlamentares.html');return}
+if(M[h]){go(M[h]);history.replaceState({},'',location.pathname)}})();
+function fechar(id){document.getElementById(id).classList.remove('open')}
+function toggleMenu(){document.getElementById('mnav').classList.toggle('open')}
+function go(p){if(p==='radar'){window.location.href='pages/parlamentares.html';return}$$('.sec').forEach(s=>s.classList.remove('on'));$('#sec-'+p).classList.add('on');$$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===p));window.scrollTo(0,0)}
+$$('#nav a').forEach(a=>a.onclick=()=>go(a.dataset.p));
+/* Deep-link: #conferir-voto, #radar, #revogados etc. abrem a seção direto
+   (usado pelos menus das páginas internas: congresso, votações…) */
+(function(){
+  const mapa={'conferir-voto':'conferir','revogar-voto':'revogar','revogados':'revogados','ajuda':'ajuda','quem-somos':'quem','congresso':'inicio','voto':'revogar'};
+  const h=(location.hash||'').replace('#','').split('?')[0];
+  if(h==='radar'){location.replace('pages/parlamentares.html');return}
+  if(mapa[h]!==undefined){setTimeout(()=>go(mapa[h]),50)}
+  window.addEventListener('hashchange',()=>{const hh=(location.hash||'').replace('#','').split('?')[0];if(hh==='radar'||hh==='congresso'){location.href='pages/parlamentares.html';return}if(mapa[hh]!==undefined)go(mapa[hh])});
+})();
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+const CORES=['#2ECC71','#FFD700','#4a90f0','#E74C3C','#A855F7'],NOMES=['Maria','Carlos','Ana','João','Outros'];
+let POL=[],ready=false,PINS=[],SESS=LS.get('mb_sess',null),DET={},FTAB={},REMOTE_REC={},REMOTE_APO={},REMOTE_RESP={},BACKEND_OK=false,VOT_CACHE={ts:0,list:[]},VOTOS_BY_ID={};
+const CARGOS_F=['Presidente','Governador','Senador','Deputado Federal','Deputado Estadual','Prefeito','Vereador'];
+/* Regra "tudo real": sem textos inventados. As SEED_* sintéticas de reclamação/
+   apoio/resposta foram removidas — contadores e listas vêm só do backend. */
+async function carregaPol(){POL=[];
+try{const r=await fetch(API_BASE+'/api/candidatos');const j=await r.json();const arr=Array.isArray(j)?j:(j.dados||j.candidatos||[]);
+if(arr.length){arr.forEach(d=>{const numId=parseInt(String(d.id||d.num||'').replace(/\D/g,''),10)||0;POL.push({nome:d.nome||d.name||d.nomeCivil||'',partido:d.partido||d.party||d.siglaPartido||'',uf:d.uf||d.state||d.siglaUf||'',cargo:d.cargo||d.position||'Deputado Federal',foto:d.foto||d.urlFoto||d.photo||'',num:numId||d.id||0,real:1,rec:0,selo:!!(d.selo||d.verificado||d.verified)});});
+BACKEND_OK=true;}}catch(e){}
+if(!POL.length){
+try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?itens=513&ordem=ASC&ordenarPor=nome');const j=await r.json();(j.dados||[]).forEach(d=>POL.push({nome:d.nome,partido:d.siglaPartido||'',uf:d.siglaUf||'',cargo:'Deputado Federal',foto:d.urlFoto||'',num:d.id,real:1,rec:0,selo:false}));}catch(e){}
+try{const r=await fetch('https://legis.senado.leg.br/dadosabertos/senador/lista/legislatura/57?formato=json');const j=await r.json();const L=(j.lista&&j.lista.senador)||[];L.forEach(s=>{const p=s.IdentificacaoParlamentar||{};POL.push({nome:p.NomeParlamentar||'',partido:p.SiglaPartido||'',uf:p.Uf||'',cargo:'Senador',foto:p.UrlFotoParlamentar||'',num:p.CodigoParlamentar||'',real:1,rec:0,selo:false});});}catch(e){}}
+ready=true;const el=document.getElementById('bReais');if(el)el.textContent=POL.length+' políticos reais'+(BACKEND_OK?' (backend)':'');
+popula();renderRad();carregaRemoteRec()}
+async function carregaStats(){
+  try{const r=await fetch(API_BASE+'/api/termometro');const j=await r.json();
+    try{const jr=await fetch(API_BASE+'/api/termometro?top=600');const jj=await jr.json();TERM_RANK={};(jj.topN||[]).slice().sort((a,b)=>b.indice-a.indice).forEach((rr,idx)=>{TERM_RANK[rr.politicianId]=idx+1;});}catch(e){}
+    if(j&&j.ok){const el=document.getElementById('bVotos');if(el)el.textContent=(j.totalVotosAtivos||0)+' votos registrados'+((j.totalRevogados||0)?' \u00b7 '+(j.totalRevogados||0)+' revoga\u00e7\u00f5es':'');}
+  }catch(e){}
+  try{const r2=await fetch(API_BASE+'/api/pls');const j2=await r2.json();
+    if(j2&&j2.ok&&Array.isArray(j2.pls)){const el2=document.getElementById('bPls');if(el2)el2.textContent=j2.pls.length+' PLs em an\u00e1lise';}
+  }catch(e){}
+}
+
+/* ============================================================
+   FASE 3 — SSE (Server-Sent Events) + Fallback Polling
+   Conecta ao /api/stream do backend para receber atualizações
+   em tempo real (novos votos, reclamações, apoios, etc.).
+   Se o SSE falhar, faz polling a cada 60 segundos.
+   ============================================================ */
+let SSE_SOURCE = null;
+let SSE_FALLBACK = null;
+function initSSE(){
+  if(!BACKEND_OK || !window.EventSource) return;
+  try {
+    SSE_SOURCE = new EventSource(API_BASE + '/api/stream');
+    SSE_SOURCE.addEventListener('welcome', function(e){
+      try {
+        const data = JSON.parse(e.data);
+        atualizaContadoresSSE(data);
+        console.log('✅ SSE conectado (welcome)');
+      } catch(_){}
+    });
+    SSE_SOURCE.addEventListener('termometro', function(e){
+      try {
+        const data = JSON.parse(e.data);
+        atualizaContadoresSSE(data);
+        /* donuts do 02 ACOMPANHAMENTO: refresh ao vivo (debounce 2s) */
+        clearTimeout(window._dkLiveT);
+        window._dkLiveT = setTimeout(function(){ if (window.dkRefresh) window.dkRefresh(); }, 2000);
+      } catch(_){}
+    });
+    /* 🔴 AO VIVO — nova reclamação de outra janela */
+    SSE_SOURCE.addEventListener('reclamacao', function(e){
+      try {
+        const data = JSON.parse(e.data);
+        const politicoNome = data.data ? ' para ' + data.data.politicianId : '';
+        toast('🔴 AO VIVO - Nova reclamação recebida' + politicoNome + '!');
+        carregaRemoteRec();
+        /* Se o Radar estiver aberto, re-renderiza */
+        const secRadar = document.getElementById('sec-radar');
+        if(secRadar && secRadar.classList.contains('on')) renderRad();
+      } catch(_){}
+    });
+    /* 🔴 AO VIVO — novo apoio de outra janela */
+    SSE_SOURCE.addEventListener('apoio', function(e){
+      try {
+        const data = JSON.parse(e.data);
+        const politicoNome = data.data ? ' para ' + data.data.politicianId : '';
+        toast('🔴 AO VIVO - Novo apoio registrado' + politicoNome + '!');
+        carregaRemoteRec();
+        const secRadar = document.getElementById('sec-radar');
+        if(secRadar && secRadar.classList.contains('on')) renderRad();
+      } catch(_){}
+    });
+    SSE_SOURCE.onerror = function(){
+      console.warn('⚠️ SSE falhou, ativando fallback de polling (60s)');
+      SSE_SOURCE.close();
+      SSE_SOURCE = null;
+      if(!SSE_FALLBACK){
+        SSE_FALLBACK = setInterval(carregaStats, 60000);
+      }
+    };
+  } catch(e) {
+    console.warn('⚠️ SSE não suportado, ativando fallback');
+    if(!SSE_FALLBACK){
+      SSE_FALLBACK = setInterval(carregaStats, 60000);
+    }
+  }
+}
+function atualizaContadoresSSE(data){
+  const elVotos = document.getElementById('bVotos');
+  if(elVotos && data){
+    const ativos = data.totalVotosAtivos || 0;
+    const revogados = data.totalRevogados || 0;
+    let txt = ativos + ' votos registrados';
+    if(revogados) txt += ' · ' + revogados + ' revogações';
+    elVotos.textContent = txt;
+  }
+  const elReais = document.getElementById('bReais');
+  if(elReais && POL.length){
+    elReais.textContent = POL.length + ' políticos reais (backend)';
+  }
+}
+
+/* ============================================================
+   FASE 4 — Reclamações/Apoios via backend
+   Corrige: endpoint /api/reclamacoes (sem /public) + sessionToken
+   ============================================================ */
+async function carregaRemoteRec(){
+  try{
+    const r=await fetch(API_BASE+'/api/reclamacoes');
+    const j=await r.json();
+    const arr=j.complaints||j.reclamacoes||j.feed||j||[];
+    REMOTE_REC={};REMOTE_APO={};REMOTE_RESP={};
+    if(Array.isArray(arr))arr.forEach(x=>{
+      const k=String(x.politicianId||x.politico||x.politicoNum||'').replace(/\D/g,'');
+      const item={txt:(x.titulo?x.titulo+' — ':'')+(x.descricao||x.content||x.texto||''),ts:x.createdAt||x.timestamp,tipo:x.tipo};
+      if(x.tipo==='apoio'){(REMOTE_APO[k]=REMOTE_APO[k]||[]).push(item)}
+      else if(x.tipo==='resposta'){(REMOTE_RESP[k]=REMOTE_RESP[k]||[]).push({txt:item.txt,ts:item.ts})}
+      else{(REMOTE_REC[k]=REMOTE_REC[k]||[]).push(item)}
+    });
+  }catch(e){console.warn('carregaRemoteRec failed:',e)}}
+function fill(id,arr,all){const el=document.getElementById(id);if(el)el.innerHTML=`<option value="">${all}</option>`+arr.map(x=>`<option>${x}</option>`).join('')}
+function popula(){const uf=[...new Set(POL.map(p=>p.uf))].filter(Boolean).sort();const pt=[...new Set(POL.map(p=>p.partido))].filter(Boolean).sort();
+fill('fUF',uf,'Todos os estados');fill('fPartido',pt,'Todos os partidos');fill('fCargo',CARGOS_F,'Todos os cargos');
+fill('fPol',POL.map(p=>p.nome),'Selecione…')}
+function av(p,cls){return p.foto?`<img class="${cls||'av'}" src="${p.foto}" alt="">`:`<div class="${cls||'av'}" style="background:${CORES[p.nome.length%5]};display:grid;place-items:center;color:#1a1400;font-weight:800">${p.nome[0]}</div>`}
+function txtUser(i){const m=LS.get('mb_rec_txt',{});return m[i]||[]}
+function elogUser(i){const m=LS.get('mb_elog_txt',{});return m[i]||[]}
+function respList(p){return (REMOTE_RESP[p.num]||[]).map(r=>({txt:r.txt,ts:r.ts}))}
+function fmtTs(ts){if(!ts)return'';try{return new Date(ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return''}}
+function recAll(p,i){const loc=txtUser(i).map(t=>({txt:t,ts:Date.now(),tipo:'reclamacao'}));const rem=(REMOTE_REC[p.num]||[]).map(r=>({txt:r.txt,ts:r.ts,tipo:r.tipo}));return[...loc,...rem]}
+function apoAll(p,i){const loc=elogUser(i).map(t=>({txt:t,ts:Date.now(),tipo:'apoio'}));const rem=(REMOTE_APO[p.num]||[]).map(r=>({txt:r.txt,ts:r.ts,tipo:r.tipo}));return[...loc,...rem]}
+function countRec(p,i){return p.rec+txtUser(i).length+(REMOTE_REC[p.num]||[]).length}
+function countApo(p,i){return elogUser(i).length+(REMOTE_APO[p.num]||[]).length}
+function idade(iso){if(!iso)return null;const n=new Date(iso);const h=new Date();let a=h.getFullYear()-n.getFullYear();const m=h.getMonth()-n.getMonth();if(m<0||(m===0&&h.getDate()<n.getDate()))a--;return a}
+function fmtData(iso){if(!iso)return null;return new Date(iso).toLocaleDateString('pt-BR')}
+async function preencheDetalhe(i){const p=POL[i];const det={props:[],votos:[]};
+if(p.cargo==='Deputado Federal'){
+ const CB=(function(){if(!BACKEND_OK)return null;const h=location.hostname;if(h==='localhost'||h==='127.0.0.1'||/railway\.app$/.test(h))return '';return API_BASE;})();const CA=CB!=null?CB+'/api/camara/':'https://dadosabertos.camara.leg.br/api/v2/';
+ try{const r=await fetch(CA+'deputados/'+p.num);const j=await r.json();const d=j.dados||{};
+  if(d.dataNascimento){det.idade=idade(d.dataNascimento);det.nasc=fmtData(d.dataNascimento)}
+  if(d.escolaridade)det.escolaridade=d.escolaridade;if(d.nomeCivil)det.nomeCivil=d.nomeCivil;
+  if(d.municipioNascimento)det.munic=(d.municipioNascimento||'')+(d.ufNascimento?'/'+d.ufNascimento:'');
+  const us=d.ultimoStatus||{};if(us.idLegislatura)det.legislatura=us.idLegislatura;
+  det.situacao=us.situacao||'';det.descStatus=us.descricaoStatus||'';det.condicao=us.condicaoEleitoral||'';
+  det.redes=(us.redesSociais||[]).filter(Boolean);det.emailDep=us.email||'';
+  const gab=us.gabinete||d.gabinete;if(gab)det.gabinete=(gab.nome||'')+(gab.predio?' · '+gab.predio:'')+(gab.andar?' '+gab.andar:'')+(gab.sala?' '+gab.sala:'');
+  if(gab)det.contato=[gab.telefone,gab.email].filter(Boolean).join(' · ');}catch(e){}
+ try{const ex=await Promise.all([fetch(CA+'deputados/'+p.num+'/orgaos?itens=20').then(y=>y.json()).catch(()=>({dados:[]})),fetch(CA+'deputados/'+p.num+'/frentes').then(y=>y.json()).catch(()=>({dados:[]})),fetch(CA+'deputados/'+p.num+'/ocupacoes').then(y=>y.json()).catch(()=>({dados:[]})),fetch(CA+'deputados/'+p.num+'/historico?itens=8').then(y=>y.json()).catch(()=>({dados:[]}))]);
+  det.orgaos=(ex[0].dados||[]).map(o=>({n:o.nomeOrgao||'',s:o.siglaOrgao||'',c:o.cargo||'',t:o.dataInicio?fmtData(o.dataInicio):''})).filter(o=>o.n);
+  det.frentes=(ex[1].dados||[]).map(f=>f.titulo||'').filter(Boolean);
+  det.ocup=(ex[2].dados||[]).filter(o=>o.titulo).map(o=>o.titulo+(o.entidade?' — '+o.entidade:'')+(o.anoInicio?' ('+o.anoInicio+')':''));
+  det.hist=(ex[3].dados||[]).map(x2=>({d:x2.dataHora?fmtData(x2.dataHora):'',t:x2.descricaoStatus||x2.situacao||x2.texto||''})).filter(x2=>x2.t).slice(0,6);
+ }catch(e){det.orgaos=det.frentes=[];det.ocup=det.hist=[];}
+ try{const r=await fetch(CA+'proposicoes?idDeputadoAutor='+p.num+'&itens=8&ordem=DESC&ordenarPor=id');const j=await r.json();det.props=(j.dados||[]).map(x=>({t:(x.siglaTipo||'')+' '+(x.numero||'')+'/'+(x.ano||''),e:(x.ementa||x.titulo||'').slice(0,110)}));}catch(e){}
+ DET[i]=det;const rl0=document.getElementById('real-'+i);if(rl0)rl0.innerHTML=realHTML(i);
+ try{/* votações nominais: últimas votações do Plenário + voto do deputado em cada uma (cache compartilhado entre fichas) */
+  const now=Date.now();if(now-VOT_CACHE.ts>600000){const vr=await fetch(CA+'votacoes?itens=150&ordem=DESC&ordenarPor=dataHoraRegistro');VOT_CACHE.list=((await vr.json()).dados||[]).filter(v=>v.siglaOrgao==='PLEN');VOT_CACHE.ts=now;}
+  let probed=0;
+  for(const v of VOT_CACHE.list){if(det.votos.length>=8||probed>=45)break;
+   if(!Object.prototype.hasOwnProperty.call(VOTOS_BY_ID,v.id)){probed++;try{const r2=await fetch(CA+'votacoes/'+v.id+'/votos');VOTOS_BY_ID[v.id]=(await r2.json()).dados||[];}catch(e2){}}
+   const arr=VOTOS_BY_ID[v.id]||[];
+   const mine=arr.find(y=>y.deputado_&&String(y.deputado_.id)===String(p.num));
+   if(mine){const pr=v.proposicaoObjeto;const dt=v.data||v.dataHoraRegistro||'';const dfmt=dt?fmtData(String(dt).slice(0,10)):'';
+    det.votos.push({t:pr&&pr.siglaTipo?((pr.siglaTipo||'')+' '+(pr.numero||'')+'/'+(pr.ano||'')):'Votação PLEN',e:(v.descricao||'').slice(0,110),v:mine.tipoVoto||'',d:dfmt,vid:v.id,desc:v.descricao||''});
+    const rl2=document.getElementById('real-'+i);if(rl2)rl2.innerHTML=realHTML(i);}}
+  det.votosFim=true;const rl3=document.getElementById('real-'+i);if(rl3)rl3.innerHTML=realHTML(i);
+ }catch(e){det.votosFim=true;}
+}else if(/^Senador/.test(p.cargo)){
+ try{const r=await fetch('https://legis.senado.leg.br/dadosabertos/senador/'+p.num+'/votacoes.json',{headers:{Accept:'application/json'}});const j=await r.json();
+  const arr=[].concat((((j.VotacaoParlamentar||{}).Parlamentar||{}).Votacoes||{}).Votacao||[]);
+  det.votosHist=arr;det.votos=arr.slice(0,8).map(v=>{const s=v.SessaoPlenaria||{};const m=v.Materia||{};
+   const t=m.DescricaoIdentificacao||((m.Sigla||'')+' '+(m.Numero||'')+'/'+(m.Ano||''))||((v.DescricaoVotacao||'').slice(0,60))||'Votação SF';
+   return {t:t,e:((v.DescricaoVotacao||'')||(m.Ementa||'')).slice(0,110),v:v.SiglaDescricaoVoto||'',d:s.DataSessao?fmtData(s.DataSessao):''};});
+  det.votosFim=true;const rl4=document.getElementById('real-'+i);if(rl4)rl4.innerHTML=realHTML(i);
+ }catch(e){det.votosFim=true;}
+}
+DET[i]=det;const rl=document.getElementById('real-'+i);if(rl)rl.innerHTML=realHTML(i);const fsEl=document.getElementById('fstats-'+i);if(fsEl)fsEl.innerHTML=fstatsHTML(det,p)}
+function realHTML(i){const p=POL[i];const d=DET[i]||{props:[],votos:[]};
+let h=`<a href="pages/congresso.html?dep=${encodeURIComponent(p.nome)}" style="text-decoration:none;display:inline-block;padding:6px 10px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);border-radius:8px;margin:4px 0" data-tip="Abre a página do Congresso já filtrada nas PLs deste(a) parlamentar"><h4 style="color:var(--gold);font-size:13px;cursor:pointer;margin:0">📚 Projetos de Leis (PLs) apresentados (${d.props.length?d.props.length:'…'}) →</h4></a>`;
+h+=`<p class="muted" style="margin-top:6px">Clique pra ver as PLs e como os partidos votaram. <b>A lista completa fica na página do Congresso.</b></p>`;
+h+=`<h4 style="color:var(--blueL);font-size:12px;margin-top:8px">🗳️ Como votou (últimas votações)</h4>`;
+h+=votosHTML(d,p,i);
+return h}
+function votoBadge(v){const s=(v||'').toLowerCase();if(s==='sim')return '<span class="badge ok">Sim</span>';if(s==='não'||s==='nao')return '<span class="badge" style="color:var(--red);border-color:rgba(231,76,60,.45)">Não</span>';return '<span class="badge">'+(v||'—')+'</span>'}
+function votosHTML(d,p,i){const hist=d.votosHist||[];const limite=d.votosMostrados||50;const vs=(d.votosTodas&&hist.length)?hist.slice(0,limite):(d.votos||[]);let h='';
+ if(vs.length)h+=vs.map((x,ix)=>{const click=(p&&p.cargo==='Deputado Federal'&&x.vid)?` onclick="abrirVotacao('${x.vid}',${i})" style="cursor:pointer" title="Clique para ver como TODOS votaram"`:'';
+  return `<div class="quote info"${click}><span style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${votoBadge(x.v)}<b>${x.t||'Votação'}</b></span>${x.d?`<small class="muted" style="flex:none">${x.d}</small>`:''}</span>${x.e?`<div style="margin-top:3px">${x.e}</div>`:''}</div>`}).join('');
+ else{if(p&&p.cargo==='Deputado Federal')h+=`<p class="muted">${d.votosFim?'Nenhuma votação nominal do deputado nas últimas votações do Plenário.':'Carregando votações nominais…'}</p>`;
+  else if(p&&/^Senador/.test(p.cargo))h+=`<p class="muted">${d.votosFim?'Votações nominais do senador indisponíveis agora (portal do Senado no fim da página).':'Carregando votações nominais…'}</p>`;
+  else h+='<p class="muted">Votações nominais no link oficial (fim da página).</p>';}
+ if(hist.length>8&&i!=null){
+  if(d.votosTodas){if(hist.length>limite)h+=`<div id="votos-more-${i}" style="margin-top:6px"><button class="btn sm" onclick="carregaMaisVotos(${i})">Carregar mais (restam ${hist.length-limite})</button></div>`;}
+  else h+=`<div style="margin-top:6px"><button class="btn sm" onclick="verTodas(${i})">Ver todas (${hist.length})</button></div>`;}
+ return h}
+let VOTOS_OBS=null;
+function setupVotosObserver(i){if(VOTOS_OBS){VOTOS_OBS.disconnect();VOTOS_OBS=null}const m=document.getElementById('votos-more-'+i);if(!m||!('IntersectionObserver'in window))return;VOTOS_OBS=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)carregaMaisVotos(i)})},{rootMargin:'250px'});VOTOS_OBS.observe(m)}
+function renderVotosBloco(i){const rl=document.getElementById('real-'+i);if(rl)rl.innerHTML=realHTML(i);const md=document.getElementById('mDados');if(md&&md.classList.contains('open'))abrirDados(i);setupVotosObserver(i)}
+function abreModalVotos(html){document.getElementById('votosBody').innerHTML=html;document.getElementById('mVotos').classList.add('open')}
+function camaraBase(){if(BACKEND_OK&&(location.hostname==='localhost'||location.hostname==='127.0.0.1'||/railway\.app$/.test(location.hostname)))return '';return API_BASE||'';}
+async function abrirVotacao(vid,tituloPol){
+  abreModalVotos('<p class="muted">Carregando votação…</p>');
+  let votos=VOTOS_BY_ID[vid];
+  if(!votos){try{const r=await fetch(camaraBase()+'/api/camara/votacoes/'+vid+'/votos');votos=(await r.json()).dados||[];VOTOS_BY_ID[vid]=votos;}catch(e){votos=null;}}
+  if(!votos)return abreModalVotos('<p class="muted">Não foi possível carregar os votos desta votação.</p>');
+  const placar={};votos.forEach(v=>{const t=v.tipoVoto||'Sem registro';placar[t]=(placar[t]||0)+1;});
+  const ord=['Sim','Não','Abstenção','Obstrução'];const chips=ord.filter(t=>placar[t]).map(t=>`<span class="badge ${t==='Sim'?'ok':''}" style="${t==='Não'?'color:var(--red);border-color:rgba(231,76,60,.45)':''}">${t}: ${placar[t]}</span>`).join(' ');
+  const outros=Object.keys(placar).filter(t=>ord.indexOf(t)<0&&t!=='Sem registro');
+  const partidos=[...new Set(votos.map(v=>(v.deputado_&&v.deputado_.siglaPartido)||'—'))].sort();
+  window._VOT={vid:vid,votos:votos};
+  abreModalVotos(`<h3 style="margin-bottom:6px">🗳️ Quem votou como</h3>
+    <p class="muted" style="margin-bottom:8px">Votação <b>${vid}</b> — Plenário da Câmara${tituloPol?' · '+tituloPol:''}</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${chips}${outros.map(t=>`<span class="badge">${t}: ${placar[t]}</span>`).join(' ')}<span class="badge">Registrados: ${votos.length}</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <input id="vot-busca" placeholder="🔎 buscar nome…" oninput="renderListaVotos()" style="flex:1;min-width:140px"/>
+      <select id="vot-part" onchange="renderListaVotos()" style="min-width:120px"><option value="">Todos os partidos</option>${partidos.map(p2=>`<option>${p2}</option>`).join('')}</select>
+    </div>
+    <div id="vot-lista"></div>`);
+  renderListaVotos();
+}
+function renderListaVotos(){const w=window._VOT;if(!w)return;const q=(($('#vot-busca')&&$('#vot-busca').value)||'').toLowerCase();const pt=$('#vot-part')?$('#vot-part').value:'';
+  const rows=w.votos.filter(v=>{const d=v.deputado_||{};const nm=(d.nome||'').toLowerCase();const sp=d.siglaPartido||'—';return (!q||nm.includes(q))&&(!pt||sp===pt);}).sort((a,b)=>(a.deputado_.nome||'').localeCompare(b.deputado_.nome||''));
+  $('#vot-lista').innerHTML=(rows.length?rows.map(v=>{const d=v.deputado_||{};
+    return `<div class="quote info"><span style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>${votoBadge(v.tipoVoto)}<b>${d.nome||'—'}</b> <small class="muted">${d.siglaPartido||''}·${d.siglaUf||''}</small></span></span></div>`;}).join(''):'<p class="muted">Nenhum parlamentar encontrado com esse filtro.</p>');
+}
+async function abrirVotacoesPL(pid,sigla){
+  abreModalVotos('<p class="muted">Carregando votações do projeto…</p>');
+  try{const r=await fetch(camaraBase()+'/api/camara/proposicoes/'+pid+'/votacoes');const j=await r.json();const vs=j.dados||[];
+    if(!vs.length)return abreModalVotos(`<h3>🗳️ ${sigla||'Projeto'}</h3><p class="muted">Nenhuma votação nominal registrada para este projeto.</p>`);
+    abreModalVotos(`<h3 style="margin-bottom:6px">🗳️ Votações — ${sigla||'Projeto'}</h3>
+      <p class="muted" style="margin-bottom:8px">${vs.length} votação(ões) registrada(s). Clique para ver como TODOS votaram:</p>
+      ${vs.map(v=>`<div class="quote info" onclick="abrirVotacao('${v.id}','${(sigla||'').replace(/'/g,'')}')" style="cursor:pointer"><b>${fmtData(v.data)}</b> — ${(v.descricao||'').slice(0,120)}…<br><small class="muted">votação ${v.id}</small></div>`).join('')}`);
+  }catch(e){abreModalVotos('<p class="muted">Falha ao carregar votações.</p>')}
+}
+function verTodas(i){if(!DET[i])return;DET[i].votosTodas=!DET[i].votosTodas;DET[i].votosMostrados=0;renderVotosBloco(i)}
+function carregaMaisVotos(i){if(!DET[i])return;DET[i].votosMostrados=(DET[i].votosMostrados||50)+50;renderVotosBloco(i)}
+function fstatsHTML(d,p){const rank=TERM_RANK[(p.cargo==='Deputado Federal'?'camara-':'senado-')+p.num];
+  const st=[['Idade',d.idade||'…'],['Escolaridade',(d.escolaridade||'…').slice(0,14)],['Projetos',(d.props||[]).length||'…'],['Votações',(d.votos||[]).length],['Comissões',(d.orgaos||[]).length||'…'],['Frentes',(d.frentes||[]).length||'…'],['Ranking',rank?'#'+rank:'—'],['Situação',d.situacao||'—']];
+  return st.map(x=>`<div class="stat"><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}
+function fichaHTML(p,i){const d=DET[i];
+  const rec=recAll(p,i);const apo=apoAll(p,i);const resp=respList(p);
+  const tab=FTAB[i]||'rec';let lista='';
+  if(tab=='rec')lista=rec.map(x=>`<div class="quote"><span style="display:flex;justify-content:space-between;gap:8px"><b style="color:var(--red)">🔴 Reclamação</b><small class="muted" style="flex:none">${fmtTs(x.ts)}</small></span>"${x.txt}"</div>`).join('')||'<p class="muted">Nenhuma reclamação ainda.</p>';
+  if(tab=='apo')lista=apo.map(x=>`<div class="quote ok"><span style="display:flex;justify-content:space-between;gap:8px"><b style="color:var(--green)">🟢 Apoio</b><small class="muted" style="flex:none">${fmtTs(x.ts)}</small></span>"${x.txt}"</div>`).join('')||'<p class="muted">Nenhum apoio ainda.</p>';
+  if(tab=='resp')lista=resp.map(x=>`<div class="quote ok"><span style="display:flex;justify-content:space-between;gap:8px"><b style="color:var(--blueL)">🗣️ Resposta</b></span>"${x}"</div>`).join('')||'<p class="muted">Sem respostas (só verificado responde).</p>';
+  return `<div class="card">
+  <button class="pin ${PINS.includes(i)?'on':''}" data-tip="Fixar para comparar lado a lado" onclick="togglePin(${i})">📌</button>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${av(p,'avXL')}<div style="flex:1"><b style="font-size:17px">${p.nome}</b><div class="muted">${p.partido} · ${p.uf} · ${p.cargo} · nº ${p.num}</div>
+  <div id="fstats-${i}" class="stats" style="grid-template-columns:repeat(4,1fr);margin:10px 0 0"><div class="stat"><small>…</small><b>—</b></div></div>
+  <div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap"><span class="badge blue">#${p.num}</span><span class="badge ${p.selo?'ok':''}" data-tip="${p.selo?'Identidade confirmada.':'Ainda não verificado.'}">${p.selo?'Verificado':'Sem selo'}</span></div></div></div>
+  <div class="stats" style="grid-template-columns:repeat(3,1fr);margin:10px 0">
+    <div class="stat"><small>🔴 Reclamações</small><b style="color:var(--red)">${rec.length}</b></div>
+    <div class="stat"><small>🟢 Apoios</small><b style="color:var(--green)">${apo.length}</b></div>
+    <div class="stat"><small>🗣️ Respostas</small><b style="color:var(--blueL)">${resp.length}</b></div>
+  </div>
+  <div class="tabs"><button class="${tab=='rec'?'on':''}" onclick="FTAB[${i}]='rec';renderRad()">🔴 Reclamações (${rec.length})</button><button class="${tab=='resp'?'on':''}" onclick="FTAB[${i}]='resp';renderRad()">🗣️ Respostas (${resp.length})</button><button class="${tab=='apo'?'on':''}" onclick="FTAB[${i}]='apo';renderRad()">🟢 Apoios (${apo.length})</button></div>
+  <div>${lista}</div>
+  <div id="real-${i}" style="margin-top:10px"></div>
+  <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><button class="btn red sm" onclick="abrirForm(${i},'rec')"><i class="fa-solid fa-bullhorn"></i> Fazer reclamação</button><button class="btn green sm" onclick="abrirForm(${i},'apo')"><i class="fa-solid fa-thumbs-up"></i> Dar apoio</button><button class="btn sm" onclick="abrirDados(${i})"><i class="fa-solid fa-magnifying-glass-chart"></i> Dados públicos</button><button class="btn sm" onclick="souPolitico(${i})"><i class="fa-solid fa-fingerprint"></i> É você? Verificar</button></div>
+  </div>`}
+function abrirDados(i){const p=POL[i];const d=DET[i]||{};
+const rows=[['Nome civil',d.nomeCivil],['Nascimento',d.nasc],['Idade',d.idade],['Município/UF nasc.',d.munic],['Escolaridade',d.escolaridade],['Partido/UF',p.partido+' · '+p.uf],['Cargo',p.cargo],['Nº eleitoral',p.num],['Legislatura',d.legislatura],['Gabinete',d.gabinete],['Contato gabinete',d.contato],['Projetos apresentados',(d.props||[]).length],['Últimas votações',(d.votosHist||d.votos||[]).length],['Patrimônio declarado','ver TSE (fim da pág.)'],['Processos/condenações','ver CNJ (fim da pág.)']];
+$('#dadosBody').innerHTML=(function(){const esc=v=>(v!=null&&v!=='')?v:null;const row=(l,v)=>esc(v)?`<div class="stat"><small>${l}</small><b style="font-size:13px">${v}</b></div>`:'';
+  const grp=(t,rowsHtml)=>rowsHtml?`<h4 style="color:var(--gold);font-size:12px;margin:14px 0 4px">${t}</h4><div class="stats" style="grid-template-columns:1fr 1fr">${rowsHtml}</div>`:'';
+  const org=(d.orgaos||[]).map(o=>`<div class="quote info" style="margin-top:4px"><b>${o.n}</b>${o.c?' — <b style="color:var(--gold)">'+o.c+'</b>':''}${o.t?' <small class="muted">desde '+o.t+'</small>':''}</div>`).join('');
+  const fre=(d.frentes||[]).length?(d.frentes||[]).slice(0,6).map(f=>`<div class="quote ok" style="margin-top:4px">🤝 ${f}</div>`).join('')+((d.frentes||[]).length>6?`<p class="muted" style="margin:4px 0 0">+ ${d.frentes.length-6} outras frentes</p>`:''):'';
+  const oc=(d.ocup||[]).map(o=>`<div class="stat"><small>Ocupação</small><b style="font-size:13px">${o}</b></div>`).join('');
+  const hi=(d.hist||[]).map(x=>`<div class="quote info" style="margin-top:4px">${x.d?`<small class="muted">${x.d}</small> — `:''}${x.t}</div>`).join('');
+  const redes=(d.redes||[]).map(u=>`<a href="${u}" target="_blank" style="color:var(--blueL);word-break:break-all">${u.replace(/^https?:\/\/(www\.)?/,'')}</a>`).join(' · ');
+  return `<h3 style="margin-bottom:6px">🔎 Dados públicos — ${p.nome}</h3>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${d.situacao?`<span class="badge ok">${d.situacao}</span>`:''}${d.condicao?`<span class="badge">${d.condicao}</span>`:''}<span class="badge blue">${p.partido} · ${p.uf}</span></div>
+  ${grp('👤 Pessoal',row('Nome civil',d.nomeCivil)+row('Nascimento',d.nasc)+row('Idade',d.idade?d.idade+' anos':null)+row('Município/UF nasc.',d.munic)+row('Escolaridade',d.escolaridade)+oc)}
+  ${grp('🏛️ Mandato',row('Partido/UF',p.partido+' · '+p.uf)+row('Cargo',p.cargo)+row('Nº eleitoral',p.num)+row('Legislatura',d.legislatura?d.legislatura+'ª':null)+row('Situação',d.situacao)+row('Gabinete',d.gabinete)+row('Contato',d.contato)+row('Descrição do status',d.descStatus))}
+  ${(org||fre||hi)?grp('🧩 Atuação institucional',(org?`<div class="stat"><small>Comissões/Órgãos</small></div>${org}`:'')+(fre?`<div class="stat"><small>Frentes parlamentares (${d.frentes.length})</small></div>${fre}`:'')+(hi?`<div class="stat"><small>Histórico recente</small></div>${hi}`:'')):''}
+  ${grp('🌐 Presença digital',redes?`<div class="stat"><small>Redes sociais (Câmara)</small><b style="font-size:13px">${redes}</b></div>`:row('Redes sociais','não informadas à Câmara'))}
+  ${grp('📊 Atuação em números',row('Projetos apresentados',(d.props||[]).length)+row('Votações registradas',(d.votosHist||d.votos||[]).length)+row('Despesas de cota','consultar portal da Câmara'))}
+  ${grp('⚖️ Transparência externa',row('Patrimônio declarado','ver TSE (fim da pág.)')+row('Processos/condenações','ver CNJ (fim da pág.)'))}
+  <h4 style="color:var(--blueL);font-size:12px;margin:12px 0 4px">🗳️ Últimas votações nominais</h4>
+  ${votosHTML(d,p,i)}
+  <p class="muted" style="margin-top:10px">Fontes oficiais no final da página do Radar.</p>`})();
+document.getElementById('mDados').classList.add('open');setupVotosObserver(i)}
+function renderRad(){if(!ready)return;const q=($('#cbusca').value||'').toLowerCase();const uf=$('#fUF').value;const pt=$('#fPartido').value;const cg=$('#fCargo').value;const ord=$('#fOrdem').value;
+	const temFiltro=q||uf||pt||cg;
+	if(!temFiltro){$('#cCount').textContent='';$('#radList').innerHTML=`<div class="card" style="grid-column:1/-1;text-align:center;padding:40px"><i class="fa-solid fa-magnifying-glass" style="font-size:30px;color:var(--gold)"></i><h3 style="margin:12px 0 6px">Pesquise um político</h3><p class="muted">Digite nome, número, estado, partido ou área pra abrir a ficha completa com dados reais.</p></div>`;return}
+	let l=POL.filter(p=>(!q||p.nome.toLowerCase().includes(q)||p.partido.toLowerCase().includes(q)||p.uf.toLowerCase().includes(q)||String(p.num).includes(q))&&(!uf||p.uf===uf)&&(!pt||p.partido===pt)&&(!cg||p.cargo===cg));
+	if(ord==='rec')l.sort((a,b)=>countRec(b,POL.indexOf(b))-countRec(a,POL.indexOf(a)));
+	if(ord==='props')l.sort((a,b)=>((DET[POL.indexOf(b)]||{}).props||[]).length-((DET[POL.indexOf(a)]||{}).props||[]).length);
+	if(ord==='apo')l.sort((a,b)=>countApo(b,POL.indexOf(b))-countApo(a,POL.indexOf(a)));
+	$('#cCount').textContent=l.length+' político(s) encontrado(s)';
+	const top=l.slice(0,6);
+	$('#radList').innerHTML=top.map(p=>fichaHTML(p,POL.indexOf(p))).join('')||'<p class="muted">Nada encontrado.</p>';
+	top.forEach(p=>{const i=POL.indexOf(p);if(!DET[i])preencheDetalhe(i)})}
+function togglePin(i){if(PINS.includes(i))PINS=PINS.filter(x=>x!==i);else{if(PINS.length>=5)return toast('Máximo de 5 — solte um pra trocar.');PINS.push(i)}
+$('#cmpcount').textContent=PINS.length+' fixados';$('#cmpbar').classList.toggle('on',PINS.length>0);renderRad()}
+function limparPin(){PINS=[];$('#cmpbar').classList.remove('on');renderRad()}
+function abrirCmp(){if(PINS.length<2)return toast('Fixe pelo menos 2.');
+  $('#cmpBody').innerHTML=PINS.map(i=>{const p=POL[i];const d=DET[i]||{};const rec=countRec(p,i);const apo=countApo(p,i);const resp=respList(p).length;
+  return `<div class="card" style="margin:0">${av(p)}<div style="margin:10px 0"><b>${p.nome}</b><div class="muted">${p.partido} · ${p.uf} · ${p.cargo}</div></div>
+  <div class="stats" style="grid-template-columns:1fr 1fr;margin:0">
+    <div class="stat"><small>🔴 Reclamações</small><b style="color:var(--red)">${rec}</b></div>
+    <div class="stat"><small>🟢 Apoios</small><b style="color:var(--green)">${apo}</b></div>
+    <div class="stat"><small>🗣️ Respostas</small><b style="color:var(--blueL)">${resp}</b></div>
+    <a href="pages/congresso.html?dep=${encodeURIComponent(p.nome)}" class="stat" style="text-decoration:none;display:block" data-tip="Abre a página do Congresso já filtrada nas PLs deste(a) parlamentar"><small>📚 Projetos</small><b style="color:var(--gold)">${(d.props||[]).length} →</b></a>
+  </div>
+  <div class="badge ${p.selo?'ok':''}">${p.selo?'Verificado':'Sem selo'}</div></div>`}).join('');
+  document.getElementById('mCmp').classList.add('open')}
+function abrirForm(i,t){FORM_T=t;$('#fTitle').textContent=t=='rec'?'📝 Fazer reclamação':'👍 Dar apoio';
+if(!ready)return toast('Aguarde carregar os políticos.');
+fill('fPol',POL.map(p=>p.nome),'Selecione…');
+const sel=$('#fPol');if(i>=0)sel.selectedIndex=i;
+$('#fTitulo').value='';$('#fDesc').value='';$('#fFile').value='';document.getElementById('mForm').classList.add('open')}
+
+/* Gera sessionToken simples para autenticação de reclamações/apoios */
+function generateSessionToken(){
+  const stored = LS.get('mb_session_token', null);
+  if(stored) return stored.token;
+  const token = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
+  LS.set('mb_session_token', {token, created: Date.now()});
+  return token;
+}
+
+async function enviaForm(){const idx=$('#fPol').selectedIndex;const ti=($('#fTitulo').value||'').trim();const de=($('#fDesc').value||'').trim();
+if(idx<0)return toast('Selecione o político.');if(ti.length<5||de.length<10)return toast('Preencha título (5+) e descrição (10+).');
+const files=[...($('#fFile').files||[])].map(f=>f.name);
+const p=POL[idx];
+if(BACKEND_OK){
+  try{
+    const r=await fetch(API_BASE+'/api/reclamacoes/public',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({politicianId:(p.cargo==='Deputado Federal'?'camara-':'senado-')+p.num, tipo:FORM_T, titulo:ti, descricao:de, anexos:files})
+    });
+    if(r.ok){
+      toast(FORM_T=='rec'?'Reclamação registrada no servidor. 📣':'Apoio registrado no servidor. 👍');
+      fechar('mForm');carregaRemoteRec();renderRad();return
+    } else if(r.status===404){
+      /* Backend desatualizado — rota /api/reclamacoes/public não existe na produção ainda */
+      console.warn('⚠️ Endpoint /api/reclamacoes/public não encontrado (404). Backend precisa ser atualizado. Salvando localmente.');
+      toast('Servidor em atualização. Sua ' + (FORM_T=='rec'?'reclamação':'apoio') + ' foi salva localmente e será sincronizada depois. 📣');
+    } else {
+      const err = await r.json().catch(()=>({}));
+      toast('Erro ao enviar: ' + (err.error || r.status));
+    }
+  }catch(e){console.warn('Erro de conexão:', e.message);toast('Erro de conexão. Salvando localmente.')}}
+const txt=ti+' — '+de+(files.length?` 📎 ${files.join(', ')}`:'');
+if(FORM_T=='rec'){const m=LS.get('mb_rec_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('mb_rec_txt',m);if(!toast._silent)toast('Reclamação registrada localmente. 📣')}
+else{const m=LS.get('mb_elog_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('mb_elog_txt',m);if(!toast._silent)toast('Apoio registrado localmente. 👍')}
+fechar('mForm');renderRad()}
+function abrirLogin(){document.getElementById('mLogin').classList.add('open')}
+function entrarCidadao(){SESS={nome:'Cidadão BR'};LS.set('mb_sess',SESS);fechar('mLogin');toast('Bem-vindo, cidadão! (simulado)')}
+let VERIF_PID='',VERIF_NOME='';
+function souPolitico(i){fechar('mLogin');
+ if(i!=null&&POL[i]){const p=POL[i];VERIF_PID=(p.cargo==='Deputado Federal'?'camara-':'senado-')+p.num;VERIF_NOME=p.nome;}
+ else{VERIF_PID='';VERIF_NOME='';go('radar');toast('Busque seu perfil no Radar e use “É você? Verificar”.');return}
+ const al=$('#verifAlvo');if(al)al.textContent='Perfil: '+VERIF_NOME;
+ const dv=$('#verifDev');if(dv){dv.style.display='none';dv.innerHTML='';}
+ $('#verifPasso1').style.display='block';$('#verifPasso2').style.display='none';document.getElementById('mVerif').classList.add('open')}
+async function solicitarCodigo(){const em=($('#vEmail').value||'').trim();if(em.length<5)return toast('Informe e-mail institucional ou registro TSE.');
+if(!VERIF_PID)return toast('Abra seu perfil no Radar e use “É você? Verificar”.');
+try{const r=await fetch(API_BASE+'/api/verificacao/solicitar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({politicianId:VERIF_PID,email:em})});
+const data=await r.json().catch(()=>({}));
+if(r.ok&&data.ok){$('#verifPasso1').style.display='none';$('#verifPasso2').style.display='block';
+ const dv=$('#verifDev');if(dv&&data.devConfirmUrl){dv.style.display='block';dv.innerHTML='MODO DEV (SMTP não configurado) — use o link de confirmação: <a style="color:var(--blueL)" href="'+data.devConfirmUrl+'">confirmar agora</a> ou cole o token abaixo.';}
+ toast(data.message||'Link de confirmação enviado!')}
+else toast(data.error||'Falha ao solicitar verificação.')}catch(e){toast('Backend indisponível para verificação.')}}
+
+async function confirmarCodigo(){const em=($('#vEmail').value||'').trim();const cod=($('#vCodigo').value||'').trim();
+try{
+  const r=await fetch(API_BASE+'/api/verificacao/confirmar?token='+encodeURIComponent(cod));
+  const data = await r.json().catch(()=>({}));
+  if(r.ok && data.ok){
+    if(SESS){SESS.verified=true;LS.set('mb_sess',SESS);}
+    const vi=POL.findIndex(x=>x&&(VERIF_PID==='camara-'+x.num||VERIF_PID==='senado-'+x.num));if(vi>=0)POL[vi].selo=true;
+    fechar('mVerif');toast('✅ Selo de verificado concedido!');renderRad();
+  } else {
+    toast(data.error || 'Token inválido ou expirado.');
+  }
+}catch(e){toast('Verificação real ativa na versão online completa.')}}
+let TERM_RANK={};
+/* Bloco morto removido: a lista de PLs agora vive em pages/congresso.html.
+   Antes carregaPLS() buscava na Câmara e, sem conexão, injetava 2 PLs
+   sintéticos (PL 5183/2026 "Lei Rouanet", PL 5182/2026 "Rodovias") — dados
+   fake que violam a regra "tudo real". O renderPLS() ainda quebrava com
+   TypeError porque #plBusca/#plsList não existem mais no DOM da home. */
+const DEMO_BAL={'Presidente':'Maria Santos (PT 13)','Governador':'Roberto Lima (MDB 15)','Senador':'BRANCO'};
+function usarDemo(){renderCedula('35001500100212345789',DEMO_BAL)}
+function conferir(){const raw=($('#chk').value||'').replace(/\D/g,'');if(raw.length!==20){toast('Código inválido (20 dígitos).');return}
+/* FIX: o app salva o código em mb_eleicao_codigo (com traços) e os votos em mb_eleicao_votos —
+   o site antes só lia mb_codigo, então nunca localizava o voto feito no app */
+const codeApp=String(LS.get('mb_eleicao_codigo','')||'').replace(/\D/g,'');
+if(codeApp&&codeApp===raw){
+  const votos=LS.get('mb_eleicao_votos',{})||{};const bal={};
+  Object.keys(votos).forEach(c=>{const v=votos[c]||{};
+    bal[c]=v.tipo==='branco'?'BRANCO':v.tipo==='nulo'?('NULO ('+(v.numero||'')+')'):((v.nome||'—')+(v.partido?' ('+v.partido+' '+v.numero+')':''));});
+  renderCedula(raw,bal);return}
+const st=LS.get('mb_codigo',null);const bal=(st&&st.code===raw)?st.ballot:DEMO_BAL;renderCedula(raw,bal)}
+function renderCedula(code,bal){$('#chkRes').innerHTML=`<div class="card" style="margin-top:14px"><b style="color:var(--green)"><i class="fa-solid fa-circle-check"></i> Voto localizado</b>
+<div style="margin-top:10px">${Object.keys(bal).map(c=>`<div class="rank"><div><b style="font-size:13px">${c}</b><div class="muted">${bal[c]}</div></div><span class="badge ok">ativo</span></div>`).join('')}</div></div>`}
+const REV=[{n:'João Lima',p:'PL',uf:'RJ',el:1510,rev:1180},{n:'Carlos Rocha',p:'PSD',uf:'MG',el:980,rev:610},{n:'Pedro Alves',p:'PP',uf:'BA',el:1200,rev:700},{n:'Ana Souza',p:'PT',uf:'SP',el:800,rev:430},{n:'Rui Costa',p:'MDB',uf:'RS',el:900,rev:470},{n:'Tereza Lemos',p:'UNIÃO',uf:'CE',el:1100,rev:540},{n:'Beto Farias',p:'PSB',uf:'PE',el:850,rev:400},{n:'Lúcia Prado',p:'PSDB',uf:'GO',el:950,rev:430},{n:'Nino Sales',p:'PTB',uf:'AM',el:700,rev:300},{n:'Dora Pires',p:'REDE',uf:'ES',el:760,rev:320}];
+function renderRevogados(){const q=($('#revBusca').value||'').toLowerCase();const l=REV.filter(p=>(p.n+' '+p.p+' '+p.uf).toLowerCase().includes(q)).sort((a,b)=>(b.rev/b.el)-(a.rev/a.el)).slice(0,10);
+$('#revList').innerHTML=l.map((p,i)=>{const pct=Math.round(p.rev/p.el*100);const falta=Math.max(0,Math.round(p.el*0.7)-p.rev);return `<div class="card"><div class="rank" style="border:none;padding:0;margin-bottom:8px"><div class="pos">${i+1}</div><div><b>${p.n}</b><div class="muted">${p.p} · ${p.uf}</div></div></div>
+<div class="muted">Elegeram: <b style="color:var(--ink)">${p.el}</b> · Revogados: <b style="color:var(--red)">${p.rev}</b></div>
+<div class="bar70"><i style="width:${Math.min(100,pct)}%;background:var(--red)"></i><span class="mk" style="left:70%"></span></div>
+<div class="muted">${pct}% dos 70% · ${falta>0?`faltam <b style="color:var(--gold)">${falta}</b>`:'<b style="color:var(--red)">atingiu 70% — cassação</b>'}</div></div>`}).join('')||'<p class="muted">Nada encontrado.</p>'}
+const FAQ=[['O que é simulação?','A votação/revogação não tem valor jurídico hoje. Notícias, políticos e PLs são reais.'],['Como revogo?','No site, com código + login, só após a posse.'],['Quem pode responder reclamações?','Só o político/candidato com identidade verificada (selo).'],['Posso anexar provas?','Sim — o formulário aceita anexos.'],['O que é a regra dos 70%?','Proposta: 70% dos votos que elegeram = cassação.']];
+$('#faqList').innerHTML=FAQ.map(f=>`<div class="card"><b>${f[0]}</b><p class="muted" style="margin:6px 0 0">${f[1]}</p></div>`).join('');
+let NUF_FILTRO='GERAL';
+let _newsRetry=0;
+window._NEWS=window._NEWS||[];
+async function news(){
+ /* 1) Snapshot embutido: renderiza na hora — o espaço nunca fica em branco */
+ try{
+  /* Snapshot local só sob http(s): Chromium bloqueia fetch() de file://. */
+  if(location.protocol!=='file:'){
+   const rs=await fetch('data/noticias.json');
+   if(rs.ok){
+    const d=await rs.json();
+    if(d.noticias&&d.noticias.length&&!window._NEWS.length){
+     window._NEWS=d.noticias;
+     nufContador();renderNews();
+     $('#nstatus').textContent='Última atualização: '+new Date(d.geradoEm).toLocaleString('pt-BR')+' — buscando ao vivo…';
+    }
+   }
+  }
+ }catch(e){}
+ /* 2) Ao vivo (backend) com até 3 tentativas; sucesso substitui o snapshot */
+ for(let tent=1;tent<=3;tent++){
+  try{
+   const j=await fetch(API_BASE+'/api/noticias').then(r=>r.json());
+   const it=(j.noticias||[]);
+   if(it.length){
+    window._NEWS=it;
+    nufContador();renderNews();
+    $('#nstatus').textContent='Atualizado em '+new Date(j.geradoEm).toLocaleTimeString('pt-BR')+' · fontes: '+((j.fontes&&j.fontes.length)?j.fontes.join(', '):'')+' · ao vivo';
+   }
+   _newsRetry=0;return;
+  }catch(e){
+   if(window._NEWS.length){$('#nstatus').textContent='Exibindo o último snapshot — atualização ao vivo indisponível neste momento.';return}
+   $('#nstatus').textContent='Backend acordando (plano gratuito) — tentativa '+tent+' de 3…';
+   await new Promise(r=>setTimeout(r,5000));
+  }
+ }
+ if(!window._NEWS.length){$('#nstatus').innerHTML='Não foi possível carregar as notícias. <button class=\"btn sm gold\" onclick=\"news()\">🔄 Tentar de novo</button>';}
+}
+const UFS_NOME={AC:'Acre',AL:'Alagoas',AP:'Amapá',AM:'Amazonas',BA:'Bahia',CE:'Ceará',DF:'Distrito Federal',ES:'Espírito Santo',GO:'Goiás',MA:'Maranhão',MT:'Mato Grosso',MS:'Mato Grosso do Sul',MG:'Minas Gerais',PA:'Pará',PB:'Paraíba',PR:'Paraná',PE:'Pernambuco',PI:'Piauí',RJ:'Rio de Janeiro',RN:'Rio Grande do Norte',RS:'Rio Grande do Sul',RO:'Rondônia',RR:'Roraima',SC:'Santa Catarina',SP:'São Paulo',SE:'Sergipe',TO:'Tocantins'};
+function nufContador(){const ns=window._NEWS||[];const ct={};ns.forEach(n=>{if(n.uf&&n.uf!=='BR')ct[n.uf]=(ct[n.uf]||0)+1});
+ const sel=document.getElementById('nf-uf');const atual=sel.value;
+ if(sel.options.length<2){Object.keys(UFS_NOME).forEach(uf=>{const o=document.createElement('option');o.value=uf;o.textContent=uf;sel.appendChild(o)})}
+ [...sel.options].forEach(o=>{if(o.value)o.textContent=o.value;});
+ sel.value=atual;
+ const n=NUF_FILTRO==='GERAL'?ns.length:(ns.filter(x=>x.uf===NUF_FILTRO).length);
+ const c=document.getElementById('nf-count');if(c)c.textContent=(NUF_FILTRO==='GERAL'?'Exibindo tudo':n+' matéria'+(n===1?'':'s'));}
+function renderNews(){const ns=window._NEWS||[];const lista=(NUF_FILTRO==='GERAL'?ns:ns.filter(n=>n.uf===NUF_FILTRO));
+ const dtRel=iso=>{if(!iso)return'';const d=(Date.now()-new Date(iso))/1000;if(d<3600)return Math.max(1,Math.floor(d/60))+' min atrás';if(d<86400)return Math.floor(d/3600)+' h atrás';return Math.floor(d/86400)+' d atrás'};
+ $('#homeNews').innerHTML=lista.length?lista.map(n=>`<article class="ncard-new">
+  <div class="nimg">${(n.img||n.thumb)?`<img src="${n.img||n.thumb}" alt="" loading="lazy" onerror="this.remove()">`:'<i class="fa-solid fa-landmark nph"></i>'}<span class="nfonte">✓ ${n.fonte}</span>${n.uf?`<span class="nufb">${n.uf==='BR'?'🇧🇷 Brasil':'📌 '+n.uf}</span>`:''}</div>
+  <div class="nbody"><h4>${n.t}</h4>${n.res?`<p>${n.res}</p>`:''}
+  <div class="nfoot"><span>${n.dt?dtRel(n.dt):''}</span><a href="${n.l}" target="_blank" rel="noopener">Ler na fonte →</a></div></div>
+ </article>`).join(''):`<p class="muted" style="padding:20px 4px">Nenhuma notícia ${NUF_FILTRO==='GERAL'?'':NUF_FILTRO==='BR'?'nacional':'de '+NUF_FILTRO} neste momento — as feeds locais atualizam a cada 10 min.</p>`;
+}
+function nufSet(v){NUF_FILTRO=v;const sel=document.getElementById('nf-uf'),g=document.getElementById('nf-geral');
+ if(v==='GERAL'){g.classList.remove('off');sel.classList.remove('on');sel.value=''}
+ else{g.classList.add('off');sel.classList.add('on');sel.value=v}
+ renderNews();nufContador();}
+function ncarScroll(dir){const c=document.getElementById('homeNews');if(c)c.scrollBy({left:dir*360,behavior:'smooth'})}
+async function newsOLD(){try{const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml'));const j=await r.json();const it=(j.items||[]).slice(0,2);
+$('#homeNews').innerHTML=it.map(n=>`<div class="ncard"><div class="th"><span class="cat">${(n.category||'Política').toString().slice(0,14)}</span><i class="fa-solid fa-layer-group"></i></div><div class="bd"><h4>${n.title}</h4><p>${(n.description||'').replace(/<[^>]+>/g,'').slice(0,140)}</p><div style="display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted)"><span class="seal">Fonte verificada</span><span>Agência Brasil</span><a href="${n.link}" target="_blank">Ler →</a></div></div></div>`).join('')}catch(e){$('#homeNews').innerHTML='<div class="ncard"><div class="th"><span class="cat">Política</span><i class="fa-solid fa-layer-group"></i></div><div class="bd"><h4>Brasil promete restaurar 163 mil km² de terras degradadas até 2030</h4><p>O Brasil apresentou as primeiras metas de Neutralidade da Degradação da Terra em evento internacional.</p><div style="display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted)"><span class="seal">Fonte verificada</span><span>Agência Brasil</span><a>Ler →</a></div></div></div>'}}
+try{carregaPol()}catch(e){console.error('carregaPol',e)}try{news()}catch(e){console.error('news',e)}try{carregaStats()}catch(e){console.error('carregaStats',e)}
+/* Fase 3 — SSE: inicia conexão após carregamento inicial */
+setTimeout(initSSE, 2000);
+</script>
+<div id="bannerProto" style="position:fixed;bottom:16px;left:16px;right:16px;max-width:560px;margin:0 auto;background:linear-gradient(135deg,#0d2242,#123059);border:1px solid var(--gold);border-radius:14px;padding:14px 16px;z-index:250;display:none;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.4)">
+<i class="fa-solid fa-circle-info" style="color:var(--gold);font-size:20px;flex:none"></i>
+<div style="flex:1;font-size:13px"><b style="color:var(--gold)">Protótipo demonstrativo</b><br><span class="muted">Votos e revogações aqui <b>não têm efeito jurídico</b>. A plataforma é cívica e independente. <a onclick="document.getElementById('mDisclaimer').classList.add('open');document.getElementById('bannerProto').style.display='none'">Leia o aviso completo →</a></span></div>
+<button class="btn sm" onclick="document.getElementById('bannerProto').style.display='none';localStorage.setItem('mb_aviso','1')">×</button>
+</div>
+<script>if(!localStorage.getItem('mb_aviso'))document.getElementById('bannerProto').style.display='flex'</script>
+
+<script>
+/* ===== 02 ACOMPANHAMENTO — donuts por cargo (dados REAIS da plataforma) ===== */
+(function(){
+  var DK_CARGOS=[
+    {id:'presidente',nome:'Presidente'},
+    {id:'governador',nome:'Governador'},
+    {id:'senador',nome:'Senador',votavel:true},
+    {id:'dep-federal',nome:'Deputado Federal',votavel:true},
+    {id:'dep-estadual',nome:'Deputado Estadual / Distrital'},
+    {id:'prefeito',nome:'Prefeito'},
+    {id:'vereador',nome:'Vereador'}
+  ];
+  var DK_CORES=['#2ECC71','#FFD700','#4a90d9','#ff7a6e'];
+  var COR_OUTROS='#a78bfa';
+  var DK_CIDADES={SP:['São Paulo','Campinas','Santos'],RJ:['Rio de Janeiro','Niterói'],MG:['Belo Horizonte','Uberlândia'],BA:['Salvador','Feira de Santana'],RS:['Porto Alegre','Caxias do Sul'],PR:['Curitiba','Londrina'],PE:['Recife','Olinda'],CE:['Fortaleza'],PA:['Belém'],SC:['Florianópolis','Joinville'],GO:['Goiânia'],MA:['São Luís']};
+  var DK_CACHE={};
+  var DK_TTL=60000;
+  var DK_SEQ=0;
+  var dkModo='uf';
+  function dkRecorte(){var uf=document.getElementById('dk-uf').value;return dkModo==='uf'?uf:(document.getElementById('dk-cidade').value||'Capital')}
+  function dkDonutSVG(parts){
+    var r=55,cx=70,cy=70,circ=2*Math.PI*r,off=0;
+    var segs=parts.map(function(c){
+      var len=Math.max(0,c.pct)/100*circ;
+      var s='<circle r="'+r+'" cx="'+cx+'" cy="'+cy+'" fill="none" stroke="'+c.cor+'" stroke-width="22" stroke-dasharray="'+len+' '+(circ-len)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 '+cx+' '+cy+')"/>';
+      off+=len;return s}).join('');
+    return '<svg class="dk-svg" viewBox="0 0 140 140" width="150" height="150"><circle r="'+r+'" cx="'+cx+'" cy="'+cy+'" fill="none" stroke="#1f2c45" stroke-width="22"/>'+segs+'</svg>';
+  }
+  function dkMini(){return '<span class="dk-mini"><button class="'+(dkModo==='uf'?'on':'')+'" onclick="dkSetModo(&quot;uf&quot;)" title="Recorte por estado">UF</button><button class="'+(dkModo==='cidade'?'on':'')+'" onclick="dkSetModo(&quot;cidade&quot;)" title="Recorte por cidade">Cidade</button></span>'}
+  function dkCardVazio(nome,titulo,sub){
+    return '<div class="dk-card"><h4>'+nome+dkMini()+'</h4><div class="dk-empty"><b>'+titulo+'</b>'+(sub?'<span>'+sub+'</span>':'')+'</div></div>';
+  }
+  function dkCardReal(nome,d){
+    var parts=d.candidatos.map(function(c,i){return{pct:c.pct,cor:DK_CORES[i]||COR_OUTROS}});
+    if(d.outrosPct>0)parts.push({pct:d.outrosPct,cor:COR_OUTROS});
+    var leg=d.candidatos.map(function(c,i){
+      return '<div><i style="background:'+(DK_CORES[i]||COR_OUTROS)+'"></i><span title="'+c.name+' ('+c.party+'-'+c.state+')">'+c.name+'</span><b>'+c.pct+'%</b></div>';
+    }).join('');
+    if(d.outrosPct>0)leg+='<div><i style="background:'+COR_OUTROS+'"></i><span>Outros</span><b>'+d.outrosPct+'%</b></div>';
+    return '<div class="dk-card"><h4>'+nome+dkMini()+'</h4>'+dkDonutSVG(parts)+
+      '<div class="dk-total">🔴 Real · '+d.totalVotos+' voto'+(d.totalVotos===1?'':'s')+' ativo'+(d.totalVotos===1?'':'s')+'</div>'+
+      '<div class="dk-leg">'+leg+'</div></div>';
+  }
+  function dkCardCarregando(nome){return '<div class="dk-card"><h4>'+nome+dkMini()+'</h4><div class="dk-empty"><b>⏳ Carregando…</b></div></div>'}
+  async function dkRender(){
+    var grid=document.getElementById('dk-grid');if(!grid)return;
+    var rec=dkRecorte();
+    var seq=++DK_SEQ;
+    /* Recorte por cidade: os votos hoje carregam UF — estado honesto, sem dados falsos */
+    if(dkModo==='cidade'){
+      grid.innerHTML=DK_CARGOS.map(function(c){
+        return dkCardVazio(c.nome,'Recorte por cidade: em breve','Os votos por cidade chegam junto com as eleições municipais.');
+      }).join('');
+      return;
+    }
+    var data=DK_CACHE[rec];
+    if(!data||Date.now()-data.ts>DK_TTL){
+      grid.innerHTML=DK_CARGOS.map(dkCardCarregando).join('');
+      try{
+        var r=await fetch(API_BASE+'/api/acompanhamento?uf='+encodeURIComponent(rec));
+        if(!r.ok)throw new Error('HTTP '+r.status);
+        data={ts:Date.now(),j:await r.json()};
+        DK_CACHE[rec]=data;
+      }catch(e){
+        if(seq!==DK_SEQ)return;
+        grid.innerHTML=DK_CARGOS.map(function(c){
+          if(c.votavel)return dkCardVazio(c.nome,'Backend acordando…','<button class="btn sm gold" onclick="dkRefresh()">🔄 Tentar de novo</button>');
+          return dkCardVazio(c.nome,'Votação abre em breve','Este cargo entra na plataforma nas próximas fases.');
+        }).join('');
+        return;
+      }
+    }
+    if(seq!==DK_SEQ)return;
+    var cg=(data.j&&data.j.cargos)||{};
+    grid.innerHTML=DK_CARGOS.map(function(c){
+      if(!c.votavel)return dkCardVazio(c.nome,'Votação abre em breve','Este cargo entra na plataforma nas próximas fases.');
+      var d=cg[c.id];
+      if(!d||!d.totalVotos)return dkCardVazio(c.nome,'Ainda sem votos neste recorte','O primeiro voto pode ser o seu — escolha um parlamentar no radar e confie (ou não).');
+      return dkCardReal(c.nome,d);
+    }).join('');
+  }
+  window.dkRefresh=function(){DK_CACHE={};dkRender()};
+  window.dkSetModo=function(m){
+    dkModo=m;
+    document.getElementById('dk-uf-btn').classList.toggle('on',m==='uf');
+    document.getElementById('dk-cid-btn').classList.toggle('on',m==='cidade');
+    var selUf=document.getElementById('dk-uf'),selC=document.getElementById('dk-cidade');
+    selC.hidden=(m!=='cidade');
+    selUf.hidden=(m==='cidade');
+    if(m==='cidade'){
+      var cidades=DK_CIDADES[selUf.value]||['Capital'];
+      selC.innerHTML=cidades.map(function(c){return '<option>'+c+'</option>'}).join('');
+    }
+    dkRender();
+  };
+  window.dkRender=dkRender;
+  dkRender();
+})();
+</script>
+  <script src="pdf-cassacao.js" defer></script>
+  <script src="notificacoes-pwa.js" defer></script>
+  <script src="dashboard-politico.js" defer></script>
+  <script src="gamificacao.js" defer></script>
+  <script src="api-publica.js" defer></script>
+<script id="vb-fundo-render">
+(function(){
+  var host='data/fundo-eleitoral.json';
+  fetch(host).then(function(r){return r.json()}).then(function(fe){
+    var section=document.querySelector('[id*="fundo" i],[href*="fundo" i]');
+    var container=section?section.closest('section')||section:null;
+    if(!container){
+      var h=document.querySelector('h2');while(h && !/Fundo Eleitoral/i.test(h.textContent))h=h.nextElementSibling;
+      if(h)container=h.parentNode;
+    }
+    if(!container)return;
+    var html='<div style="margin:18px 0"><strong>Total distribuido em 2026:</strong> R$ '+(fe.totalGeral/1e6).toFixed(0)+' milhoes ('+fe.totalPartidos+' partidos)</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;max-height:420px;overflow-y:auto;padding:6px">';
+    fe.partidos.slice().sort(function(a,b){return b.valor-a.valor}).forEach(function(p){
+      html+='<div style="border:1px solid #ddd;border-radius:10px;padding:10px;background:#fafafa"><b>'+p.sigla+'</b><div style="font-size:1.4em;color:#009739;font-weight:700;margin:6px 0">R$ '+(p.valor/1e6).toFixed(1)+' mi</div></div>';
+    });
+    html+='</div><div style="margin-top:10px;font-size:.85em;color:#666">Fonte: '+fe.fonte+' | '+fe.observacao+'</div>';
+    var box=document.createElement('div');box.innerHTML=html;container.appendChild(box);
+  }).catch(function(e){console.warn('fundo-eleitoral:',e)});
+})();
+</script>
+<script id="vb-hist-fe">
+(function(){
+  function fmt(v){return 'R$ '+Number(v).toLocaleString('pt-BR',{maximumFractionDigits:0})}
+  fetch('data/fundo-candidatos-historico.json').then(function(r){return r.json()}).then(function(d){
+    var hs=[].slice.call(document.querySelectorAll('h1,h2,h3,h4'));
+    var h=hs.filter(function(x){return /Fundo Eleitoral/i.test(x.textContent)})[0];
+    var sec=h?(h.closest('section')||h.parentElement.parentElement):document.body;
+    var box=document.createElement('div');
+    box.style.cssText='margin:18px 0;padding:16px;border:1px solid #23406b;border-radius:12px;background:#0e1c33';
+    box.innerHTML='<h3 style="margin:0 0 8px">Por que ainda nao aparece o valor por candidato em 2026?</h3>'+
+    '<ol style="margin:0;padding-left:20px;line-height:1.55">'+
+    '<li>O Fundo Eleitoral e repassado aos <b>partidos</b> - esses valores ja estao aqui, com fonte oficial (TSE, Resolucao 23.749/2026).</li>'+
+    '<li>A distribuicao <b>por candidato</b> e informada por cada campanha ao TSE na prestacao de contas: parciais durante a campanha (set-out/2026) e prestacao final apos a eleicao (nov-dez/2026).</li>'+
+    '<li><b>Ate essa publicacao, valores por candidato referentes a 2026 nao tem carater oficial</b> - o que circula antes disso sao estimativas ou projecoes, nao dados da fonte publica.</li>'+
+    '<li>Por isso, mostramos hoje: o total oficial por partido (2026) + o historico real da ultima eleicao para estes mesmos cargos (<b>2022</b>). Assim que o TSE publicar os dados de 2026, eles entram aqui automaticamente, com a mesma fonte.</li>'+
+    '</ol>'+
+    '<div style="margin:14px 0 6px;font-weight:700">Ultima eleicao para estes mesmos cargos: 2022 · '+d.totalCandidatos+' candidatos receberam FEFC · total '+fmt(d.totalRepassado)+'</div>'+
+    '<input id="vb-hist-q" type="text" placeholder="Buscar por nome, partido ou UF..." style="width:100%;padding:10px;border:1px solid #23406b;border-radius:8px;background:#0b1526;color:#eaf2ff;margin:6px 0">'+
+    '<div id="vb-hist-list"></div>'+
+    '<button id="vb-hist-more" style="margin:10px 0;padding:10px 16px;border:0;border-radius:8px;background:#009739;color:#fff;font-weight:700;cursor:pointer">Carregar mais</button>'+
+    '<div style="margin-top:8px;font-size:.85em;opacity:.75">Fonte: '+d.fonte+'</div>';
+    sec.appendChild(box);
+    var list=box.querySelector('#vb-hist-list'),q=box.querySelector('#vb-hist-q'),more=box.querySelector('#vb-hist-more');
+    var view=[],shown=0;
+    function render(reset){
+      if(reset){shown=0;list.innerHTML=''}
+      var frag=view.slice(shown,shown+100);
+      shown+=frag.length;
+      list.innerHTML+=frag.map(function(x){return '<div style="padding:8px 10px;border-bottom:1px solid #1b2f4d"><b>'+x.n+'</b> ('+x.p+'/'+x.uf+') - '+x.c+'<div style="color:#7ee2a8;font-weight:700">'+fmt(x.t)+'</div></div>'}).join('');
+      more.style.display=(shown<view.length)?'inline-block':'none';
+    }
+    q.addEventListener('input',function(){
+      var s=q.value.toLowerCase();
+      view=d.candidatos.filter(function(x){return !s||x.n.toLowerCase().indexOf(s)>-1||x.p.toLowerCase().indexOf(s)>-1||x.uf.toLowerCase().indexOf(s)>-1});
+      render(true);
+    });
+    more.addEventListener('click',function(){render(false)});
+    view=d.candidatos;render(true);
+  }).catch(function(e){console.warn('hist-fe:',e)});
+})();
+</script>
+<script id="vb-quem-somos">
+(function(){
+  if(window.__vbqsDone)return; window.__vbqsDone=1;
+  var SENT=["plataforma civica de voto continuo","plataforma de opiniao e participacao","prototipo demonstrativo, sem valor juridico"];
+  var TEXTO=`
+<style>
+.vb-qs{position:relative;overflow:hidden;box-sizing:border-box;max-width:760px;margin:0 auto;padding:40px 36px;line-height:1.78;color:#eaf2ff;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));border:1px solid rgba(0,151,57,.3);border-radius:22px;box-shadow:0 16px 54px rgba(0,0,0,.42)}
+.vb-qs::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#009739,#FFD700,#009739)}
+.vb-qs .eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:.72em;font-weight:700;color:#FFD700;margin:0 0 12px}
+.vb-qs h2.title{font-size:1.78em;line-height:1.22;font-weight:800;color:#fff;margin:0 0 4px;letter-spacing:-.01em}
+.vb-qs .rule{height:3px;width:70px;border-radius:3px;background:linear-gradient(90deg,#009739,#FFD700);margin:16px 0 26px}
+.vb-qs h3.sec{margin:34px 0 14px;padding-left:15px;border-left:3px solid #009739;font-size:1.12em;font-weight:700;color:#fff;letter-spacing:.005em;line-height:1.3}
+.vb-qs p{margin:0 0 17px;color:rgba(234,242,255,.93)}
+.vb-qs strong{color:#fff;font-weight:700}
+.vb-qs em{color:#cfe9d8;font-style:italic}
+.vb-qs .sign{margin-top:34px;padding-top:20px;border-top:1px dashed rgba(255,255,255,.2)}
+.vb-qs .sign .name{font-weight:800;color:#FFD700;letter-spacing:.02em;font-size:1.06em;margin:0 0 16px}
+.vb-qs .sign .motto{text-align:left;font-style:italic;color:rgba(234,242,255,.82);font-size:1.08em;margin:0;line-height:1.5}
+.vb-qs .legal{margin-top:30px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);font-size:.76em;line-height:1.55;opacity:.55;text-align:center;color:#eaf2ff}
+@media(max-width:640px){.vb-qs{padding:28px 18px;border-radius:16px}.vb-qs h2.title{font-size:1.46em}.vb-qs h3.sec{font-size:1.04em;margin-top:28px}}
+</style>
+<div class="vb-qs">
+ <div class="eyebrow">Quem Somos</div>
+ <h2 class="title">O poder emana do povo — e não acaba no dia da eleição.</h2>
+ <div class="rule"></div>
+ <p>O <strong>VotaBrasil</strong> é uma plataforma cívica de <strong>voto contínuo e revogável</strong>. Nossa tese cabe em uma frase: <em>seu voto coloca, e seu voto tira</em>. Entre uma eleição e outra, o cidadão hoje entrega um cheque em branco de quatro anos e espera. Nós acreditamos que mandato é contrato — e contrato se fiscaliza, se cobra e, quando descumprido, se encerra. Não por golpe, não por rua, não por tapetão: por regra clara, escrita e auditável por quem elegeu.</p>
+ <h3 class="sec">O problema que existia antes de nós</h3>
+ <p>Depois da posse, o eleitor vira espectador. Não há ferramenta simples para dizer “este representante não me representa mais”. A desconfiança cresce porque falta checagem: o cidadão confia ou desconfia no escuro, sem conseguir provar nem o próprio voto, nem a conduta de quem o recebeu. Resultado: abstenção, raiva sem saída e a sensação de que democracia é evento de dois em dois anos, não prática diária.</p>
+ <h3 class="sec">O que propomos</h3>
+ <p>Tr&#234;s ferramentas, todas com fonte oficial: o <strong>Radar Pol&#237;tico</strong> (ficha completa, reclama&#231;&#245;es, compara&#231;&#227;o lado a lado), o <strong>Congresso</strong> (opine sobre projetos de lei, com dados da C&#226;mara) e o <strong>Fundo Eleitoral</strong> (de onde vem e para onde vai o dinheiro p&#250;blico).</p>
+ <p>E se o pol&#237;tico n&#227;o cumprir, voc&#234; revoga. A regra &#233; uma s&#243;, e &#233; seca: <strong>70% dos votos que o elegeram cassam o mandato</strong>. Abre depois da posse e vale o mandato inteiro. Bateu 70%, acabou.</p>
+ <p>Da&#237; v&#234;m duas mudan&#231;as que a lei hoje n&#227;o d&#225;. A primeira: quem &#233; cassado por revoga&#231;&#227;o fica <strong>8 anos sem poder concorrer</strong>. O prazo n&#227;o &#233; nosso &#8212; &#233; o mesmo da Ficha Limpa para quem &#233; condenado. Quem quebra o contrato com o eleitor paga como quem quebra a lei.</p>
+ <p>A segunda: quem assume a vaga &#233; o <strong>pr&#243;ximo mais votado pelo povo</strong>, n&#227;o o suplente do partido. O eleitor j&#225; disse na urna quem vem depois. &#201; a urna que decide, n&#227;o a lista de um partido.</p>
+ <p style="font-size:.9em;opacity:.8;font-style:italic">(As duas s&#227;o proposta do prot&#243;tipo. Hoje n&#227;o t&#234;m valor de lei. &#201; isso que a gente quer ver virar lei.)</p>
+<h3 class="sec">De onde vêm os dados</h3>
+ <p>Tudo que afirmamos nasce de fonte pública e verificável: <strong>TSE</strong> (candidaturas e prestações de contas), <strong>Câmara dos Deputados</strong>, <strong>Senado Federal</strong>, <strong>Portal da Transparência</strong> e <strong>CNJ</strong>. Publicamos também uma <strong>API de dados abertos</strong> (licença CC-BY 4.0) para que qualquer pessoa, jornal ou pesquisador possa reconstruir o que mostramos — inclusive melhor. Não inventamos número: se o dado oficial ainda não existe, dizemos que ainda não existe.</p>
+ <h3 class="sec">O que <em>não</em> somos</h3>
+ <p>Não somos partido. Não somos sindicato, movimento ou facção. Não somos tribunal nem substituímos a Justiça Eleitoral, o TSE ou o Congresso. <strong>Não temos valor jurídico</strong>: hoje somos um protótipo demonstrativo — votos são simulados, a revogação é educativa. Nosso papel é provar o conceito, educar o eleitor e pressionar, com dados, por uma regra que um dia seja lei. Também não vendemos dado, não fazemos microtargeting e não monetizamos a confiança de ninguém.</p>
+ <h3 class="sec">Privacidade e segurança</h3>
+ <p>O voto é anônimo por desenho. O comprovante de 20 dígitos existe para que <strong>você</strong> prove a si mesmo que seu voto está íntegro — não para que alguém prove quem você é. A trilha de verificação é auditável sem expor o eleitor. Dados pessoais não são produto.</p>
+ <h3 class="sec">Nossa história</h3>
+ <p>Construído à mão, sem agência por trás, sem interesse partidário, com backend real e dados públicos na capa. Porque transparência não se delega: quem mostra o número tem que mostrar de onde ele veio.</p>
+ <h3 class="sec">A equipe</h3>
+ <p>Uma família construindo, na prática, a ferramenta que gostaríamos que existisse para o Brasil — pequena o bastante para não ter dono oculto, séria o bastante para citar fonte em cada número. Somos dois: eu e minha filha, <strong>Ludimila Antunes Rodrigues Nikelatto</strong>. Se um dia isto virar lei, não será por nós: será por quem acreditou que esse projeto é possível. Mas o primeiro tijolo foi nosso.</p>
+ <div class="sign">
+  <p class="name">Euler Rodrigues Pereira</p>
+  <p class="motto">O poder emana do povo — e, aqui, começou em casa.</p>
+ </div>
+ <p class="legal">Protótipo demonstrativo, sem valor jurídico. Votos simulados; dados públicos de fontes oficiais. Conteúdo sob CC-BY 4.0 quando publicado via API. © 2026 VotaBrasil.</p>
+</div>
+  `;
+  function semAcc(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
+  function sobe(el){var s=el;while(s&&s.tagName!=='SECTION'&&s!==document.body){s=s.parentElement;}return (s&&s.tagName==='SECTION')?s:el.parentElement;}
+  function ehQuem(c){return c&&/quem\s+somos/i.test(c.textContent||'');}
+  function achar(){
+    var byId=document.getElementById('quem-somos');
+    if(byId){var c0=sobe(byId);if(ehQuem(c0))return c0;}
+    var els=document.querySelectorAll('h1,h2,h3,h4,p,span,div,small,em,strong,li');
+    var i,el,c;
+    for(i=0;i<els.length;i++){el=els[i];if(el.tagName==='A')continue;if(el.closest('nav')||el.closest('header'))continue;if(semAcc(el.textContent)==='quem somos'){c=sobe(el);if(ehQuem(c))return c;}}
+    for(i=0;i<els.length;i++){el=els[i];if(el.closest('nav')||el.closest('header'))continue;var t=semAcc(el.textContent);for(var k=0;k<SENT.length;k++){if(t.indexOf(SENT[k])>-1){c=sobe(el);if(ehQuem(c))return c;break;}}}
+    return null;
+  }
+  function aplicar(){var c=achar();if(!c)return false;c.innerHTML=TEXTO;c.setAttribute('data-vbqs','1');console.log('[vb-quem-somos] epigrafe a esquerda');return true;}
+  var n=0,tm=setInterval(function(){if(aplicar()||++n>40)clearInterval(tm);},250);
+  window.addEventListener('load',function(){setTimeout(aplicar,150);});
+})();
+</script>
+<script id="vb-close-highlight">
+(function(){
+  if(document.getElementById('vb-close-hi-style'))return;
+  var st=document.createElement('style');st.id='vb-close-hi-style';
+  st.textContent='#vb-close-hi{min-width:34px!important;min-height:34px!important;width:34px!important;height:34px!important;background:#FFD700!important;color:#0B132B!important;font-size:20px!important;font-weight:800!important;line-height:1!important;border:2px solid #0B132B!important;border-radius:50%!important;box-shadow:0 0 0 3px rgba(255,215,0,.35),0 4px 12px rgba(0,0,0,.5)!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;opacity:1!important;transition:transform .12s ease,box-shadow .12s ease!important}#vb-close-hi:hover{transform:scale(1.12)!important;background:#fff!important;box-shadow:0 0 0 4px rgba(255,255,255,.5),0 6px 16px rgba(0,0,0,.6)!important}';
+  document.head.appendChild(st);
+  var RE_TITLE=/^prot[o\u00F3]tipo demonstrativo$/i;
+  var RE_X=/^[\u00D7\u2715\u2716xX]$/;
+  function isClose(el){
+    if(!el)return false;
+    var t=(el.textContent||'').trim();
+    if(RE_X.test(t))return true;
+    var al=(el.getAttribute&&el.getAttribute('aria-label'))||'';
+    if(/fechar|close|dismiss|\u00D7|\u2715/i.test(al))return true;
+    return false;
+  }
+  function hasClose(root){
+    var c=root.querySelectorAll('button,a,span,i,svg,[role="button"]');
+    for(var i=0;i<c.length;i++){ if(isClose(c[i]))return true; }
+    return false;
+  }
+  function titleNode(){
+    var els=document.querySelectorAll('h1,h2,h3,h4,strong,b,span,div,p,em');
+    for(var i=0;i<els.length;i++){ var t=(els[i].textContent||'').trim(); if(RE_TITLE.test(t))return els[i]; }
+    return null;
+  }
+  function cardOf(node){
+    var p=node,prev=null;
+    while(p&&p!==document.body){
+      var h=p.offsetHeight||0;
+      if(h>=40&&h<=260){ if(hasClose(p))return p; }
+      if(h>260)break;
+      prev=p;p=p.parentElement;
+    }
+    return prev||node.parentElement;
+  }
+  function apply(){
+    var tn=titleNode(); if(!tn)return false;
+    var card=cardOf(tn); if(!card)return false;
+    var cands=card.querySelectorAll('button,a,span,i,svg,[role="button"]');
+    var hit=null;
+    for(var j=0;j<cands.length;j++){ if(isClose(cands[j])){ hit=cands[j]; break; } }
+    if(!hit)return false;
+    if(hit.id==='vb-close-hi')return true;
+    hit.setAttribute('id','vb-close-hi');
+    hit.setAttribute('title','Fechar aviso');
+    hit.setAttribute('aria-label','Fechar aviso');
+    return true;
+  }
+  var n=0,tm=setInterval(function(){ if(apply()||++n>80)clearInterval(tm); },300);
+  window.addEventListener('load',function(){ setTimeout(apply,250); });
+})();
+</script>
+<script id="vb-print-fixes">
+(function(){
+if(window.__vbpf2)return;window.__vbpf2=1;
+var st=document.createElement('style');st.id='vb-pf2-style';
+st.textContent='.vb-6col{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:12px!important}@media(max-width:1180px){.vb-6col{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:760px){.vb-6col{grid-template-columns:repeat(2,1fr)!important}}@media(max-width:480px){.vb-6col{grid-template-columns:1fr!important}}#vb-close-hi{min-width:30px!important;min-height:30px!important;width:30px!important;height:30px!important;background:#e11d48!important;color:#fff!important;font-size:18px!important;font-weight:800!important;line-height:1!important;border:2px solid #fff!important;border-radius:50%!important;box-shadow:0 0 0 2px rgba(225,29,72,.45),0 3px 10px rgba(0,0,0,.5)!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;opacity:1!important;transition:transform .12s ease!important}#vb-close-hi:hover{transform:scale(1.14)!important;background:#be123c!important}';
+document.head.appendChild(st);
+function sa(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
+function tx(e){return (e&&e.textContent||'').trim();}
+function logo(){
+ var hdr=document.querySelector('header')||document.querySelector('nav');if(!hdr)return;
+ var img=hdr.querySelector('img[src*="logo"],img[src*="icon"],img[alt*="Vota"],svg');
+ var brand=null;var cs=[].slice.call(hdr.querySelectorAll('a,div,span'));
+ for(var i=0;i<cs.length;i++){var t=sa(tx(cs[i]));if(t==='votabrasil'||t.indexOf('votabrasil')===0){brand=cs[i];break;}}
+ var target=brand||hdr;
+ if(img){img.style.setProperty('width','56px','important');img.style.setProperty('height','56px','important');img.style.setProperty('max-width','none','important');}
+ var ts=[].slice.call(target.querySelectorAll('span,div,p,em,small,b,strong'));
+ for(var k=0;k<ts.length;k++){var tt=sa(tx(ts[k]));if(tt==='votabrasil'||tt.indexOf('participacao')===0){ts[k].style.setProperty('display','none','important');}}
+ if(brand&&brand.setAttribute)brand.setAttribute('aria-label','VotaBrasil');
+}
+function fundo(){
+ fetch('data/fundo-eleitoral.json').then(function(r){return r.json();}).then(function(fe){
+  var total=Number(fe.totalGeral)||1;
+  var ps=(fe.partidos||[]).slice().sort(function(a,b){return (b.valor||0)-(a.valor||0);});
+  var cont=document.querySelector('#fundo-eleitoral,.fundo-eleitoral,[id*="fundo"]');
+  if(!cont){var hs=[].slice.call(document.querySelectorAll('h1,h2,h3'));var h=hs.filter(function(x){return /fundo eleitoral/i.test(tx(x));})[0];if(h)cont=h.closest('section')||h.parentElement.parentElement;}
+  if(!cont)return;
+  var old=cont.querySelector('[data-vbfundo]');if(old)old.remove();
+  var box=document.createElement('div');box.setAttribute('data-vbfundo','1');
+  var g='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:7px">';
+  ps.forEach(function(p,i){var pct=((p.valor||0)/total*100);var val=((p.valor||0)/1e6).toFixed(1);
+   g+='<div style="background:#fff;border:1px solid #d8dee9;border-radius:9px;padding:7px 8px;line-height:1.2"><div style="display:flex;justify-content:space-between;align-items:center"><b style="color:#0b132b;font-size:.9em">'+String(p.sigla)+'</b><span style="font-size:.62em;color:#8a94a6">#'+(i+1)+'</span></div><div style="color:#009739;font-weight:800;font-size:1em;margin:2px 0 4px">R$ '+val+' mi</div><div style="height:4px;border-radius:3px;background:#eef1f5;overflow:hidden"><div style="height:100%;width:'+pct.toFixed(1)+'%;background:#009739"></div></div><div style="font-size:.62em;color:#6b7280;margin-top:3px">'+pct.toFixed(1)+'% do total</div></div>';});
+  g+='</div>';
+  box.innerHTML=g;cont.appendChild(box);
+ }).catch(function(){});
+}
+var RX=/^[\u00D7\u2715\u2716xX]$/;
+function fechar(){
+ var nodes=document.querySelectorAll('button,span,i,a,[role="button"],div');
+ for(var i=0;i<nodes.length;i++){
+  if(!RX.test(tx(nodes[i])))continue;
+  var p=nodes[i],card=null;
+  for(var k=0;k<7&&p;k++){var t=(p.textContent||'');if(/prot[o\u00F3]tipo/i.test(t)&&/jur[i\u00ED]dico/i.test(t)){card=p;break;}p=p.parentElement;}
+  if(card){nodes[i].setAttribute('id','vb-close-hi');return true;}
+ }
+ return false;
+}
+var MAP={'comparar':{t:'Quem Somos',d:'Nossa hist\u00F3ria, princ\u00EDpios e a equipe por tr\u00E1s do projeto.',cta:'Conhecer \u2192',href:'#quem-somos'},'fundo eleitoral':{t:'Elei\u00E7\u00F5es 2026',d:'Candidatos reais do TSE por cargo, UF e situa\u00E7\u00E3o.',cta:'Ver candidatos \u2192',href:'pages/eleicoes-2026.html'}};
+function explore(){
+ var hs=[].slice.call(document.querySelectorAll('h1,h2,h3'));
+ var expH=hs.filter(function(x){return sa(tx(x)).indexOf('explore o votabrasil')>-1;})[0];
+ var sec=expH?(expH.closest('section')||expH.parentElement.parentElement):null;if(!sec)return false;
+ var all=[].slice.call(sec.querySelectorAll('h1,h2,h3,h4,strong,b,div,span,p'));
+ var grid=null;
+ Object.keys(MAP).forEach(function(key){
+  var target=all.filter(function(e){return sa(tx(e))===key&&e.children.length===0;})[0];if(!target)return;
+  var card=target;for(var u=0;u<6&&card;u++){if(card.querySelector&&card.querySelector('a[href],button'))break;card=card.parentElement;}
+  if(!card)return;if(!grid)grid=card.parentElement;
+  var m=MAP[key];target.textContent=m.t;
+  var ps=[].slice.call(card.querySelectorAll('p,span,div')).filter(function(e){return e!==target&&tx(e).length>10&&!(e.querySelector&&e.querySelector('a[href],button'));});
+  if(ps.length)ps[0].textContent=m.d;
+  var cta=card.querySelector('a[href],button');if(cta){cta.setAttribute('href',m.href);cta.textContent=m.cta;}
+ });
+ if(grid)grid.classList.add('vb-6col');
+ return true;
+}
+function work(){logo();fundo();fechar();explore();}
+var n=0,tm=setInterval(function(){work();if(++n>60)clearInterval(tm);},400);
+window.addEventListener('load',function(){setTimeout(work,250);});
+})();
+</script>
+<section id="faq" style="max-width:900px;margin:60px auto;padding:0 20px">
+<h2 style="font-size:1.8em;margin-bottom:30px;color:#009739">Perguntas Frequentes</h2>
+<div style="display:grid;gap:16px">
+<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
+<summary style="font-weight:700;cursor:pointer;font-size:1.1em">1. Isso ja vale como voto oficial?</summary>
+<p style="margin-top:12px;line-height:1.6">N&#227;o. Somos um prot&#243;tipo demonstrativo. Votos s&#227;o simulados; o objetivo &#233; provar o conceito e pressionar por uma lei que torne a revoga&#231;&#227;o poss&#237;vel.</p>
+</details>
+<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
+<summary style="font-weight:700;cursor:pointer;font-size:1.1em">2. Quem audita meu voto?</summary>
+<p style="margin-top:12px;line-height:1.6">Voc&#234;. Cada voto gera um c&#243;digo de 20 d&#237;gitos que prova a voc&#234; mesmo que seu voto est&#225; &#237;ntegro, sem expor sua identidade.</p>
+</details>
+<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
+<summary style="font-weight:700;cursor:pointer;font-size:1.1em">3. E se houver fraude?</summary>
+<p style="margin-top:12px;line-height:1.6">A regra &#233; bin&#225;ria e explic&#225;vel: 70% dos votos que elegeram cassam o mandato. N&#227;o h&#225; medidor subjetivo. Todos os dados v&#234;m de fontes oficiais (TSE, C&#226;mara, Senado, Portal da Transpar&#234;ncia, CNJ).</p>
+</details>
+<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
+<summary style="font-weight:700;cursor:pointer;font-size:1.1em">4. Uma minoria nao vai ficar derrubando mandato?</summary>
+<p style="margin-top:12px;line-height:1.6">N&#227;o. S&#227;o 70% dos votos que <strong>elegeram</strong> o representante, n&#227;o 70% de qualquer universo. Se 100 mil elegeram, s&#227;o 70 mil desses 100 mil.</p>
+</details>
+<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
+<summary style="font-weight:700;cursor:pointer;font-size:1.1em">5. E se o politico for injusticado?</summary>
+<p style="margin-top:12px;line-height:1.6">O painel do pol&#237;tico garante direito de resposta p&#250;blico. Reclama&#231;&#245;es s&#227;o publicadas junto com as respostas. Devido processo &#233; pilar do sistema.</p>
+</details>
+<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
+<summary style="font-weight:700;cursor:pointer;font-size:1.1em">6. Quanto custa manter isso?</summary>
+<p style="margin-top:12px;line-height:1.6">Infraestrutura web commodity (GitHub Pages + Railway). Sem urna f&#237;sica, sem log&#237;stica de dia &#250;nico, sem mes&#225;rios.</p>
+</details>
+<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
+<summary style="font-weight:700;cursor:pointer;font-size:1.1em">7. Quem assume se o mandato for cassado?</summary>
+<p style="margin-top:12px;line-height:1.6">O pr&#243;ximo mais votado pelo povo, n&#227;o o suplente do partido. E quem perde o mandato por revoga&#231;&#227;o fica 8 anos ineleg&#237;vel (mesmo prazo da Ficha Limpa).</p>
+</details>
+<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
+<summary style="font-weight:700;cursor:pointer;font-size:1.1em">8. Meus dados pessoais sao vendidos?</summary>
+<p style="margin-top:12px;line-height:1.6">N&#227;o. Voto &#233; an&#244;nimo por desenho. Dados pessoais n&#227;o s&#227;o produto. N&#227;o vendemos dado, n&#227;o fazemos microtargeting.</p>
+</details>
+</div>
+<p style="margin-top:30px;text-align:center;font-size:0.9em;color:#6b7280">Todas as fontes citadas s&#227;o p&#250;blicas e verific&#225;veis: TSE, C&#226;mara dos Deputados, Senado Federal, Portal da Transpar&#234;ncia, CNJ.</p>
+</section>
+<script defer src="js/offline.js"></script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+</body>
+</html>

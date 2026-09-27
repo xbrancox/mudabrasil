@@ -1,5 +1,5 @@
 /* ============================================================
-   MUDABRASIL — CABEÇALHO ÚNICO (todas as páginas)
+   MEUVOTO — CABEÇALHO ÚNICO (todas as páginas)
    Injeta o cabeçalho com 10 itens, item ativo detectado pela URL,
    badge "backend ativo" e menu mobile.
    ============================================================ */
@@ -77,7 +77,7 @@
     topo.id = 'mbtopo';
     topo.innerHTML =
       '<header>' +
-      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><i class="fa-solid fa-layer-group"></i></span><span><b>MudaBrasil</b><small>Participação Cívica</small></span></a>' +
+      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><i class="fa-solid fa-layer-group"></i></span><span><b>MeuVoto</b><small>Participação Cívica</small></span></a>' +
       ' <button class="ham" aria-label="Menu" onclick="document.getElementById(\'mbtopo-mnav\').classList.toggle(\'open\')"><i class="fa-solid fa-bars"></i></button>' +
       ' <nav>' + nav + '</nav>' +
       ' <div class="hact"><span class="hbadge" id="mbtopo-badge" hidden>conectando…</span>' +
@@ -100,7 +100,7 @@
       document.head.appendChild(fa);
     }
 
-    var base = (window.MudaBrasil && window.MudaBrasil.API_BASE) || '';
+    var base = (window.MeuVoto && window.MeuVoto.API_BASE) || '';
     var badge = document.getElementById('mbtopo-badge');
     if (badge) {
       fetch(base + '/api/health').then(function (r) {

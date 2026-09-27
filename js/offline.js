@@ -1,4 +1,4 @@
-/* VotaBrasil offline-first: outbox generico (monkey-patch de fetch) + banner de rede */
+/* MeuVoto offline-first: outbox generico (monkey-patch de fetch) + banner de rede */
 (function(){
   if(window.__vboff)return;window.__vboff=1;
   var KEY='votabrasil_outbox';
@@ -18,7 +18,7 @@
   window.fetch=function(url,opts){
     opts=opts||{};
     var isPost=String(opts.method||'GET').toUpperCase()==='POST';
-    var base=(window.VotaBrasil&&window.VotaBrasil.API_BASE)||'';
+    var base=(window.MeuVoto&&window.MeuVoto.API_BASE)||'';
     var target=String(url);
     var isApi=base&&target.indexOf(base)===0;
     function enfileira(){ var q=load(); q.push({url:target,opts:{method:opts.method,headers:opts.headers,body:opts.body}}); save(q);

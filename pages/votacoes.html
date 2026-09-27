@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Votações nominais · VotaBrasil</title>
+<title>Votações nominais · MeuVoto</title>
 <meta name="description" content="Como cada deputado e senador votou nas votações nominais da Câmara e do Senado — histórico completo e verificável.">
-<link rel="canonical" href="https://VotaBrasil-redesign-production.up.railway.app/pages/votacoes.html">
-<meta property="og:title" content="Votações nominais · VotaBrasil">
+<link rel="canonical" href="https://MeuVoto-redesign-production.up.railway.app/pages/votacoes.html">
+<meta property="og:title" content="Votações nominais · MeuVoto">
 <meta property="og:description" content="Como cada deputado e senador votou nas votações nominais da Câmara e do Senado — histórico completo e verificável.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://VotaBrasil-redesign-production.up.railway.app/pages/votacoes.html">
-<meta property="og:image" content="https://VotaBrasil-redesign-production.up.railway.app/og-image.png">
-<meta property="og:site_name" content="VotaBrasil">
+<meta property="og:url" content="https://MeuVoto-redesign-production.up.railway.app/pages/votacoes.html">
+<meta property="og:image" content="https://MeuVoto-redesign-production.up.railway.app/og-image.png">
+<meta property="og:site_name" content="MeuVoto">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://VotaBrasil-redesign-production.up.railway.app/og-image.png">
+<meta name="twitter:image" content="https://MeuVoto-redesign-production.up.railway.app/og-image.png">
 
 <link rel="icon" type="image/x-icon" href="../images/logo/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../images/logo/favicon-32x32.png">
@@ -112,14 +112,14 @@ footer a{color:var(--gold)}
 
 <footer>
 <div class="wrap">
-<b>VotaBrasil</b> · "Seu voto coloca, seu voto tira." · <a href="../index.html">Voltar ao início</a> · <a href="../privacidade.html">Privacidade</a> · <a href="../termos.html">Termos</a><br>
+<b>MeuVoto</b> · "Seu voto coloca, seu voto tira." · <a href="../index.html">Voltar ao início</a> · <a href="../privacidade.html">Privacidade</a> · <a href="../termos.html">Termos</a><br>
 <small>Dados oficiais da API aberta da Câmara dos Deputados (dadosabertos.camara.leg.br).</small>
 </div>
 </footer>
 
 <script>
 /* FIX: API_BASE pode ser '' (mesma origem) — não usar ||, que trocaria '' pela URL de produção */
-const API_B = (window.VotaBrasil && typeof window.VotaBrasil.API_BASE === 'string') ? window.VotaBrasil.API_BASE : 'https://VotaBrasil-redesign-production.up.railway.app';
+const API_B = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string') ? window.MeuVoto.API_BASE : 'https://MeuVoto-redesign-production.up.railway.app';
 const $ = s => document.querySelector(s);
 
 let VOTS = [];

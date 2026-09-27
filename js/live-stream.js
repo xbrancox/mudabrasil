@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL — TEMPO REAL (SSE) COM FALLBACK
+   MEUVOTO — TEMPO REAL (SSE) COM FALLBACK
    ------------------------------------------------------------
    Conecta o cliente ao /api/stream (Server-Sent Events) e
    chama refreshFn() sempre que o servidor notifica uma
@@ -22,8 +22,8 @@
     const intervalMs = opts.intervalMs || 15000;
     /* Base da API: absoluta em file:// (config.local.js aponta p/ Railway),
        relativa ('') quando servido por http(s) na mesma origem do backend. */
-    const API = (window.VotaBrasil && typeof window.VotaBrasil.API_BASE === 'string')
-      ? window.VotaBrasil.API_BASE
+    const API = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string')
+      ? window.MeuVoto.API_BASE
       : 'https://mudabrasil-production-79eb.up.railway.app';
     let es = null;
     let timer = null;

@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL — CAMADA DE ARMAZENAMENTO (VOTOS + PARLAMENTARES + RECLAMAÇÕES)
+   MEUVOTO — CAMADA DE ARMAZENAMENTO (VOTOS + PARLAMENTARES + RECLAMAÇÕES)
    ------------------------------------------------------------
    Backends suportados:
    - SQLITE (padrão, Node 22.5+): banco nativo do Node (`node:sqlite`)
@@ -676,7 +676,7 @@ function getResponsesByPolitician(politicianId, { limit = 50, offset = 0 } = {})
 }
 
 function hashVoter(method, identifier) {
-  return require('crypto').createHash('sha256').update(method + ':' + identifier + ':VotaBrasil_VOTER_SALT_2026').digest('hex');
+  return require('crypto').createHash('sha256').update(method + ':' + identifier + ':MeuVoto_VOTER_SALT_2026').digest('hex');
 }
 
 function upsertVoter(v) {

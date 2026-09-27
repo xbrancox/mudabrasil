@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL — SMOKE TEST
+   MEUVOTO — SMOKE TEST
    ------------------------------------------------------------
    Valida os pontos essenciais sem depender de rede:
    - módulos do servidor carregam sem erro
@@ -15,7 +15,7 @@ function teste(nome, fn) {
   catch (e) { falhas++; console.error('  ✗', nome, '—', e.message); }
 }
 
-console.log('🇧🇷 VotaBrasil — smoke test\n');
+console.log('🇧🇷 MeuVoto — smoke test\n');
 
 teste('db.js carrega e expõe operações', () => {
   const db = require('../server/db');

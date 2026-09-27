@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL - ENHANCEMENTS: Tooltips, Loading States, Empty States
+   MEUVOTO - ENHANCEMENTS: Tooltips, Loading States, Empty States
    ============================================================ */
 
 (function () {
@@ -68,5 +68,5 @@
     `;
   };
 
-  console.log('✨ VotaBrasil UI Enhancements carregados.');
+  console.log('✨ MeuVoto UI Enhancements carregados.');
 })();

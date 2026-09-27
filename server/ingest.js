@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL - INGESTÃO DE DADOS PÚBLICOS
+   MEUVOTO - INGESTÃO DE DADOS PÚBLICOS
    ------------------------------------------------------------
    Busca dados REAIS de parlamentares da Câmara dos Deputados
    (dadosabertos.camara.leg.br), normaliza para o schema do
@@ -22,7 +22,7 @@ const DATA_DIR = path.join(__dirname, 'data');
 const DEP_FILE = path.join(DATA_DIR, 'deputados.json');
 const ENRICH_DIR = path.join(DATA_DIR, 'enrich');
 const API_BASE = 'https://dadosabertos.camara.leg.br/api/v2';
-const UA = 'VotaBrasil/1.0 (plataforma civica de transparencia; uso de dados abertos)';
+const UA = 'MeuVoto/1.0 (plataforma civica de transparencia; uso de dados abertos)';
 
 function ensureDirs() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });

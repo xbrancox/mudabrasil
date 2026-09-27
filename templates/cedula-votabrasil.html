@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Cédula VotaBrasil — template de votação</title>
+<title>Cédula MeuVoto — template de votação</title>
 <style>
 /* ============================================================
-   CEDULA VOTABRASIL v1 — template reutilizavel de votacao
-   (extraido do app VotaBrasil em producao, set/2026)
+   CEDULA MEUVOTO v1 — template reutilizavel de votacao
+   (extraido do app MeuVoto em producao, set/2026)
    Fluxo: f1 monte a cedula -> f2 revise -> f3 explicacao -> f4 codigo unico
    + sheet bottom de candidatos reais + toast + comprovante no aparelho.
    Personalize apenas o bloco CONFIG no script.
@@ -165,7 +165,7 @@
   <div class="pb"><div class="pd c"></div><div class="pd a"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div>
   <h2 class="rv">Revise sua cédula</h2>
   <div id="review-list"></div>
-  <p class="ht">⚠️ Demonstração (hoje): estes votos alimentam a pesquisa de opinião do VotaBrasil e podem ser zerados e refeitos por você. Não têm valor jurídico. Na votação real (amanhã), com login por e-mail/telefone, o voto não pode ser apagado e passa a valer para a revogação do mandato.</p>
+  <p class="ht">⚠️ Demonstração (hoje): estes votos alimentam a pesquisa de opinião do MeuVoto e podem ser zerados e refeitos por você. Não têm valor jurídico. Na votação real (amanhã), com login por e-mail/telefone, o voto não pode ser apagado e passa a valer para a revogação do mandato.</p>
   <label style="display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid rgba(255,255,255,.1);padding:14px;border-radius:var(--r);margin:16px 0 10px;cursor:pointer;font-size:.82rem;line-height:1.45;color:var(--text);">
     <input type="checkbox" id="chk-confirmar-voto" onchange="document.getElementById('btn-avancar-explicacao').disabled=!this.checked" style="width:20px;height:20px;margin-top:2px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;">
     <span><strong>Confirmar Voto:</strong> Revisei todos os meus candidatos e confirmo a minha cédula para prosseguir para a próxima etapa.</span>
@@ -181,7 +181,7 @@
     <div class="cc">
       <div class="ic">
         <div class="ii">i</div>
-        <div><h3>Mandato revogável</h3><p>No VotaBrasil, <strong>seu voto coloca e seu voto tira</strong>. Depois da posse, se o eleito não cumprir as promessas, você pode revogar seu voto durante todo o mandato.<br><br><strong>(R3)</strong> Regra proposta: quando <strong>70%</strong> dos votos que elegeram um político forem revogados, o mandato é cassado.</p></div>
+        <div><h3>Mandato revogável</h3><p>No MeuVoto, <strong>seu voto coloca e seu voto tira</strong>. Depois da posse, se o eleito não cumprir as promessas, você pode revogar seu voto durante todo o mandato.<br><br><strong>(R3)</strong> Regra proposta: quando <strong>70%</strong> dos votos que elegeram um político forem revogados, o mandato é cassado.</p></div>
       </div>
       <div class="hj">
         <h4>⚖️ DEMONSTRAÇÃO (hoje) × VOTAÇÃO REAL (amanhã)</h4>
@@ -248,9 +248,9 @@
 /* ============================================================
    CONFIG — personalize so aqui
    ============================================================ */
-/* URL base do backend: mesma origem (vazio) ou https://... . Em producao VotaBrasil usamos Railway.
+/* URL base do backend: mesma origem (vazio) ou https://... . Em producao MeuVoto usamos Railway.
    NUNCA usar || com API_BASE — o valor '' (mesma origem) é válido e seria substituído. */
-const API=(window.VotaBrasil&&typeof window.VotaBrasil.API_BASE==='string')?window.VotaBrasil.API_BASE:'https://mudabrasil-production-79eb.up.railway.app';
+const API=(window.MeuVoto&&typeof window.MeuVoto.API_BASE==='string')?window.MeuVoto.API_BASE:'https://mudabrasil-production-79eb.up.railway.app';
 /* Prefixo das chaves localStorage — mude se usar o template lado a lado com outro app na mesma origem. */
 const LS={rascunho:'cv_rascunho',uf:'cv_uf',session:'cv_session',comprov:'cv_comprovante'};
 /* Cargos da eleicao: [rotulo, numeroTSE]. No DF a linha "Deputado Estadual" vira
@@ -293,7 +293,7 @@ async function fetchJson(u,o){const r=await fetch(API+u,o);let j={};try{j=await 
 async function garantirSessao(){
   let tok=localStorage.getItem(LS.session);
   if(tok){try{const me=await fetchJson('/api/auth/me?sessionToken='+encodeURIComponent(tok));if(me&&me.ok)return tok}catch(_){localStorage.removeItem(LS.session)}}
-  const dev=(window.VotaBrasil&&window.VotaBrasil.AUTH_DEV_TOKEN)||'';
+  const dev=(window.MeuVoto&&window.MeuVoto.AUTH_DEV_TOKEN)||'';
   if(dev){try{const g=await fetchJson('/api/auth/google',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idToken:dev})});if(g&&g.ok&&g.sessionToken){localStorage.setItem(LS.session,g.sessionToken);return g.sessionToken}}catch(_){}}
   const r=await fetchJson('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'simulacao+'+Date.now()+'-'+Math.floor(Math.random()*1e6)+'@votabrasil.demo',nome:'Eleitor(a) Demonstração'})});
   if(r&&r.ok&&r.sessionToken){localStorage.setItem(LS.session,r.sessionToken);return r.sessionToken}
@@ -414,7 +414,7 @@ function irConferir(){
   go('s-conf');
   if(comp&&comp.codigo)[...document.querySelectorAll('#s-conf input.ci')].forEach((i,j)=>i.value=comp.codigo.slice(j*4,j*4+4));
 }
-/* Link para conferir no SITE oficial VotaBrasil (mesmo contrato de API).
+/* Link para conferir no SITE oficial MeuVoto (mesmo contrato de API).
    Troque a constante se publicar o site num domínio próprio. */
 const SITE_CONFERIR='https://mudabrasil-production-79eb.up.railway.app/index.html#conferir-voto';
 function abrirConferirNoSite(){window.open(SITE_CONFERIR,'_blank','noopener')}

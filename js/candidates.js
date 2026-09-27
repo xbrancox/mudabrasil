@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL - LÓGICA DA PÁGINA DE CANDIDATOS (dual-mode)
+   MEUVOTO - LÓGICA DA PÁGINA DE CANDIDATOS (dual-mode)
    ------------------------------------------------------------
    - MODO REAL:  busca /api/candidatos (dados reais da Câmara)
    - MODO DEMO:  fallback para window.CANDIDATE_DATA (sintéticos)

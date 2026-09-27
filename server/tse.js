@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL — Módulo TSE (candidatos de eleições)
+   MEUVOTO — Módulo TSE (candidatos de eleições)
    ------------------------------------------------------------
    Fonte oficial: DivulgaCandContas (TSE) + Dados Abertos TSE.
 

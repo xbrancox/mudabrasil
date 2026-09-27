@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL — VERIFICAÇÃO DE POLÍTICOS (SELO)
+   MEUVOTO — VERIFICAÇÃO DE POLÍTICOS (SELO)
    ------------------------------------------------------------
    Verificação automática via domínio de e-mail institucional:
    - @camara.leg.br  (deputados federais)
@@ -78,12 +78,12 @@ async function sendVerificationEmail(email, token, politicianName, baseUrl) {
     </head>
     <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="background: linear-gradient(135deg, #061a3a 0%, #115FCB 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-        <h1 style="color: #FFD700; margin: 0; font-size: 28px;">🇧🇷 VotaBrasil</h1>
+        <h1 style="color: #FFD700; margin: 0; font-size: 28px;">🇧🇷 MeuVoto</h1>
         <p style="color: #fff; margin: 10px 0 0; opacity: 0.9;">Verificação de Identidade Política</p>
       </div>
       <div style="background: #fff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 12px 12px;">
         <h2 style="color: #061a3a; margin-top: 0;">Olá, ${politicianName}</h2>
-        <p>Você (ou sua assessoria) solicitou a verificação de identidade no <strong>VotaBrasil</strong> para obter o selo de político verificado.</p>
+        <p>Você (ou sua assessoria) solicitou a verificação de identidade no <strong>MeuVoto</strong> para obter o selo de político verificado.</p>
         <p>Seu e-mail institucional <strong>${email}</strong> foi reconhecido como domínio autorizado.</p>
         <div style="text-align: center; margin: 30px 0;">
           <a href="${confirmUrl}" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #061a3a; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; display: inline-block; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);">
@@ -93,18 +93,18 @@ async function sendVerificationEmail(email, token, politicianName, baseUrl) {
         <p style="font-size: 14px; color: #666;">Ou acesse diretamente: <a href="${confirmUrl}">${confirmUrl}</a></p>
         <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 24px 0;">
         <p style="font-size: 12px; color: #999;">Este link expira em 24 horas. Se não solicitou esta verificação, ignore este e-mail.</p>
-        <p style="font-size: 12px; color: #999;">VotaBrasil — Seu voto coloca. Seu voto tira.</p>
+        <p style="font-size: 12px; color: #999;">MeuVoto — Seu voto coloca. Seu voto tira.</p>
       </div>
     </body>
     </html>
   `;
 
   const text = `
-    VotaBrasil - Verificação de Identidade Política
+    MeuVoto - Verificação de Identidade Política
     
     Olá, ${politicianName}
     
-    Você (ou sua assessoria) solicitou a verificação de identidade no VotaBrasil para obter o selo de político verificado.
+    Você (ou sua assessoria) solicitou a verificação de identidade no MeuVoto para obter o selo de político verificado.
     
     Seu e-mail institucional ${email} foi reconhecido como domínio autorizado.
     
@@ -112,15 +112,15 @@ async function sendVerificationEmail(email, token, politicianName, baseUrl) {
     
     Este link expira em 24 horas. Se não solicitou esta verificação, ignore este e-mail.
     
-    VotaBrasil — Seu voto coloca. Seu voto tira.
+    MeuVoto — Seu voto coloca. Seu voto tira.
   `;
 
   if (transporter) {
     try {
       await transporter.sendMail({
-        from: `"VotaBrasil" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+        from: `"MeuVoto" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
         to: email,
-        subject: '🇧🇷 VotaBrasil - Confirme seu e-mail para obter o selo de verificado',
+        subject: '🇧🇷 MeuVoto - Confirme seu e-mail para obter o selo de verificado',
         text,
         html
       });

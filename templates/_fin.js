@@ -25,8 +25,8 @@ const config=`
 /* ============================================================
    CONFIG — personalize so aqui
    ============================================================ */
-/* URL base do backend: mesma origem (vazio) ou https://... . Em producao VotaBrasil usamos Railway. */
-const API=(window.VotaBrasil&&window.VotaBrasil.API_BASE)||'';
+/* URL base do backend: mesma origem (vazio) ou https://... . Em producao MeuVoto usamos Railway. */
+const API=(window.MeuVoto&&window.MeuVoto.API_BASE)||'';
 /* Prefixo das chaves localStorage — mude se usar o template lado a lado com outro app na mesma origem. */
 const LS={rascunho:'cv_rascunho',uf:'cv_uf',session:'cv_session',comprov:'cv_comprovante'};
 /* Cargos da eleicao: [rotulo, numeroTSE]. No DF a linha "Deputado Estadual" vira
@@ -40,11 +40,11 @@ const headCss=`<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Cédula VotaBrasil — template de votação</title>
+<title>Cédula MeuVoto — template de votação</title>
 <style>
 /* ============================================================
-   CEDULA VOTABRASIL v1 — template reutilizavel de votacao
-   (extraido do app VotaBrasil em producao, set/2026)
+   CEDULA MEUVOTO v1 — template reutilizavel de votacao
+   (extraido do app MeuVoto em producao, set/2026)
    Fluxo: f1 monte a cedula -> f2 revise -> f3 explicacao -> f4 codigo unico
    + sheet bottom de candidatos reais + toast + comprovante no aparelho.
    Personalize apenas o bloco CONFIG no script.

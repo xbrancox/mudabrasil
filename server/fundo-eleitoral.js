@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL — FUNDO ELEITORAL (dados públicos TSE)
+   MEUVOTO — FUNDO ELEITORAL (dados públicos TSE)
    ------------------------------------------------------------
    Distribuição do FEFC (Fundo Especial de Financiamento de
    Campanha) por partido, Elections 2026.

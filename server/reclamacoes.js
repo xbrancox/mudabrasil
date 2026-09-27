@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL — SISTEMA DE RECLAMAÇÕES E APOIOS
+   MEUVOTO — SISTEMA DE RECLAMAÇÕES E APOIOS
    ------------------------------------------------------------
    Eleitores autenticados podem registrar:
    - RECLAMAÇÕES: críticas a ações do político

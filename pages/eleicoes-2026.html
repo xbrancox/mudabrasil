@@ -2,18 +2,18 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Eleições 2026 · Candidatos · VotaBrasil</title>
+<title>Eleições 2026 · Candidatos · MeuVoto</title>
 <meta name="description" content="Candidatos reais das Eleições Gerais 2026 com número de urna, partido, coligação e situação de julgamento — dados oficiais do TSE.">
-<link rel="canonical" href="https://VotaBrasil-redesign-production.up.railway.app/pages/eleicoes-2026.html">
-<meta property="og:title" content="Eleições 2026 · Candidatos · VotaBrasil">
+<link rel="canonical" href="https://MeuVoto-redesign-production.up.railway.app/pages/eleicoes-2026.html">
+<meta property="og:title" content="Eleições 2026 · Candidatos · MeuVoto">
 <meta property="og:description" content="Candidatos reais das Eleições Gerais 2026 com número de urna, partido, coligação e situação de julgamento — dados oficiais do TSE.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://VotaBrasil-redesign-production.up.railway.app/pages/eleicoes-2026.html">
-<meta property="og:image" content="https://VotaBrasil-redesign-production.up.railway.app/og-image.png">
-<meta property="og:site_name" content="VotaBrasil">
+<meta property="og:url" content="https://MeuVoto-redesign-production.up.railway.app/pages/eleicoes-2026.html">
+<meta property="og:image" content="https://MeuVoto-redesign-production.up.railway.app/og-image.png">
+<meta property="og:site_name" content="MeuVoto">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://VotaBrasil-redesign-production.up.railway.app/og-image.png">
+<meta name="twitter:image" content="https://MeuVoto-redesign-production.up.railway.app/og-image.png">
 
 <link rel="icon" type="image/x-icon" href="../images/logo/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../images/logo/favicon-32x32.png">
@@ -60,7 +60,7 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 @media(max-width:900px){.filtros{grid-template-columns:1fr 1fr}}
 </style>
 <style>
-/* ===== CABEÇALHO PADRÃO VOTABRASIL ===== */
+/* ===== CABEÇALHO PADRÃO MEUVOTO ===== */
 header.topo{position:sticky;top:0;z-index:50;display:flex;gap:12px;align-items:center;padding:12px 20px;background:#061a3add;backdrop-filter:blur(8px);border-bottom:1px solid #1d3a66;flex-wrap:wrap}
 header.topo .lg{display:flex;gap:10px;align-items:center;text-decoration:none}
 header.topo .lg .ic{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7ed957,#2ECC71);display:flex;align-items:center;justify-content:center;color:#061a3a;font-size:18px}
@@ -111,7 +111,7 @@ header.topo nav a.on{background:#FFD700;color:#061a3a;font-weight:800}
 <div class="overlay" id="mDet"><div class="modal"><div id="detBody"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar()">Fechar</button></div></div>
 <script>
 /* FIX: API_BASE pode ser '' (mesma origem) — não usar ||, que trocaria '' pela URL de produção */
-const API=(window.VotaBrasil&&typeof window.VotaBrasil.API_BASE==='string')?window.VotaBrasil.API_BASE:'https://VotaBrasil-redesign-production.up.railway.app';
+const API=(window.MeuVoto&&typeof window.MeuVoto.API_BASE==='string')?window.MeuVoto.API_BASE:'https://MeuVoto-redesign-production.up.railway.app';
 const UFS=['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
 const $=s=>document.querySelector(s);
 $('#uf').innerHTML=UFS.map(u=>`<option value="${u}" ${u==='SP'?'selected':''}>${u}</option>`).join('');
@@ -198,7 +198,7 @@ function abrir(c){
  <div class="stat" style="background:var(--card2);padding:10px;border-radius:10px"><small style="color:var(--muted);display:block">Bens Declarados ${createTooltip('Bens declarados à Justiça Eleitoral no momento da candidatura. Valor total declarado.')}</small><b>${bens.length} (Total: ${c.bensTotal?'R$ '+Number(c.bensTotal).toLocaleString('pt-BR'):'R$ 0'})</b></div>
  <div class="stat" style="background:var(--card2);padding:10px;border-radius:10px"><small style="color:var(--muted);display:block">Fonte Oficial</small><b>DivulgaCand / TSE</b></div>
  </div>
- <p class="muted" style="font-size:12.5px;margin-bottom:14px;line-height:1.5">📊 <b>Transparência Eleitoral 2026:</b> O Fundo Especial de Financiamento de Campanha (FEFC) é regulamentado pela Justiça Eleitoral. Dados públicos extraídos diretamente dos portais do TSE e integrados unificadamente no VotaBrasil.</p>
+ <p class="muted" style="font-size:12.5px;margin-bottom:14px;line-height:1.5">📊 <b>Transparência Eleitoral 2026:</b> O Fundo Especial de Financiamento de Campanha (FEFC) é regulamentado pela Justiça Eleitoral. Dados públicos extraídos diretamente dos portais do TSE e integrados unificadamente no MeuVoto.</p>
  <h4 style="font-size:14px;color:var(--gold);margin-bottom:8px">🏛️ Detalhes de Bens Declarados (${bens.length})</h4>
  <div style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
  ${bens.length?bens.map(b=>`<div style="background:var(--card2);padding:8px 12px;border-radius:8px;font-size:12.5px">${esc(b.descricao||b.tipo||'Bem')} — <b style="color:var(--gold)">R$ ${Number(b.valor||0).toLocaleString('pt-BR')}</b></div>`).join(''):renderEmptyState('fa-solid fa-file-invoice-dollar','Nenhum bem declarado à Justiça Eleitoral.')}

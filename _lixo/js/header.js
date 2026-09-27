@@ -1,5 +1,5 @@
 /* ============================================================
-   MUDABRASIL — HEADER COMPARTILHADO (injetado em todas as páginas)
+   MEUVOTO — HEADER COMPARTILHADO (injetado em todas as páginas)
    ============================================================ */
 (function () {
   'use strict';

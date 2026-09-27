@@ -1,6 +1,6 @@
-/* MudaBrasil - Cache, resiliencia e erros globais */
+/* MeuVoto - Cache, resiliencia e erros globais */
 const CACHE_TTL = 30 * 60 * 1000;
-const CACHE_PREFIX = 'votabrasil_cache_';
+const CACHE_PREFIX = 'meuvoto_cache_';
 const CACHE_STALE = {};
 
 function fetchWithCache(url) {

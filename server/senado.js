@@ -1,5 +1,5 @@
 /* ============================================================
-   VOTABRASIL - INTEGRAÇÃO SENADO FEDERAL (v2)
+   MEUVOTO - INTEGRAÇÃO SENADO FEDERAL (v2)
    ------------------------------------------------------------
    1) Parser do schema REAL (ListaParlamentarEmExercicio.Parlamentares)
       + tolerante a array direto / {senadores:[...]}.
@@ -16,7 +16,7 @@ const DATA_DIR = path.join(__dirname, 'data');
 const SENADO_FILE = path.join(DATA_DIR, 'senadores.json');
 const SNAPSHOT_FILE = path.join(__dirname, 'senadores_snapshot.json');
 const API_BASE = 'https://legis.senado.leg.br/dadosabertos';
-const UA = 'VotaBrasil/1.0 (plataforma civica; dados abertos)';
+const UA = 'MeuVoto/1.0 (plataforma civica; dados abertos)';
 
 function ensureDirs() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });

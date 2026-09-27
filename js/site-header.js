@@ -1,9 +1,9 @@
 /* ============================================================
-   VOTABRASIL — CABEÇALHO ÚNICO (todas as páginas)
+   MEUVOTO — CABEÇALHO ÚNICO (todas as páginas)
    ------------------------------------------------------------
    Injeta o mesmo cabeçalho em qualquer página, com:
    - menu de 11 itens, item ativo detectado pela URL/hash
-   - badge "backend ativo" (usa window.VotaBrasil.API_BASE se
+   - badge "backend ativo" (usa window.MeuVoto.API_BASE se
      config.js estiver carregado antes deste script)
    - Entrar/Cadastrar: na home chama abrirLogin(), fora aponta
      para a home
@@ -99,7 +99,7 @@
     topo.id = 'mbtopo';
     topo.innerHTML =
       '<header>' +
-      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'icon.svg" alt="VotaBrasil" width="48" height="48" style="border-radius:14px;display:block"></span><span><b>VotaBrasil</b><span class="mv-slogan">Seu voto coloca, seu voto tira.</span></span></a>' +
+      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'icon.svg" alt="MeuVoto" width="48" height="48" style="border-radius:14px;display:block"></span><span><b>MeuVoto</b><span class="mv-slogan">Seu voto coloca, seu voto tira.</span></span></a>' +
       ' <button class="ham" aria-label="Menu" onclick="document.getElementById(\'mbtopo-mnav\').classList.toggle(\'open\')"><i class="fa-solid fa-bars"></i></button>' +
       ' <nav>' + nav + '</nav>' +
       ' <div class="hact"><span class="hbadge" id="mbtopo-badge" hidden>conectando\u2026</span>' +
@@ -128,8 +128,8 @@
     }
 
     // badge do backend (API_BASE '' é válida — mesma origem; nunca usar || aqui)
-    var base = (window.VotaBrasil && typeof window.VotaBrasil.API_BASE === 'string')
-      ? window.VotaBrasil.API_BASE
+    var base = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string')
+      ? window.MeuVoto.API_BASE
       : '';
     var badge = document.getElementById('mbtopo-badge');
     if (badge) {
@@ -140,7 +140,7 @@
       }).catch(function () { badge.hidden = true; });
     }
 
-    // Título da página já está correto como VotaBrasil
+    // Título da página já está correto como MeuVoto
     // (não precisa substituir)
 
     // na home, acompanha troca de hash para atualizar o item ativo
