@@ -17,11 +17,11 @@
     '#mbtopo{position:sticky;top:0;z-index:9000;display:flex;gap:8px;align-items:center;padding:10px 18px!important;flex-wrap:nowrap;background:rgba(6,26,58,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(127,176,245,0.25);flex-wrap:wrap;font-family:Manrope,system-ui,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,0.3)}',
     '#mbtopo *{box-sizing:border-box}',
     '#mbtopo header{display:flex!important;gap:10px!important;align-items:center!important;padding:0!important;margin:0!important;background:none!important;border:none!important;box-shadow:none!important;backdrop-filter:none!important;flex-wrap:nowrap!important;width:100%;position:static!important;top:auto!important}',
-    '#mbtopo .lg{display:flex;gap:10px;align-items:center;text-decoration:none;transition:transform 0.2s ease}',
+    '#mbtopo .lg{display:flex;gap:12px;align-items:center;text-decoration:none;transition:transform 0.2s ease}',
     '#mbtopo .lg:hover{transform:translateY(-1px)}',
-    '#mbtopo .lg .ic{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#7ed957,#2ECC71);display:flex;align-items:center;justify-content:center;color:#061a3a;font-size:18px;flex:none;box-shadow:0 2px 10px rgba(46,204,113,0.3)}',
-    '#mbtopo .lg b{font-family:Montserrat,sans-serif;font-size:15px;color:#fff;display:block;white-space:nowrap}',
-    '#mbtopo .lg small{display:block;color:#9fb0c8;font-size:10px;white-space:nowrap}',
+    '#mbtopo .lg .ic{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#7ed957,#2ECC71);display:flex;align-items:center;justify-content:center;color:#061a3a;font-size:22px;flex:none;box-shadow:0 3px 14px rgba(46,204,113,0.35)}',
+    '#mbtopo .lg b{font-family:Montserrat,sans-serif;font-size:20px;font-weight:900;color:#fff;display:block;white-space:nowrap;letter-spacing:-0.02em}',
+    '#mbtopo .lg .mv-slogan{display:block;color:#FFD700;font-size:10.5px;font-weight:700;white-space:nowrap;font-style:italic;letter-spacing:0.01em}',
     '#mbtopo nav{display:flex;gap:4px;flex-wrap:nowrap;margin-left:auto;min-width:0}',
     '#mbtopo nav a{color:#eaf1fb;text-decoration:none;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;transition:all 0.2s ease}',
     '#mbtopo nav a:hover{background:rgba(18,48,89,0.8);transform:translateY(-1px);color:#FFD700}',
@@ -99,7 +99,7 @@
     topo.id = 'mbtopo';
     topo.innerHTML =
       '<header>' +
-      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'icon.svg" alt="VotaBrasil" width="40" height="40" style="border-radius:10px;display:block"></span><span><b>VotaBrasil</b><small>Participa\u00e7\u00e3o C\u00edvica</small></span></a>' +
+      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'icon.svg" alt="VotaBrasil" width="48" height="48" style="border-radius:14px;display:block"></span><span><b>VotaBrasil</b><span class="mv-slogan">Seu voto coloca, seu voto tira.</span></span></a>' +
       ' <button class="ham" aria-label="Menu" onclick="document.getElementById(\'mbtopo-mnav\').classList.toggle(\'open\')"><i class="fa-solid fa-bars"></i></button>' +
       ' <nav>' + nav + '</nav>' +
       ' <div class="hact"><span class="hbadge" id="mbtopo-badge" hidden>conectando\u2026</span>' +
@@ -139,6 +139,9 @@
         badge.textContent = 'backend ativo';
       }).catch(function () { badge.hidden = true; });
     }
+
+    // Título da página já está correto como VotaBrasil
+    // (não precisa substituir)
 
     // na home, acompanha troca de hash para atualizar o item ativo
     if (naHomeAgora) {

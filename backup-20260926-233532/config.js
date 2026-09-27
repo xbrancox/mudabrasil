@@ -2,12 +2,12 @@
    VotaBrasil — Configuração Global
    -----------------------------------------------------------
    Backend: https://mudabrasil-production-79eb.up.railway.app (Railway production)
-   Frontend: https://xbrancox.github.io/VotaBrasil/
+   Frontend: https://xbrancox.github.io/mudabrasil/
    ============================================================ */
 
 let API_BASE = (typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
   ? ''
-  : 'https://mudabrasil-production-79eb.up.railway.app';
+  : 'https://votabrasil.up.railway.app';
 
 /* Para que o localhost use exatamente o mesmo backend e dados da Produção (Railway),
    mantemos API_BASE apontando para o servidor de produção. */
@@ -56,3 +56,6 @@ window.VotaBrasil.TERMOMETRO = {
 console.log('%c🟡 VotaBrasil', 'font-size:16px;font-weight:bold;color:#FFD700');
 console.log('%cModo: ' + window.VotaBrasil.MODO, 'color:#94A3B8');
 console.log('%cBackend: ' + API_BASE, 'color:#2ECC71');
+
+window.VotaBrasil=window.VotaBrasil||window.MudaBrasil||{};
+window.MudaBrasil=window.MudaBrasil||window.VotaBrasil;

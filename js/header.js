@@ -21,11 +21,12 @@
       padding: 12px 24px; gap: 16px; max-width: 1480px; margin: 0 auto;
     }
     .mb-logo {
-      display: flex; align-items: center; gap: 10px;
-      font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.12rem;
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.3rem;
       color: #fff; text-decoration: none; white-space: nowrap;
     }
     .mb-logo:hover { opacity: 0.9; }
+    .mb-logo .mv-slogan{display:block;color:#FFD700;font-size:0.65rem;font-weight:700;white-space:nowrap;font-style:italic;letter-spacing:0.01em}
     .mb-nav-links {
       display: flex; align-items: center; gap: 2px;
       list-style: none; margin: 0; padding: 0; flex-wrap: wrap;
@@ -155,8 +156,9 @@
     return `
 <header class="mb-header">
   <div class="mb-nav-inner">
-    <a href="${prefix}index.html" class="mb-logo" aria-label="VotaBrasil">
-      <img src="${prefix}icon.svg" alt="" width="76" height="76" style="border-radius:0;display:block">
+    <a href="${prefix}index.html" class="mb-logo" aria-label="MeuVoto">
+      <img src="${prefix}icon.svg" alt="" width="56" height="56" style="border-radius:14px;display:block">
+      <span><b>MeuVoto</b><span class="mv-slogan">Meu voto coloca, meu voto tira.</span></span>
     </a>
     <nav aria-label="Navegação principal">
       <ul class="mb-nav-links" id="mb-nav-links">
