@@ -198,7 +198,7 @@ function abrir(c){
  <div class="stat" style="background:var(--card2);padding:10px;border-radius:10px"><small style="color:var(--muted);display:block">Bens Declarados ${createTooltip('Bens declarados à Justiça Eleitoral no momento da candidatura. Valor total declarado.')}</small><b>${bens.length} (Total: ${c.bensTotal?'R$ '+Number(c.bensTotal).toLocaleString('pt-BR'):'R$ 0'})</b></div>
  <div class="stat" style="background:var(--card2);padding:10px;border-radius:10px"><small style="color:var(--muted);display:block">Fonte Oficial</small><b>DivulgaCand / TSE</b></div>
  </div>
- <p class="muted" style="font-size:12.5px;margin-bottom:14px;line-height:1.5">📊 <b>Transparência Eleitoral 2026:</b> O Fundo Especial de Financiamento de Campanha (FEFC) é regulamentado pela Justiça Eleitoral. Dados públicos extraídos diretamente dos portais do TSE e integrados unificadamente no MudaBrasil.</p>
+ <p class="muted" style="font-size:12.5px;margin-bottom:14px;line-height:1.5">📊 <b>Transparência Eleitoral 2026:</b> O Fundo Especial de Financiamento de Campanha (FEFC) é regulamentado pela Justiça Eleitoral. Dados públicos extraídos diretamente dos portais do TSE e integrados unificadamente no VotaBrasil.</p>
  <h4 style="font-size:14px;color:var(--gold);margin-bottom:8px">🏛️ Detalhes de Bens Declarados (${bens.length})</h4>
  <div style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
  ${bens.length?bens.map(b=>`<div style="background:var(--card2);padding:8px 12px;border-radius:8px;font-size:12.5px">${esc(b.descricao||b.tipo||'Bem')} — <b style="color:var(--gold)">R$ ${Number(b.valor||0).toLocaleString('pt-BR')}</b></div>`).join(''):renderEmptyState('fa-solid fa-file-invoice-dollar','Nenhum bem declarado à Justiça Eleitoral.')}
