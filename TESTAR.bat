@@ -1,53 +1,58 @@
 @echo off
 chcp 65001 >nul
-title VotaBrasil - Verificando site...
+title MeuVoto — Bateria de Testes
 color 0A
 cd /d "%~dp0"
 
 echo.
-echo ====================================================
-echo   VOTABRASIL - TESTE AUTOMATICO
-echo ====================================================
+echo ========================================
+echo  MEUVOTO - BATERIA COMPLETA DE TESTES
+echo ========================================
 echo.
-echo Verificando arquivos locais...
+echo Node.js:
+node --version
 echo.
 
-set /a ok=0
-set /a fail=0
+echo [1/4] test-engine.js (25 checks - motor do backend)...
+echo.
+node tests/test-engine.js
+if errorlevel 1 goto :fail
+echo.
 
-if exist "js\header-unificado.js" (
-    echo [OK] js/header-unificado.js
-    set /a ok+=1
-) else (
-    echo [ERRO] js/header-unificado.js nao encontrado
-    set /a fail+=1
-)
+echo [2/4] test-thermometer.js (21 checks - ciclo votar/ver/revogar)...
+echo.
+node tests/test-thermometer.js
+if errorlevel 1 goto :fail
+echo.
 
-if exist "pages\congresso.html" (
-    echo [OK] pages/congresso.html
-    set /a ok+=1
-) else (
-    echo [ERRO] pages/congresso.html nao encontrado
-    set /a fail+=1
-)
+echo [3/4] test-live.js (4 checks - SSE tempo real)...
+echo.
+node tests/test-live.js
+if errorlevel 1 goto :fail
+echo.
 
-for %%f in (pages\candidatos.html pages\comunidade.html pages\congresso.html pages\eleicoes-2026.html pages\meu-voto.html pages\parlamentares.html pages\proposta.html pages\revogar.html pages\status.html pages\termometro.html pages\votacoes.html) do (
-    findstr /C:"header-unificado.js" "%%f" >nul 2>&1
-    if !errorlevel! == 0 (
-        echo [OK] %%~nxf - tem script do header unificado
-        set /a ok+=1
-    ) else (
-        echo [ERRO] %%~nxf - FALTA script do header unificado
-        set /a fail+=1
-    )
-)
+echo [4/4] test-render.js (6 checks - renderização das páginas)...
+echo.
+node tests/test-render.js
+if errorlevel 1 goto :fail
+echo.
 
 echo.
-echo ====================================================
-echo   RESULTADO: %ok% OK / %fail% ERRO
-echo ====================================================
+echo ========================================
+echo  ✅ TODOS OS TESTES PASSARAM
+echo ========================================
 echo.
 echo Se tudo estiver OK, duplo-clique em ENVIAR.bat
 echo para fazer push ao GitHub.
 echo.
 pause
+exit /b 0
+
+:fail
+echo.
+echo ========================================
+echo  ❌ ALGUM TESTE FALHOU
+echo ========================================
+echo.
+pause
+exit /b 1
