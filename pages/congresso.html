@@ -30,23 +30,11 @@
 body{background:radial-gradient(1200px 600px at 80% -10%,#0d2b57 0%,var(--bg) 55%) fixed var(--bg);color:var(--txt);font-family:Manrope,system-ui,sans-serif}
 h1,h2,h3,h4{font-family:Montserrat,sans-serif}
 a{color:var(--gold)}
-header{position:sticky;top:0;z-index:50;display:flex;gap:12px;align-items:center;padding:12px 20px;background:#061a3add;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);flex-wrap:wrap}
-.lg{display:flex;gap:10px;align-items:center}
-.lg .ic{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7ed957,#2ECC71);display:flex;align-items:center;justify-content:center;color:#061a3a;font-size:18px}
-.lg b{font-family:Montserrat;font-size:17px}
-.lg small{display:block;color:#9fb0c8;font-size:11px}
-nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
-nav a{color:var(--txt);text-decoration:none;padding:8px 12px;border-radius:999px;font-size:13px}
-nav a:hover{background:var(--c2)} nav a.on{background:var(--gold);color:#061a3a;font-weight:800}
-.hact{display:flex;gap:8px;align-items:center}
+/* Cabeçalho uniforme injetado por site-header.js — regras locais removidas */
 .badge{border:1px solid var(--green);color:var(--green);border-radius:999px;padding:6px 12px;font-size:12px}
 .btn{border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
 .btn.az{background:var(--c2);color:var(--txt);border:1px solid var(--line)}
 .btn.gold{background:var(--gold);color:#061a3a}
-.ham{display:none;background:none;border:none;color:var(--txt);font-size:20px;cursor:pointer}
-.mnav{display:none;flex-direction:column;background:var(--c1);border-bottom:1px solid var(--line);padding:10px 16px}
-.mnav a{color:var(--txt);text-decoration:none;padding:10px 4px;border-bottom:1px dashed var(--line);font-size:14px}
-@media(max-width:960px){nav{display:none}.ham{display:block}.mnav.open{display:flex}}
 main{max-width:1150px;margin:0 auto;padding:24px 16px 100px}
 .hero p{color:#b9c7dd;max-width:760px;margin-top:6px}
 [data-tip]{position:relative;cursor:help;border-bottom:1px dotted var(--grey)}

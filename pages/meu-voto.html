@@ -27,8 +27,7 @@
   <style>
 
 
-@media(max-width:960px){header nav{display:none}.ham{display:block}.mnav.open{display:flex}}
-    /* Estilos específicos para a página Meu Voto */
+    /* Estilos específicos da página Meu Voto (sidebar removida — cabeçalho vem do site-header.js) */
     .vote-tabs {
       display: flex;
       gap: 4px;
@@ -174,20 +173,7 @@
 
   
 
-  <aside class="sidebar" id="sidebar">
-    <ul>
-      <li><a href="../index.html">🏠 Início</a></li>
-      <li><a href="candidatos.html">🗳️ Políticos</a></li>
-      <li><a href="meu-voto.html" style="color:var(--accent-500);">✋ Meu Voto</a></li>
-      <li><a href="proposta.html">📖 Proposta</a></li>
-      <li><a href="comunidade.html">👥 Comunidade</a></li>
-    </ul>
-    <div class="login-area">
-      <button class="btn btn-secondary btn-sm" onclick="showLoginForm()">Entrar na sua conta</button>
-    </div>
-  </aside>
-
-  <main class="main-content">
+  <main>
     <section class="reveal">
       <h1>✋ Meu Voto</h1>
       <p style="max-width:720px; margin:0 auto var(--space-md);">
