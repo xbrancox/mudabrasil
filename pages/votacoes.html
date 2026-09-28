@@ -146,6 +146,28 @@ var enc=encodeURIComponent(body);
 h+='<div class="ecard"><h3>🧾 Recibo — '+esc(pr.nome)+' · "'+esc(trunc(pr.txt,60))+'"</h3><pre style="white-space:pre-wrap;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px;font:12px/1.5 Manrope,sans-serif">'+esc(body)+'</pre><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" onclick="navigator.clipboard.writeText(decodeURIComponent(\''+enc+'\')).then(function(){alert(\'📋 Copiado!\')})">📋 Copiar</button><button class="btn sm" onclick="window.open(\'https://wa.me/?text='+enc+'\',\'_blank\')">📲 WhatsApp</button>'+(email?'<button class="btn sm" onclick="location.href=\'mailto:'+esc(email)+'?subject='+encodeURIComponent('Recibo de cobrança — MeuVoto')+'&body='+enc+'">✉️ E-mail ao gabinete</button>':'<span class="muted">sem e-mail oficial cadastrado</span>')+'</div></div>'}
 document.getElementById('out9').innerHTML=h}
 window.addEventListener('load',function(){setTimeout(function(){maybeAuto9(false)},1500)});
+</script><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
+<div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn sm" data-tip="Tabela consolidada dos seus deputados: presença, % Sim, delta vs Plenário, coerência com a bancada e promessas." onclick="meuCongresso()">📊 Meu Congresso</button>
+<button class="btn sm" data-tip="Imprime/salva em PDF a tabela consolidada do Meu Congresso." onclick="mcPdf()">🖨️ PDF do Meu Congresso</button>
+</div>
+<div id="out10" style="margin-top:10px"></div>
+</div>
+<script id="ciclo10">
+var CACHEO={};
+async function orientOf(id){if(CACHEO[id])return CACHEO[id];var r=await fetchJ(CAM('votacoes/'+id+'/orientacoes'));var d=(r&&r.dados)||[];var m={};for(var i=0;i<d.length;i++){var p=String(d[i].siglaPartido||d[i].partido||'').toUpperCase();var v=String(d[i].voto||d[i].orientacao||'').trim();if(p&&/^(sim|n[aã]o)$/i.test(v))m[p]=v.toLowerCase()}CACHEO[id]=m;return m}
+async function coerDeputado(num){var dev=0,tot=0;for(var k=0;k<C7.length;k++){var v=C7[k];var L=CACHEV[v.id].list;var x=null;for(var q=0;q<L.length;q++){if(L[q].id===num){x=L[q];break}}if(!x)continue;var vv=(x.voto||'').trim().toLowerCase();if(vv.indexOf('sim')!==0&&vv.indexOf('n')!==0)continue;var om=await orientOf(v.id);var o=om[(x.partido||'').toUpperCase()];if(!o)continue;tot++;if(vv.indexOf(o)!==0)dev++}return tot?{pc:Math.round(100*(1-dev/tot)),dev:dev,tot:tot}:null}
+async function meuCongresso(){if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');await needC7();if(!C7.length)return alert('Sem votações nominais na janela.');
+$('#out10').innerHTML='<p class="muted">⏳ Consolidando…</p>';
+var allList=[];for(var i=0;i<C7.length;i++){allList=allList.concat(CACHEV[C7[i].id].list)}var nat=rates(allList);
+var rows='';
+for(var j=0;j<MEUS.length;j++){var m=MEUS[j];var num=String(m.id).replace('camara-','');
+var part=0,mine=[];for(var k=0;k<C7.length;k++){var L=CACHEV[C7[k].id].list;for(var q=0;q<L.length;q++){if(L[q].id===num){part++;mine.push(L[q])}}}
+var mr=rates(mine);var d=(mr!=null&&nat!=null)?(mr-nat):null;var co=await coerDeputado(num);var np=PROMS.filter(function(p){return p.depId===m.id}).length;
+rows+='<tr><td>⭐ '+esc(m.nome)+'</td><td><b>'+Math.round(100*part/C7.length)+'%</b></td><td>'+(mr==null?'—':mr+'%')+'</td><td>'+(d==null?'—':((d>0?'+':'')+d+' pp'))+'</td><td>'+(co?(co.pc+'% ('+co.dev+' desvio(s))'):'—')+'</td><td>'+np+'</td></tr>'}
+$('#out10').innerHTML='<div class="ecard"><h3>📊 Meu Congresso — visão consolidada (últimas '+C7.length+' nominais)</h3><div style="overflow-x:auto"><table class="vtable"><tr><th>Deputado</th><th>Presença</th><th>% Sim</th><th>Δ vs Plenário</th><th>Coerência c/ bancada</th><th>🤝 Promessas</th></tr>'+rows+'</table></div><p class="muted" style="margin-top:8px">Coerência = % dos votos Sim/Não alinhados à orientação do próprio partido. Δ = pontos percentuais acima/abaixo da média do Plenário.</p></div>'}
+function mcPdf(){var el=$('#out10');if(!el||!el.innerHTML.trim())return alert('Gere o 📊 Meu Congresso primeiro.');$('#fichaPrint').innerHTML='<h1>MeuVoto · Meu Congresso</h1>'+el.innerHTML+'<p style="margin-top:8px">Gerado em '+new Date().toLocaleString('pt-BR')+' · fontes: dadosabertos.camara.leg.br</p>';window.print()}
+(function(){var b=window.buildResumo9;if(typeof b==='function'){window.buildResumo9=async function(){var r=null;try{r=await b()}catch(e){}if(r){try{localStorage.setItem('mb_resumo_cache',JSON.stringify(r))}catch(e){}}else{var c=localStorage.getItem('mb_resumo_cache');if(c){try{r=JSON.parse(c);if(r)r.fromCache=true}catch(e){}}}return r}}}());
 </script><div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
