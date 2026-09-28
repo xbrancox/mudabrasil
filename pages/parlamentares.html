@@ -130,6 +130,12 @@ a.badge:hover{filter:brightness(1.25)}
  .fontes{grid-template-columns:1fr}
 }
 </style>
+
+<style id="mb-modal-fix">
+.mbFixOverlay{display:flex !important;align-items:flex-start !important;justify-content:center !important;overflow-y:auto !important;padding:88px 14px 56px !important;box-sizing:border-box !important}
+.mbFixOverlay>*:first-child{margin:0 auto !important;transform:none !important;top:auto !important;bottom:auto !important;max-height:none !important;width:min(940px,100%) !important;box-sizing:border-box !important}
+.mbFixBox{position:fixed !important;top:88px !important;bottom:56px !important;left:50% !important;transform:translateX(-50%) !important;max-height:none !important;overflow-y:auto !important}
+</style>
 </head>
 <body>
 
@@ -901,6 +907,48 @@ carregaTseIdx();
   const t0=Date.now();const tenta=()=>{if(POL.find(x=>x.id===id))abrirFicha(id);
     else if(Date.now()-t0<8000)setTimeout(tenta,300)};
   setTimeout(tenta,400)})();
+</script>
+
+<script id="mb-modal-fix-js">
+(function(){
+  function fechar(ov){
+    var cb=ov.querySelector('[class*="close"],[class*="fechar"],[aria-label*="Fechar"],[aria-label*="fechar"],[title*="Fechar"],[title*="fechar"]');
+    if(cb && cb!==ov){ cb.click(); return; }
+    ov.classList.remove('open','show','active','on');
+    ov.style.display='none';
+    document.body.classList.remove('modal-open','no-scroll');
+  }
+  function addBtn(box,ov){
+    if(!box || box.nodeType!==1 || box.hasAttribute('data-mb-fechar-fim')) return;
+    box.setAttribute('data-mb-fechar-fim','1');
+    var b=document.createElement('button');
+    b.type='button';
+    b.textContent='\u2716 Fechar';
+    b.style.cssText='display:block;margin:20px auto 6px;background:#12305c;color:#fff;border:1px solid #2b5ea7;border-radius:10px;padding:10px 26px;font-size:14px;cursor:pointer';
+    b.addEventListener('click',function(){ fechar(ov); });
+    box.appendChild(b);
+  }
+  function fix(){
+    var els=document.querySelectorAll('[class*="modal"],[id*="modal"],[class*="overlay"],[class*="mask"]');
+    for(var i=0;i<els.length;i++){
+      var ov=els[i];
+      var cs=getComputedStyle(ov);
+      if(cs.position!=='fixed') continue;
+      var r=ov.getBoundingClientRect();
+      if(r.width===0&&r.height===0) continue;
+      var isOverlay=(r.width>=window.innerWidth*0.9&&r.height>=window.innerHeight*0.9);
+      if(isOverlay){ if(!ov.classList.contains('mbFixOverlay')) ov.classList.add('mbFixOverlay'); addBtn(ov.firstElementChild,ov); }
+      else{ if(!ov.classList.contains('mbFixBox')) ov.classList.add('mbFixBox'); addBtn(ov,ov); }
+    }
+  }
+  var tm=null;
+  function q(){ if(tm) clearTimeout(tm); tm=setTimeout(fix,60); }
+  document.addEventListener('click',q,true);
+  window.addEventListener('resize',q);
+  if(window.MutationObserver){ new MutationObserver(q).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']}); }
+  document.addEventListener('DOMContentLoaded',fix);
+  fix();
+})();
 </script>
 </body>
 </html>
