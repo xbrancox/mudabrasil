@@ -1,18 +1,18 @@
 # ===============================
-# VotaBrasil — Ignorar arquivos locais
+# VotaBrasil â€” Ignorar arquivos locais
 # ===============================
 
 # Urnas de voto (ANONIMATO GARANTIDO)
 server/data/votos.db
 server/data/votos.json
 
-# Sal criptográfico (não deve ser versionado)
+# Sal criptogrÃ¡fico (nÃ£o deve ser versionado)
 server/data/.salt
 
-# Cache de enriquecimento (regenerável)
+# Cache de enriquecimento (regenerÃ¡vel)
 server/data/enrich/
 
-# Dependências Node.js
+# DependÃªncias Node.js
 node_modules/
 
 # Testes e artefatos locais
@@ -26,11 +26,11 @@ Thumbs.db
 *.swo
 *~
 
-# Temporários
+# TemporÃ¡rios
 tmp/
 temp/
 
-# Sujidade de sessão (diagnósticos e rascunhos descartáveis)
+# Sujidade de sessÃ£o (diagnÃ³sticos e rascunhos descartÃ¡veis)
 diagG-temp.js
 *-temp.js
 *-temp.ps1
@@ -39,7 +39,7 @@ up-*.json
 upload-*.ps1
 
 # === FIM .gitignore ===
-# Snapshots públicos do front (data/politicos.json e data/pls.json ficam
+# Snapshots pÃºblicos do front (data/politicos.json e data/pls.json ficam
 # versionados para o GitHub Pages carregar sem servidor). Caches do servidor:
 server/data/enrich/
 server/data/pls_reais.json
@@ -48,5 +48,16 @@ node_modules/
 # Config local do usuario (nunca versionar)
 app/config.js
 
-# Códigos de voto emitidos (nunca versionar)
+# CÃ³digos de voto emitidos (nunca versionar)
 server/data/vote_codes.json
+/DIAG-*.ps1
+/RODAR-*.bat
+/PUBLICAR-SITE.bat
+/MEUVOTO-*.ps1
+/CONVERTER-*.ps1
+/IMPLANTAR-*.ps1
+/CONFIGURAR-*.ps1
+/FIX-*.ps1
+/PUBLICAR.*
+/backup-*/
+/backup-*
