@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Digest Semanal · MeuVoto</title>
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
+h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:680px;margin:0 auto;padding:38px 20px 60px}
+.muted{color:var(--muted);font-size:12.5px}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px;margin-top:14px}
+.hero{text-align:center}
+.hero h1{font-size:clamp(24px,4.5vw,34px)}
+.hero p{color:var(--muted);max-width:560px;margin:10px auto 0}
+label{display:block;font:700 12px Manrope;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px}
+input{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:12px 14px;font:500 15px Manrope}
+input:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:11px 18px;cursor:pointer;flex:1;min-width:140px}
+.btn:hover{filter:brightness(1.12)}
+.btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
+.msg{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:13.5px;line-height:1.55;display:none}
+.msg.ok{display:block;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.45);color:#bff0d2}
+.msg.err{display:block;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.45);color:#ffc9c2}
+.msg.warn{display:block;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.4);color:#ffe9a8}
+ul{margin:10px 0 0 18px;font-size:13.5px;line-height:1.7;color:var(--muted)}
+ul b{color:var(--ink)}
+.foot{text-align:center;margin-top:22px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <h1>📧 Digest Semanal MeuVoto</h1>
+    <p>Receba, toda segunda-feira, um resumo do que o Plenário votou e como <b>seus deputados</b> se posicionaram — direto no seu e-mail. Sem conta, sem rastreamento; o endereço fica só na lista de envio.</p>
+  </section>
+
+  <div class="card">
+    <label for="em">Seu e-mail</label>
+    <input id="em" type="email" inputmode="email" autocomplete="email" placeholder="voce@exemplo.com"/>
+    <div class="row">
+      <button class="btn gold" id="bAssinar">Assinar digest</button>
+      <button class="btn" id="bCancelar">Cancelar</button>
+      <button class="btn" id="bStatus">Ver status</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px">O que você recebe</h3>
+    <ul>
+      <li><b>As votações da semana</b> com assunto e resultado (nominal ou simbólica);</li>
+      <li><b>O voto dos seus deputados</b> nas nominais, quando registrados;</li>
+      <li>Um lembrete neutro de <b>como cobrar</b> — sem partidarismo, só dado público.</li>
+    </ul>
+    <p class="muted" style="margin-top:10px">Cada e-mail tem link de descadastro. Você pode assinar/cancelar quantas vezes quiser. O envio é feito por um robô open-source (GitHub Action) que lê a lista no backend e usa SMTP configurado pelo mantenedor — seu e-mail nunca é usado para outra finalidade.</p>
+  </div>
+
+  <p class="foot"><a href="votacoes.html">← Voltar para as Votações</a></p>
+</main>
+<script>
+(function(){
+  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+  var $=function(s){return document.querySelector(s)};
+  var msg=$('#msg'), em=$('#em');
+  function show(cls,t){msg.className='msg '+cls;msg.innerHTML=t}
+  function val(){var v=(em.value||'').trim().toLowerCase();return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)?v:null}
+  async function call(path,body,method){
+    var r;
+    try{ r=await fetch(BASE+path,{method:method||'POST',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}) }
+    catch(e){ show('err','⚠️ Sem conexão com o servidor (<code>'+BASE+'</code>). Verifique sua internet ou tente mais tarde.'); return null }
+    var ct=r.headers.get('content-type')||'';
+    if(ct.indexOf('application/json')<0){
+      show('warn','🛠️ O backend ainda não tem as rotas de digest publicadas (<code>'+path+'</code> → HTTP '+r.status+'). Assim que o deploy sair, este botão passa a funcionar. Por enquanto, use o painel na página <a href="votacoes.html">Votações</a>.');
+      return null;
+    }
+    var j=await r.json().catch(function(){return {}});
+    return {status:r.status,j:j};
+  }
+  $('#bAssinar').addEventListener('click',async function(){
+    var v=val(); if(!v){show('err','Digite um e-mail válido.');return}
+    show('ok','⏳ inscrevendo…');
+    var r=await call('/api/digest/subscribe',{email:v});
+    if(r&&r.j.ok) show('ok','✅ Pronto! <b>'+v+'</b> está na lista. Você recebe o resumo toda segunda-feira. Total de inscritos: '+r.j.total+'.');
+    else if(r) show('err','❌ '+(r.j.error||('HTTP '+r.status)));
+  });
+  $('#bCancelar').addEventListener('click',async function(){
+    var v=val(); if(!v){show('err','Digite o e-mail que quer cancelar.');return}
+    show('ok','⏳ cancelando…');
+    var r=await call('/api/digest/unsubscribe',{email:v});
+    if(r&&r.j.ok) show('ok','✅ Cancelado. Restam '+r.j.total+' inscritos.');
+    else if(r) show('err','❌ '+(r.j.error||('HTTP '+r.status)));
+  });
+  $('#bStatus').addEventListener('click',async function(){
+    show('ok','⏳ consultando…');
+    var r=await call('/api/digest/status',null,'GET');
+    if(r&&r.j.ok) show('ok','📊 Digest ativo. Inscritos na lista: <b>'+r.j.total+'</b>.');
+    else if(r) show('err','❌ '+(r.j.error||('HTTP '+r.status)));
+  });
+  em.addEventListener('keydown',function(e){if(e.key==='Enter')$('#bAssinar').click()});
+})();
+</script>
+</body>
+</html>

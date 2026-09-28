@@ -553,6 +553,45 @@ async function handleApi(req, res, url) {
     });
   }
 
+  /* ===== DIGEST SEMANAL ===== */
+  const digestFile = path.join(__dirname, 'data', 'digest-subscribers.json');
+  const digestRead = () => { try { return JSON.parse(fs.readFileSync(digestFile, 'utf8')); } catch (e) { return []; } };
+  const digestWrite = (a) => { fs.mkdirSync(path.dirname(digestFile), { recursive: true }); fs.writeFileSync(digestFile, JSON.stringify(a, null, 2)); };
+
+  if (p === '/api/digest/subscribe' && req.method === 'POST') {
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    const email = String(body.email || '').trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return sendJson(res, 400, { ok: false, error: 'email invalido' });
+    const arr = digestRead();
+    if (arr.indexOf(email) < 0) arr.push(email);
+    digestWrite(arr);
+    return sendJson(res, 200, { ok: true, total: arr.length });
+  }
+
+  if (p === '/api/digest/unsubscribe' && (req.method === 'POST' || req.method === 'DELETE')) {
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    const email = String(body.email || '').trim().toLowerCase();
+    const arr = digestRead();
+    const n = arr.length;
+    const filtered = arr.filter(e => e !== email);
+    digestWrite(filtered);
+    return sendJson(res, 200, { ok: true, removed: n - filtered.length, total: filtered.length });
+  }
+
+  if (p === '/api/digest/status' && req.method === 'GET') {
+    return sendJson(res, 200, { ok: true, total: digestRead().length });
+  }
+
+  if (p === '/api/digest/list' && req.method === 'GET') {
+    const secret = String(q.secret || '');
+    if (!process.env.DIGEST_SECRET || secret !== process.env.DIGEST_SECRET) {
+      return sendJson(res, 403, { ok: false, error: 'sem permissao' });
+    }
+    return sendJson(res, 200, { ok: true, emails: digestRead() });
+  }
+
   /* Backup integral (dump JSON de todas as tabelas) para a manutenção
      automática da CI. Protegido por BACKUP_TOKEN — sem a env configurada,
      o endpoint responde 503 e não expõe nada. */
