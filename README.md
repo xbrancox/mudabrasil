@@ -369,6 +369,32 @@ data: {"tipo":"voto","ts":"2026-08-19T12:00:00.000Z","totalVotosAtivos":124,"tot
 
 ---
 
+## 🏗️ Arquitetura de Infraestrutura
+
+### Backend (Railway)
+- **Projeto**: VotaBrasil (`198baa4d-6141-418c-96dd-d7826831249f`)
+- **Serviço**: VotaBrasil (`4d5f569d-9c54-45f5-a25a-b474fb218b18`)
+- **Domínio atual**: `https://mudabrasil-production-79eb.up.railway.app`
+- **Região**: Amsterdam (ams)
+- **Builder**: RAILPACK (Node 22)
+- **Storage**: SQLite nativo (`node:sqlite`) em `/app/server/data/votos.db`
+- **Volume**: 500MB persistente
+
+### Frontend (GitHub Pages)
+- **Repositório**: `xbrancox/votabrasil`
+- **Branch**: `main`
+- **Workflow**: `.github/workflows/pages.yml`
+- **URL**: `https://xbrancox.github.io/votabrasil/`
+
+### Plano de Migração de Domínio
+1. **Registrar domínio**: `omeuvoto.app` (pendente)
+2. **Configurar DNS**: CNAME apontando para Railway
+3. **Adicionar domínio custom no Railway**: `railway domain omeuvoto.app`
+4. **Atualizar `API_BASE`** em todos os arquivos para `https://api.omeuvoto.app`
+5. **Configurar SSL**: Automático pelo Railway (Let's Encrypt)
+
+---
+
 ## ⚖️ Aviso Legal
 
 - No **modo real**, os nomes, partidos, estados e fotos são **dados reais** de
