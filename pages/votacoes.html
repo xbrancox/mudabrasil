@@ -168,6 +168,49 @@ rows+='<tr><td>⭐ '+esc(m.nome)+'</td><td><b>'+Math.round(100*part/C7.length)+'
 $('#out10').innerHTML='<div class="ecard"><h3>📊 Meu Congresso — visão consolidada (últimas '+C7.length+' nominais)</h3><div style="overflow-x:auto"><table class="vtable"><tr><th>Deputado</th><th>Presença</th><th>% Sim</th><th>Δ vs Plenário</th><th>Coerência c/ bancada</th><th>🤝 Promessas</th></tr>'+rows+'</table></div><p class="muted" style="margin-top:8px">Coerência = % dos votos Sim/Não alinhados à orientação do próprio partido. Δ = pontos percentuais acima/abaixo da média do Plenário.</p></div>'}
 function mcPdf(){var el=$('#out10');if(!el||!el.innerHTML.trim())return alert('Gere o 📊 Meu Congresso primeiro.');$('#fichaPrint').innerHTML='<h1>MeuVoto · Meu Congresso</h1>'+el.innerHTML+'<p style="margin-top:8px">Gerado em '+new Date().toLocaleString('pt-BR')+' · fontes: dadosabertos.camara.leg.br</p>';window.print()}
 (function(){var b=window.buildResumo9;if(typeof b==='function'){window.buildResumo9=async function(){var r=null;try{r=await b()}catch(e){}if(r){try{localStorage.setItem('mb_resumo_cache',JSON.stringify(r))}catch(e){}}else{var c=localStorage.getItem('mb_resumo_cache');if(c){try{r=JSON.parse(c);if(r)r.fromCache=true}catch(e){}}}return r}}}());
+</script><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
+<div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn sm" data-tip="Cruza a pauta dos próximos 10 dias com suas promessas e avisa até 72h antes de cada sessão ligada a um tema seu." onclick="alertaFuturo(true)">📅 Alertas de pauta (seus temas)</button>
+<button class="btn sm" data-tip="Linha do tempo em SVG da coerência acumulada de cada deputado seu com a orientação do próprio partido." onclick="grafCoerencia()">📈 Coerência ao longo do tempo</button>
+</div>
+<div id="out11" style="margin-top:10px"></div>
+</div>
+<script id="ciclo11">
+async function alertaFuturo(show){
+if(!PROMS.length){if(show)$('#out11').innerHTML='<p class="muted">Cadastre ao menos uma promessa 🤝 para receber alertas de pauta.</p>';return}
+var hoje=new Date(),fim=new Date(Date.now()+10*864e5);
+var r=await fetchJ(CAM('eventos?itens=15&siglaOrgao=PLEN&dataInicio='+fd(hoje)+'&dataFim='+fd(fim)+'&ordem=ASC'));
+var ev=(r&&r.dados)||[];var hits=[];
+for(var i=0;i<ev.length;i++){var e=ev[i];var txt=String(e.titulo||e.descricao||'').toLowerCase();
+for(var j=0;j<PROMS.length;j++){var ks=kws(PROMS[j].txt);var mk=null;for(var k2=0;k2<ks.length;k2++){if(txt.indexOf(ks[k2])>=0){mk=ks[k2];break}}if(mk){hits.push({e:e,p:PROMS[j],k:mk});break}}}
+var done=JSON.parse(localStorage.getItem('mb_alerta_fut')||'[]');
+for(var i2=0;i2<hits.length;i2++){var h=hits[i2];var eid=String(h.e.id||h.e.dataHora||'');var dt=new Date(h.e.dataHora||h.e.data);var hrs=(dt-Date.now())/36e5;
+if(hrs>0&&hrs<=72&&done.indexOf(eid)<0&&('Notification' in window)&&Notification.permission==='granted'){try{new Notification('MeuVoto · Votação se aproximando',{body:fmtData(h.e.dataHora)+' — tema "'+h.p.txt+'" ('+h.p.nome+'). Pressione antes da sessão!'})}catch(e2){}done.push(eid)}}
+localStorage.setItem('mb_alerta_fut',JSON.stringify(done.slice(-40)));
+if(show){$('#out11').innerHTML=hits.length?'<div class="ecard"><h3>📅 Pauta dos próximos 10 dias ligada às suas promessas</h3>'+hits.map(function(h){return '<p style="margin-top:6px">• <b>'+fmtData(h.e.dataHora||h.e.data)+'</b> — '+esc(h.e.titulo||h.e.descricao||'Sessão')+' <span class="vb out">tema: '+esc(h.k)+'</span> <span class="muted">promessa de '+esc(h.p.nome)+'</span></p>'}).join('')+'<p class="muted" style="margin-top:8px">Você será notificado até 72h antes de cada sessão destas.</p></div>':'<div class="ecard"><p class="muted">Nenhuma sessão futura (10 dias) cruza com suas promessas agora — ou a pauta ainda não foi publicada (recesso).</p></div>'}}
+async function grafCoerencia(){
+if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');
+$('#out11').innerHTML='<p class="muted">⏳ Calculando coerência acumulada…</p>';
+await needC7();if(!C7.length)return $('#out11').innerHTML='<p class="muted">Sem votações nominais na janela.</p>';
+var chron=C7.slice().reverse();var n=chron.length;
+var cols=['#FFD700','#4a90f0','#2ECC71','#E74C3C','#94A3B8','#c084fc'];
+var W=680,H=240,PL=34,PR=10,PT=12,PB=26;
+var X=function(i){return PL+(W-PL-PR)*(i-1)/Math.max(1,n-1)};
+var Y=function(pc){return PT+(H-PT-PB)*(1-pc/100)};
+var grid='';[0,50,100].forEach(function(g){grid+='<line x1="'+PL+'" y1="'+Y(g)+'" x2="'+(W-PR)+'" y2="'+Y(g)+'" stroke="rgba(127,176,245,.25)" stroke-dasharray="4 4"/><text x="4" y="'+(Y(g)+4)+'" fill="#94A3B8" font-size="10">'+g+'%</text>'});
+grid+='<text x="'+PL+'" y="'+(H-8)+'" fill="#94A3B8" font-size="10">'+fmtData(chron[0].dataHora).slice(0,10)+'</text><text x="'+(W-PR-72)+'" y="'+(H-8)+'" fill="#94A3B8" font-size="10">'+fmtData(chron[n-1].dataHora).slice(0,10)+'</text>';
+var paths='';var legend='';
+for(var j=0;j<MEUS.length&&j<6;j++){var m=MEUS[j];var num=String(m.id).replace('camara-','');
+var dev=0,tot=0,pts=[];
+for(var i=0;i<n;i++){var v=chron[i];var L=(CACHEV[v.id]||{list:[]}).list;var x=null;for(var q=0;q<L.length;q++){if(L[q].id===num){x=L[q];break}}
+if(x){var vv=(x.voto||'').trim().toLowerCase();if(vv.indexOf('sim')===0||vv.indexOf('n')===0){var om=await orientOf(v.id);var o=om[(x.partido||'').toUpperCase()];if(o){tot++;if(vv.indexOf(o)!==0)dev++;pts.push({x:i+1,pc:Math.round(100*(1-dev/tot)),d:v.dataHora})}}}}
+if(pts.length<2)continue;
+paths+='<polyline fill="none" stroke="'+cols[j]+'" stroke-width="2.5" points="'+pts.map(function(p){return X(p.x).toFixed(1)+','+Y(p.pc).toFixed(1)}).join(' ')+'"/>';
+for(var k3=0;k3<pts.length;k3++){var p=pts[k3];paths+='<circle cx="'+X(p.x).toFixed(1)+'" cy="'+Y(p.pc).toFixed(1)+'" r="3" fill="'+cols[j]+'"><title>'+esc(m.nome)+' · '+fmtData(p.d)+' · coerência '+p.pc+'%</title></circle>'}
+legend+='<span style="color:'+cols[j]+';font:700 12px Manrope;margin-right:10px">— '+esc(m.nome)+'</span>'}
+if(!paths){$('#out11').innerHTML='<p class="muted">Dados insuficientes para o gráfico (precisa de 2+ votações com orientação de bancada publicada).</p>';return}
+$('#out11').innerHTML='<div class="ecard"><h3>📈 Coerência acumulada com a bancada (linha do tempo)</h3><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:720px;background:var(--card2);border:1px solid var(--line);border-radius:12px">'+grid+paths+'</svg><p style="margin-top:8px">'+legend+'</p><p class="muted">Cada ponto = uma votação nominal com orientação de partido; passe o mouse nos pontos para ver data e %.</p></div>'}
+window.addEventListener('load',function(){setTimeout(function(){alertaFuturo(false)},3000)});
 </script><div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
