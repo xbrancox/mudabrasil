@@ -102,7 +102,51 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 </div></div></div>
 <div class="wrap"><div id="agenda"></div><h2 class="secT" id="lblPassado">🗳️ O que JÁ foi votado — últimos 10 dias</h2><div id="list"></div><div class="loadmore"><button id="more" class="btn gold" hidden onclick="mais()" data-tip="Carrega mais votações da janela."></button></div></div>
 </main>
-<div id="tip"></div><div id="btip"></div>
+<div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
+<div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn sm" data-tip="Liga/desliga: ao abrir o site numa semana nova, você recebe o resumo da semana como notificação do PWA." onclick="ciclo9auto()">🔔 Resumo semanal automático</button>
+<button class="btn sm" data-tip="Baixa planilha CSV com % Sim de cada deputado seu vs Plenário vs partido, delta e presença." onclick="csv9()">📥 Exportar CSV</button>
+<button class="btn sm" data-tip="Gera mensagem pronta (copiar/WhatsApp/e-mail ao gabinete) citando votações nominais ligadas às suas promessas." onclick="recibo9()">🧾 Recibo de cobrança</button>
+</div>
+<div id="out9" style="margin-top:10px"></div>
+</div>
+<script id="ciclo9">
+function isoWeek(d){var t=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()));var day=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-day+3);var first=new Date(Date.UTC(t.getUTCFullYear(),0,4));var w=1+Math.round(((t-first)/864e5-3+((first.getUTCDay()+6)%7))/7);return t.getUTCFullYear()+'-W'+(w<10?'0':'')+w}
+async function c7local(){var r=await fetchJ(CAM('votacoes?itens=60&ordem=DESC'));ALL=((r&&r.dados)||[]).slice(0,60);await tipagem(ALL.slice(0,24));var n=ALL.filter(function(v){return v._tipo==='N'}).slice(0,20);await tipagem(n);C7=n;return C7}
+async function needC7(){if(typeof ensureC7==='function'){return await ensureC7()}return await c7local()}
+async function buildResumo9(){var ini=new Date(Date.now()-7*864e5);var r=await fetchJ(CAM('votacoes?itens=60&ordem=DESC'));var vs=((r&&r.dados)||[]).filter(function(v){var d=v.dataHoraRegistro||v.dataHora;return d&&new Date(d)>=ini});if(!vs.length)return null;await tipagem(vs);var lines=[];for(var i=0;i<Math.min(6,vs.length);i++){var v=vs[i];var o=CACHEV[v.id];var inf=vInfo(v);var mv=o.nominal?o.list.filter(function(x){return meusIds().includes('camara-'+x.id)}):[];lines.push('• '+trunc(inf.assunto,70)+' — '+(o.nominal?(mv.length?mv.map(function(x){return esc((x.nome||'').split(' ')[0])+' '+esc(x.voto)}).join(', '):'nenhum dos seus registrou voto'):'simbólica (sem registro)'))}return{vs:vs,lines:lines}}
+async function ciclo9auto(){if(localStorage.getItem('mb_resumo_auto')==='1'){localStorage.removeItem('mb_resumo_auto');alert('🔕 Resumo semanal automático desligado.');return}
+if(!('Notification' in window))return alert('Seu navegador não suporta notificações.');
+var p=await Notification.requestPermission();if(p!=='granted')return alert('Permissão negada — sem resumo automático.');
+if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');
+localStorage.setItem('mb_resumo_auto','1');alert('🔔 Ligado! Ao abrir o site numa semana nova, o resumo chega como notificação.');
+maybeAuto9(true)}
+async function maybeAuto9(force){if(localStorage.getItem('mb_resumo_auto')!=='1')return;if(!('Notification' in window)||Notification.permission!=='granted')return;var wk=isoWeek(new Date());if(!force&&localStorage.getItem('mb_resumo_auto_wk')===wk)return;var R=await buildResumo9();localStorage.setItem('mb_resumo_auto_wk',wk);
+if(!R){try{new Notification('MeuVoto · Semana '+wk,{body:'Nenhuma votação nos últimos 7 dias (recesso/período eleitoral).'})}catch(e){}return}
+try{new Notification('MeuVoto · Resumo da semana '+wk,{body:R.lines.slice(0,2).join(' | ')})}catch(e){}
+var el=document.getElementById('out9');if(el)el.innerHTML='<div class="ecard"><h3>🔔 Resumo automático — semana '+wk+'</h3>'+R.lines.map(function(l){return '<p style="margin-top:6px">'+l+'</p>'}).join('')+'</div>'}
+async function csv9(){if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');await needC7();if(!C7.length)return alert('Sem votações nominais na janela.');
+var allList=[];for(var i=0;i<C7.length;i++){allList=allList.concat(CACHEV[C7[i].id].list)}var nat=rates(allList);
+var rows=[['deputado','pct_sim_dele','pct_sim_plenario','pct_sim_partido','delta_pp_vs_plenario','presenca_pct']];
+for(var j=0;j<MEUS.length;j++){var m=MEUS[j];var num=String(m.id).replace('camara-','');var pp=POL?POL.find(function(p){return p.id===m.id}):null;var mine=[],party=[],part=0;
+for(var k=0;k<C7.length;k++){var L=CACHEV[C7[k].id].list;for(var q=0;q<L.length;q++){var y=L[q];if(y.id===num){part++;mine.push(y)}if(pp&&y.partido===(pp.party||pp.partido))party.push(y)}}
+var mr=rates(mine),pr=rates(party);var d=(mr!=null&&nat!=null)?(mr-nat):'';
+rows.push([m.nome,(mr==null?'':mr),(nat==null?'':nat),(pr==null?'':pr),d,Math.round(100*part/C7.length)])}
+var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(';')}).join('\r\n');
+var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='meuvoto-comparador.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href)}
+async function recibo9(){if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');if(!PROMS.length)return alert('Cadastre ao menos uma promessa 🤝 para emitir o recibo.');await needC7();if(!C7.length)return alert('Sem votações nominais na janela.');
+var h='';
+for(var i=0;i<PROMS.length;i++){var pr=PROMS[i];var ks=kws(pr.txt);var hits=C7.filter(function(v){var a=vInfo(v).assunto.toLowerCase();return ks.some(function(k){return a.indexOf(k)>=0})});
+var num=String(pr.depId).replace('camara-','');var pp=POL?POL.find(function(p){return p.id===pr.depId}):null;var email=pp?(pp.email||''):'';
+var body='Olá, '+(pp?(pp.name||pp.nome||pr.nome):pr.nome)+'.\n\nComo eleitor que acompanha seu mandato pelo MeuVoto, registro este RECIBO DE COBRANÇA sobre a promessa: "'+pr.txt+'".\n';
+if(hits.length){for(var j=0;j<Math.min(5,hits.length);j++){var v=hits[j];var x=CACHEV[v.id].list.find(function(y){return y.id===num});body+='\n- '+vInfo(v).assunto+' ('+fmtData(v.dataHora)+'): '+(x?('seu voto registrado: '+x.voto):'sem voto registrado nesta votação')+'.'}}else{body+='\n- Nenhuma votação nominal sobre o tema da promessa foi localizada na janela atual.'}
+var part=0;for(var k2=0;k2<C7.length;k2++){if(CACHEV[C7[k2].id].list.some(function(y){return y.id===num}))part++}
+body+='\n\nPresença nas últimas '+C7.length+' votações nominais: '+Math.round(100*part/C7.length)+'%.\nSolicito alinhamento entre o discurso de campanha e os votos em Plenário nas próximas sessões.\n\nAtenciosamente,\neleitor acompanhado pelo MeuVoto (protótipo cívico, sem valor legal).';
+var enc=encodeURIComponent(body);
+h+='<div class="ecard"><h3>🧾 Recibo — '+esc(pr.nome)+' · "'+esc(trunc(pr.txt,60))+'"</h3><pre style="white-space:pre-wrap;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px;font:12px/1.5 Manrope,sans-serif">'+esc(body)+'</pre><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" onclick="navigator.clipboard.writeText(decodeURIComponent(\''+enc+'\')).then(function(){alert(\'📋 Copiado!\')})">📋 Copiar</button><button class="btn sm" onclick="window.open(\'https://wa.me/?text='+enc+'\',\'_blank\')">📲 WhatsApp</button>'+(email?'<button class="btn sm" onclick="location.href=\'mailto:'+esc(email)+'?subject='+encodeURIComponent('Recibo de cobrança — MeuVoto')+'&body='+enc+'">✉️ E-mail ao gabinete</button>':'<span class="muted">sem e-mail oficial cadastrado</span>')+'</div></div>'}
+document.getElementById('out9').innerHTML=h}
+window.addEventListener('load',function(){setTimeout(function(){maybeAuto9(false)},1500)});
+</script><div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
 const $=s=>document.querySelector(s);
