@@ -1,0 +1,1 @@
+{ "packageId":"br.app.meuvoto","name":"MeuVoto","startUrl":"https://xbrancox.github.io/votabrasil/app/","scope":"https://xbrancox.github.io/votabrasil/","display":"standalone","themeColor":"#0A1628","backgroundColor":"#061a3a","iconUrl":"https://xbrancox.github.io/votabrasil/public/icon-512.png","features":{"notifications":{"enabled":true}} }

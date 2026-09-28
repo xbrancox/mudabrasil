@@ -287,7 +287,26 @@ var to=prompt('Enviar o digest para (e-mail):',localStorage.getItem('mb_digest_t
 try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(body)}catch(e){}
 location.href='mailto:'+(to||'')+'?subject='+encodeURIComponent('MeuVoto · Resumo semanal')+'&body='+encodeURIComponent(body);
 var o=document.getElementById('out13');if(o)o.innerHTML='<div class="ecard"><p>📧 Digest preparado e copiado para a área de transferência; seu app de e-mail deve abrir com destinatário, assunto e corpo preenchidos. Envio automático servidor-a-servidor (opt-in) vem no ciclo 14.</p></div>'}
-</script><div id="tip"></div><div id="btip"></div>
+</script>
+<div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
+  <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <input id="dgEmail" type="email" placeholder="📧 seu@email.com" style="flex:1;min-width:220px" />
+    <button class="btn sm gold" onclick="digestAssinar()">Assinar digest</button>
+    <button class="btn sm" onclick="digestSair()">Cancelar</button>
+    <button class="btn sm" onclick="digestStatus()">Status</button>
+  </div>
+  <div id="out15" class="muted" style="margin-top:8px"></div>
+  <p class="muted" style="margin-top:6px">Envio semanal via GitHub Action com SMTP nos secrets do repositorio.</p>
+</div>
+<script id="ciclo15">
+var B15=(typeof BASE!=="undefined"?BASE:"https://mudabrasil-production-79eb.up.railway.app");
+function dgMsg(m,ok){var el=document.getElementById("out15");if(!el)return;el.textContent=m;el.style.color=ok?"var(--green)":"var(--red)"}
+async function dgFetch(p,body,method){var r=await fetch(B15+p,{method:method||"POST",headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});var j=await r.json().catch(function(){return{}});return{status:r.status,j:j}}
+async function digestAssinar(){var e=(document.getElementById("dgEmail").value||"").trim();if(!e)return dgMsg("Digite seu e-mail.",false);dgMsg("⏳ inscrevendo...",true);try{var r=await dgFetch("/api/digest/subscribe",{email:e});dgMsg(r.j.ok?("✅ Inscrito! Total: "+r.j.total):("❌ "+(r.j.error||("HTTP "+r.status))),!!r.j.ok)}catch(err){dgMsg("❌ Conexao: "+err.message,false)}}
+async function digestSair(){var e=(document.getElementById("dgEmail").value||"").trim();if(!e)return dgMsg("Digite o e-mail a cancelar.",false);dgMsg("⏳ cancelando...",true);try{var r=await dgFetch("/api/digest/unsubscribe",{email:e});dgMsg(r.j.ok?("✅ Cancelado. Restam "+r.j.total+"."):("❌ "+(r.j.error||("HTTP "+r.status))),!!r.j.ok)}catch(err){dgMsg("❌ Conexao: "+err.message,false)}}
+async function digestStatus(){dgMsg("⏳ consultando...",true);try{var r=await dgFetch("/api/digest/status",null,"GET");dgMsg(r.j.ok?("📊 Digest ativo. Inscritos: "+r.j.total):("❌ "+(r.j.error||("HTTP "+r.status))),!!r.j.ok)}catch(err){dgMsg("❌ Backend indisponivel: "+err.message,false)}}
+</script>
+<div class=painel style=max-width:960px;margin:12px<div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px"><div class="row" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm" href="api-publica.html">API para jornalistas</a><a class="btn sm" href="https://github.com/xbrancox/votabrasil/blob/main/store/twa-config.json" target="_blank" rel="noopener">Kit store/</a></div></div><script id="ciclo14">/* v14 */</script><div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
 const $=s=>document.querySelector(s);
