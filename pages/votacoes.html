@@ -211,6 +211,44 @@ legend+='<span style="color:'+cols[j]+';font:700 12px Manrope;margin-right:10px"
 if(!paths){$('#out11').innerHTML='<p class="muted">Dados insuficientes para o gráfico (precisa de 2+ votações com orientação de bancada publicada).</p>';return}
 $('#out11').innerHTML='<div class="ecard"><h3>📈 Coerência acumulada com a bancada (linha do tempo)</h3><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:720px;background:var(--card2);border:1px solid var(--line);border-radius:12px">'+grid+paths+'</svg><p style="margin-top:8px">'+legend+'</p><p class="muted">Cada ponto = uma votação nominal com orientação de partido; passe o mouse nos pontos para ver data e %.</p></div>'}
 window.addEventListener('load',function(){setTimeout(function(){alertaFuturo(false)},3000)});
+</script><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
+<div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn sm" data-tip="Um único PDF: tabela consolidada + seção por deputado (presença, coerência, faixa de votos, últimas 10 votações) + promessas." onclick="dossieCompleto()">🧾 Dossiê completo (PDF)</button>
+<button class="btn sm" data-tip="Copia URL com seus deputados embutidos; quem abrir vê o comparador já carregado com sua lista." onclick="linkCompartilhar()">🔗 Link público do comparador</button>
+</div>
+<div id="out12" style="margin-top:10px"></div>
+</div>
+<script id="ciclo12">
+function linkCompartilhar(){if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');var ids=MEUS.map(function(m){return m.id}).join(',');var url=location.href.split('?')[0].split('#')[0]+'?meus='+encodeURIComponent(ids);
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(function(){alert('🔗 Link copiado!\n'+url)},function(){prompt('Copie o link:',url)})}else{prompt('Copie o link:',url)}}
+function adotaShare(){var p=null;try{p=new URLSearchParams(location.search).get('meus')}catch(e){}if(!p)return;var ids=p.split(',').filter(Boolean);if(!ids.length)return;
+pols().then(function(P){var add=0;ids.forEach(function(id){var exists=MEUS.some(function(m){return m.id===id});if(!exists){var pp=P.find(function(x){return x.id===id});if(pp){MEUS.push({id:id,nome:pp.name||pp.nome});add++}}});
+if(add){localStorage.setItem('mb_meus',JSON.stringify(MEUS));renderChips();var el=document.getElementById('out12');if(el)el.innerHTML='<div class="ecard"><p>🔗 Comparador compartilhado carregado: +'+add+' deputado(s) na sua lista (você pode removê-los pelos chips ⭐).</p></div>'}})}
+async function dossieCompleto(){if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');
+var o12=document.getElementById('out12');if(o12)o12.innerHTML='<p class="muted">⏳ Montando dossiê completo…</p>';
+await needC7();if(!C7.length){if(o12)o12.innerHTML='<p class="muted">Sem votações nominais na janela.</p>';return}
+var allList=[];for(var i=0;i<C7.length;i++){allList=allList.concat(CACHEV[C7[i].id].list)}var nat=rates(allList);
+var h='<h1>MeuVoto · Dossiê completo do acompanhamento</h1><p>Gerado em '+new Date().toLocaleString('pt-BR')+' · janela: últimas '+C7.length+' votações nominais · fontes: dadosabertos.camara.leg.br</p>';
+h+='<h2>1. Visão consolidada (Meu Congresso)</h2><table><tr><th>Deputado</th><th>Presença</th><th>% Sim</th><th>Δ vs Plenário</th><th>Coerência</th><th>Promessas</th></tr>';
+var secs='';
+for(var j=0;j<MEUS.length;j++){var m=MEUS[j];var num=String(m.id).replace('camara-','');
+var part=0,mine=[];for(var k=0;k<C7.length;k++){var L=CACHEV[C7[k].id].list;for(var q=0;q<L.length;q++){if(L[q].id===num){part++;mine.push(L[q])}}}
+var mr=rates(mine);var d=(mr!=null&&nat!=null)?(mr-nat):null;var co=await coerDeputado(num);var prs=PROMS.filter(function(p){return p.depId===m.id});
+h+='<tr><td>'+esc(m.nome)+'</td><td>'+Math.round(100*part/C7.length)+'%</td><td>'+(mr==null?'—':mr+'%')+'</td><td>'+(d==null?'—':((d>0?'+':'')+d+' pp'))+'</td><td>'+(co?(co.pc+'% ('+co.dev+' desv.)'):'—')+'</td><td>'+prs.length+'</td></tr>';
+var cells='';var s=0,n2=0;
+for(var k2=0;k2<C7.length;k2++){var x=null;var L2=CACHEV[C7[k2].id].list;for(var q2=0;q2<L2.length;q2++){if(L2[q2].id===num){x=L2[q2];break}}
+if(!x){cells+='<span style="display:inline-block;width:10px;height:10px;background:#1e293b;border-radius:3px;margin:1px" title="ausente"></span>';continue}
+var vv=(x.voto||'').toLowerCase();
+if(vv.indexOf('sim')===0){s++;cells+='<span style="display:inline-block;width:10px;height:10px;background:#2ECC71;border-radius:3px;margin:1px" title="Sim"></span>'}
+else if(vv.indexOf('n')===0){n2++;cells+='<span style="display:inline-block;width:10px;height:10px;background:#E74C3C;border-radius:3px;margin:1px" title="Não"></span>'}
+else cells+='<span style="display:inline-block;width:10px;height:10px;background:#64748b;border-radius:3px;margin:1px" title="'+esc(x.voto)+'"></span>'}
+secs+='<h2>'+(j+2)+'. '+esc(m.nome)+'</h2><p>Presença '+Math.round(100*part/C7.length)+'% · Sim '+s+' · Não '+n2+' · coerência com a bancada '+(co?(co.pc+'% ('+co.dev+' desvios)'):'—')+' · % Sim '+ (mr==null?'—':mr+'%')+' (Plenário: '+(nat==null?'—':nat+'%')+')</p><p>'+cells+'</p>';
+var last=[];for(var a3=C7.length-1;a3>=0&&last.length<10;a3--){var v3=C7[a3];var L3=CACHEV[v3.id].list;for(var q3=0;q3<L3.length;q3++){if(L3[q3].id===num){last.push({v:v3,x:L3[q3]});break}}}
+if(last.length){secs+='<table><tr><th>Data</th><th>Matéria</th><th>Voto</th></tr>'+last.map(function(o2){return '<tr><td>'+fmtData(o2.v.dataHora)+'</td><td>'+esc(trunc(vInfo(o2.v).assunto,60))+'</td><td>'+esc(o2.x.voto)+'</td></tr>'}).join('')+'</table>'}
+if(prs.length){secs+='<p><b>Promessas em cobrança:</b> '+prs.map(function(p){return '"'+esc(p.txt)+'"'}).join(', ')+'</p>'}}
+h+='</table>'+secs+'<p style="margin-top:8px">MeuVoto — protótipo cívico de transparência, sem valor legal. Dados públicos oficiais da Câmara dos Deputados.</p>';
+$('#fichaPrint').innerHTML=h;if(o12)o12.innerHTML='<p class="muted">✅ Dossiê montado — abrindo impressão/PDF…</p>';window.print()}
+window.addEventListener('load',function(){setTimeout(adotaShare,800)});
 </script><div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
