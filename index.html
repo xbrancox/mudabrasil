@@ -143,7 +143,7 @@ textarea{min-height:70px;resize:vertical}
 .dk-tb.on{background:var(--gold);color:#061a3a;font-weight:800}
 .dk-selects{display:flex;gap:10px;margin:14px 0 4px;flex-wrap:wrap}
 .dk-selects select{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 14px;color:var(--txt);font-size:13px;cursor:pointer;outline:none}
-.dk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:20px}
+.dk-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-top:20px}.dk-grid .dk-svg{max-width:100%;height:auto}@media(max-width:1200px){.dk-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:760px){.dk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .dk-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;position:relative;transition:transform .15s,border-color .15s}
 .dk-card:hover{transform:translateY(-2px);border-color:var(--gold)}
 .dk-card h4{font-family:Montserrat;font-size:.85rem;font-weight:800;margin:0 0 10px;color:#eaf1fb;text-transform:uppercase;letter-spacing:.04em;min-height:34px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
@@ -214,8 +214,8 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div class="dk-sec" id="acompanhamento">
   <div class="dk-head">
     <div>
-      <span class="kick">02 — ACOMPANHAMENTO</span>
       <h2 style="margin:6px 0 4px">Acompanhe quem está <span style="color:var(--blueL)">na frente</span></h2>
+      <p style="margin:10px 0 0;padding:10px 14px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.35);border-radius:10px;font-size:12.5px;line-height:1.55">⚠️ <b>Resultados do aplicativo:</b> os números abaixo são <b>votos colocados dentro do MeuVoto</b> (protótipo cívico de opinião) — <b>não são o resultado oficial da eleição real</b> (TSE).</p>
       <p class="muted">Preferência do eleitorado por cargo (recorte UF / Cidade).</p>
     </div>
     <div class="dk-toggle" role="group" aria-label="Recorte UF ou Cidade">
@@ -233,7 +233,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
     <select id="dk-cidade" onchange="dkRender()" aria-label="Cidade" hidden></select>
   </div>
   <div class="dk-grid" id="dk-grid"></div>
-  <p class="muted" style="font-size:11px;text-align:center;margin-top:14px">🔴 <b>Senador</b> e <b>Deputado Federal</b>: distribuição real dos votos da plataforma, atualizada ao vivo (a cada novo voto o donut gira). Demais cargos entram nas próximas fases — prefeito e vereador nas eleições municipais.</p>
+  <p class="muted" style="font-size:11px;text-align:center;margin-top:14px">🔴 <b>Senador</b> e <b>Deputado Federal</b>: distribuição real dos votos da plataforma, atualizada ao vivo (a cada novo voto o donut gira). Presidente, Governador e Deputado Estadual/Distrital entram nas próximas fases.</p>
 </div>
   <div style="margin-top:40px"><h2 style="margin-top:0">Notícias do Congresso e da política</h2>
   <p class="muted">Só política, direto das fontes oficiais e da grande imprensa — <b>com os devidos créditos</b>. Filtre por Geral (nacional), Brasil ou qualquer um dos 27 estados — com notícias locais buscadas a cada 10 min.</p>
@@ -857,8 +857,6 @@ setTimeout(initSSE, 2000);
     {id:'senador',nome:'Senador',votavel:true},
     {id:'dep-federal',nome:'Deputado Federal',votavel:true},
     {id:'dep-estadual',nome:'Deputado Estadual / Distrital'},
-    {id:'prefeito',nome:'Prefeito'},
-    {id:'vereador',nome:'Vereador'}
   ];
   var DK_CORES=['#2ECC71','#FFD700','#4a90d9','#ff7a6e'];
   var COR_OUTROS='#a78bfa';
