@@ -131,10 +131,10 @@ a.badge:hover{filter:brightness(1.25)}
 }
 </style>
 
-<style id="mb-modal-fix">
-.mbFixOverlay{display:flex !important;align-items:flex-start !important;justify-content:center !important;overflow-y:auto !important;padding:88px 14px 56px !important;box-sizing:border-box !important}
-.mbFixOverlay>*:first-child{margin:0 auto !important;transform:none !important;top:auto !important;bottom:auto !important;max-height:none !important;width:min(940px,100%) !important;box-sizing:border-box !important}
-.mbFixBox{position:fixed !important;top:88px !important;bottom:56px !important;left:50% !important;transform:translateX(-50%) !important;max-height:none !important;overflow-y:auto !important}
+<style id="mb-modal-fix2">
+.overlay{align-items:flex-start !important;justify-content:center !important;overflow-y:auto !important;padding:88px 14px 56px !important;box-sizing:border-box !important}
+.overlay>.modal{margin:0 auto !important;transform:none !important;max-height:none !important;flex:0 0 auto !important}
+.mbFecharFim{display:block;margin:22px auto 6px;background:#12305c;color:#fff;border:1px solid #2b5ea7;border-radius:10px;padding:10px 26px;font-size:14px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -909,46 +909,8 @@ carregaTseIdx();
   setTimeout(tenta,400)})();
 </script>
 
-<script id="mb-modal-fix-js">
-(function(){
-  function fechar(ov){
-    var cb=ov.querySelector('[class*="close"],[class*="fechar"],[aria-label*="Fechar"],[aria-label*="fechar"],[title*="Fechar"],[title*="fechar"]');
-    if(cb && cb!==ov){ cb.click(); return; }
-    ov.classList.remove('open','show','active','on');
-    ov.style.display='none';
-    document.body.classList.remove('modal-open','no-scroll');
-  }
-  function addBtn(box,ov){
-    if(!box || box.nodeType!==1 || box.hasAttribute('data-mb-fechar-fim')) return;
-    box.setAttribute('data-mb-fechar-fim','1');
-    var b=document.createElement('button');
-    b.type='button';
-    b.textContent='\u2716 Fechar';
-    b.style.cssText='display:block;margin:20px auto 6px;background:#12305c;color:#fff;border:1px solid #2b5ea7;border-radius:10px;padding:10px 26px;font-size:14px;cursor:pointer';
-    b.addEventListener('click',function(){ fechar(ov); });
-    box.appendChild(b);
-  }
-  function fix(){
-    var els=document.querySelectorAll('[class*="modal"],[id*="modal"],[class*="overlay"],[class*="mask"]');
-    for(var i=0;i<els.length;i++){
-      var ov=els[i];
-      var cs=getComputedStyle(ov);
-      if(cs.position!=='fixed') continue;
-      var r=ov.getBoundingClientRect();
-      if(r.width===0&&r.height===0) continue;
-      var isOverlay=(r.width>=window.innerWidth*0.9&&r.height>=window.innerHeight*0.9);
-      if(isOverlay){ if(!ov.classList.contains('mbFixOverlay')) ov.classList.add('mbFixOverlay'); addBtn(ov.firstElementChild,ov); }
-      else{ if(!ov.classList.contains('mbFixBox')) ov.classList.add('mbFixBox'); addBtn(ov,ov); }
-    }
-  }
-  var tm=null;
-  function q(){ if(tm) clearTimeout(tm); tm=setTimeout(fix,60); }
-  document.addEventListener('click',q,true);
-  window.addEventListener('resize',q);
-  if(window.MutationObserver){ new MutationObserver(q).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']}); }
-  document.addEventListener('DOMContentLoaded',fix);
-  fix();
-})();
+<script id="mb-modal-fix2-js">
+(function(){var IDS=["mFicha","mProc","mCmp","mForm","mVerif","mVotos"];function fechar(ov){var cb=ov.querySelector("[class*=close],[class*=fechar],[aria-label*=Fechar],[title*=Fechar],[onclick*=none],[onclick*=fechar],[onclick*=close]");if(cb&&cb!==ov&&!cb.hasAttribute("data-mb-fechar-fim")){cb.click();return;}ov.classList.remove("open","show","active","on");if(ov.style&&ov.style.display)ov.style.display="none";document.body.classList.remove("modal-open","no-scroll");}function ensure(ov){var box=ov.querySelector(".modal")||ov.firstElementChild;if(!box)return;if(!box.querySelector("[data-mb-fechar-fim]")){var b=document.createElement("button");b.type="button";b.className="mbFecharFim";b.setAttribute("data-mb-fechar-fim","1");b.textContent="\u2716 Fechar";b.addEventListener("click",function(){fechar(ov);});box.appendChild(b);}}function fixAll(){IDS.forEach(function(id){var ov=document.getElementById(id);if(ov)ensure(ov);});}document.addEventListener("DOMContentLoaded",fixAll);window.addEventListener("load",fixAll);if(window.MutationObserver){document.addEventListener("DOMContentLoaded",function(){IDS.forEach(function(id){var ov=document.getElementById(id);if(!ov)return;new MutationObserver(function(){ensure(ov);}).observe(ov,{childList:true,subtree:true});});});}})();
 </script>
 </body>
 </html>
