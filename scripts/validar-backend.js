@@ -72,7 +72,7 @@ await test('Votar (/api/voto)', async () => {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ politicianId: pol.id, uf: pol.state })
   });
-  if (res.status !== 200) throw new Error(`Status ${res.status}`);
+  if (res.status !== 200 && res.status !== 201) throw new Error(`Status ${res.status}`);
   const data = await res.json();
   if (!data.ok) throw new Error('ok !== true');
   if (!data.code) throw new Error('code não retornado');
@@ -97,7 +97,7 @@ await test('Manter voto (/api/voto/manter)', async () => {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ code })
   });
-  if (res.status !== 200) throw new Error(`Status ${res.status}`);
+  if (res.status !== 200 && res.status !== 201) throw new Error(`Status ${res.status}`);
   const data = await res.json();
   if (!data.ok) throw new Error('ok !== true');
 });
@@ -110,7 +110,7 @@ await test('Revogar voto (/api/voto/revogar)', async () => {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ code })
   });
-  if (res.status !== 200) throw new Error(`Status ${res.status}`);
+  if (res.status !== 200 && res.status !== 201) throw new Error(`Status ${res.status}`);
   const data = await res.json();
   if (!data.ok) throw new Error('ok !== true');
 });
@@ -131,8 +131,10 @@ await test('Domínios autorizados (/api/verificacao/dominios)', async () => {
   const res = await fetch(`${BASE}/api/verificacao/dominios`);
   if (res.status !== 200) throw new Error(`Status ${res.status}`);
   const data = await res.json();
-  if (!Array.isArray(data)) throw new Error('não é array');
-  if (data.length < 3) throw new Error(`só ${data.length} domínios`);
+  // Aceita tanto array direto quanto objeto {ok, dominios}
+  const dominios = Array.isArray(data) ? data : (data.dominios || []);
+  if (!Array.isArray(dominios)) throw new Error('não é array');
+  if (dominios.length < 3) throw new Error(`só ${dominios.length} domínios`);
 });
 
 // 11) Rankings

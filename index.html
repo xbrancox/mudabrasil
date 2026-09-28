@@ -651,16 +651,16 @@ $('#dadosBody').innerHTML=(function(){const esc=v=>(v!=null&&v!=='')?v:null;cons
   ${votosHTML(d,p,i)}
   <p class="muted" style="margin-top:10px">Fontes oficiais no final da página do Radar.</p>`})();
 document.getElementById('mDados').classList.add('open');setupVotosObserver(i)}
-function renderRad(){if(!ready)return;const q=($('#cbusca').value||'').toLowerCase();const uf=$('#fUF').value;const pt=$('#fPartido').value;const cg=$('#fCargo').value;const ord=$('#fOrdem').value;
+function renderRad(){if(!ready)return;const q=(($('#cbusca')&&$('#cbusca').value)||'').toLowerCase();const uf=($('#fUF')&&$('#fUF').value)||'';const pt=($('#fPartido')&&$('#fPartido').value)||'';const cg=($('#fCargo')&&$('#fCargo').value)||'';const ord=($('#fOrdem')&&$('#fOrdem').value)||'nome';
 	const temFiltro=q||uf||pt||cg;
-	if(!temFiltro){$('#cCount').textContent='';$('#radList').innerHTML=`<div class="card" style="grid-column:1/-1;text-align:center;padding:40px"><i class="fa-solid fa-magnifying-glass" style="font-size:30px;color:var(--gold)"></i><h3 style="margin:12px 0 6px">Pesquise um político</h3><p class="muted">Digite nome, número, estado, partido ou área pra abrir a ficha completa com dados reais.</p></div>`;return}
+	if(!temFiltro){if($('#cCount'))$('#cCount').textContent='';if($('#radList'))$('#radList').innerHTML=`<div class="card" style="grid-column:1/-1;text-align:center;padding:40px"><i class="fa-solid fa-magnifying-glass" style="font-size:30px;color:var(--gold)"></i><h3 style="margin:12px 0 6px">Pesquise um político</h3><p class="muted">Digite nome, número, estado, partido ou área pra abrir a ficha completa com dados reais.</p></div>`;return}
 	let l=POL.filter(p=>(!q||p.nome.toLowerCase().includes(q)||p.partido.toLowerCase().includes(q)||p.uf.toLowerCase().includes(q)||String(p.num).includes(q))&&(!uf||p.uf===uf)&&(!pt||p.partido===pt)&&(!cg||p.cargo===cg));
 	if(ord==='rec')l.sort((a,b)=>countRec(b,POL.indexOf(b))-countRec(a,POL.indexOf(a)));
 	if(ord==='props')l.sort((a,b)=>((DET[POL.indexOf(b)]||{}).props||[]).length-((DET[POL.indexOf(a)]||{}).props||[]).length);
 	if(ord==='apo')l.sort((a,b)=>countApo(b,POL.indexOf(b))-countApo(a,POL.indexOf(a)));
-	$('#cCount').textContent=l.length+' político(s) encontrado(s)';
+	if($('#cCount'))$('#cCount').textContent=l.length+' político(s) encontrado(s)';
 	const top=l.slice(0,6);
-	$('#radList').innerHTML=top.map(p=>fichaHTML(p,POL.indexOf(p))).join('')||'<p class="muted">Nada encontrado.</p>';
+	if($('#radList'))$('#radList').innerHTML=top.map(p=>fichaHTML(p,POL.indexOf(p))).join('')||'<p class="muted">Nada encontrado.</p>';
 	top.forEach(p=>{const i=POL.indexOf(p);if(!DET[i])preencheDetalhe(i)})}
 function togglePin(i){if(PINS.includes(i))PINS=PINS.filter(x=>x!==i);else{if(PINS.length>=5)return toast('Máximo de 5 — solte um pra trocar.');PINS.push(i)}
 $('#cmpcount').textContent=PINS.length+' fixados';$('#cmpbar').classList.toggle('on',PINS.length>0);renderRad()}
