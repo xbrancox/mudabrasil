@@ -370,7 +370,7 @@ $$('#nav a').forEach(a=>a.onclick=()=>go(a.dataset.p));
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 const CORES=['#2ECC71','#FFD700','#4a90f0','#E74C3C','#A855F7'],NOMES=['Maria','Carlos','Ana','João','Outros'];
 let POL=[],ready=false,PINS=[],SESS=LS.get('mb_sess',null),DET={},FTAB={},REMOTE_REC={},REMOTE_APO={},REMOTE_RESP={},BACKEND_OK=false,VOT_CACHE={ts:0,list:[]},VOTOS_BY_ID={};
-const CARGOS_F=['Presidente','Governador','Senador','Deputado Federal','Deputado Estadual','Prefeito','Vereador'];
+const CARGOS_F=['Presidente','Governador','Senador','Deputado Federal','Deputado Estadual'];
 /* Regra "tudo real": sem textos inventados. As SEED_* sintéticas de reclamação/
    apoio/resposta foram removidas — contadores e listas vêm só do backend. */
 async function carregaPol(){POL=[];
