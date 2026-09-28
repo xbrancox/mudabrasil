@@ -26,8 +26,8 @@
 <style>
 :root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--blueL:#4a90f0;--green:#2ECC71;--red:#E74C3C;--r:14px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;padding:20px}
-.wrap{max-width:1180px;margin:0 auto}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:20px}
 h1{font-family:Montserrat;font-weight:900;font-size:26px;margin:8px 0}
 .kick{color:var(--gold);font:800 11px Manrope;letter-spacing:.2em;text-transform:uppercase}
 .muted{color:var(--muted);font-size:12.5px}
@@ -59,19 +59,7 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 #aviso{display:none;background:rgba(255,215,0,.08);border:1px solid var(--gold);border-radius:12px;padding:12px;margin:12px 0;font-size:13px}
 @media(max-width:900px){.filtros{grid-template-columns:1fr 1fr}}
 </style>
-<style>
-/* ===== CABEÇALHO PADRÃO MEUVOTO ===== */
-header.topo{position:sticky;top:0;z-index:50;display:flex;gap:12px;align-items:center;padding:12px 20px;background:#061a3add;backdrop-filter:blur(8px);border-bottom:1px solid #1d3a66;flex-wrap:wrap}
-header.topo .lg{display:flex;gap:10px;align-items:center;text-decoration:none}
-header.topo .lg .ic{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7ed957,#2ECC71);display:flex;align-items:center;justify-content:center;color:#061a3a;font-size:18px}
-header.topo .lg b{font-family:Montserrat;font-size:17px;color:#fff}
-header.topo .lg small{display:block;color:#9fb0c8;font-size:11px}
-header.topo nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
-header.topo nav a{color:#eaf1fb;text-decoration:none;padding:8px 12px;border-radius:999px;font-size:13px}
-header.topo nav a:hover{background:#123059}
-header.topo nav a.on{background:#FFD700;color:#061a3a;font-weight:800}
-@media(max-width:960px){header.topo nav{display:none}}
-</style>
+<!-- Cabeçalho uniforme injetado por site-header.js -->
   <script src="../js/site-header.js?v=3"></script>
 </head>
 <body>
