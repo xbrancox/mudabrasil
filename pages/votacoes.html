@@ -249,6 +249,44 @@ if(prs.length){secs+='<p><b>Promessas em cobrança:</b> '+prs.map(function(p){re
 h+='</table>'+secs+'<p style="margin-top:8px">MeuVoto — protótipo cívico de transparência, sem valor legal. Dados públicos oficiais da Câmara dos Deputados.</p>';
 $('#fichaPrint').innerHTML=h;if(o12)o12.innerHTML='<p class="muted">✅ Dossiê montado — abrindo impressão/PDF…</p>';window.print()}
 window.addEventListener('load',function(){setTimeout(adotaShare,800)});
+</script><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
+<div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn sm" data-tip="Grade com as 27 UFs e o % Sim de cada bancada; clique para o calor detalhado da UF." onclick="mapaBrasil()">🗺️ Brasil por bancadas</button>
+<button class="btn sm" data-tip="Compare, para um tema, o que Câmara e Senado fizeram (datas, assuntos, resultados)." onclick="espelhoCasas()">🏛️ Espelho Câmara × Senado</button>
+<button class="btn sm" data-tip="Monta o resumo semanal, copia o texto e abre seu app de e-mail preenchido (opt-in)." onclick="digestMail()">📧 Digest semanal (e-mail)</button>
+</div>
+<div id="out13" style="margin-top:10px"></div>
+</div>
+<script id="ciclo13">
+async function ufClick(u){await needC7();var ufs={};for(var i=0;i<C7.length;i++){var L=CACHEV[C7[i].id].list;for(var q=0;q<L.length;q++){if(L[q].uf)ufs[L[q].uf]=1}}var sel=$('#hmUF');if(sel){sel.innerHTML=Object.keys(ufs).sort().map(function(x){return '<option>'+x+'</option>'}).join('');sel.value=u;drawHM()}var el=document.getElementById('hm');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})}
+async function mapaBrasil(){var o=document.getElementById('out13');if(!o)return;await needC7();if(!C7.length){o.innerHTML='<p class="muted">Sem votações nominais na janela.</p>';return}
+var m={};for(var i=0;i<C7.length;i++){var L=CACHEV[C7[i].id].list;for(var q=0;q<L.length;q++){var x=L[q];var u=x.uf||'?';m[u]=m[u]||{s:0,n:0,t:0};var vv=(x.voto||'').toLowerCase();if(vv.indexOf('sim')===0||vv.indexOf('n')===0){m[u].t++;if(vv.indexOf('sim')===0)m[u].s++}}}
+var ufs=Object.keys(m).sort();
+var h='<div class="ecard"><h3>🗺️ Brasil por bancadas — % Sim nas últimas '+C7.length+' nominais</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px;margin-top:8px">';
+for(var j=0;j<ufs.length;j++){var u=ufs[j];var pc=m[u].t?Math.round(100*m[u].s/m[u].t):null;
+var bg=pc==null?'#334155':(pc>=60?'rgba(46,204,113,'+(0.25+0.75*pc/100).toFixed(2)+')':(pc>=40?'rgba(148,163,184,.5)':'rgba(231,76,60,'+(0.25+0.75*(100-pc)/100).toFixed(2)+')'));
+h+='<button class="btn sm" style="background:'+bg+';justify-content:space-between;border-color:rgba(127,176,245,.25)" data-tip="Bancada '+u+': '+m[u].s+' Sim de '+m[u].t+' votos Sim/Não · clique para o calor detalhado" onclick="ufClick(\''+u+'\')">'+u+' <b>'+(pc==null?'—':pc+'%')+'</b></button>'}
+h+='</div><p class="muted" style="margin-top:8px">Clique numa UF para carregar acima o mapa de calor detalhado da bancada.</p></div>';
+o.innerHTML=h}
+async function espelhoCasas(){var kw=prompt('Tema para comparar Câmara × Senado (ex.: orçamento, saúde, educação):');if(!kw)return;kw=kw.trim().toLowerCase();
+var o=document.getElementById('out13');if(!o)return;o.innerHTML='<p class="muted">⏳ Buscando nas duas casas…</p>';
+var rc=await fetchJ(CAM('votacoes?itens=60&ordem=DESC'));var cv=((rc&&rc.dados)||[]).filter(function(v){var i=vInfo(v);return (i.assunto+' '+i.rot).toLowerCase().indexOf(kw)>=0}).slice(0,4);
+var ini=new Date(Date.now()-180*864e5);var rs=await fetchJ('https://legis.senado.leg.br/dadosabertos/sf/votacoes/VotacaoLista?dataInicio='+fd(ini)+'&dataFim='+fd(new Date()));var sarr=(rs&&(rs.Votacoes||rs.votacoes||rs.dados))||[];
+if(!sarr.length){var rs2=await fetchJ('https://legis.senado.leg.br/dadosabertos/votacoes?dataInicio='+fd(ini)+'&dataFim='+fd(new Date()));sarr=(rs2&&(rs2.Votacoes||rs2.votacoes||rs2.dados))||[]}
+var sv=sarr.filter(function(v){var t=((v.Descricao||v.descricao||v.nomeMateria||v.materia||'')+' '+(v.Codigo||v.codigo||'')).toLowerCase();return t.indexOf(kw)>=0}).slice(0,4);
+var h='<div class="ecard"><h3>🏛️ Espelho Câmara × Senado — tema "'+esc(kw)+'"</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">';
+h+='<div><h4 style="font-size:13px">Câmara ('+cv.length+')</h4>'+(cv.length?cv.map(function(v){var i=vInfo(v);return '<p style="margin-top:6px">• '+fmtData(v.dataHora)+' — '+esc(trunc(i.assunto,60))+'</p>'}).join(''):'<p class="muted">Nada encontrado na janela atual.</p>')+'</div>';
+h+='<div><h4 style="font-size:13px">Senado ('+sv.length+')</h4>'+(sv.length?sv.map(function(v){return '<p style="margin-top:6px">• '+esc(fmtData(v.Data||v.data)||'—')+' — '+esc(trunc(v.Descricao||v.descricao||v.nomeMateria||v.materia||'',60))+((v.Resultado||v.resultado)?' <span class="muted">('+esc(v.Resultado||v.resultado)+')</span>':'')+'</p>'}).join(''):'<p class="muted">Nada encontrado (ou consulta direta bloqueada pelo WAF).</p>')+'</div></div>';
+h+='<p class="muted" style="margin-top:8px">Mesmo tema, ritos diferentes: compare datas e resultados para ver qual casa acelerou ou travou a matéria.</p></div>';
+o.innerHTML=h}
+async function digestMail(){if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');
+var R=null;try{R=await buildResumo9()}catch(e){}
+if(!R){var c=localStorage.getItem('mb_resumo_cache');if(c){try{R=JSON.parse(c)}catch(e){}}}
+var body='RESUMO SEMANAL MeuVoto\n\n'+(R&&R.lines?R.lines.join('\n'):'Sem votações nos últimos 7 dias (recesso/período eleitoral).')+'\n\nMeus deputados: '+MEUS.map(function(m){return m.nome}).join(', ')+'\n\nGerado em '+new Date().toLocaleString('pt-BR')+' · fonte: dadosabertos.camara.leg.br';
+var to=prompt('Enviar o digest para (e-mail):',localStorage.getItem('mb_digest_to')||'');if(to===null)return;if(to)localStorage.setItem('mb_digest_to',to);
+try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(body)}catch(e){}
+location.href='mailto:'+(to||'')+'?subject='+encodeURIComponent('MeuVoto · Resumo semanal')+'&body='+encodeURIComponent(body);
+var o=document.getElementById('out13');if(o)o.innerHTML='<div class="ecard"><p>📧 Digest preparado e copiado para a área de transferência; seu app de e-mail deve abrir com destinatário, assunto e corpo preenchidos. Envio automático servidor-a-servidor (opt-in) vem no ciclo 14.</p></div>'}
 </script><div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
