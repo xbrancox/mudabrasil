@@ -5,21 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Votações do Plenário · MeuVoto</title>
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="../config.js"></script>
 <script src="../js/site-header.js"></script>
 <style>
-:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--blue:#115FCB;--blueL:#4a90f0;--green:#2ECC71;--red:#E74C3C;--r:14px}
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--blueL:#4a90f0;--green:#2ECC71;--red:#E74C3C}
 *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
 body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif}
 h1,h2,h3,h4{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
 a{color:var(--gold);text-decoration:none}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
 .muted{color:var(--muted);font-size:12.5px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:10px 18px;cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:10px 18px;cursor:pointer}
 .btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
 .btn.sm{padding:7px 12px;font-size:12px}
 .badge{font:800 11px Manrope;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
@@ -32,24 +29,36 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 .edu{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px auto 0;max-width:960px;text-align:left}
 .ecard{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--card);font-size:13px;line-height:1.6}
 .ecard h3{font-size:14px;margin-bottom:6px}
-.ecard.simb{border-color:rgba(255,215,0,.4)}
-.ecard.nom{border-color:rgba(46,204,113,.4)}
-.fbar{position:sticky;top:56px;z-index:80;background:rgba(6,26,58,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px 0;margin-top:18px}
+.ecard.simb{border-color:rgba(255,215,0,.4)}.ecard.nom{border-color:rgba(46,204,113,.4)}
+.tabs{display:flex;gap:8px;justify-content:center;margin:16px 0 4px}
+.tabs button{border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--muted);font:800 13px Manrope;padding:9px 20px;cursor:pointer}
+.tabs button.on{background:var(--gold);color:#1a1400;border-color:var(--gold)}
+.painel{max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px}
+.painel .row{display:flex;gap:8px;flex-wrap:wrap}
+.painel input{flex:1;min-width:200px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chips span{font:700 12px Manrope;border:1px solid rgba(255,215,0,.5);color:var(--gold);border-radius:999px;padding:4px 10px;cursor:pointer}
+.fbar{position:sticky;top:56px;z-index:80;background:rgba(6,26,58,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px 0;margin-top:14px}
 .fbar .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .fbar input{flex:2;min-width:220px}
+.agenda{margin:14px 0 0}
+.agenda .ecard{margin-bottom:8px}
 .vcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .vtop{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
 .vcard h3{font-size:16px;margin-top:10px}
 .lei{color:var(--gold);border:1px dashed rgba(255,215,0,.5);padding:3px 9px;border-radius:8px}
 .ementa{margin-top:8px;font-size:13px;line-height:1.55}
-.vacts{margin-top:12px}
 .vdet{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
 .cbar{display:flex;height:14px;border-radius:8px;overflow:hidden;margin:10px 0 6px;background:var(--card2)}
 .cbar div{height:100%}
 .cleg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px}
+.quorum{margin-top:10px;border:1px dashed rgba(74,144,240,.5);border-radius:12px;padding:10px 12px;font-size:13px;background:rgba(17,95,203,.08)}
+.meusres{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
+.promx{margin-top:8px;border-left:3px solid var(--gold);background:rgba(255,215,0,.07);border-radius:8px;padding:8px 10px;font-size:12.5px}
 .vtable{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
-.vtable td{padding:7px 8px;border-bottom:1px solid rgba(127,176,245,.12);vertical-align:middle}
+.vtable td{padding:7px 8px;border-bottom:1px solid rgba(127,176,245,.12)}
 .vtable img{width:34px;height:34px;border-radius:50%;object-fit:cover;background:var(--card2)}
+.vtable tr.meu{background:rgba(255,215,0,.07);outline:1px solid rgba(255,215,0,.35)}
 .vb{font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px;white-space:nowrap}
 .vb.sim{background:rgba(46,204,113,.15);color:var(--green)}
 .vb.nao{background:rgba(231,76,60,.15);color:var(--red)}
@@ -62,26 +71,31 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 #tip{position:fixed;z-index:400;max-width:320px;background:var(--card2);border:1px solid var(--gold);border-radius:12px;padding:10px 12px;font-size:12.5px;line-height:1.5;display:none;box-shadow:0 8px 30px rgba(0,0,0,.5)}
 .loadmore{text-align:center;margin:16px 0 40px}
 @media(max-width:860px){.edu{grid-template-columns:1fr}}
+@media print{body *{visibility:hidden}#fichaPrint,#fichaPrint *{visibility:visible}#fichaPrint{position:absolute;left:0;top:0;width:100%;padding:28px;background:#fff;color:#000;font:13px/1.5 Manrope,sans-serif}#fichaPrint h1,#fichaPrint h2{color:#000}#fichaPrint table{width:100%;border-collapse:collapse}#fichaPrint td,#fichaPrint th{border:1px solid #999;padding:6px}}
 </style>
 </head>
 <body>
 <main>
 <section class="hero">
   <h1>🗳️ Votações do Plenário</h1>
-  <p>Cada votação da Câmara com <b>assunto, resumo da matéria, link oficial</b> e a explicação de <b>como ela foi decidida</b> — voto a voto (nominal) ou pelo método "fica como está" (simbólica).</p>
+  <p>Cada votação com <b>assunto, resumo, link oficial</b> e a explicação de <b>como foi decidida</b>. Marque <b>⭐ seus deputados</b>, cadastre <b>🤝 promessas</b>, receba <b>🔔 alertas</b> e veja a <b>📅 agenda</b> do que ainda será votado.</p>
   <div class="edu">
-    <div class="ecard simb"><h3>🗣️ Votação simbólica — "fica como está"</h3>O presidente pede que quem é a favor <b>permaneça como está</b>. Não há botão, não há nome publicado: a Mesa conta o conjunto e anuncia o resultado. Por isso <b>não existe "como cada deputado votou"</b> — e é assim que a maioria das matérias passa, em segundos. Não é falha do site: é o Regimento Interno.</div>
-    <div class="ecard nom"><h3>✍️ Votação nominal — voto por voto</h3>Cada deputado registra <b>Sim / Não / Abstenção</b> no painel e tudo fica público, deputado por deputado. É obrigatória em temas graves (cassação, vetos…) ou quando um partido exige. Aqui você vê a <b>tabela completa</b> e pode cobrar o seu representante.</div>
+    <div class="ecard simb"><h3>🗣️ Simbólica — "fica como está"</h3>Quem é a favor <b>permanece como está</b>; a Mesa conta o conjunto. <b>Não há registro individual</b> — e é assim que a maioria passa, em segundos. Não é falha do site: é o Regimento.</div>
+    <div class="ecard nom"><h3>✍️ Nominal — voto por voto</h3>Cada parlamentar registra <b>Sim/Não/Abstenção</b> no painel. Aqui você vê a <b>tabela completa</b>, o <b>quórum</b>, o voto dos <b>seus</b> deputados, a <b>ficha-resumo em PDF</b> e o compartilhamento no <b>WhatsApp</b>.</div>
   </div>
+  <div class="tabs"><button id="tbC" class="on" onclick="setTab('camara')">🏛️ Câmara</button><button id="tbS" onclick="setTab('senado')">🏛️ Senado</button></div>
+  <div class="painel"><div class="row"><input id="mq" placeholder="⭐ Nome do seu deputado/senador + Enter…"/><button class="btn sm gold" onclick="addMeu()">Adicionar</button><button class="btn sm" onclick="ativaAlertas()">🔔 Ativar alertas</button></div><div class="chips" id="mchips"></div></div>
+  <div class="painel"><div class="row"><select id="pDep" style="max-width:220px"></select><input id="pTxt" placeholder="🤝 Promessa a cobrar (ex.: defender a educação pública…)"/><button class="btn sm" onclick="addProm()">Cobrar</button></div><div class="chips" id="pChips"></div><p class="muted" style="margin-top:8px">Ao abrir uma votação nominal, cruzamos as palavras da promessa com o assunto e mostramos como seu deputado votou.</p></div>
 </section>
 <div class="fbar"><div class="wrap"><div class="row">
-  <input id="q" placeholder="🔎 Buscar por assunto ou matéria (ex.: PL, MPV)…" oninput="render()"/>
-  <select id="fTipo" onchange="filtraTipo()"><option value="">Todos os tipos</option><option value="N">✍️ Nominais (voto registrado)</option><option value="S">🗣️ Simbólicas (sem registro)</option></select>
+  <input id="q" placeholder="🔎 Buscar por assunto ou matéria…" oninput="render()"/>
+  <select id="fTipo" onchange="filtraTipo()"><option value="">Todos os tipos</option><option value="N">✍️ Nominais</option><option value="S">🗣️ Simbólicas</option></select>
   <span class="muted" id="count"></span>
 </div></div></div>
-<div class="wrap"><div id="list"></div><div class="loadmore"><button id="more" class="btn gold" hidden onclick="mais()"></button></div></div>
+<div class="wrap"><div class="agenda" id="agenda"></div><div id="list"></div><div class="loadmore"><button id="more" class="btn gold" hidden onclick="mais()"></button></div></div>
 </main>
 <div id="tip"></div>
+<div id="fichaPrint"></div>
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -89,30 +103,76 @@ const trunc=(s,n)=>s&&s.length>n?s.slice(0,n)+'…':(s||'');
 async function fetchJ(u){try{const r=await fetch(u);if(!r.ok)throw new Error(r.status);return await r.json()}catch(e){return null}}
 const CAM=u=>(window.API||API)+'/api/camara/'+u;
 const oficial=pid=>pid?('https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao='+pid):'#';
-let ALL=[],SHOW=12,CACHEV={},CACHEE={};
-function vInfo(v){const p=v.proposicao||{};const idProp=p.id||((v.uriProposicao||'').split('/').pop())||'';const sigla=v.siglaProposicao||p.sigla||'';const num=v.numeroProposicao||p.numero||'';const ano=v.anoProposicao||p.ano||'';const rot=(sigla||num)?(sigla+' '+num+'/'+ano):'';const assunto=v.tituloVotacao||v.descricaoProposicao||p.titulo||p.descricao||rot||('Votação '+v.id);return{idProp,rot,assunto}}
+let ALL=[],SHOW=12,CACHEV={},CACHEE={},POL=null,TAB='camara',SEN=[];
+let MEUS=JSON.parse(localStorage.getItem('mb_meus')||'[]');
+let PROMS=JSON.parse(localStorage.getItem('mb_promessas')||'[]');
+const STOP=['para','com','não','nao','uma','que','dos','das','pelo','pela','mais','menos','contra','entre','sobre','todos','todas','ser','ter','fazer','defesa','defender'];
+function meusIds(){return MEUS.map(m=>m.id)}
+function kws(t){return t.toLowerCase().split(/[^a-zà-úçãõ0-9]+/).filter(w=>w.length>=5&&!STOP.includes(w))}
+function renderChips(){$('#mchips').innerHTML=MEUS.length?MEUS.map((m,i)=>'<span title="Remover" onclick="rmMeu('+i+')">⭐ '+esc(m.nome)+' ✕</span>').join(''):'<span class="muted" style="border:none">Nenhum representante marcado.</span>';
+$('#pDep').innerHTML=MEUS.length?MEUS.map(m=>'<option value="'+m.id+'">'+esc(m.nome)+'</option>').join(''):'<option value="">(marque um deputado acima)</option>';
+$('#pChips').innerHTML=PROMS.length?PROMS.map((p,i)=>'<span title="Remover" onclick="rmProm('+i+')">🤝 '+esc(trunc(p.txt,34))+' ('+esc(trunc(p.nome,14))+') ✕</span>').join(''):'<span class="muted" style="border:none">Nenhuma promessa cadastrada.</span>'}
+function rmMeu(i){MEUS.splice(i,1);localStorage.setItem('mb_meus',JSON.stringify(MEUS));renderChips();render()}
+function rmProm(i){PROMS.splice(i,1);localStorage.setItem('mb_promessas',JSON.stringify(PROMS));renderChips()}
+async function pols(){if(POL)return POL;const r=await fetchJ((window.API||API)+'/api/candidatos');POL=(r&&r.candidatos)||[];return POL}
+async function addMeu(){const q=($('#mq').value||'').trim().toLowerCase();if(q.length<3)return;const P=await pols();const p=P.find(x=>(x.name||x.nome||'').toLowerCase().includes(q));if(!p)return alert('Não encontrei. Tente o nome completo.');if(meusIds().includes(p.id))return alert('Já está na lista.');MEUS.push({id:p.id,nome:p.name||p.nome});localStorage.setItem('mb_meus',JSON.stringify(MEUS));$('#mq').value='';renderChips();render()}
+function addProm(){const t=($('#pTxt').value||'').trim();const d=MEUS.find(m=>m.id===$('#pDep').value);if(t.length<6)return alert('Descreva a promessa (6+ caracteres).');if(!d)return alert('Marque primeiro um deputado (painel ⭐).');PROMS.push({txt:t,depId:d.id,nome:d.nome});localStorage.setItem('mb_promessas',JSON.stringify(PROMS));$('#pTxt').value='';renderChips()}
+function ativaAlertas(){if(!('Notification' in window))return alert('Seu navegador não suporta notificações.');Notification.requestPermission().then(p=>{alert(p==='granted'?'🔔 Alertas ativados! Você será avisado quando seus deputados votarem.':'Permissão negada — sem alertas por enquanto.')})}
+async function alertaCheck(){if(!('Notification' in window)||Notification.permission!=='granted'||!MEUS.length)return;const r=await fetchJ(CAM('votacoes?itens=8&ordem=DESC&ordenarPor=dataHora'));const vs=(r&&r.dados)||[];const done=JSON.parse(localStorage.getItem('mb_alertados')||'[]');let n=0;for(const v of vs){if(done.includes(v.id))continue;const o=await votosDe(v.id);if(o.nominal){const mv=o.votos.filter(x=>meusIds().includes('camara-'+(x.idDeputado||x.id||'')));if(mv.length&&n<3){const i=vInfo(v);try{new Notification('MeuVoto · Seus deputados votaram',{body:mv.map(x=>x.nome+': '+(x.voto||'—')).join(' · ')+' — '+trunc(i.assunto,80)})}catch(e){}n++}}done.push(v.id)}localStorage.setItem('mb_alertados',JSON.stringify(done.slice(-60)))}
+function vInfo(v){const p=v.proposicao||{};const idProp=p.id||((v.uriProposicao||'').split('/').pop())||'';const sigla=v.siglaProposicao||p.sigla||'';const num=v.numeroProposicao||p.numero||'';const ano=v.anoProposicao||p.ano||'';const rot=(sigla||num)?(sigla+' '+num+'/'+ano):'';const assunto=v.tituloVotacao||v.descricaoProposicao||p.titulo||p.descricao||rot||('Votação '+v.id);return{idProp,rot,assunto,sigla}}
 function fmtData(d){if(!d)return'';const t=new Date(d);return t.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' às '+t.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
 async function votosDe(id){if(CACHEV[id])return CACHEV[id];const r=await fetchJ(CAM('votacoes/'+id+'/votos?itens=600'));const d=(r&&r.dados)||[];const o={nominal:d.length>0,votos:d,counts:{}};if(o.nominal)for(const x of d){const k=x.voto||'Outro';o.counts[k]=(o.counts[k]||0)+1}CACHEV[id]=o;return o}
 async function tipagem(arr){const pool=[...arr];const run=async()=>{while(pool.length){const v=pool.shift();const o=await votosDe(v.id);v._tipo=o.nominal?'N':'S'}};await Promise.all([run(),run(),run(),run()])}
 function ementaDe(pid){if(!pid)return Promise.resolve('');if(CACHEE[pid]!==undefined)return Promise.resolve(CACHEE[pid]);return fetchJ(CAM('proposicoes/'+pid)).then(r=>{const p=(r&&r.dados)||r||{};const e=p.ementa||p.descricao||'';CACHEE[pid]=e;return e}).catch(()=>{CACHEE[pid]='';return ''})}
-async function carrega(){$('#list').innerHTML='<p class="muted" style="padding:40px;text-align:center">⏳ Carregando votações do Plenário…</p>';const r=await fetchJ(CAM('votacoes?itens=40&ordem=DESC&ordenarPor=dataHora'));ALL=(r&&r.dados)||[];if(!ALL.length){$('#list').innerHTML='<p class="muted" style="padding:40px;text-align:center">Não foi possível carregar as votações agora. Tente novamente em instantes.</p>';return}await tipagem(ALL.slice(0,SHOW));render()}
+function quorumTxt(o,i){const c=o.counts;const tot=o.votos.length;const sim=c['Sim']||0,nao=c['Não']||0,abs=c['Abstenção']||0;const nec=/^PEC/i.test(i.sigla)?308:Math.floor(tot/2)+1;let frase;if(sim>=nec)frase='✅ Indicativo: APROVADA com folga de '+(sim-nec)+' voto(s).';else frase='⛔ Indicativo: REJEITADA — faltaram '+(nec-sim)+' voto(s) para aprovar.';return{tot,sim,nao,abs,nec,frase}}
+function setTab(t){TAB=t;$('#tbC').classList.toggle('on',t==='camara');$('#tbS').classList.toggle('on',t==='senado');SHOW=12;if(t==='camara'){agenda();render()}else{$('#agenda').innerHTML='';renderSenado()}}
+async function agenda(){const f=d=>d.toISOString().slice(0,10);const r=await fetchJ(CAM('eventos?itens=10&sigla=PLEN&dataInicio='+f(new Date())+'&dataFim='+f(new Date(Date.now()+7*864e5))+'&ordem=ASC&ordenarPor=dataHora'));const ev=(r&&r.dados)||[];$('#agenda').innerHTML=ev.length?'<div class="ecard"><h3>📅 Agenda do Plenário — próximos 7 dias</h3>'+ev.map(e=>'<p style="margin-top:6px">• <b>'+fmtData(e.dataHora||e.data)+'</b> — '+esc(e.titulo||e.descricao||'Sessão')+((e.situacao)?' <span class="muted">('+esc(e.situacao)+')</span>':'')+'</p>').join('')+'<p class="muted" style="margin-top:8px">Pressione seus deputados ANTES da sessão: é nela que o "fica como está" decide.</p></div>':'<div class="ecard"><h3>📅 Agenda do Plenário</h3><p class="muted">Sem sessões publicadas para os próximos 7 dias (ou API indisponível). Confira a <a href="https://www.camara.leg.br/noticias/" target="_blank" rel="noopener">pauta oficial</a>.</p></div>'}
+async function carrega(){$('#list').innerHTML='<p class="muted" style="padding:40px;text-align:center">⏳ Carregando votações…</p>';agenda();const r=await fetchJ(CAM('votacoes?itens=40&ordem=DESC&ordenarPor=dataHora'));ALL=(r&&r.dados)||[];if(!ALL.length){$('#list').innerHTML='<p class="muted" style="padding:40px;text-align:center">Não foi possível carregar agora. Tente em instantes.</p>';return}await tipagem(ALL.slice(0,SHOW));render();alertaCheck();const h=location.hash.match(/^#v(\d+)/);if(h){const el=document.getElementById('vd-'+h[1]);if(el)expand(+h[1])}}
 function filtrados(){const q=($('#q').value||'').toLowerCase();const t=$('#fTipo').value;return ALL.filter(v=>{const i=vInfo(v);if(t&&v._tipo!==t)return false;if(q&&!(i.assunto+' '+i.rot).toLowerCase().includes(q))return false;return true})}
 async function filtraTipo(){const t=$('#fTipo').value;if(t){const falta=ALL.filter(v=>!v._tipo);if(falta.length)await tipagem(falta)}render()}
 function render(){const L=filtrados();$('#count').textContent=L.length+' votação(ões)';const vis=L.slice(0,SHOW);$('#more').hidden=L.length<=SHOW;$('#more').textContent='⬇️ Carregar mais ('+(L.length-SHOW)+' restantes)';
-$('#list').innerHTML=vis.map(v=>{const i=vInfo(v);const t=v._tipo;return '<div class="vcard"><div class="vtop"><span class="badge '+(t==='N'?'tn':'ts')+'">'+(t==='N'?'✍️ Nominal · voto registrado':'🗣️ Simbólica · sem registro individual')+'</span><span class="muted">'+fmtData(v.dataHora)+' · Plenário da Câmara</span></div><h3>'+esc(i.assunto)+'</h3>'+(i.rot?'<p style="margin:8px 0 0"><a class="lei" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener" data-prop="'+i.idProp+'">📜 '+esc(i.rot)+'</a> <span class="muted">— passe o mouse: resumo da matéria · clique: site oficial</span></p>':'')+'<p class="ementa muted" id="em-'+v.id+'">'+(i.idProp&&CACHEE[i.idProp]?esc(trunc(CACHEE[i.idProp],240)):'⏳ carregando resumo da matéria…')+'</p><div class="vacts"><button class="btn sm" onclick="expand('+v.id+')">🔎 Como foi esta votação?</button></div><div class="vdet" id="vd-'+v.id+'" hidden></div></div>'}).join('')||'<p class="muted" style="padding:40px;text-align:center">Nada encontrado com esses filtros.</p>';
-vis.forEach(v=>{const i=vInfo(v);if(i.idProp&&CACHEE[i.idProp]===undefined)ementaDe(i.idProp).then(e=>{const el=document.getElementById('em-'+v.id);if(el)el.textContent=e?trunc(e,240):'Matéria sem resumo público (ementa) disponível.'})})}
+$('#list').innerHTML=vis.map(v=>{const i=vInfo(v);const t=v._tipo;return '<div class="vcard"><div class="vtop"><span class="badge '+(t==='N'?'tn':'ts')+'">'+(t==='N'?'✍️ Nominal · voto registrado':'🗣️ Simbólica · sem registro individual')+'</span><span class="muted">'+fmtData(v.dataHora)+' · Plenário da Câmara</span></div><h3>'+esc(i.assunto)+'</h3>'+(i.rot?'<p style="margin:8px 0 0"><a class="lei" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener" data-prop="'+i.idProp+'">📜 '+esc(i.rot)+'</a> <span class="muted">— mouse: resumo · clique: oficial</span></p>':'')+'<p class="ementa muted" id="em-'+v.id+'">'+(i.idProp&&CACHEE[i.idProp]?esc(trunc(CACHEE[i.idProp],240)):'⏳ carregando resumo da matéria…')+'</p><div style="margin-top:12px"><button class="btn sm" onclick="expand('+v.id+')">🔎 Como foi esta votação?</button></div><div class="vdet" id="vd-'+v.id+'" hidden></div></div>'}).join('')||'<p class="muted" style="padding:40px;text-align:center">Nada encontrado.</p>';
+vis.forEach(v=>{const i=vInfo(v);if(i.idProp&&CACHEE[i.idProp]===undefined)ementaDe(i.idProp).then(e=>{const el=document.getElementById('em-'+v.id);if(el)el.textContent=e?trunc(e,240):'Matéria sem resumo público disponível.'})})}
 async function mais(){const antes=SHOW;SHOW+=12;await tipagem(filtrados().slice(antes,SHOW));render()}
-async function expand(id){const el=document.getElementById('vd-'+id);const v=ALL.find(x=>x.id==id);if(!el||!v)return;if(!el.hidden){el.hidden=true;return}el.hidden=false;el.innerHTML='<p class="muted">⏳ carregando detalhes…</p>';const i=vInfo(v);const o=await votosDe(id);
-if(o.nominal){const c=o.counts;const tot=o.votos.length;const sim=c['Sim']||0,nao=c['Não']||0,abs=c['Abstenção']||0;const out=tot-sim-nao-abs;
-el.innerHTML='<h4 style="font-size:13px">✍️ Votação NOMINAL — registro voto a voto</h4><div class="cbar"><div style="width:'+(sim/tot*100)+'%;background:var(--green)"></div><div style="width:'+(nao/tot*100)+'%;background:var(--red)"></div><div style="width:'+(abs/tot*100)+'%;background:#64748b"></div><div style="width:'+(out/tot*100)+'%;background:var(--gold)"></div></div><div class="cleg"><span style="color:var(--green)">Sim: '+sim+'</span><span style="color:var(--red)">Não: '+nao+'</span><span>Abstenção: '+abs+'</span><span style="color:var(--gold)">Obstrução/outros: '+out+'</span></div><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><input id="nvq-'+id+'" placeholder="🔎 Buscar deputado…" oninput="tab('+id+')" style="flex:1;min-width:180px"><select id="nvs-'+id+'" onchange="tab('+id+')"><option value="">Todos os votos</option><option>Sim</option><option>Não</option><option>Abstenção</option></select></div><div style="overflow-x:auto"><table class="vtable"><tbody id="nvt-'+id+'"></tbody></table></div>';tab(id);return}
-const or=await fetchJ(CAM('votacoes/'+id+'/orientacoes'));const ors=(or&&or.dados)||[];
-el.innerHTML='<div class="sbox"><h4 style="font-size:13px">🗣️ Esta foi uma votação SIMBÓLICA</h4><p style="margin-top:6px">O presidente do Plenário pediu que quem fosse a favor <b>permanecesse como estava</b> ("fica como está"). Nesses casos <b>não existe registro individual</b>: a Mesa conta o conjunto e anuncia o resultado. Por isso não há "como cada deputado votou" — e é assim que a maioria das matérias é aprovada, em poucos segundos.</p><p class="muted" style="margin-top:6px">Transparência: um partido pode exigir votação <b>nominal</b> (selo ✍️). Cobrar registro nominal é um jeito concreto de exigir responsabilidade dos parlamentares.</p>'+(ors.length?'<p class="muted" style="margin-top:10px">Orientações das bancadas (como cada partido mandou votar):</p><div class="ochips">'+ors.map(x=>'<span>'+esc(x.siglaPartido||x.partido||'?')+': '+esc(x.voto||x.orientacao||'—')+'</span>').join('')+'</div>':'')+'<p style="margin-top:12px"><a class="fonte" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener">📜 Ver a matéria no site da Câmara</a> <a class="fonte" href="'+CAM('votacoes/'+id+'/votos')+'" target="_blank" rel="noopener">⬇️ Baixar dados (JSON)</a></p></div>'}
-function tab(id){const o=CACHEV[id];if(!o)return;const q=(document.getElementById('nvq-'+id).value||'').toLowerCase();const s=document.getElementById('nvs-'+id).value;const rows=o.votos.filter(x=>{const nome=x.nome||'';if(q&&!(nome+' '+(x.siglaPartido||'')+' '+(x.siglaUf||'')).toLowerCase().includes(q))return false;if(s&&(x.voto||'')!==s)return false;return true}).slice(0,120);
-document.getElementById('nvt-'+id).innerHTML=rows.map(x=>{const dId=x.idDeputado||x.id||((x.uriDeputado||'').split('/').pop());const v=x.voto||'—';const cls=/^sim$/i.test(v)?'sim':/^n[aã]o$/i.test(v)?'nao':/absten/i.test(v)?'abs':'out';return '<tr><td><img loading="lazy" src="https://www.camara.leg.br/internet/deputado/bandep/'+dId+'.jpg" alt=""></td><td><a href="parlamentares.html?id=camara-'+dId+'">'+esc(x.nome||'—')+'</a></td><td class="muted">'+esc(x.siglaPartido||'')+'-'+esc(x.siglaUf||'')+'</td><td><span class="vb '+cls+'">'+esc(v)+'</span></td></tr>'}).join('')||'<tr><td class="muted">Nenhum voto com esse filtro.</td></tr>'}
+async function expand(id){const el=document.getElementById('vd-'+id);const v=ALL.find(x=>x.id==id);if(!el||!v)return;if(!el.hidden){el.hidden=true;return}el.hidden=false;el.innerHTML='<p class="muted">⏳ carregando…</p>';const i=vInfo(v);const o=await votosDe(id);
+if(o.nominal){const q=quorumTxt(o,i);const c=o.counts;const out=q.tot-q.sim-q.nao-q.abs;
+const mv=o.votos.filter(x=>meusIds().includes('camara-'+(x.idDeputado||x.id||'')));
+const ks=PROMS.map(p=>({p,k:kws(p.txt)})).filter(x=>x.k.length);
+const promHit=ks.filter(x=>x.k.some(k=>i.assunto.toLowerCase().includes(k)));
+el.innerHTML='<h4 style="font-size:13px">✍️ Votação NOMINAL — voto a voto</h4><div class="cbar"><div style="width:'+(q.sim/q.tot*100)+'%;background:var(--green)"></div><div style="width:'+(q.nao/q.tot*100)+'%;background:var(--red)"></div><div style="width:'+(q.abs/q.tot*100)+'%;background:#64748b"></div><div style="width:'+(out/q.tot*100)+'%;background:var(--gold)"></div></div><div class="cleg"><span style="color:var(--green)">Sim: '+q.sim+'</span><span style="color:var(--red)">Não: '+q.nao+'</span><span>Abstenção: '+q.abs+'</span><span style="color:var(--gold)">Outros: '+out+'</span></div><div class="quorum">🧮 <b>Quórum:</b> '+q.tot+' presentes · necessários <b>'+q.nec+'</b> ('+(/^PEC/i.test(i.sigla)?'3/5 da Casa — PEC':'maioria dos presentes')+') · Sim '+q.sim+' → '+q.frase+' <span class="muted">(indicativo calculado; o oficial está no link da matéria)</span></div>'+(mv.length?'<div class="meusres">'+mv.map(x=>{const v2=x.voto||'—';const cls=/^sim$/i.test(v2)?'sim':/^n[aã]o$/i.test(v2)?'nao':/absten/i.test(v2)?'abs':'out';return '<span class="vb '+cls+'">⭐ '+esc(x.nome)+': '+esc(v2)+'</span>'}).join('')+'</div>':'')+(promHit.length?promHit.map(x=>{const voto=(o.votos.find(y=>meusIds().includes('camara-'+(y.idDeputado||y.id||''))&&y.nome===x.p.nome)||{}).voto;return '<div class="promx">🤝 Promessa cobrada: “'+esc(x.p.txt)+'” → '+esc(x.p.nome)+' votou <b>'+(voto?esc(voto):'não participou')+'</b> nesta matéria.</div>'}).join(''):'')+'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn sm" onclick="ficha('+id+')">📄 Ficha-resumo (PDF)</button><button class="btn sm" onclick="zap('+id+')">📲 WhatsApp</button><input id="nvq-'+id+'" placeholder="🔎 Buscar deputado…" oninput="tab('+id+')" style="flex:1;min-width:160px"><select id="nvs-'+id+'" onchange="tab('+id+')"><option value="">Todos os votos</option><option>Sim</option><option>Não</option><option>Abstenção</option></select></div><div style="overflow-x:auto"><table class="vtable"><tbody id="nvt-'+id+'"></tbody></table></div>';tab(id);return}
+const or=await fetchJ(CAM('votacoes/'+id+'/orientacoes'));const ors=(or&&r0(or)&&or.dados)||[];
+el.innerHTML='<div class="sbox"><h4 style="font-size:13px">🗣️ Votação SIMBÓLICA</h4><p style="margin-top:6px">Quem era a favor <b>permaneceu como estava</b>. Não há registro individual — a Mesa conta o conjunto. É assim que a maioria das matérias passa, em segundos.</p><p class="muted" style="margin-top:6px">Um partido pode exigir votação <b>nominal</b> (selo ✍️). Cobrar registro nominal é exigir responsabilidade.</p>'+(ors.length?'<p class="muted" style="margin-top:10px">Orientações das bancadas:</p><div class="ochips">'+ors.map(x=>'<span>'+esc(x.siglaPartido||x.partido||'?')+': '+esc(x.voto||x.orientacao||'—')+'</span>').join('')+'</div>':'')+'<p style="margin-top:12px"><a class="fonte" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener">📜 Matéria oficial</a> <button class="btn sm" onclick="zap('+id+')">📲 WhatsApp</button></p></div>'}
+function r0(x){return !!x}
+function tab(id){const o=CACHEV[id];if(!o)return;const q=(document.getElementById('nvq-'+id).value||'').toLowerCase();const s=document.getElementById('nvs-'+id).value;const rows=o.votos.filter(x=>{const nome=x.nome||'';if(q&&!(nome+' '+(x.siglaPartido||'')+' '+(x.siglaUf||'')).toLowerCase().includes(q))return false;if(s&&(x.voto||'')!==s)return false;return true}).slice(0,150);
+document.getElementById('nvt-'+id).innerHTML=rows.map(x=>{const dId=x.idDeputado||x.id||((x.uriDeputado||'').split('/').pop());const meu=meusIds().includes('camara-'+dId);const v=x.voto||'—';const cls=/^sim$/i.test(v)?'sim':/^n[aã]o$/i.test(v)?'nao':/absten/i.test(v)?'abs':'out';return '<tr class="'+(meu?'meu':'')+'"><td><img loading="lazy" src="https://www.camara.leg.br/internet/deputado/bandep/'+dId+'.jpg" alt=""></td><td>'+(meu?'⭐ ':'')+'<a href="parlamentares.html?id=camara-'+dId+'">'+esc(x.nome||'—')+'</a></td><td class="muted">'+esc(x.siglaPartido||'')+'-'+esc(x.siglaUf||'')+'</td><td><span class="vb '+cls+'">'+esc(v)+'</span></td></tr>'}).join('')||'<tr><td class="muted">Nenhum voto com esse filtro.</td></tr>'}
+function resumoTxt(id){const v=ALL.find(x=>x.id==id);const i=vInfo(v);const o=CACHEV[id];let t='🗳️ '+i.assunto+'\n📅 '+fmtData(v.dataHora)+' · Plenário da Câmara\n';if(o&&o.nominal){const q=quorumTxt(o,i);t+='✍️ Nominal: Sim '+q.sim+' · Não '+q.nao+' · Abstenção '+q.abs+'\n🧮 Necessários '+q.nec+' → '+q.frase.replace(/[✅⛔] /,'')+'\n';const mv=o.votos.filter(x=>meusIds().includes('camara-'+(x.idDeputado||x.id||'')));if(mv.length)t+='⭐ Seus deputados: '+mv.map(x=>x.nome+'='+x.voto).join(', ')+'\n'}else t+='🗣️ Simbólica: sem registro individual ("fica como está")\n';t+='🔎 Detalhes: '+location.href.split('#')[0]+'#v'+id;return t}
+function zap(id){window.open('https://wa.me/?text='+encodeURIComponent(resumoTxt(id)),'_blank')}
+function ficha(id){const v=ALL.find(x=>x.id==id);const i=vInfo(v);const o=CACHEV[id];const q=o&&o.nominal?quorumTxt(o,i):null;const mv=o&&o.nominal?o.votos.filter(x=>meusIds().includes('camara-'+(x.idDeputado||x.id||''))):[];
+$('#fichaPrint').innerHTML='<h1>MeuVoto · Ficha-resumo de votação</h1><h2>'+esc(i.assunto)+'</h2><p>'+esc(i.rot)+' · '+fmtData(v.dataHora)+' · Plenário da Câmara dos Deputados</p><p><b>Tipo:</b> '+(o&&o.nominal?'Nominal (voto registrado deputado a deputado)':'Simbólica ("fica como está", sem registro individual)')+'</p>'+(q?('<p><b>Placar:</b> Sim '+q.sim+' · Não '+q.nao+' · Abstenção '+q.abs+' · Presentes '+q.tot+'<br><b>Quórum:</b> necessários '+q.nec+' → '+q.frase+'</p>'):'')+(mv.length?('<table><tr><th>Seu deputado</th><th>Voto</th></tr>'+mv.map(x=>'<tr><td>'+esc(x.nome)+'</td><td>'+esc(x.voto||'—')+'</td></tr>').join('')+'</table>'):'')+'<p style="margin-top:10px"><b>Em linguagem simples:</b> '+(q?('Nesta votação, '+q.sim+' parlamentares disseram SIM e '+q.nao+' disseram NÃO. Para aprovar eram necessários '+q.nec+' votos. '+q.frase):'Esta votação foi decidida pelo método simbólico: quem era a favor permaneceu sentado e a Mesa anunciou o resultado, sem publicar o voto de cada um.')+'</p><p style="margin-top:8px">Fontes oficiais: '+oficial(i.idProp)+' · dadosabertos.camara.leg.br — Gerado por MeuVoto (protótipo cívico, sem valor legal) em '+new Date().toLocaleDateString('pt-BR')+'</p>';
+window.print()}
+async function renderSenado(){$('#count').textContent='';$('#more').hidden=true;$('#list').innerHTML='<p class="muted" style="padding:40px;text-align:center">⏳ Consultando o Senado…</p>';
+const f=d=>d.toISOString().slice(0,10);const ini=new Date(Date.now()-60*864e5);
+let r=await fetchJ('https://legis.senado.leg.br/dadosabertos/sf/votacoes/VotacaoLista?dataInicio='+f(ini)+'&dataFim='+f(new Date()));
+let arr=(r&&(r.Votacoes||r.votacoes||r.dados))||null;
+if(!arr){r=await fetchJ('https://legis.senado.leg.br/dadosabertos/votacoes?dataInicio='+f(ini)+'&dataFim='+f(new Date()));arr=(r&&(r.Votacoes||r.votacoes||r.dados))||null}
+SEN=arr||[];
+if(!SEN.length){$('#list').innerHTML='<div class="sbox" style="max-width:760px;margin:20px auto"><h4>🏛️ Senado: lista ao vivo indisponível no navegador</h4><p style="margin-top:6px">O dadosabertos do Senado às vezes bloqueia chamadas diretas (WAF/CORS). Veja <b>como cada senador votou</b> na ficha dele no <a href="parlamentares.html">Radar Político</a> (aba "Como votou").</p><p style="margin-top:10px"><a class="fonte" href="https://www25.senado.leg.br/web/atividadeparlamentar/plenario/votacoes" target="_blank" rel="noopener">🗳️ Votações oficiais do Senado</a></p></div>';return}
+const q=($('#q').value||'').toLowerCase();
+const vis=SEN.filter(v=>{const t=(v.Descricao||v.descricao||v.nomeMateria||v.materia||'')+' '+(v.Codigo||v.codigo||'');return !q||t.toLowerCase().includes(q)}).slice(0,SHOW);
+$('#count').textContent=SEN.length+' votação(ões) do Senado';
+$('#list').innerHTML=vis.map(v=>{const cod=v.Codigo||v.codigo||v.id||'';const desc=v.Descricao||v.descricao||v.nomeMateria||v.materia||('Votação '+cod);const dt=v.Data||v.data||'';const res=v.Resultado||v.resultado||'';return '<div class="vcard"><div class="vtop"><span class="badge tn">🏛️ Senado · Plenário</span><span class="muted">'+esc(fmtData(dt)||dt)+'</span></div><h3>'+esc(desc)+'</h3>'+(res?'<p class="muted" style="margin-top:6px">Resultado: <b style="color:var(--gold)">'+esc(res)+'</b></p>':'')+'<div style="margin-top:12px"><button class="btn sm" onclick="expandSen(\''+cod+'\')">🔎 Como foi?</button></div><div class="vdet" id="svd-'+cod+'" hidden></div></div>'}).join('')||'<p class="muted" style="padding:40px;text-align:center">Nada encontrado.</p>'}
+async function expandSen(cod){const el=document.getElementById('svd-'+cod);if(!el)return;if(!el.hidden){el.hidden=true;return}el.hidden=false;el.innerHTML='<p class="muted">⏳ carregando votos…</p>';
+let r=await fetchJ('https://legis.senado.leg.br/dadosabertos/materias/votacoes?codigoMateria='+cod);
+let votos=(r&&(r.VotacaoParlamentar||r.votacaoParlamentar||r.dados))||null;
+if(!votos){r=await fetchJ('https://legis.senado.leg.br/dadosabertos/sf/votacoes/'+cod+'/votos');votos=(r&&(r.VotacaoParlamentar||r.votacaoParlamentar||r.dados))||null}
+if(!votos||!votos.length){el.innerHTML='<div class="sbox">🗣️ Sem registro nominal público (simbólica ou não publicada). Veja o resultado no <a href="https://www25.senado.leg.br/web/atividadeparlamentar/plenario/votacoes" target="_blank" rel="noopener">site do Senado</a>.</div>';return}
+el.innerHTML='<h4 style="font-size:13px">✍️ Votos nominais</h4><div style="overflow-x:auto"><table class="vtable"><tbody>'+votos.slice(0,150).map(x=>{const nome=x.NomeParlamentar||x.nomeParlamentar||x.nome||'—';const v=x.Voto||x.voto||'—';const cls=/^sim$/i.test(v)?'sim':/^n[aã]o$/i.test(v)?'nao':/absten/i.test(v)?'abs':'out';return '<tr><td>'+esc(nome)+'</td><td><span class="vb '+cls+'">'+esc(v)+'</span></td></tr>'}).join('')+'</tbody></table></div>'}
 const tip=document.getElementById('tip');
-document.addEventListener('mouseover',e=>{const a=e.target.closest?e.target.closest('.lei'):null;if(!a){tip.style.display='none';return}const pid=a.dataset.prop;const r=a.getBoundingClientRect();tip.style.display='block';tip.style.left=Math.min(innerWidth-336,Math.max(8,r.left))+'px';tip.style.top=(r.bottom+10)+'px';tip.innerHTML=CACHEE[pid]?('<b>📜 Resumo da matéria:</b> '+esc(trunc(CACHEE[pid],260))+'<br><small class="muted">Clique para abrir no site oficial da Câmara.</small>'):'<small>⏳ carregando resumo…</small>';if(CACHEE[pid]===undefined)ementaDe(pid).then(t2=>{if(tip.style.display==='block')tip.innerHTML='<b>📜 Resumo da matéria:</b> '+esc(trunc(t2,260))+'<br><small class="muted">Clique para abrir no site oficial da Câmara.</small>'})});
+document.addEventListener('mouseover',e=>{const a=e.target.closest?e.target.closest('.lei'):null;if(!a){tip.style.display='none';return}const pid=a.dataset.prop;const r=a.getBoundingClientRect();tip.style.display='block';tip.style.left=Math.min(innerWidth-336,Math.max(8,r.left))+'px';tip.style.top=(r.bottom+10)+'px';tip.innerHTML=CACHEE[pid]?('<b>📜 Resumo:</b> '+esc(trunc(CACHEE[pid],260))+'<br><small class="muted">Clique: site oficial.</small>'):'<small>⏳ carregando…</small>';if(CACHEE[pid]===undefined)ementaDe(pid).then(t2=>{if(tip.style.display==='block')tip.innerHTML='<b>📜 Resumo:</b> '+esc(trunc(t2,260))+'<br><small class="muted">Clique: site oficial.</small>'})});
 window.addEventListener('scroll',()=>{tip.style.display='none'},{passive:true});
-carrega();
+$('#mq').addEventListener('keydown',e=>{if(e.key==='Enter')addMeu()});
+$('#pTxt').addEventListener('keydown',e=>{if(e.key==='Enter')addProm()});
+renderChips();carrega();
 </script>
 </body>
 </html>
