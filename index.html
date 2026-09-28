@@ -1191,20 +1191,9 @@ function logo(){
  if(brand&&brand.setAttribute)brand.setAttribute('aria-label','MeuVoto');
 }
 function fundo(){
- fetch('data/fundo-eleitoral.json').then(function(r){return r.json();}).then(function(fe){
-  var total=Number(fe.totalGeral)||1;
-  var ps=(fe.partidos||[]).slice().sort(function(a,b){return (b.valor||0)-(a.valor||0);});
-  var cont=document.querySelector('#fundo-eleitoral,.fundo-eleitoral,[id*="fundo"]');
-  if(!cont){var hs=[].slice.call(document.querySelectorAll('h1,h2,h3'));var h=hs.filter(function(x){return /fundo eleitoral/i.test(tx(x));})[0];if(h)cont=h.closest('section')||h.parentElement.parentElement;}
-  if(!cont)return;
-  var old=cont.querySelector('[data-vbfundo]');if(old)old.remove();
-  var box=document.createElement('div');box.setAttribute('data-vbfundo','1');
-  var g='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:7px">';
-  ps.forEach(function(p,i){var pct=((p.valor||0)/total*100);var val=((p.valor||0)/1e6).toFixed(1);
-   g+='<div style="background:#fff;border:1px solid #d8dee9;border-radius:9px;padding:7px 8px;line-height:1.2"><div style="display:flex;justify-content:space-between;align-items:center"><b style="color:#0b132b;font-size:.9em">'+String(p.sigla)+'</b><span style="font-size:.62em;color:#8a94a6">#'+(i+1)+'</span></div><div style="color:#009739;font-weight:800;font-size:1em;margin:2px 0 4px">R$ '+val+' mi</div><div style="height:4px;border-radius:3px;background:#eef1f5;overflow:hidden"><div style="height:100%;width:'+pct.toFixed(1)+'%;background:#009739"></div></div><div style="font-size:.62em;color:#6b7280;margin-top:3px">'+pct.toFixed(1)+'% do total</div></div>';});
-  g+='</div>';
-  box.innerHTML=g;cont.appendChild(box);
- }).catch(function(){});
+ /* Removido: o painel compacto com donut + ranking + tabela agora é renderizado
+    pelo script vb-fundo-render (linhas ~955-1030). Esta função antiga criava a
+    grade de 32 cards brancos que ocupava ~5 telas de altura. */
 }
 var RX=/^[\u00D7\u2715\u2716xX]$/;
 function fechar(){
@@ -1236,7 +1225,7 @@ function explore(){
  if(grid)grid.classList.add('vb-6col');
  return true;
 }
-function work(){logo();fundo();fechar();explore();}
+function work(){logo();fechar();explore();}
 var n=0,tm=setInterval(function(){work();if(++n>60)clearInterval(tm);},400);
 window.addEventListener('load',function(){setTimeout(work,250);});
 })();
