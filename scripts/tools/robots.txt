@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /pages/candidatos.html
+
+Sitemap: https://VotaBrasil-redesign-production.up.railway.app/sitemap.xml

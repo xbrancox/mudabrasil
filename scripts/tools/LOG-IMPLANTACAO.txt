@@ -1,0 +1,12 @@
+[1/4] Gravando MudaBrasil\pdf-cassacao.js ...
+[OK] pdf-cassacao.js gravado
+[2/4] Inserindo tag script no MudaBrasil\index.html ...
+JA-PATCHED
+[3/4] Commit e push ...
+[main 5cd8e5f] feat: relatorio PDF de cassacao v6
+ 3 files changed, 50 insertions(+), 157 deletions(-)
+ create mode 100644 LOG-IMPLANTACAO.txt
+To https://github.com/xbrancox/mudabrasilv4.git
+   77b7be7..5cd8e5f  main -> main
+[4/4] Concluido.
+Confira em ~2 min: https://xbrancox.github.io/mudabrasilv4/
