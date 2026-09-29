@@ -581,3 +581,24 @@ Entregue em commit `21-xxx` (substituir hash real). Nova ferramenta na aba **An�
 - `node scripts/testar-ia.js`: todos os 12 grupos A–L verdes (incluindo tabela voto a voto com 3 linhas no teste).
 
 **Status:** Commit aplicado e publicado em produção (GitHub Pages).
+
+
+### 5.6 Ciclo hotfix — reforço do expand e tratamento de erros
+
+**Commit `71ce1f5`** (hotfix aplicado após relato de que "abrir votação nominal não funciona").
+
+Diagnóstico:
+- O teste automatizado do DOM (grupo I) confirmou que `expand()` abre detalhes, renderiza quórum, coerência, placar por UF e a tabela voto a voto.
+- No entanto, foram identificados três pontos fracos que podiam fazer o clique parecer inoperante em situações de borda:
+  1. **Deep-link `#v<id>` só aceitava IDs puramente numéricos** (`/^\d+$/`). IDs reais da Câmara contêm traço (ex.: `2611313-31`), então links diretos como `#v2611313-31` não abriam a votação.
+  2. **`votosDe()` engolia silenciosamente falhas de rede**: retornava `{nominal:false}` e o card caía no branch simbólica sem nenhum aviso ao usuário.
+  3. **`expand()` não logava quando `el` ou `v` não eram encontrados**, dificultando diagnóstico.
+
+Correções aplicadas:
+- Regex do deep-link trocada para aceitar strings com traço; `W.expand(nid)` agora recebe a string diretamente (sem `Number()`).
+- `votosDe()` agora faz `try/catch` e loga no `console.warn` quando o fetch falha.
+- `expand()` ganha `console.warn` quando não encontra elementos, e mostra mensagem amigável na tela quando `votosDe` retorna vazio: *"Não foi possível carregar os votos desta votação agora. Tente novamente em instantes."*.
+- 15 scripts inline revalidados (`validar-ia.js`) — todos OK.
+- Teste DOM completo (grupos A–L, 60+ asserções) — todos passaram, incluindo "detalhes expandem" e "tabela voto a voto com 3 linhas".
+
+Resultado: a funcionalidade de abrir votações nominais ficou mais robusta, com diagnóstico claro caso volte a falhar.
