@@ -307,7 +307,7 @@ async function digestAssinar(){var e=(document.getElementById("dgEmail").value||
 async function digestSair(){var e=(document.getElementById("dgEmail").value||"").trim();if(!e)return dgMsg("Digite o e-mail a cancelar.",false);dgMsg("⏳ cancelando...",true);try{var r=await dgFetch("/api/digest/unsubscribe",{email:e});dgMsg(r.j.ok?("✅ Cancelado. Restam "+r.j.total+"."):("❌ "+(r.j.error||("HTTP "+r.status))),!!r.j.ok)}catch(err){dgMsg("❌ Conexao: "+err.message,false)}}
 async function digestStatus(){dgMsg("⏳ consultando...",true);try{var r=await dgFetch("/api/digest/status",null,"GET");dgMsg(r.j.ok?("📊 Digest ativo. Inscritos: "+r.j.total):("❌ "+(r.j.error||("HTTP "+r.status))),!!r.j.ok)}catch(err){dgMsg("❌ Backend indisponivel: "+err.message,false)}}
 </script>
-<div class=painel style=max-width:960px;margin:12px<div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px"><div class="row" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm" href="api-publica.html">API para jornalistas</a><a class="btn sm" href="https://github.com/xbrancox/votabrasil/blob/main/store/twa-config.json" target="_blank" rel="noopener">Kit store/</a></div></div><script id="ciclo14">/* v14 */</script>
+<div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px"><div class="row" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm" href="api-publica.html" data-tip="Documentacao dos endpoints abertos com teste ao vivo.">📘 API para jornalistas</a><a class="btn sm" href="https://github.com/xbrancox/votabrasil/blob/main/store/twa-config.json" target="_blank" rel="noopener" data-tip="Configuracao do TWA Android.">📦 Kit store/</a></div></div><script id="ciclo14">/* painel v14 */</script>
 <div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
 <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
 <button class="btn sm" data-tip="Gera barra de atalhos para cada painel desta pagina." onclick="buildNav16()">🧭 Sumario da pagina</button>
@@ -336,6 +336,18 @@ if(typeof window.render==='function'){var _r=window.render;window.render=functio
 if(typeof window.buildResumo9==='function'){var _b=window.buildResumo9;window.buildResumo9=async function(){var r=await _b();if(r&&r.lines&&temasGet16().length){var f=r.lines.filter(function(l){return temaHit16(l)});if(f.length)r.lines=f.concat(['(filtrado pelos seus temas 📌)'])}return r}}
 buildNav16();temasUI16();markTemas16();
 });
+</script>
+
+<script id="ciclo17">
+(function(){
+function up17(){var ns=document.querySelectorAll("span[onclick],div[onclick]");for(var i=0;i<ns.length;i++){var s=ns[i];if(s.getAttribute("data-a11y"))continue;s.setAttribute("data-a11y","1");s.setAttribute("role","button");s.setAttribute("tabindex","0");if(!s.getAttribute("aria-label"))s.setAttribute("aria-label",(s.textContent||"").trim().slice(0,60)||"acao");s.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();var oc=this.getAttribute("onclick");if(oc){try{(new Function(oc))()}catch(err){}}}});}}
+document.addEventListener("DOMContentLoaded",up17);
+window.addEventListener("load",up17);
+var t17=null,mo=new MutationObserver(function(){clearTimeout(t17);t17=setTimeout(up17,300)});
+mo.observe(document.documentElement,{childList:true,subtree:true});
+
+if(typeof window.ensureC7!=="function"){window.ensureC7=async function(){if(typeof C7!=="undefined"&&C7&&C7.length)return C7;var r=await fetchJ(CAM("votacoes?itens=60&ordem=DESC"));var ALL2=((r&&r.dados)||[]).slice(0,60);if(typeof tipagem==="function")await tipagem(ALL2.slice(0,24));if(typeof ALL!=="undefined")ALL=ALL2;var n=ALL2.filter(function(v){return v._tipo==="N"}).slice(0,20);if(typeof tipagem==="function")await tipagem(n);if(typeof C7!=="undefined")C7=n;return n};}
+})();
 </script>
 <div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
