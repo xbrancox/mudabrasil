@@ -85,6 +85,15 @@ a{color:var(--gold);text-decoration:none}
 </div>
 
 <div class="card" style="margin-top:14px">
+  <h3 style="font-size:14px">📈 Envios semanais (últimas 52 semanas)</h3>
+  <div class="row"><span class="k">Total de envios</span><span class="v" id="wk-total">—</span></div>
+  <div class="row"><span class="k">Total de aberturas</span><span class="v" id="wk-opens">—</span></div>
+  <div class="row"><span class="k">Taxa de abertura estimada</span><span class="v" id="wk-rate">—</span></div>
+  <div id="wk-chart" style="margin-top:12px;overflow-x:auto"></div>
+  <p class="muted" style="margin-top:8px;font-size:11.5px">Contagem por pixel 1×1 transparente carregado ao abrir o e-mail. Subestima aberturas (bloqueadores de imagem e clientes que não carregam imagens por padrão não registram).</p>
+</div>
+
+<div class="card" style="margin-top:14px">
   <h3 style="font-size:14px">💾 Fallback de cache</h3>
   <div class="row"><span class="k">Status</span><span class="v" id="fb-status">…</span></div>
   <div class="row"><span class="k">Última leitura do backend</span><span class="v" id="fb-ts">—</span></div>
@@ -201,6 +210,40 @@ async function refresh(){
   }else{
     $('#dg-rows').innerHTML='<div class="row"><span class="k">indisponível enquanto o backend estiver offline</span></div>';
   }
+  /* --- Envios semanais (observabilidade) --- */
+  try{
+    var wkR=await fetch(BASE+'/api/digest/stats');
+    if(wkR.ok){
+      var wkData=await wkR.json();
+      $('#wk-total').textContent=wkData.totalSent||0;
+      $('#wk-opens').textContent=wkData.totalOpens||0;
+      var rate=(wkData.totalSent>0)?((wkData.totalOpens/wkData.totalSent)*100).toFixed(1)+'%':'—';
+      $('#wk-rate').textContent=rate;
+      var weekly=wkData.weekly||[];
+      if(weekly.length>0){
+        var W=weekly.slice().reverse();
+        var maxC=Math.max.apply(null,W.map(function(x){return x.count||1}));
+        var maxO=Math.max.apply(null,W.map(function(x){return x.opens||0}));
+        var max=Math.max(maxC,maxO,1);
+        var bw=14,gap=3,svgW=(bw+gap)*W.length+gap,svgH=120;
+        var svg='<svg viewBox="0 0 '+svgW+' '+svgH+'" width="100%" style="min-width:'+(bw+gap)*W.length+'px" xmlns="http://www.w3.org/2000/svg">';
+        svg+='<line x1="0" y1="'+(svgH-16)+'" x2="'+svgW+'" y2="'+(svgH-16)+'" stroke="rgba(127,176,245,.25)"/>';
+        W.forEach(function(w,i){
+          var x=gap+i*(bw+gap);
+          var h=((w.count||0)/max)*(svgH-30);
+          svg+='<rect x="'+x+'" y="'+(svgH-16-h)+'" width="'+bw+'" height="'+h+'" fill="#4a90f0" rx="2"><title>'+w.week+': '+w.count+' enviados</title></rect>';
+          if(w.opens){var ho=(w.opens/max)*(svgH-30);svg+='<rect x="'+x+'" y="'+(svgH-16-ho)+'" width="'+bw+'" height="'+ho+'" fill="#2ECC71" rx="2"><title>'+w.week+': '+w.opens+' aberturas</title></rect>'}
+          if(i%Math.max(1,Math.floor(W.length/6))===0){svg+='<text x="'+(x+bw/2)+'" y="'+(svgH-2)+'" font-size="8" fill="#94A3B8" text-anchor="middle">'+w.week.slice(-3)+'</text>'}
+        });
+        svg+='</svg>';
+        $('#wk-chart').innerHTML=svg+'<p class="muted" style="margin-top:4px;font-size:11px"><span style="display:inline-block;width:10px;height:10px;background:#4a90f0;vertical-align:middle;margin-right:4px"></span>envios <span style="display:inline-block;width:10px;height:10px;background:#2ECC71;vertical-align:middle;margin:0 4px 0 10px"></span>aberturas</p>';
+      }else{
+        $('#wk-chart').innerHTML='<p class="muted">Nenhum envio registrado ainda. O gráfico aparecerá após o primeiro digest semanal.</p>';
+      }
+    }else{
+      $('#wk-chart').innerHTML='<p class="muted">Indisponível no momento.</p>';
+    }
+  }catch(e){$('#wk-chart').innerHTML='<p class="muted">Erro ao carregar gráfico: '+e.message+'</p>'}
   /* --- Banner --- */
   if(anyBad){
     banner.innerHTML='<div class="banner off">⚠️ Um ou mais serviços estão fora do ar. O site continua funcional com o cache mais recente — o fallback está ativo automaticamente em votacoes.html e nas páginas de Radar, Eleições 2026 e Fundo Eleitoral.</div>';

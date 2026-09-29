@@ -761,7 +761,7 @@ async function handleApi(req, res, url) {
         s.lastSent = ts;
         s.lastBody = body;
         s.archive = s.archive || [];
-        s.archive.unshift({ ts: ts, count: count, body: body });
+        s.archive.unshift({ ts: ts, count: count, body: body, opens: 0 });
         // Mantém apenas os últimos 52 envios (1 ano de histórico semanal)
         if (s.archive.length > 52) s.archive = s.archive.slice(0, 52);
         digestStatsWrite(s);
@@ -776,6 +776,65 @@ async function handleApi(req, res, url) {
   /* Backup integral (dump JSON de todas as tabelas) para a manutenção
      automática da CI. Protegido por BACKUP_TOKEN — sem a env configurada,
      o endpoint responde 503 e não expõe nada. */
+  /* ===== OBSERVABILIDADE DE ENVIOS (ciclo 24) =====
+     GET  /api/digest/stats    agregado público (sem e-mails): envios, aberturas, semanal
+     GET  /api/digest/open?i=N pixel de tracking: retorna GIF 1x1 e incrementa opens[i] */
+  if (p === '/api/digest/stats' && req.method === 'GET') {
+    const s = digestStatsRead();
+    const archive = s.archive || [];
+    const byWeek = new Map();
+    archive.forEach((e) => {
+      const d = new Date(e.ts);
+      if (isNaN(d.getTime())) return;
+      const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+      const day = (t.getUTCDay() + 6) % 7;
+      t.setUTCDate(t.getUTCDate() - day + 3);
+      const first = new Date(Date.UTC(t.getUTCFullYear(), 0, 4));
+      const w = 1 + Math.round(((t - first) / 86400000 - 3 + ((first.getUTCDay() + 6) % 7)) / 7);
+      const key = t.getUTCFullYear() + '-W' + String(w).padStart(2, '0');
+      const bucket = byWeek.get(key) || { week: key, count: 0, opens: 0, sends: 0 };
+      bucket.count += e.count || 0;
+      bucket.opens += e.opens || 0;
+      bucket.sends += 1;
+      byWeek.set(key, bucket);
+    });
+    const weekly = Array.from(byWeek.values()).sort((a, b) => b.week.localeCompare(a.week));
+    const entries = archive.map((e, i) => ({ i, ts: e.ts, count: e.count || 0, opens: e.opens || 0 }));
+    const totalOpens = archive.reduce((a, e) => a + (e.opens || 0), 0);
+    return sendJson(res, 200, {
+      ok: true,
+      totalSent: s.totalSent || 0,
+      totalOpens: totalOpens,
+      weekly: weekly,
+      entries: entries
+    });
+  }
+
+  if (p === '/api/digest/open' && req.method === 'GET') {
+    const idx = parseInt(String(q.i || ''), 10);
+    let changed = false;
+    if (Number.isInteger(idx) && idx >= 0) {
+      const s = digestStatsRead();
+      if (s.archive && s.archive[idx]) {
+        s.archive[idx].opens = (s.archive[idx].opens || 0) + 1;
+        digestStatsWrite(s);
+        changed = true;
+      }
+    }
+    const gif = Buffer.from(
+      'R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
+      'base64'
+    );
+    res.writeHead(200, {
+      'Content-Type': 'image/gif',
+      'Content-Length': gif.length,
+      'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+    return res.end(gif);
+  }
+
   if (p === '/api/admin/backup' && req.method === 'GET') {
     const tok = process.env.BACKUP_TOKEN || '';
     const given = String(req.headers['x-backup-token'] || q.t || '');

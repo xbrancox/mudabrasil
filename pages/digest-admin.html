@@ -46,6 +46,12 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase}
   </div>
 
   <div id="adminPanel" class="hidden">
+    <div id="opensPanel" class="card">
+      <h3>📈 Taxa de Abertura (ciclo 24)</h3>
+      <p class="muted">Aberturas são contadas quando o pixel 1×1 do e-mail é carregado. Subestima (bloqueadores de imagem e clientes sem imagens automáticas não registram).</p>
+      <div id="opens-rows" class="sub" style="margin-top:10px">consultando…</div>
+      <div id="opens-chart" style="margin-top:12px;overflow-x:auto"></div>
+    </div>
     <div class="tabs">
       <div class="tab on" onclick="showTab('confirmed')">Confirmados</div>
       <div class="tab" onclick="showTab('pending')">Pendentes</div>
@@ -89,6 +95,7 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase}
           document.getElementById('authPanel').classList.add('hidden');
           document.getElementById('adminPanel').classList.remove('hidden');
           loadData(j.data);
+          loadOpensStats();
         }else{
           showMsg('authMsg','err','❌ '+ (j.error || 'Secret inválido'));
         }
@@ -118,6 +125,33 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase}
     });
     document.getElementById('confirmedPanel').classList.toggle('hidden', tab!=='confirmed');
     document.getElementById('pendingPanel').classList.toggle('hidden', tab!=='pending');
+  }
+  
+  function loadOpensStats(){
+    var row=function(k,v){return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed rgba(127,176,245,.22);font-size:13px"><span style="color:#94A3B8">'+k+'</span><span style="font-weight:700">'+v+'</span></div>'};
+    fetch(BASE+'/api/digest/stats')
+      .then(function(r){return r.json()})
+      .then(function(j){
+        if(!j.ok) return;
+        var rate=(j.totalSent>0)?((j.totalOpens/j.totalSent)*100).toFixed(1)+'%':'—';
+        var rows=document.getElementById('opens-rows');
+        rows.innerHTML=row('Total de envios',j.totalSent||0)+row('Total de aberturas',j.totalOpens||0)+row('Taxa estimada',rate)+row('Envios no histórico',(j.entries||[]).length);
+        var entries=(j.entries||[]).slice(0,20);
+        if(!entries.length){document.getElementById('opens-chart').innerHTML='<p style="color:#94A3B8;font-size:12px">Nenhum envio registrado ainda.</p>';return}
+        var maxC=Math.max.apply(null,entries.map(function(e){return e.count||1}));
+        var bw=16,gap=3,svgW=(bw+gap)*entries.length+gap,svgH=100;
+        var svg='<svg viewBox="0 0 '+svgW+' '+svgH+'" width="100%" style="min-width:'+(bw+gap)*entries.length+'px" xmlns="http://www.w3.org/2000/svg">';
+        svg+='<line x1="0" y1="'+(svgH-14)+'" x2="'+svgW+'" y2="'+(svgH-14)+'" stroke="rgba(127,176,245,.25)"/>';
+        entries.forEach(function(e,i){
+          var x=gap+i*(bw+gap);
+          var h=((e.count||0)/maxC)*(svgH-28);
+          svg+='<rect x="'+x+'" y="'+(svgH-14-h)+'" width="'+bw+'" height="'+h+'" fill="#4a90f0" rx="2"><title>Envio #'+e.i+': '+e.count+' destinatários, '+e.opens+' aberturas</title></rect>';
+          if(e.opens){var ho=(e.opens/maxC)*(svgH-28);svg+='<rect x="'+x+'" y="'+(svgH-14-ho)+'" width="'+bw+'" height="'+ho+'" fill="#2ECC71" rx="2"></rect>'}
+        });
+        svg+='</svg>';
+        document.getElementById('opens-chart').innerHTML=svg+'<p style="color:#94A3B8;font-size:11px;margin-top:4px">Últimos '+(j.entries||[]).length+' envios (máx. 20). <span style="display:inline-block;width:10px;height:10px;background:#4a90f0;vertical-align:middle;margin-right:4px"></span>destinatários <span style="display:inline-block;width:10px;height:10px;background:#2ECC71;vertical-align:middle;margin:0 4px 0 10px"></span>aberturas</p>';
+      })
+      .catch(function(e){document.getElementById('opens-rows').innerHTML='erro: '+e.message});
   }
   
   window.removeEmail=function(email){
