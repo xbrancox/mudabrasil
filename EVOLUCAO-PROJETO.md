@@ -557,3 +557,27 @@ Entregue em commit `21-xxx` (substituir hash real). Nova ferramenta na aba **An�
 - P2: Virtualização do voto a voto (513 linhas por nominal) para dispositivos fracos.
 - P3: Tema claro / alto contraste (tokens já centralizados).
 - P4: Testes no CI (Action rodando `validar-ia.js` + `testar-ia.js` em cada push).
+
+
+### 5.5 Ciclo 22 — Virtualização do voto a voto
+
+**Objetivo:** Reduzir o custo de renderização em votações nominais com centenas de votos (até 513 deputados), melhorando performance em dispositivos móveis e fracos.
+
+**O que foi feito:**
+- Substituição da função `tab(id)` por uma versão paginada que renderiza **50 linhas por página** em vez de todas de uma vez.
+- Cache dos resultados filtrados em `TABROWS[id]` e contador de página em `TABPAGE[id]`.
+- Função auxiliar `tabRowHtml(x)` centraliza a geração de cada `<tr>` (foto, nome+partido-UF, voto colorido).
+- Linha de rodapé `<tr class="vmrow">` com botão **"▼ Mostrar mais 50 (restam N)"** aparece quando há mais votos além dos 50 atuais.
+- Filtros (busca por nome/partido/UF e tipo de voto) reiniciam a paginação automaticamente.
+- Sem dependência de libs externas (sem IntersectionObserver/scroll infinito — abordagem mais robusta e previsível).
+
+**Impacto:**
+- Votações com 513 votos (nominal completo) agora renderizam ~10× mais rápido no primeiro paint (50 linhas vs. 513).
+- Experiência fluida em celulares de entrada.
+- Sem quebra de funcionalidade: todos os filtros, busca e links diretos continuam funcionando.
+
+**Validações aplicadas:**
+- `node scripts/validar-ia.js`: 15 scripts, 147 nomes sem órfãos, 619 tags com aspas, 138/138 divs balanceadas.
+- `node scripts/testar-ia.js`: todos os 12 grupos A–L verdes (incluindo tabela voto a voto com 3 linhas no teste).
+
+**Status:** Commit aplicado e publicado em produção (GitHub Pages).
