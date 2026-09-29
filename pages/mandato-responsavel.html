@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mandato Responsável · MeuVoto</title>
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--blueL:#4a90f0;--green:#2ECC71;--red:#E74C3C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
+h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:860px;margin:0 auto;padding:38px 20px 60px}
+.muted{color:var(--muted);font-size:12.5px}
+.ecard{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px 20px;margin-top:16px;font-size:14px;line-height:1.65}
+.ecard h3{font-size:16px;margin-bottom:10px}
+.ecard ul,.ecard ol{margin:10px 0 0 20px}
+.ecard li{margin-top:6px}
+.ecard b{color:var(--ink)}
+.disclaimer{border:1.5px solid rgba(255,215,0,.6);background:rgba(255,215,0,.06)}
+.disclaimer h3{color:var(--gold)}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:10px 16px;cursor:pointer;text-decoration:none}
+.btn:hover{filter:brightness(1.15)}
+.hero{text-align:center}
+.hero h1{font-size:clamp(24px,4.5vw,36px)}
+.hero p{color:var(--muted);max-width:640px;margin:12px auto 0}
+label{display:block;font:700 12px Manrope;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px}
+input[type=number],input[type=text]{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:11px 13px;font:500 14px Manrope}
+input[type=range]{width:100%}
+.foot{text-align:center;margin-top:22px}
+.foot a{color:var(--gold)}
+code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--gold);font-size:12px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <h1 id="mrTop">🎓 Mandato Responsável — educação cívica</h1>
+    <p>Como um mandato pode terminar <b>hoje, no Brasil</b>; o que é <i>recall</i> em outras democracias; e quais são as <b>chaves de mobilização legítima</b> que qualquer cidadão pode usar agora mesmo.</p>
+  </section>
+
+  <div class="ecard disclaimer">
+    <h3>⚠️ Aviso importante</h3>
+    <p>O ordenamento jurídico brasileiro <b>não prevê, atualmente, revogação popular direta de mandato</b> de deputado federal, senador ou presidente da República. Esta página tem <b>finalidade educativa</b>: apresenta o conceito de <i>recall</i> tal como existe em outras democracias, mostra os mecanismos que <i>de fato</i> encerram mandatos no Brasil e aponta caminhos legítimos de participação. Nada aqui tem <b>valor legal</b>.</p>
+  </div>
+
+  <div class="ecard">
+    <h3>🌍 O que é revogabilidade (<i>recall</i>) em outras democracias</h3>
+    <p>Em alguns sistemas, os eleitores podem, dentro de regras específicas, recolher assinaturas e <b>convocar um plebiscito para remover</b> um mandatário antes do fim do mandato — normalmente com cláusulas de barreira altas e prazo mínimo desde a posse. Exemplos frequentemente citados na literatura:</p>
+    <ul>
+      <li><b>Estados dos EUA</b> (Califórnia, Wisconsin, Colorado, entre outros): recall de governadores, prefeitos e, em alguns casos, senadores estaduais.</li>
+      <li><b>Venezuela e Bolívia</b>: previsão constitucional de referendo revogatório para certos cargos eletivos.</li>
+      <li><b>Suíça (em alguns cantões)</b>: mecanismos cantonais de destituição popular.</li>
+    </ul>
+    <p class="muted" style="margin-top:8px">O que todas essas experiências têm em comum: regras <b>muito restritivas</b> de ativação, para evitar instabilidade institucional.</p>
+  </div>
+
+  <div class="ecard">
+    <h3>🇧🇷 Como um mandato pode terminar <b>hoje</b> no Brasil</h3>
+    <p>Os caminhos existentes para deputado federal estão na <b>Constituição</b>, no <b>Regimento Interno da Câmara</b> e na legislação eleitoral:</p>
+    <ul>
+      <li><b>Renúncia</b> — decisão pessoal do parlamentar.</li>
+      <li><b>Perda de mandato decidida pela própria Casa</b> (art. 55 da CF/88): por quebra de decoro, condenação criminal transitada em julgado, ausência em mais de ⅓ das sessões ordinárias, entre outras hipóteses — após processo no <b>Conselho de Ética</b> e votação no Plenário.</li>
+      <li><b>Cassação por infidelidade partidária</b> — para cargos proporcionais, via <b>TSE</b>, quando há desfiliação sem justa causa.</li>
+      <li><b>Condenação judicial</b> (em especial eleitoral) que implique inelegibilidade.</li>
+      <li><b>Falecimento</b> do titular.</li>
+    </ul>
+    <p class="muted" style="margin-top:8px">Não existe, portanto, votação popular direta para <i>revogar</i> um mandato em curso.</p>
+  </div>
+
+  <div class="ecard">
+    <h3>🧮 Simulador conceitual (hipotético)</h3>
+    <p class="muted">Cenário didático: <b>se</b> o Brasil tivesse recall para deputado com uma regra popular de 70% dos votos obtidos na eleição como limiar, quantas assinaturas seriam necessárias no cenário atual?</p>
+    <label>Votos obtidos pelo parlamentar na eleição</label>
+    <input id="mrVotos" type="number" min="0" value="120000" step="1000"/>
+    <label>% da base que assina o pedido: <span id="mrPctV">35</span>%</label>
+    <input id="mrPct" type="range" min="0" max="100" value="35" oninput="mrCalc()"/>
+    <label>Regra conceitual (% dos votos obtidos): <span id="mrRegraV">70</span>%</label>
+    <input id="mrRegra" type="range" min="50" max="90" value="70" step="5" oninput="mrCalc()"/>
+    <div id="mrOut" class="muted" style="margin-top:10px">Ajuste os controles para ver o cálculo conceitual.</div>
+  </div>
+
+  <div class="ecard">
+    <h3>✊ Chaves de mobilização legítima (o que <b>funciona hoje</b>)</h3>
+    <ol>
+      <li><b>Pressão direta ao gabinete:</b> e-mails, cartas, audiências agendadas. O gabinete presta contas do mandato — quanto mais estruturada a demanda, melhor a resposta.</li>
+      <li><b>Requerimentos e petições a comissões:</b> deputados podem apresentar requerimentos de informação a ministérios, autarquias e empresas públicas.</li>
+      <li><b>Representação ao Conselho de Ética:</b> qualquer cidadão pode levar ao conhecimento do Conselho fatos que, em tese, configurem quebra de decoro — o rito é próprio da Casa.</li>
+      <li><b>Acionar órgãos de controle:</b> MPF, TCU, TSE (para ilícitos eleitorais), Controladoria-Geral da União e o próprio Judiciário quando houver indícios concretos.</li>
+      <li><b>Organização de voto e campanhas de informação:</b> plataformas cívicas como esta ajudam o eleitor a <b>acompanhar votações nominais</b>, comparar coerência e compartilhar dados.</li>
+      <li><b>Participação em consultas e audiências públicas:</b> comissões permanentes da Câmara realizam audiências abertas à sociedade civil — sua presença e fala ficam registradas.</li>
+    </ol>
+  </div>
+
+  <div class="ecard">
+    <h3>🧭 Continuar navegando</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn" href="votacoes.html">🗳️ Voltar para Votações</a>
+      <a class="btn" href="parlamentares.html">📡 Radar Político</a>
+      <a class="btn" href="api-publica.html">📘 API pública</a>
+    </div>
+  </div>
+
+  <p class="foot">MeuVoto · protótipo cívico de transparência, sem valor legal. Fontes: Constituição Federal, Regimento Interno da Câmara, TSE, dados abertos.</p>
+</main>
+<script id="mrScript">
+function mrCalc(){
+  var v=Number(document.getElementById('mrVotos').value)||0;
+  var p=Number(document.getElementById('mrPct').value)||0;
+  var r=Number(document.getElementById('mrRegra').value)||70;
+  document.getElementById('mrPctV').textContent=p;
+  document.getElementById('mrRegraV').textContent=r;
+  var need=Math.max(0,Math.ceil(v*r/100));
+  var have=Math.max(0,Math.floor(v*p/100));
+  var pc=need?Math.min(100,Math.round(100*have/need)):0;
+  var bar=pc>=100?'var(--red)':'var(--gold)';
+  var verdict=pc>=100?'Cenário hipotético: limiar atingido.':'Cenário hipotético: limiar NÃO atingido ('+pc+'% do necessário).';
+  document.getElementById('mrOut').innerHTML=
+    '<p style="margin-top:4px">Assinaturas necessárias (hipotéticas): <b>'+need.toLocaleString('pt-BR')+'</b> ('+r+'% dos votos obtidos)</p>'+
+    '<p>Assinaturas no cenário: <b>'+have.toLocaleString('pt-BR')+'</b> ('+p+'% da base)</p>'+
+    '<div style="height:14px;border-radius:8px;background:var(--card2);overflow:hidden;margin-top:8px"><div style="height:100%;width:'+pc+'%;background:'+bar+'"></div></div>'+
+    '<p style="margin-top:10px"><b style="color:'+(pc>=100?'var(--red)':'var(--gold)')+'">'+verdict+'</b></p>'+
+    '<p class="muted" style="margin-top:6px">Lembrete: este mecanismo <b>não existe</b> no ordenamento brasileiro para deputados federais. Use as <b>chaves de mobilização legítima</b> listadas acima.</p>';
+}
+document.getElementById('mrVotos').addEventListener('input',mrCalc);
+mrCalc();
+</script>
+</body>
+</html>

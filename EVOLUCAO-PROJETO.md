@@ -492,3 +492,30 @@ Quando expandida (nominal):
 ---
 
 *Fim do documento. Para alterações, abra PR atualizando a seção 11.*
+
+
+---
+
+## 5. Implementações pós-v2.0
+
+### 5.1 Ciclo 18 — Painel de representação (3 eixos + quadrante)
+Página: `pages/votacoes.html`, aba **📊 Análise**, botão **🧭 Painel de representação (3 eixos)**.
+
+Entrega, por deputado ⭐, quatro indicadores simultâneos:
+- **A. Fidelidade partidária** — % dos votos nominais alinhados à orientação da bancada;
+- **B. Distância da bancada** — diferença em pp entre o %Sim do deputado e o %Sim do partido;
+- **C. Confiança da base** — índice agregado do Termômetro Cívico (UF);
+- **Badge de quadrante** — classificação em *Consistente / Autônomo com respaldo / Partidário / Em tensão / Indeterminado*.
+
+Bloco ⓘ editorial com os 4 campos fixos do padrão (o que é / para que serve / como interpretar / limitações).
+
+### 5.2 Ciclo 19 — Página educativa de Mandato Responsável
+Arquivo: `pages/mandato-responsavel.html`. Linkada a partir do painel de Análise (junto ao botão do painel de 3 eixos) e do painel de Dossiê.
+
+Conteúdo:
+1. **⚠️ Aviso (disclaimer)** — esclarece que o ordenamento brasileiro não prevê revogação popular direta de mandato de deputado federal; a página tem finalidade educativa e protótipo sem valor legal.
+2. **O que é recall em outras democracias** — exemplos citados na literatura (alguns estados dos EUA, Venezuela, Bolívia, cantões suíços), com nota sobre restrições de ativação.
+3. **Como um mandato pode terminar hoje no Brasil** — renúncia, perda por votação na Casa (art. 55 CF), cassação por infidelidade partidária (TSE), condenação, falecimento.
+4. **Simulador conceitual (hipotético)** — entrada: votos obtidos, % da base assinando, regra conceitual (% dos votos obtidos); saída: assinaturas necessárias, assinaturas no cenário, barra de progresso e veredicto, sempre com lembrete do caráter hipotético.
+5. **Chaves de mobilização legítima** — pressão ao gabinete, requerimentos a comissões, representação ao Conselho de Ética, acionamento de MPF/TCU/TSE/CGU, organização de voto e informação, participação em audiências públicas.
+6. Navegação para Votações, Radar Político e API pública.
