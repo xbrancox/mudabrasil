@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Métricas do Digest · MeuVoto</title>
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C;--blue:#4a90f0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
+h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:960px;margin:0 auto;padding:38px 20px 60px}
+.muted{color:var(--muted);font-size:12.5px}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px;margin-top:14px}
+.hero{text-align:center;margin-bottom:20px}
+.hero h1{font-size:clamp(24px,4.5vw,34px)}
+.hero p{color:var(--muted);max-width:560px;margin:10px auto 0}
+.row{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
+.stat{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;background:var(--card2);padding:16px;text-align:center}
+.stat .num{font-size:32px;font-weight:800;color:var(--gold);font-family:Montserrat}
+.stat .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+input{width:100%;max-width:400px;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:12px 14px;font:500 15px Manrope;margin:0 auto;display:block}
+input:focus{outline:none;border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:11px 18px;cursor:pointer;margin-top:14px}
+.btn:hover{filter:brightness(1.12)}
+.btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
+.msg{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:13.5px;line-height:1.55;display:none}
+.msg.ok{display:block;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.45);color:#bff0d2}
+.msg.err{display:block;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.45);color:#ffc9c2}
+.chart-container{margin-top:20px;text-align:center}
+.chart-container svg{max-width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:var(--card2)}
+.foot{text-align:center;margin-top:22px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <h1>📊 Métricas do Digest Semanal</h1>
+    <p>Painel administrativo para monitorar a saúde do sistema de digest, inscritos e status do servidor.</p>
+  </section>
+
+  <div class="card">
+    <label for="secret" style="display:block;text-align:center;font:700 12px Manrope;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">DIGEST_SECRET (para acessar métricas)</label>
+    <input id="secret" type="password" placeholder="Cole seu DIGEST_SECRET aqui"/>
+    <div style="text-align:center">
+      <button class="btn gold" id="bLoad">Carregar Métricas</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div id="metrics" style="display:none">
+    <div class="row">
+      <div class="stat">
+        <div class="num" id="mConfirmed">0</div>
+        <div class="label">Inscritos Confirmados</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="mPending">0</div>
+        <div class="label">Pendentes de Confirmação</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="mUptime">0h</div>
+        <div class="label">Uptime do Servidor</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:15px;margin-bottom:10px">📈 Distribuição de Inscritos</h3>
+      <div class="chart-container" id="chartContainer">
+        <!-- SVG será injetado aqui -->
+      </div>
+      <p class="muted" style="margin-top:10px;text-align:center">Último envio: <b id="mLastSent">Nunca</b></p>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:15px;margin-bottom:10px">🛠️ Ações Rápidas</h3>
+      <div class="row" style="justify-content:center">
+        <a class="btn" href="digest-admin.html">Gerenciar Lista de Inscritos</a>
+        <a class="btn" href="digest.html">Página de Inscrição Pública</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot"><a href="votacoes.html">← Voltar para as Votações</a></p>
+</main>
+<script>
+(function(){
+  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+  var $=function(s){return document.querySelector(s)};
+  var msg=$('#msg');
+  function show(cls,t){msg.className='msg '+cls;msg.innerHTML=t}
+  
+  $('#bLoad').addEventListener('click',async function(){
+    var secret=$('#secret').value.trim();
+    if(!secret){show('err','Digite o DIGEST_SECRET.');return}
+    show('ok','⏳ carregando métricas…');
+    
+    try{
+      var r=await fetch(BASE+'/api/digest/metrics?secret='+encodeURIComponent(secret));
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      var data=await r.json();
+      
+      if(data.ok){
+        $('#metrics').style.display='block';
+        $('#mConfirmed').textContent=data.confirmed;
+        $('#mPending').textContent=data.pending;
+        $('#mUptime').textContent=Math.floor(data.health.uptimeSec/3600)+'h '+Math.floor((data.health.uptimeSec%3600)/60)+'m';
+        $('#mLastSent').textContent=data.lastSent ? new Date(data.lastSent).toLocaleString('pt-BR') : 'Nunca';
+        
+        // Gráfico SVG puro
+        var total=data.confirmed+data.pending;
+        var angleC=total>0 ? (data.confirmed/total)*360 : 0;
+        var angleP=total>0 ? (data.pending/total)*360 : 0;
+        
+        // Função auxiliar para calcular coordenadas do arco SVG
+        function polarToCartesian(centerX,centerY,radius,angleInDegrees){
+          var angleInRadians=(angleInDegrees-90)*Math.PI/180.0;
+          return {x:centerX+(radius*Math.cos(angleInRadians)),y:centerY+(radius*Math.sin(angleInRadians))};
+        }
+        function describeArc(x,y,radius,startAngle,endAngle){
+          var start=polarToCartesian(x,y,radius,endAngle);
+          var end=polarToCartesian(x,y,radius,startAngle);
+          var largeArcFlag=endAngle-startAngle<=180?"0":"1";
+          return ["M",x,y,"L",start.x,start.y,"A",radius,radius,0,largeArcFlag,0,end.x,end.y,"Z"].join(" ");
+        }
+        
+        var svg='';
+        if(total>0){
+          svg+='<svg viewBox="0 0 200 200" width="200" height="200">';
+          if(data.confirmed>0) svg+='<path d="'+describeArc(100,100,80,0,angleC)+'" fill="#2ECC71" title="Confirmados: '+data.confirmed+'"/>';
+          if(data.pending>0) svg+='<path d="'+describeArc(100,100,80,angleC,angleC+angleP)+'" fill="#FFD700" title="Pendentes: '+data.pending+'"/>';
+          svg+='<circle cx="100" cy="100" r="50" fill="#0d2242"/>';
+          svg+='<text x="100" y="105" text-anchor="middle" fill="#fff" font-size="20" font-weight="800">'+total+'</text>';
+          svg+='<text x="100" y="125" text-anchor="middle" fill="#94A3B8" font-size="10">Total</text>';
+          svg+='</svg>';
+          svg+='<div style="margin-top:10px;display:flex;justify-content:center;gap:16px;font-size:13px">';
+          svg+='<span style="color:#2ECC71">● Confirmados ('+Math.round((data.confirmed/total)*100)+'%)</span>';
+          svg+='<span style="color:#FFD700">● Pendentes ('+Math.round((data.pending/total)*100)+'%)</span>';
+          svg+='</div>';
+        } else {
+          svg='<p class="muted">Nenhum inscrito ainda.</p>';
+        }
+        $('#chartContainer').innerHTML=svg;
+        
+        show('ok','✅ Métricas carregadas com sucesso!');
+      } else {
+        show('err','❌ '+(data.error||'Erro desconhecido'));
+      }
+    }catch(e){
+      show('err','❌ Falha na conexão: '+e.message);
+    }
+  });
+})();
+</script>
+</body>
+</html>

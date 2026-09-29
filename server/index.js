@@ -658,6 +658,31 @@ async function handleApi(req, res, url) {
     return sendJson(res, 200, { ok: true, data: digestRead() });
   }
 
+  if (p === '/api/digest/metrics' && req.method === 'GET') {
+    const secret = String(q.secret || '');
+    if (!process.env.DIGEST_SECRET || secret !== process.env.DIGEST_SECRET) {
+      return sendJson(res, 403, { ok: false, error: 'sem permissao' });
+    }
+    const data = digestRead();
+    let lastSent = null;
+    try {
+      const statsFile = path.join(__dirname, 'data', 'digest-stats.json');
+      const stats = JSON.parse(fs.readFileSync(statsFile, 'utf8'));
+      lastSent = stats.lastSent || null;
+    } catch (e) {}
+    return sendJson(res, 200, { 
+      ok: true, 
+      confirmed: data.confirmed.length, 
+      pending: data.pending.length,
+      lastSent,
+      health: {
+        uptimeSec: Math.round(process.uptime()),
+        storage: db.backend(),
+        totalVotosAtivos: votes.totals().totalVotosAtivos
+      }
+    });
+  }
+
   /* Backup integral (dump JSON de todas as tabelas) para a manutenção
      automática da CI. Protegido por BACKUP_TOKEN — sem a env configurada,
      o endpoint responde 503 e não expõe nada. */
