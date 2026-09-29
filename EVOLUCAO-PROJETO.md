@@ -602,3 +602,12 @@ Correções aplicadas:
 - Teste DOM completo (grupos A–L, 60+ asserções) — todos passaram, incluindo "detalhes expandem" e "tabela voto a voto com 3 linhas".
 
 Resultado: a funcionalidade de abrir votações nominais ficou mais robusta, com diagnóstico claro caso volte a falhar.
+
+### 5.6 Ciclo 23 — Tema claro/escuro global
+- **Mecanismo**: bootstrap síncrono no topo de `js/site-header.js` — define `data-theme` no `<html>` antes do primeiro paint (zero FOUC), injeta CSS de overrides como `<style>` (zero rede), cria botão flutuante de alternância (🌙/☀️) em todas as páginas.
+- **Persistência**: `localStorage('mb_tema')` com valores `claro`/`escuro`. Fallback para `prefers-color-scheme` do sistema; padrão = escuro (identidade do projeto).
+- **Cobertura**: todas as páginas que incluem `site-header.js` — index, parlamentares, eleicoes-2026, congresso, votacoes, candidatos, cedula-votabrasil, comunidade, digest.*, fundo-eleitoral, mandato-responsavel, meu-voto, proposta, roadmap, stats, status, api-publica, privacidade, termos. PWA `app/` mantém design próprio (fora do escopo deste ciclo).
+- **Overrides**: remapeiam tokens `--bg`, `--card`, `--card2`, `--line`, `--ink`, `--muted`, `--gold`, `--blueL`, `--green`, `--red` e cobrem superfícies hardcoded conhecidas (#mbtopo, .fbar, .cmpbar, .ac, .sbox, .quorum, .vtable, .msg.*, .tabs, SVG inline, .mbFecharFim, .quote.*, .databanner, .cbar, .stat). Especificidade maior que `:root` garante vitória independente da ordem de inclusão.
+- **Acessibilidade**: botão nativo `<button>`, `aria-label` dinâmico, `title`, foco visível herdado, `color-scheme` ajustado (claro/escuro).
+- **Bug corrigido**: `pages/cedula-votabrasil.html` tinha include quebrado (`js/site-header.js` sem `../`) — agora `../js/site-header.js?v=3`.
+- **API pública**: `window.mbGetTema()` e `window.mbSetTema(t)` permitem integração por outros módulos; evento `mb:tema` disparado em cada troca.

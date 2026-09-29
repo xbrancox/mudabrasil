@@ -174,3 +174,150 @@
   t.async = false;
   document.head.appendChild(t);
 })();
+
+/* ============================================================
+   CICLO 23 — TEMA CLARO/ESCURO GLOBAL
+   - Bootstrap síncrono no <head>: define data-theme antes do
+     primeiro paint (evita flash do tema errado).
+   - Persiste em localStorage('mb_tema'); respeita preferência
+     do sistema (prefers-color-scheme) como fallback; padrão
+     do projeto = escuro.
+   - Injeta CSS de overrides via <style> (zero rede, zero FOUC).
+   - Cria botão flutuante de alternância em todas as páginas.
+   ============================================================ */
+(function () {
+  if (window.__MB_TEMA__) return;
+  window.__MB_TEMA__ = 1;
+
+  var CSS = [
+    'html{color-scheme:dark}',
+    'html[data-theme="claro"]{color-scheme:light;--bg:#f2f6fb;--card:#ffffff;--card2:#e6edf6;--line:rgba(11,28,51,.18);--ink:#0b1c33;--muted:#54657d;--gold:#9a6b00;--blue:#115FCB;--blueL:#0d4ea8;--green:#177245;--red:#b3372a}',
+    'html[data-theme="claro"] body{background:linear-gradient(180deg,#e8f0fa 0%,var(--bg) 45%)!important;color:var(--ink)!important}',
+    'html[data-theme="claro"] .fbar,html[data-theme="claro"] .cmpbar{background:rgba(255,255,255,.94)!important;border-color:rgba(11,28,51,.12)!important}',
+    'html[data-theme="claro"] #mbtopo{background:rgba(255,255,255,.92)!important;border-bottom-color:rgba(11,28,51,.15)!important;box-shadow:0 2px 10px rgba(11,28,51,.08)!important}',
+    'html[data-theme="claro"] #mbtopo nav a{color:#0b1c33}',
+    'html[data-theme="claro"] #mbtopo nav a:hover{background:rgba(11,28,51,.06)}',
+    'html[data-theme="claro"] #mbtopo nav a.on{background:linear-gradient(135deg,#ffd75e,#f5a623);color:#3a2b00;box-shadow:0 2px 10px rgba(154,107,0,.25)}',
+    'html[data-theme="claro"] #mbtopo .lg b{color:#0b1c33}',
+    'html[data-theme="claro"] #mbtopo .lg .mv-slogan{color:#8a5f00}',
+    'html[data-theme="claro"] #mbtopo .hbtn{background:#fff;color:#0b1c33;border-color:rgba(11,28,51,.2)}',
+    'html[data-theme="claro"] #mbtopo .hbtn.mint{background:linear-gradient(135deg,#7ed957,#2ECC71);color:#061a3a;border-color:transparent}',
+    'html[data-theme="claro"] #mbtopo .hbtn.gold{background:linear-gradient(135deg,#ffd75e,#f5a623);color:#3a2b00;border-color:transparent}',
+    'html[data-theme="claro"] #mbtopo .ham{background:rgba(11,28,51,.06);border-color:rgba(11,28,51,.2);color:#0b1c33}',
+    'html[data-theme="claro"] #mbtopo .mnav{background:rgba(255,255,255,.98);border-top-color:rgba(11,28,51,.12)}',
+    'html[data-theme="claro"] #mbtopo .mnav a{color:#0b1c33;border-bottom-color:rgba(11,28,51,.1)}',
+    'html[data-theme="claro"] #mbtopo .hbadge{border-color:rgba(23,114,69,.5);color:#177245;background:rgba(23,114,69,.1)}',
+    'html[data-theme="claro"] input,html[data-theme="claro"] select,html[data-theme="claro"] textarea{background:#fff!important;color:var(--ink)!important;border-color:rgba(11,28,51,.2)!important}',
+    'html[data-theme="claro"] .btn{background:#fff!important;color:var(--ink)!important;border-color:rgba(11,28,51,.2)!important}',
+    'html[data-theme="claro"] .btn.gold{background:linear-gradient(135deg,#ffd75e,#f5a623)!important;color:#3a2b00!important;border:none!important}',
+    'html[data-theme="claro"] .btn.green{background:var(--green)!important;color:#fff!important;border-color:transparent!important}',
+    'html[data-theme="claro"] .btn.red{background:transparent!important;color:var(--red)!important;border-color:var(--red)!important}',
+    'html[data-theme="claro"] a{color:#8a5f00}',
+    'html[data-theme="claro"] .lei{color:#8a5f00;border-color:rgba(138,95,0,.5)}',
+    'html[data-theme="claro"] .fonte{color:var(--blueL);border-color:rgba(13,78,168,.4)}',
+    'html[data-theme="claro"] .vb.sim{background:rgba(23,114,69,.12);color:var(--green)}',
+    'html[data-theme="claro"] .vb.nao{background:rgba(179,55,42,.12);color:var(--red)}',
+    'html[data-theme="claro"] .vb.abs{background:rgba(84,101,125,.14);color:var(--muted)}',
+    'html[data-theme="claro"] .vb.out{background:rgba(154,107,0,.14);color:#8a5f00}',
+    'html[data-theme="claro"] .sbox{background:rgba(154,107,0,.07);border-color:rgba(154,107,0,.4)}',
+    'html[data-theme="claro"] .quorum{background:rgba(17,95,203,.06);border-color:rgba(13,78,168,.4)}',
+    'html[data-theme="claro"] .skel{background:linear-gradient(90deg,#dfe7f2 25%,#cfd9e8 50%,#dfe7f2 75%)}',
+    'html[data-theme="claro"] svg text{fill:#54657d}',
+    'html[data-theme="claro"] svg polyline[stroke="#FFD700"]{stroke:#9a6b00}',
+    'html[data-theme="claro"] svg line{stroke:rgba(11,28,51,.2)}',
+    'html[data-theme="claro"] #toast,html[data-theme="claro"] #tip,html[data-theme="claro"] #btip,html[data-theme="claro"] .ac{background:#fff!important;color:var(--ink)!important;border-color:rgba(11,28,51,.25)!important;box-shadow:0 8px 30px rgba(11,28,51,.18)!important}',
+    'html[data-theme="claro"] .ac div:hover,html[data-theme="claro"] .ac div.sel{background:rgba(154,107,0,.12)}',
+    'html[data-theme="claro"] .ecard,html[data-theme="claro"] .painel,html[data-theme="claro"] .vcard,html[data-theme="claro"] .card{background:var(--card)!important;border-color:var(--line)!important}',
+    'html[data-theme="claro"] pre{background:#eef3fa!important;color:var(--ink)!important;border-color:rgba(11,28,51,.2)!important}',
+    'html[data-theme="claro"] code{background:#e6edf6;color:#8a5f00}',
+    'html[data-theme="claro"] .vtable tr:hover td{background:rgba(13,78,168,.06)}',
+    'html[data-theme="claro"] .vtable tr.meu{background:rgba(154,107,0,.08);outline-color:rgba(154,107,0,.4)}',
+    'html[data-theme="claro"] .vtable td,html[data-theme="claro"] .vtable th,html[data-theme="claro"] .tabela td,html[data-theme="claro"] .tabela th,html[data-theme="claro"] .comptable td,html[data-theme="claro"] .comptable th{border-bottom-color:rgba(11,28,51,.12)!important}',
+    'html[data-theme="claro"] img.av,html[data-theme="claro"] .vtable img{background:#dfe7f2}',
+    'html[data-theme="claro"] .databanner{background:rgba(23,114,69,.08);border-color:rgba(23,114,69,.4)}',
+    'html[data-theme="claro"] .cbar{background:#dfe7f2}',
+    'html[data-theme="claro"] .stat,html[data-theme="claro"] .fontes .fcard{background:var(--card2)}',
+    'html[data-theme="claro"] .ecard.simb{border-color:rgba(154,107,0,.45)}',
+    'html[data-theme="claro"] .ecard.nom{border-color:rgba(23,114,69,.45)}',
+    'html[data-theme="claro"] .chip.on{border-color:#9a6b00;color:#8a5f00}',
+    'html[data-theme="claro"] .pin.on{background:#ffd75e;color:#3a2b00}',
+    'html[data-theme="claro"] .mx{background:#fff;color:var(--ink)}',
+    'html[data-theme="claro"] .ftabs button.on{color:#8a5f00;border-color:#9a6b00}',
+    'html[data-theme="claro"] .quote{background:rgba(179,55,42,.07)}',
+    'html[data-theme="claro"] .quote.ok{background:rgba(23,114,69,.08)}',
+    'html[data-theme="claro"] .quote.info{background:rgba(13,78,168,.08)}',
+    'html[data-theme="claro"] .promx{background:rgba(154,107,0,.08);border-color:rgba(154,107,0,.4)}',
+    'html[data-theme="claro"] .msg.ok{background:rgba(23,114,69,.1);border-color:rgba(23,114,69,.45);color:#14532d}',
+    'html[data-theme="claro"] .msg.err{background:rgba(179,55,42,.1);border-color:rgba(179,55,42,.45);color:#7f1d1d}',
+    'html[data-theme="claro"] .msg.warn{background:rgba(154,107,0,.1);border-color:rgba(154,107,0,.45);color:#713f12}',
+    'html[data-theme="claro"] .avIni{color:#3a2b00}',
+    'html[data-theme="claro"] .plrow{color:#0d4ea8}',
+    'html[data-theme="claro"] .mbFecharFim{background:#0d4ea8!important;border-color:#0d4ea8!important;color:#fff!important}',
+    'html[data-theme="claro"] .tabs button{background:#fff;color:var(--muted)}',
+    'html[data-theme="claro"] .tabs button.on{background:#ffd75e;color:#3a2b00;border-color:#ffd75e}',
+    'html[data-theme="claro"] #fichaPrint{background:#fff;color:#000}',
+    '.mbTemaBtn{position:fixed;left:16px;bottom:16px;z-index:360;border-radius:999px;border:1px solid var(--line,rgba(127,176,245,.22));background:var(--card2,#123059);color:var(--ink,#fff);font:700 13px Manrope,system-ui,sans-serif;padding:10px 14px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.25);transition:all .2s ease}',
+    '.mbTemaBtn:hover{transform:translateY(-1px);filter:brightness(1.08)}',
+    'html[data-theme="claro"] .mbTemaBtn{background:#fff;color:#0b1c33;border-color:rgba(11,28,51,.25);box-shadow:0 4px 14px rgba(11,28,51,.12)}'
+  ].join('\n');
+
+  function cur() {
+    return document.documentElement.getAttribute('data-theme') === 'claro' ? 'claro' : 'escuro';
+  }
+  function set(t) {
+    var v = t === 'claro' ? 'claro' : 'escuro';
+    document.documentElement.setAttribute('data-theme', v);
+    try { localStorage.setItem('mb_tema', v); } catch (e) {}
+    atualizaBtn();
+    try { document.dispatchEvent(new CustomEvent('mb:tema', { detail: { tema: v } })); } catch (e) {}
+  }
+  function atualizaBtn() {
+    var b = document.getElementById('mbTemaBtn');
+    if (!b) return;
+    var t = cur();
+    b.textContent = t === 'claro' ? '\uD83C\uDF19 Escuro' : '\u2600\uFE0F Claro';
+    var lb = t === 'claro' ? 'Mudar para tema escuro' : 'Mudar para tema claro';
+    b.setAttribute('aria-label', lb);
+    b.setAttribute('title', lb);
+  }
+  function criaBtn() {
+    if (document.getElementById('mbTemaBtn')) return atualizaBtn();
+    var b = document.createElement('button');
+    b.id = 'mbTemaBtn';
+    b.type = 'button';
+    b.className = 'mbTemaBtn';
+    b.addEventListener('click', function () { set(cur() === 'claro' ? 'escuro' : 'claro'); });
+    document.body.appendChild(b);
+    atualizaBtn();
+    var c = document.querySelector('.cmpbar');
+    if (c && window.MutationObserver) {
+      new MutationObserver(function () {
+        b.style.bottom = c.classList.contains('on') ? '70px' : '16px';
+      }).observe(c, { attributes: true, attributeFilter: ['class'] });
+      b.style.bottom = c.classList.contains('on') ? '70px' : '16px';
+    }
+  }
+
+  // 1) aplica tema ANTES do primeiro paint (roda no <head>)
+  var saved = null;
+  try { saved = localStorage.getItem('mb_tema'); } catch (e) {}
+  var sys = null;
+  try {
+    if (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) sys = 'claro';
+  } catch (e) {}
+  document.documentElement.setAttribute('data-theme', saved || sys || 'escuro');
+
+  // 2) injeta CSS de overrides (síncrono, no <head>)
+  var st = document.createElement('style');
+  st.id = 'mb-tema-css';
+  st.textContent = CSS;
+  (document.head || document.documentElement).appendChild(st);
+
+  // 3) expõe API pública
+  window.mbGetTema = cur;
+  window.mbSetTema = set;
+
+  // 4) cria o botão flutuante após o DOM
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', criaBtn);
+  else criaBtn();
+})();
