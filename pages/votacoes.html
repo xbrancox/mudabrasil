@@ -401,12 +401,12 @@ const res={};for(const x of o.list){const p=(x.partido||'').toUpperCase();if(!ma
 return{map,res}}
 function setTab(t){TAB=t;$('#tbC').classList.toggle('on',t==='camara');$('#tbS').classList.toggle('on',t==='senado');SHOW=12;if(t==='camara'){$('#lblPassado').textContent='🗳️ O que JÁ foi votado — últimos 10 dias';render();agenda()}else{$('#agenda').innerHTML='';$('#lblPassado').textContent='🗳️ Votações do Senado — últimos 30 dias';renderSenado()}}
 async function agenda(){const hoje=new Date(),fim=new Date(Date.now()+10*864e5);const r=await fetchJ(CAM('eventos?itens=12&siglaOrgao=PLEN&dataInicio='+fd(hoje)+'&dataFim='+fd(fim)+'&ordem=ASC'));const ev=(r&&r.dados)||[];
-$('#agenda').innerHTML='<h2 class="secT">📅 O que SERÁ votado — próximos 10 dias</h2>'+(ev.length?'<div class="ecard">'+ev.map(e=>{const txt=String(e.titulo||e.descricao||'').toLowerCase();let best=null,bs=0;for(const v of ALL){const i=vInfo(v);let sc=0;if(i.rot&&txt.indexOf(i.rot.toLowerCase())>=0)sc=3;else sc=kws(i.assunto).filter(k=>txt.indexOf(k)>=0).length;if(sc>bs){bs=sc;best=v}}const h=(best&&bs>=2)?('<p class="muted" style="margin-top:2px">🕰️ Última semelhante: '+fmtData(best.dataHora)+' — '+(best._tipo==='N'?'✍️ nominal':'🗣️ simbólica')+' · <a href="#" onclick="expand('+best.id+');return false">ver</a></p>'):'';return '<p style="margin-top:6px">• <b>'+fmtData(e.dataHora||e.data)+'</b> — '+esc(e.titulo||e.descricao||'Sessão')+((e.situacao)?' <span class="muted">('+esc(e.situacao)+')</span>':'')+'</p>'+h}).join('')+'<p class="muted" style="margin-top:8px">Pressione seus deputados ANTES da sessão: é nela que o "fica como está" decide.</p></div>':'<div class="ecard"><p class="muted">Sem sessões publicadas para os próximos 10 dias (ou API indisponível). Confira a <a href="https://www.camara.leg.br/noticias/" target="_blank" rel="noopener">pauta oficial</a>.</p></div>')}
+$('#agenda').innerHTML='<h2 class="secT">📅 O que SERÁ votado — próximos 10 dias</h2>'+(ev.length?'<div class="ecard">'+ev.map(e=>{const txt=String(e.titulo||e.descricao||'').toLowerCase();let best=null,bs=0;for(const v of ALL){const i=vInfo(v);let sc=0;if(i.rot&&txt.indexOf(i.rot.toLowerCase())>=0)sc=3;else sc=kws(i.assunto).filter(k=>txt.indexOf(k)>=0).length;if(sc>bs){bs=sc;best=v}}const h=(best&&bs>=2)?('<p class="muted" style="margin-top:2px">🕰️ Última semelhante: '+fmtData(best.dataHora)+' — '+(best._tipo==='N'?'✍️ nominal':'🗣️ simbólica')+' · <a href="#" onclick="expand(\''+best.id+'\');return false">ver</a></p>'):'';return '<p style="margin-top:6px">• <b>'+fmtData(e.dataHora||e.data)+'</b> — '+esc(e.titulo||e.descricao||'Sessão')+((e.situacao)?' <span class="muted">('+esc(e.situacao)+')</span>':'')+'</p>'+h}).join('')+'<p class="muted" style="margin-top:8px">Pressione seus deputados ANTES da sessão: é nela que o "fica como está" decide.</p></div>':'<div class="ecard"><p class="muted">Sem sessões publicadas para os próximos 10 dias (ou API indisponível). Confira a <a href="https://www.camara.leg.br/noticias/" target="_blank" rel="noopener">pauta oficial</a>.</p></div>')}
 async function carrega(){$('#list').innerHTML='<p class="muted" style="padding:40px;text-align:center">⏳ Carregando votações dos últimos 10 dias…</p>';const hoje=new Date(),ini=new Date(Date.now()-10*864e5);const r=await fetchJ(CAM('votacoes?itens=100&ordem=DESC'));let dados=(r&&r.dados)||[];ALL=dados.filter(v=>{const d=v.dataHoraRegistro||v.dataHora;if(!d)return false;const t=new Date(d);return t>=ini&&t<=hoje});if(!ALL.length&&dados.length){ALL=dados.slice(0,40);$('#lblPassado').textContent='🗳️ Sem votações nos últimos 10 dias — mostrando as 40 mais recentes'}if(!ALL.length){$('#list').innerHTML='<p class="muted" style="padding:40px;text-align:center">Nenhuma votação carregada. Tente em instantes.</p>';return}await tipagem(ALL.slice(0,SHOW));render();agenda();alertaCheck();const h=location.hash.match(/^#v(\d+)/);if(h)expand(+h[1])}
 function filtrados(){const q=($('#q').value||'').toLowerCase();const t=$('#fTipo').value;return ALL.filter(v=>{const i=vInfo(v);if(t&&v._tipo!==t)return false;if(q&&!(i.assunto+' '+i.rot).toLowerCase().indexOf(q)>=0)return false;return true})}
 async function filtraTipo(){const t=$('#fTipo').value;if(t){const falta=ALL.filter(v=>!v._tipo);if(falta.length)await tipagem(falta)}render()}
 function render(){const L=filtrados();$('#count').textContent=L.length+' votação(ões) na janela';const vis=L.slice(0,SHOW);$('#more').hidden=L.length<=SHOW;$('#more').textContent='⬇️ Carregar mais ('+(L.length-SHOW)+' restantes)';
-$('#list').innerHTML=vis.map(v=>{const i=vInfo(v);const t=v._tipo;return '<div class="vcard"><div class="vtop"><span class="badge '+(t==='N'?'tn':'ts')+'">'+(t==='N'?'✍️ Nominal · voto registrado':'🗣️ Simbólica · sem registro individual')+'</span><span class="muted">'+fmtData(v.dataHora)+' · Plenário da Câmara</span></div><h3>'+esc(i.assunto)+'</h3>'+(i.rot?'<p style="margin:8px 0 0"><a class="lei" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener" data-prop="'+i.idProp+'">📜 '+esc(i.rot)+'</a> <span class="muted">— mouse: resumo · clique: oficial</span></p>':'')+'<p class="ementa muted" id="em-'+v.id+'">'+(i.idProp&&CACHEE[i.idProp]?esc(trunc(CACHEE[i.idProp],240)):'⏳ carregando resumo da matéria…')+'</p><div style="margin-top:12px"><button class="btn sm" data-tip="Placar, quórum, placar por UF, coerência de bancada e voto a voto." onclick="expand('+v.id+')">🔎 Como foi esta votação?</button></div><div class="vdet" id="vd-'+v.id+'" hidden></div></div>'}).join('')||'<p class="muted" style="padding:40px;text-align:center">Nada encontrado com esses filtros.</p>';
+$('#list').innerHTML=vis.map(v=>{const i=vInfo(v);const t=v._tipo;return '<div class="vcard"><div class="vtop"><span class="badge '+(t==='N'?'tn':'ts')+'">'+(t==='N'?'✍️ Nominal · voto registrado':'🗣️ Simbólica · sem registro individual')+'</span><span class="muted">'+fmtData(v.dataHora)+' · Plenário da Câmara</span></div><h3>'+esc(i.assunto)+'</h3>'+(i.rot?'<p style="margin:8px 0 0"><a class="lei" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener" data-prop="'+i.idProp+'">📜 '+esc(i.rot)+'</a> <span class="muted">— mouse: resumo · clique: oficial</span></p>':'')+'<p class="ementa muted" id="em-'+v.id+'">'+(i.idProp&&CACHEE[i.idProp]?esc(trunc(CACHEE[i.idProp],240)):'⏳ carregando resumo da matéria…')+'</p><div style="margin-top:12px"><button class="btn sm" data-tip="Placar, quórum, placar por UF, coerência de bancada e voto a voto." onclick="expand(\''+v.id+'\')">🔎 Como foi esta votação?</button></div><div class="vdet" id="vd-'+v.id+'" hidden></div></div>'}).join('')||'<p class="muted" style="padding:40px;text-align:center">Nada encontrado com esses filtros.</p>';
 vis.forEach(v=>{const i=vInfo(v);if(i.idProp&&CACHEE[i.idProp]===undefined)ementaDe(i.idProp).then(e=>{const el=document.getElementById('em-'+v.id);if(el)el.textContent=e?trunc(e,240):'Matéria sem resumo público disponível.'})})}
 async function mais(){const antes=SHOW;SHOW+=12;await tipagem(filtrados().slice(antes,SHOW));render()}
 async function expand(id){const el=document.getElementById('vd-'+id);const v=ALL.find(x=>x.id==id);if(!el||!v)return;if(!el.hidden){el.hidden=true;return}el.hidden=false;el.innerHTML='<p class="muted">⏳ carregando…</p>';const i=vInfo(v);const o=await votosDe(id);const orr=await fetchJ(CAM('votacoes/'+id+'/orientacoes'));const ors=(orr&&orr.dados)||[];
@@ -416,8 +416,8 @@ const ufs=placarUF(o);const meuUfs={};mv.forEach(x=>{if(x.uf)meuUfs[x.uf]=1});
 const co=coer(o,ors);
 const ks=PROMS.map(p=>({p,k:kws(p.txt)})).filter(x=>x.k.length);
 const promHit=ks.filter(x=>x.k.some(k=>i.assunto.toLowerCase().indexOf(k)>=0));
-el.innerHTML='<h4 style="font-size:13px">✍️ Votação NOMINAL — voto a voto</h4><div class="cbar"><div style="width:'+(q.sim/q.tot*100)+'%;background:var(--green)"></div><div style="width:'+(q.nao/q.tot*100)+'%;background:var(--red)"></div><div style="width:'+(q.abs/q.tot*100)+'%;background:#64748b"></div><div style="width:'+(out/q.tot*100)+'%;background:var(--gold)"></div></div><div class="cleg"><span style="color:var(--green)">Sim: '+q.sim+'</span><span style="color:var(--red)">Não: '+q.nao+'</span><span>Abstenção: '+q.abs+'</span><span style="color:var(--gold)">Outros: '+out+'</span></div><div class="quorum">🧮 <b>Quórum:</b> '+q.tot+' presentes · necessários <b>'+q.nec+'</b> ('+(/^PEC/i.test(i.sigla)?'3/5 da Casa — PEC':'maioria dos presentes')+') · Sim '+q.sim+' → '+q.frase+' <span class="muted">(indicativo calculado; o oficial está no link da matéria)</span></div><p class="muted" style="margin-top:10px">🗺️ Placar da bancada por estado:</p><div class="ochips">'+ufs.map(u=>'<span'+(meuUfs[u.u]?' style="border-color:var(--gold);color:var(--gold)"':'')+' title="Bancada de '+esc(u.u)+': '+u.s+' Sim, '+u.n+' Não, '+u.a+' Abstenção">'+esc(u.u)+': '+u.s+'S·'+u.n+'N·'+u.a+'A</span>').join('')+'</div><p class="muted" style="margin-top:10px">🗣️ Coerência com a orientação da bancada:</p>'+(Object.keys(co.res).length?'<div class="ochips">'+Object.keys(co.res).map(p=>{const r=co.res[p];const pc=Math.round(100*(1-r.d/r.t));const cls=pc>=90?'sim':pc>=70?'out':'nao';return '<span class="vb '+cls+'" title="Orientação da bancada: '+esc(co.map[p])+'">'+esc(p)+': '+pc+'% coerente · '+r.d+' desvio(s)</span>'}).join('')+'</div>':'<p class="muted">Sem orientações de bancada publicadas para esta votação.</p>')+(mv.length?'<div class="meusres">'+mv.map(x=>{const v2=x.voto||'—';const cls=/^sim$/i.test(v2)?'sim':/^n[aã]o$/i.test(v2)?'nao':/absten/i.test(v2)?'abs':'out';return '<span class="vb '+cls+'">⭐ '+esc(x.nome)+': '+esc(v2)+'</span>'}).join('')+'</div>':'')+(promHit.length?promHit.map(x=>{const voto=(o.list.find(y=>meusIds().includes('camara-'+y.id)&&y.nome===x.p.nome)||{}).voto;return '<div class="promx">🤝 Promessa cobrada: “'+esc(x.p.txt)+'” → '+esc(x.p.nome)+' votou <b>'+(voto?esc(voto):'não participou')+'</b> nesta matéria.</div>'}).join(''):'')+'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn sm" data-tip="Ficha de 1 página em linguagem simples para imprimir/salvar PDF." onclick="ficha('+id+')">📄 Ficha-resumo (PDF)</button><button class="btn sm" data-tip="Compartilha o resumo com link no WhatsApp." onclick="zap('+id+')">📲 WhatsApp</button><input id="nvq-'+id+'" placeholder="🔎 Buscar deputado…" oninput="tab('+id+')" style="flex:1;min-width:160px" data-tip="Filtra a tabela por nome, partido ou UF."/><select id="nvs-'+id+'" onchange="tab('+id+')" data-tip="Filtra a tabela pelo tipo de voto."><option value="">Todos os votos</option><option>Sim</option><option>Não</option><option>Abstenção</option></select></div><div style="overflow-x:auto"><table class="vtable"><tbody id="nvt-'+id+'"></tbody></table></div>';tab(id);return}
-el.innerHTML='<div class="sbox"><h4 style="font-size:13px">🗣️ Votação SIMBÓLICA</h4><p style="margin-top:6px">Quem era a favor <b>permaneceu como estava</b>. Não há registro individual — a Mesa conta o conjunto. É assim que a maioria das matérias passa, em segundos.</p><p class="muted" style="margin-top:6px">Um partido pode exigir votação <b>nominal</b> (selo ✍️). Cobrar registro nominal é exigir responsabilidade.</p>'+(ors.length?'<p class="muted" style="margin-top:10px">Orientações das bancadas:</p><div class="ochips">'+ors.map(x=>'<span>'+esc(x.siglaPartido||x.partido||'?')+': '+esc(x.voto||x.orientacao||'—')+'</span>').join('')+'</div>':'')+'<p style="margin-top:12px"><a class="fonte" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener">📜 Matéria oficial</a> <button class="btn sm" data-tip="Compartilha o resumo com link no WhatsApp." onclick="zap('+id+')">📲 WhatsApp</button></p></div>'}
+el.innerHTML='<h4 style="font-size:13px">✍️ Votação NOMINAL — voto a voto</h4><div class="cbar"><div style="width:'+(q.sim/q.tot*100)+'%;background:var(--green)"></div><div style="width:'+(q.nao/q.tot*100)+'%;background:var(--red)"></div><div style="width:'+(q.abs/q.tot*100)+'%;background:#64748b"></div><div style="width:'+(out/q.tot*100)+'%;background:var(--gold)"></div></div><div class="cleg"><span style="color:var(--green)">Sim: '+q.sim+'</span><span style="color:var(--red)">Não: '+q.nao+'</span><span>Abstenção: '+q.abs+'</span><span style="color:var(--gold)">Outros: '+out+'</span></div><div class="quorum">🧮 <b>Quórum:</b> '+q.tot+' presentes · necessários <b>'+q.nec+'</b> ('+(/^PEC/i.test(i.sigla)?'3/5 da Casa — PEC':'maioria dos presentes')+') · Sim '+q.sim+' → '+q.frase+' <span class="muted">(indicativo calculado; o oficial está no link da matéria)</span></div><p class="muted" style="margin-top:10px">🗺️ Placar da bancada por estado:</p><div class="ochips">'+ufs.map(u=>'<span'+(meuUfs[u.u]?' style="border-color:var(--gold);color:var(--gold)"':'')+' title="Bancada de '+esc(u.u)+': '+u.s+' Sim, '+u.n+' Não, '+u.a+' Abstenção">'+esc(u.u)+': '+u.s+'S·'+u.n+'N·'+u.a+'A</span>').join('')+'</div><p class="muted" style="margin-top:10px">🗣️ Coerência com a orientação da bancada:</p>'+(Object.keys(co.res).length?'<div class="ochips">'+Object.keys(co.res).map(p=>{const r=co.res[p];const pc=Math.round(100*(1-r.d/r.t));const cls=pc>=90?'sim':pc>=70?'out':'nao';return '<span class="vb '+cls+'" title="Orientação da bancada: '+esc(co.map[p])+'">'+esc(p)+': '+pc+'% coerente · '+r.d+' desvio(s)</span>'}).join('')+'</div>':'<p class="muted">Sem orientações de bancada publicadas para esta votação.</p>')+(mv.length?'<div class="meusres">'+mv.map(x=>{const v2=x.voto||'—';const cls=/^sim$/i.test(v2)?'sim':/^n[aã]o$/i.test(v2)?'nao':/absten/i.test(v2)?'abs':'out';return '<span class="vb '+cls+'">⭐ '+esc(x.nome)+': '+esc(v2)+'</span>'}).join('')+'</div>':'')+(promHit.length?promHit.map(x=>{const voto=(o.list.find(y=>meusIds().includes('camara-'+y.id)&&y.nome===x.p.nome)||{}).voto;return '<div class="promx">🤝 Promessa cobrada: “'+esc(x.p.txt)+'” → '+esc(x.p.nome)+' votou <b>'+(voto?esc(voto):'não participou')+'</b> nesta matéria.</div>'}).join(''):'')+'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn sm" data-tip="Ficha de 1 página em linguagem simples para imprimir/salvar PDF." onclick="ficha(\''+id+'\')">📄 Ficha-resumo (PDF)</button><button class="btn sm" data-tip="Compartilha o resumo com link no WhatsApp." onclick="zap(\''+id+'\')">📲 WhatsApp</button><input id="nvq-'+id+'" placeholder="🔎 Buscar deputado…" oninput="tab(\''+id+'\')" style="flex:1;min-width:160px" data-tip="Filtra a tabela por nome, partido ou UF."/><select id="nvs-'+id+'" onchange="tab(\''+id+'\')" data-tip="Filtra a tabela pelo tipo de voto."><option value="">Todos os votos</option><option>Sim</option><option>Não</option><option>Abstenção</option></select></div><div style="overflow-x:auto"><table class="vtable"><tbody id="nvt-'+id+'"></tbody></table></div>';tab(id);return}
+el.innerHTML='<div class="sbox"><h4 style="font-size:13px">🗣️ Votação SIMBÓLICA</h4><p style="margin-top:6px">Quem era a favor <b>permaneceu como estava</b>. Não há registro individual — a Mesa conta o conjunto. É assim que a maioria das matérias passa, em segundos.</p><p class="muted" style="margin-top:6px">Um partido pode exigir votação <b>nominal</b> (selo ✍️). Cobrar registro nominal é exigir responsabilidade.</p>'+(ors.length?'<p class="muted" style="margin-top:10px">Orientações das bancadas:</p><div class="ochips">'+ors.map(x=>'<span>'+esc(x.siglaPartido||x.partido||'?')+': '+esc(x.voto||x.orientacao||'—')+'</span>').join('')+'</div>':'')+'<p style="margin-top:12px"><a class="fonte" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener">📜 Matéria oficial</a> <button class="btn sm" data-tip="Compartilha o resumo com link no WhatsApp." onclick="zap(\''+id+'\')">📲 WhatsApp</button></p></div>'}
 function tab(id){const o=CACHEV[id];if(!o)return;const q=(document.getElementById('nvq-'+id).value||'').toLowerCase();const s=document.getElementById('nvs-'+id).value;const rows=o.list.filter(x=>{const nome=x.nome||'';if(q&&!(nome+' '+x.partido+' '+x.uf).toLowerCase().indexOf(q)>=0)return false;if(s&&(x.voto||'')!==s)return false;return true}).slice(0,150);
 document.getElementById('nvt-'+id).innerHTML=rows.map(x=>{const meu=meusIds().includes('camara-'+x.id);const v=x.voto||'—';const cls=/^sim$/i.test(v)?'sim':/^n[aã]o$/i.test(v)?'nao':/absten/i.test(v)?'abs':'out';const ft=x.foto||('https://www.camara.leg.br/internet/deputado/bandep/'+x.id+'.jpg');return '<tr class="'+(meu?'meu':'')+'"><td><img loading="lazy" src="'+ft+'" alt=""></td><td>'+(meu?'⭐ ':'')+'<a href="parlamentares.html?id=camara-'+x.id+'">'+esc(x.nome||'—')+'</a></td><td class="muted">'+esc(x.partido)+'-'+esc(x.uf)+'</td><td><span class="vb '+cls+'">'+esc(v)+'</span></td></tr>'}).join('')||'<tr><td class="muted">Nenhum voto com esse filtro.</td></tr>'}
 async function ciclo7(){await pols();$('#hm').innerHTML='<p class="muted">⏳ Carregando votações nominais…</p>';
@@ -433,7 +433,7 @@ function drawHM(){const uf=$('#hmUF').value;let h='<div class="ecard"><h3>🌡�
 for(const v of C7){const o=CACHEV[v.id];let s=0,n=0,t=0;for(const x of o.list){if(x.uf!==uf)continue;t++;const vv=(x.voto||'').toLowerCase();if(vv.indexOf('sim')===0)s++;else if(vv.indexOf('n')===0)n++}
 const pc=t?Math.round(100*s/t):null;const i=vInfo(v);
 const col=pc==null?'#334155':(pc>=60?'rgba(46,204,113,'+(0.3+0.7*pc/100).toFixed(2)+')':(pc>=40?'rgba(148,163,184,.6)':'rgba(231,76,60,'+(0.3+0.7*(100-pc)/100).toFixed(2)+')'));
-h+='<span data-tip="'+esc(uf)+' · '+esc(fmtData(v.dataHora))+' · '+esc(trunc(i.assunto,60))+' → Sim '+pc+'%" onclick="expand('+v.id+')" style="width:26px;height:26px;border-radius:6px;background:'+col+';cursor:pointer;display:inline-block"></span>'}
+h+='<span data-tip="'+esc(uf)+' · '+esc(fmtData(v.dataHora))+' · '+esc(trunc(i.assunto,60))+' → Sim '+pc+'%" onclick="expand(\''+v.id+'\')" style="width:26px;height:26px;border-radius:6px;background:'+col+';cursor:pointer;display:inline-block"></span>'}
 h+='</div><p class="muted" style="margin-top:8px">Verde = bancada majoritariamente SIM; vermelho = NÃO; cinza = dividida. Clique numa célula para abrir a votação.</p></div>';
 $('#hm').innerHTML=h}
 function rates(list){let s=0,t=0;for(const x of list){const vv=(x.voto||'').toLowerCase();if(vv.indexOf('sim')===0||vv.indexOf('n')===0){t++;if(vv.indexOf('sim')===0)s++}}return t?Math.round(100*s/t):null}
@@ -456,7 +456,7 @@ for(const v of vs){const o=CACHEV[v.id];if(!o||!o.nominal)continue;const x=o.lis
 const sim=rows.filter(x=>/^sim$/i.test(x.voto)).length,nao=rows.filter(x=>/^n[aã]o$/i.test(x.voto)).length;
 const rec=await fetchJ(BASE+'/api/reclamacoes?politicianId='+encodeURIComponent(id)+'&limit=50');const aps=await fetchJ(BASE+'/api/apoios?politicianId='+encodeURIComponent(id)+'&limit=50');
 const nrec=((rec&&rec.complaints)||[]).length,napo=((aps&&aps.supports)||[]).length;
-$('#dossie').innerHTML='<div class="ecard"><h3>🕰️ Dossiê cívico — '+esc(p.name||p.nome||'')+'</h3><p style="margin-top:6px">✍️ Participou de <b>'+rows.length+'</b> das '+vs.length+' últimas votações nominais: Sim '+sim+' · Não '+nao+' · ausente/obstrução em '+aus+'.</p><p>📣 Reclamações recebidas: '+nrec+' · 👍 Apoios: '+napo+'</p><div style="overflow-x:auto"><table class="vtable"><tbody>'+rows.slice(0,30).map(x=>{const cls=/^sim$/i.test(x.voto)?'sim':/^n[aã]o$/i.test(x.voto)?'nao':/absten/i.test(x.voto)?'abs':'out';return '<tr><td class="muted">'+fmtData(x.data)+'</td><td>'+esc(trunc(x.i.assunto,60))+'</td><td><span class="vb '+cls+'">'+esc(x.voto)+'</span></td><td><a href="#" onclick="expand('+x.id+');return false">ver</a></td></tr>'}).join('')+'</tbody></table></div><div style="margin-top:10px"><button class="btn sm" data-tip="Imprime/salva o dossiê em PDF." onclick="dossiePdf()">📄 PDF do dossiê</button> <a class="fonte" href="parlamentares.html?id='+esc(id)+'" target="_blank" rel="noopener">📡 Ficha completa no Radar</a></div></div>';
+$('#dossie').innerHTML='<div class="ecard"><h3>🕰️ Dossiê cívico — '+esc(p.name||p.nome||'')+'</h3><p style="margin-top:6px">✍️ Participou de <b>'+rows.length+'</b> das '+vs.length+' últimas votações nominais: Sim '+sim+' · Não '+nao+' · ausente/obstrução em '+aus+'.</p><p>📣 Reclamações recebidas: '+nrec+' · 👍 Apoios: '+napo+'</p><div style="overflow-x:auto"><table class="vtable"><tbody>'+rows.slice(0,30).map(x=>{const cls=/^sim$/i.test(x.voto)?'sim':/^n[aã]o$/i.test(x.voto)?'nao':/absten/i.test(x.voto)?'abs':'out';return '<tr><td class="muted">'+fmtData(x.data)+'</td><td>'+esc(trunc(x.i.assunto,60))+'</td><td><span class="vb '+cls+'">'+esc(x.voto)+'</span></td><td><a href="#" onclick="expand(\''+x.id+'\');return false">ver</a></td></tr>'}).join('')+'</tbody></table></div><div style="margin-top:10px"><button class="btn sm" data-tip="Imprime/salva o dossiê em PDF." onclick="dossiePdf()">📄 PDF do dossiê</button> <a class="fonte" href="parlamentares.html?id='+esc(id)+'" target="_blank" rel="noopener">📡 Ficha completa no Radar</a></div></div>';
 window.DOSS={p,rows,aus,sim,nao,nrec,napo}}
 function dossiePdf(){const D=window.DOSS;if(!D)return;$('#fichaPrint').innerHTML='<h1>MeuVoto · Dossiê cívico</h1><h2>'+esc(D.p.name||D.p.nome||'')+'</h2><p>Participação nominal: '+D.rows.length+' votações · Sim '+D.sim+' · Não '+D.nao+' · ausências/obstruções '+D.aus+'</p><p>Reclamações recebidas: '+D.nrec+' · Apoios: '+D.napo+'</p><table><tr><th>Data</th><th>Matéria</th><th>Voto</th></tr>'+D.rows.map(x=>'<tr><td>'+fmtData(x.data)+'</td><td>'+esc(trunc(x.i.assunto,70))+'</td><td>'+esc(x.voto)+'</td></tr>').join('')+'</table><p style="margin-top:8px">Fontes: dadosabertos.camara.leg.br · Gerado por MeuVoto em '+new Date().toLocaleDateString('pt-BR')+'</p>';window.print()}
 function resumoTxt(id){const v=ALL.find(x=>x.id==id);const i=vInfo(v);const o=CACHEV[id];let t='🗳️ '+i.assunto+'\n📅 '+fmtData(v.dataHora)+' · Plenário da Câmara\n';if(o&&o.nominal){const q=quorumTxt(o,i);t+='✍️ Nominal: Sim '+q.sim+' · Não '+q.nao+' · Abstenção '+q.abs+'\n🧮 Necessários '+q.nec+' → '+q.frase.replace(/[✅⛔] /,'')+'\n';const mv=o.list.filter(x=>meusIds().includes('camara-'+x.id));if(mv.length)t+='⭐ Seus deputados: '+mv.map(x=>x.nome+'='+x.voto).join(', ')+'\n'}else t+='🗣️ Simbólica: sem registro individual ("fica como está")\n';t+='🔎 Detalhes: '+location.href.split('#')[0]+'#v'+id;return t}
@@ -495,6 +495,363 @@ document.addEventListener('click',e=>{if(!e.target.closest('.acwrap'))$('#ac').s
 $('#pTxt').addEventListener('keydown',e=>{if(e.key==='Enter')addProm()});
 $('#hmUF').addEventListener('change',drawHM);
 renderChips();carrega();
+</script>
+<style id="ia-css">
+:root{--ring:rgba(255,215,0,.6);--soft:rgba(127,176,245,.10)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+.ia-tabs{position:sticky;top:56px;z-index:90;display:flex;gap:6px;align-items:center;overflow-x:auto;overflow-y:hidden;padding:8px;margin:16px auto 0;max-width:1080px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;background:linear-gradient(180deg,rgba(6,26,58,.97),rgba(6,26,58,.88));backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 34px rgba(2,10,26,.45)}
+.ia-tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border-radius:999px;border:1px solid transparent;background:transparent;color:var(--muted);font:800 13px Manrope;cursor:pointer;white-space:nowrap;transition:background .18s,color .18s,box-shadow .18s}
+.ia-tab:hover{color:var(--ink);background:var(--soft)}
+.ia-tab[aria-selected="true"]{color:#1a1400;background:linear-gradient(135deg,#FFD700,#FFA500);box-shadow:0 6px 18px rgba(255,165,0,.28)}
+.ia-tab .n{font:800 10px Manrope;padding:2px 6px;border-radius:999px;background:rgba(127,176,245,.18);color:var(--blueL)}
+.ia-tab[aria-selected="true"] .n{background:rgba(0,0,0,.16);color:#1a1400}
+.ia-hint{max-width:1080px;margin:10px auto 0;padding:0 4px;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.7;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.ia-hint b{color:#cfe0f7;font-weight:800}
+.ia-stage{max-width:1080px;margin:0 auto;padding:0 16px 40px}
+.ia-view{display:none}
+.ia-view.on{display:block;animation:iaIn .22s ease}
+@keyframes iaIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ia-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:960px;margin:12px auto 0}
+.ia-stat{border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(18,48,89,.5),rgba(13,34,66,.85));padding:11px 10px;text-align:center}
+.ia-stat b{display:block;font:800 21px Montserrat;color:var(--gold);line-height:1.15}
+.ia-stat span{font:700 10px Manrope;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.painel.ia-enh{max-width:960px;margin:12px auto 0;padding:0!important;border:1px solid var(--line);border-radius:16px!important;background:linear-gradient(180deg,rgba(18,48,89,.5),rgba(13,34,66,.92))!important;box-shadow:0 10px 30px rgba(2,10,26,.35);overflow:hidden;transition:box-shadow .2s,border-color .2s}
+.painel.ia-enh:hover{border-color:rgba(127,176,245,.4);box-shadow:0 14px 38px rgba(2,10,26,.5)}
+.ia-hd{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);background:rgba(6,26,58,.42)}
+.ia-hd h3{flex:1;min-width:0;font:800 12px Manrope;letter-spacing:.07em;text-transform:uppercase;color:#cfe0f7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ia-body{padding:12px 14px 14px}
+.ia-enh.ia-min>.ia-body{display:none}
+.ia-enh.ia-min{background:rgba(13,34,66,.7)!important}
+.ia-i,.ia-col{width:22px;height:22px;flex:0 0 auto;border-radius:50%;border:1px solid var(--line);background:var(--soft);color:var(--blueL);font:800 12px Manrope;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;transition:background .15s,color .15s}
+.ia-col{border-radius:8px;width:24px}
+.ia-i:hover,.ia-col:hover,.ia-i[aria-expanded="true"]{background:var(--gold);color:#1a1400;border-color:transparent}
+#iaPop{position:fixed;z-index:900;max-width:340px;background:#0f2a52;border:1px solid var(--gold);border-radius:14px;padding:13px 15px 14px;box-shadow:0 18px 50px rgba(0,0,0,.6);display:none;font-size:12.5px;line-height:1.65}
+#iaPop h4{font:800 13px Montserrat;color:var(--gold);margin:0 0 6px;padding-right:18px}
+#iaPop p{margin:0;color:#dbe7f7}
+#iaPop .x{position:absolute;top:5px;right:7px;border:0;background:none;color:var(--muted);font:800 16px Manrope;cursor:pointer;padding:2px 4px}
+#iaPop .x:hover{color:var(--ink)}
+.ia-rng{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:2px 0 10px}
+.ia-rngb{border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--muted);font:800 11.5px Manrope;padding:6px 12px;cursor:pointer}
+.ia-rngb:hover{color:var(--ink)}
+.ia-rngb.on{background:var(--gold);color:#1a1400;border-color:transparent}
+.ia-badge{font:800 10px Manrope;letter-spacing:.05em;text-transform:uppercase;color:var(--blueL);border:1px solid var(--line);border-radius:999px;padding:3px 9px;vertical-align:middle}
+.ia-view .fbar{position:static!important;top:auto!important;margin:12px auto 0;max-width:960px;border:1px solid var(--line);border-radius:14px;background:rgba(13,34,66,.8)!important;backdrop-filter:none}
+#nav16{display:none}
+#iaOnb{position:fixed;inset:0;z-index:950;background:rgba(2,10,26,.74);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+#iaOnb.on{display:flex;animation:iaIn .2s ease}
+.ia-onb-card{max-width:540px;background:linear-gradient(180deg,#123059,#0d2242);border:1px solid var(--gold);border-radius:20px;padding:22px 22px 20px;box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.ia-onb-card h3{font:800 18px Montserrat;color:var(--gold)}
+.ia-onb-card ol{margin:12px 0 0 18px;font-size:13.5px;line-height:1.75;color:#dbe7f7}
+.ia-onb-card ol b{color:#fff}
+@media(max-width:720px){.ia-strip{grid-template-columns:repeat(2,1fr)}.ia-tabs{top:52px;border-radius:12px}.ia-tab{font-size:12px;padding:8px 11px}}
+@media(prefers-reduced-motion:reduce){.ia-view.on{animation:none}#iaOnb.on{animation:none}*{transition:none!important}}
+@media print{.ia-tabs,.ia-hint,#iaPop,#iaOnb,.ia-strip,.ia-col,.ia-i{display:none!important}.ia-view{display:block!important}.painel.ia-enh{box-shadow:none;break-inside:avoid}.painel.ia-enh.ia-min>.ia-body{display:block}}
+</style>
+<script id="ia-shell">
+(function(){
+'use strict';
+var D=document,W=window;
+function el(t,c,x){var n=D.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function escH(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+var TABS=[
+{id:'vot',ic:'🗳️',nm:'Votações',info:'O coração da página: o que já foi votado (últimos 10 dias) e o que será votado. Abra qualquer card em "🔎 Como foi esta votação?" para ver placar, quórum, voto a voto, mapa por estado e coerência de bancada.'},
+{id:'meus',ic:'⭐',nm:'Meus Representantes',info:'Defina quem você acompanha: marque deputados e senadores, cadastre promessas de campanha para cobrar e escolha os temas do seu interesse. Tudo fica salvo apenas neste navegador — nada é enviado a servidor.'},
+{id:'analise',ic:'📊',nm:'Análise',info:'Ferramentas de comparação e medição: mapa de calor das bancadas, seu deputado contra a média do Plenário e do partido, tabela consolidada do Meu Congresso e coerência partidária no tempo.'},
+{id:'gerar',ic:'🧾',nm:'Materiais & Avisos',info:'Transforme os dados em documentos e notificações: dossiê do parlamentar, ficha-resumo em PDF, recibo de cobrança pronto para enviar, planilha CSV, link público para compartilhar e resumo automático.'},
+{id:'avisos',ic:'📧',nm:'Digest por e-mail',info:'Inscrição, confirmação e cancelamento do resumo semanal enviado por e-mail, com filtragem por tema e proteção anti-spam (confirmação por link).'},
+{id:'brasil',ic:'🏛️',nm:'Brasil & Sistema',info:'Visão nacional e área técnica: Brasil por bancadas, espelho Câmara × Senado sobre o mesmo tema, documentação da API pública para jornalistas e kit de publicação do aplicativo.'}
+];
+
+var RULES=[
+['#mq','meus','⭐ Acompanhar parlamentares','Digite ao menos 2 letras e escolha na lista com foto, partido e UF. Os marcados ficam salvos só neste navegador. O botão 🔔 pede permissão para avisar quando um deles registrar voto nominal.'],
+['#pDep','meus','🤝 Promessas a cobrar','Cadastre uma promessa de campanha ligada a um parlamentar seu. As palavras-chave (5+ letras) são cruzadas com o assunto das votações nominais: quando há correspondência, o card da votação mostra o voto dele naquele compromisso.'],
+['#temas16','meus','📌 Meus temas','Ao marcar temas, os cards da lista ganham o selo 📌 e o resumo semanal passa a listar apenas o que interessa a você.'],
+['#hmUF','analise','🌡️ Mapa de calor + ⚖️ comparador','Calor: uma célula por votação nominal, colorida pelo % de SIM da bancada do estado escolhido — clique numa célula para abrir a votação. Comparador: % de SIM de cada deputado seu contra a média do Plenário e do partido, em pontos percentuais (pp).'],
+['#out10','analise','📊 Meu Congresso','Tabela consolidada dos seus parlamentares: presença, % SIM, diferença para o Plenário, coerência com a orientação da bancada e promessas cadastradas. O botão 🖨️ gera um PDF de uma página.'],
+['#out11','analise','📅 Alertas de pauta · 📈 coerência no tempo','Cruza a agenda dos próximos dias com suas promessas e avisa até 72h antes das sessões do seu interesse. O gráfico mostra a coerência acumulada com o partido, ponto a ponto, em SVG puro.'],
+['#dDep','gerar','🕰️ Dossiê do parlamentar','Varre as últimas 30 votações nominais e monta a ficha corrida cívica: em quantas participou, como votou, ausências e obstruções, além de reclamações e apoios recebidos. Exportável em PDF.'],
+['#out9','gerar','🔔 resumo automático · 📥 CSV · 🧾 recibo','Liga o resumo semanal como notificação do navegador, baixa uma planilha com os números do comparador (separador ";", compatível com Excel brasileiro) e gera o recibo de cobrança — texto pronto para copiar, enviar por WhatsApp ou e-mail ao gabinete.'],
+['#out12','gerar','🧾 dossiê completo · 🔗 link público','Um único PDF com a tabela consolidada, a faixa de votos e as últimas votações de cada parlamentar seu. O link embute sua lista de favoritos para que qualquer pessoa abra o comparador já configurado.'],
+['#dgEmail','avisos','📧 Digest semanal por e-mail','Recebe toda segunda-feira o resumo da semana. A inscrição passa por confirmação de e-mail para evitar spam; o endereço fica apenas na lista de envio e pode ser removido a qualquer momento.'],
+['#out13','brasil','🗺️ Brasil por bancadas · 🏛️ espelho · 📧 digest','Grade com as 27 unidades da federação e o % de SIM de cada bancada — clique para o detalhe. O espelho compara o mesmo tema nas duas Casas. O digest monta o texto e abre seu aplicativo de e-mail.'],
+['a[href="api-publica.html"]','brasil','📘 API pública · 📦 kit de lojas','Documentação viva dos endpoints abertos, com teste ao vivo, para jornalistas e desenvolvedores. O kit reúne a configuração de empacotamento do aplicativo para a Play Store.']
+];
+
+var views={},bar,stage,pop;
+var IA={mode:'10d',open:false,n:0};
+
+function buildBar(){
+ bar=el('div','ia-tabs'); bar.id='iaBar';
+ bar.setAttribute('role','tablist'); bar.setAttribute('aria-label','Seções da página');
+ TABS.forEach(function(t){
+  var b=el('button','ia-tab'); b.type='button'; b.id='ia-b-'+t.id;
+  b.setAttribute('role','tab'); b.setAttribute('aria-controls','ia-v-'+t.id);
+  b.setAttribute('aria-selected','false'); b.tabIndex=-1; b.dataset.id=t.id;
+  b.appendChild(el('span','ic',t.ic));
+  b.appendChild(el('span','lb',t.nm));
+  var n=el('span','n','0'); n.id='ia-n-'+t.id; b.appendChild(n);
+  var i=el('button','ia-i','i'); i.type='button';
+  i.setAttribute('aria-label','Sobre a seção '+t.nm); i.setAttribute('aria-expanded','false');
+  i.dataset.t=t.ic+' '+t.nm; i.dataset.d=t.info;
+  b.appendChild(i);
+  bar.appendChild(b);
+  var v=el('div','ia-view'); v.id='ia-v-'+t.id;
+  v.setAttribute('role','tabpanel'); v.setAttribute('aria-labelledby','ia-b-'+t.id); v.tabIndex=0;
+  views[t.id]=v;
+ });
+ stage=el('div','ia-stage'); stage.id='ia-main';
+ TABS.forEach(function(t){stage.appendChild(views[t.id])});
+ var hero=D.querySelector('section.hero')||D.body;
+ var edu=D.querySelector('.edu');
+ var ref=edu&&edu.parentNode===hero?edu.nextSibling:hero.firstChild;
+ hero.insertBefore(bar,ref);
+ var hint=el('p','ia-hint');
+ hint.innerHTML='Comece por <b>⭐ Meus Representantes</b> → compare em <b>📊 Análise</b> → exporte em <b>🧾 Materiais</b>. <button type="button" class="ia-i" aria-label="Sobre a organização da página" aria-expanded="false" data-t="Como esta página está organizada" data-d="Seis seções agrupadas por intenção de uso, não por tecnologia. Cada cartão tem um botão i com explicação própria e um ▾ que recolhe o conteúdo que você não usa agora. A seção escolhida fica no endereço (por exemplo #tab-analise), então você pode copiar a URL já aberta na seção desejada.">i</button>';
+ hero.insertBefore(hint,bar.nextSibling);
+ views.vot.insertBefore(strip(),views.vot.firstChild);
+ var heroParent=hero.parentNode;
+ if(heroParent)heroParent.insertBefore(stage,hero.nextSibling);
+}
+
+function strip(){
+ var s=el('div','ia-strip'); s.id='iaStrip'; s.setAttribute('aria-live','polite');
+ var defs=[['iaS1','Votações na janela'],['iaS2','Nominais registradas'],['iaS3','Sessões futuras'],['iaS4','Você acompanha']];
+ s.innerHTML=defs.map(function(d){return '<div class="ia-stat"><b id="'+d[0]+'">—</b><span>'+d[1]+'</span></div>'}).join('');
+ return s;
+}
+
+function enhance(p,meta){
+ var hd=el('div','ia-hd');
+ hd.appendChild(el('h3',null,meta[2]));
+ var ii=el('button','ia-i','i'); ii.type='button';
+ ii.setAttribute('aria-label','Sobre: '+meta[2]); ii.setAttribute('aria-expanded','false');
+ ii.dataset.t=meta[2]; ii.dataset.d=meta[3];
+ var col=el('button','ia-col','▾'); col.type='button';
+ col.setAttribute('aria-label','Recolher ou expandir este cartão'); col.setAttribute('aria-expanded','true');
+ hd.appendChild(ii); hd.appendChild(col);
+ var body=el('div','ia-body');
+ while(p.firstChild) body.appendChild(p.firstChild);
+ p.appendChild(hd); p.appendChild(body);
+ p.classList.add('ia-enh'); p.dataset.iaKey=meta[2];
+ var key='ia_col:'+meta[2];
+ if(ls(key)==='1'){p.classList.add('ia-min');col.textContent='▸';col.setAttribute('aria-expanded','false')}
+ col.addEventListener('click',function(){
+  var m=p.classList.toggle('ia-min');
+  ls(key,m?'1':'0');
+  col.textContent=m?'▸':'▾';
+  col.setAttribute('aria-expanded',m?'false':'true');
+ });
+}
+
+function moveNodes(){
+ function mv(node,tab){if(node&&views[tab])views[tab].appendChild(node)}
+ mv(D.querySelector('section.hero > .tabs'),'vot');
+ mv(D.querySelector('.fbar'),'vot');
+ var ag=D.getElementById('agenda');
+ if(ag&&ag.parentElement&&ag.parentElement.classList.contains('wrap'))mv(ag.parentElement,'vot');
+ var ps=D.querySelectorAll('.painel');
+ Array.prototype.forEach.call(ps,function(p){
+  if(p.classList.contains('ia-enh'))return;
+  if(stage.contains(p))return;
+  var meta=null;
+  for(var i=0;i<RULES.length;i++){
+    try{if(p.querySelector(RULES[i][0])){meta=RULES[i];break}}catch(e){}
+  }
+  if(!meta)meta=['','vot','📋 Cartão adicional','Conteúdo complementar desta página.'];
+  enhance(p,meta);
+  mv(p,meta[1]);
+ });
+}
+
+function badges(){
+ TABS.forEach(function(t){
+  var e=D.getElementById('ia-n-'+t.id);
+  if(e)e.textContent=views[t.id].querySelectorAll('.ia-enh').length;
+ });
+}
+
+function show(id,keep){
+ var found=false;
+ TABS.forEach(function(t){
+  var on=t.id===id; if(on)found=true;
+  var b=D.getElementById('ia-b-'+t.id);
+  b.setAttribute('aria-selected',on?'true':'false');
+  b.tabIndex=on?0:-1;
+  views[t.id].classList.toggle('on',on);
+ });
+ if(!found){show('vot',true);return}
+ if(!keep){try{history.replaceState(null,'','#tab-'+id)}catch(e){}try{ls('ia_tab',id)}catch(e){}}
+ var bb=D.getElementById('ia-b-'+id);
+ if(bb&&bar&&typeof bar.scrollTo==='function'){
+  var need=bb.offsetLeft-bar.clientWidth/2+bb.clientWidth/2;
+  if(Math.abs(bar.scrollLeft-need)>4){try{bar.scrollTo({left:Math.max(0,need),behavior:'smooth'})}catch(e){bar.scrollLeft=Math.max(0,need)}}
+ }
+}
+
+function openPop(btn){
+ if(!pop)return;
+ pop.innerHTML='';
+ var x=el('button','x','×'); x.type='button'; x.setAttribute('aria-label','Fechar');
+ pop.appendChild(x);
+ pop.appendChild(el('h4',null,btn.dataset.t||''));
+ pop.appendChild(el('p',null,btn.dataset.d||''));
+ pop.style.display='block';
+ btn.setAttribute('aria-expanded','true');
+ var r=btn.getBoundingClientRect();
+ var w=Math.min(340,innerWidth-24);
+ pop.style.width=w+'px';
+ var left=Math.max(12,Math.min(innerWidth-w-12,r.left-10));
+ pop.style.left=left+'px';
+ pop.style.top='0px';
+ var ph=pop.offsetHeight;
+ var top=r.bottom+8;
+ if(top+ph>innerHeight-12)top=Math.max(12,r.top-ph-8);
+ pop.style.top=top+'px';
+ x.addEventListener('click',function(){closePop()});
+}
+function closePop(){
+ if(!pop)return;
+ pop.style.display='none';
+ var o=D.querySelectorAll('.ia-i[aria-expanded="true"]');
+ Array.prototype.forEach.call(o,function(b){b.setAttribute('aria-expanded','false')});
+}
+
+function agHead(){
+ var lbl=IA.mode==='10d'?'próximos 10 dias':(IA.mode==='mes'?'próximo mês':'próximos 12 meses');
+ function bt(m,t){return '<button type="button" class="ia-rngb'+(IA.mode===m?' on':'')+'" data-m="'+m+'">'+t+'</button>'}
+ return '<h2 class="secT">📅 O que SERÁ votado <span class="ia-badge">'+lbl+'</span></h2>'
+ +'<div class="ia-rng">'+bt('10d','10 dias')+bt('mes','último mês')+bt('all','todas')
+ +'<button type="button" class="ia-i" aria-label="Sobre a agenda" aria-expanded="false" data-t="Agenda do Plenário" data-d="Os dados vêm dos eventos oficiais da Câmara (órgão PLEN). Em recesso ou antes da publicação da pauta a lista fica vazia — isso é o calendário real, não um erro. Amplie a janela com último mês ou todas.">i</button>'
+ +'</div>';
+}
+
+function renderAgenda(ev){
+ var lim=IA.open?ev.length:(IA.mode==='10d'?4:8);
+ var win=IA.mode==='10d'?'os próximos 10 dias':(IA.mode==='mes'?'o próximo mês':'os próximos 12 meses');
+ if(!ev.length){
+  return '<div class="ecard"><p class="muted">Sem sessões publicadas para '+win+'.</p><p class="muted" style="margin-top:6px">A Câmara costuma publicar a pauta poucos dias antes; em recesso o vazio é o estado real da agenda. Acompanhe a <a href="https://www.camara.leg.br/noticias/" target="_blank" rel="noopener">pauta oficial</a>.</p></div>';
+ }
+ var ALLv=(typeof ALL!=='undefined'&&ALL)?ALL:[];
+ var html='<div class="ecard">'+ev.slice(0,lim).map(function(e){
+  var txt=String(e.titulo||e.descricao||'').toLowerCase();
+  var best=null,bs=0;
+  for(var i=0;i<ALLv.length;i++){
+   var v=ALLv[i],inf=W.vInfo(v),sc=0;
+   if(inf.rot&&txt.indexOf(inf.rot.toLowerCase())>=0)sc=3;
+   else if(typeof W.kws==='function')sc=W.kws(inf.assunto).filter(function(k){return txt.indexOf(k)>=0}).length;
+   if(sc>bs){bs=sc;best=v}
+  }
+  var ref=(best&&bs>=2)?('<p class="muted" style="margin-top:2px">🕰️ Última semelhante: '+W.fmtData(best.dataHora)+' — '+(best._tipo==='N'?'✍️ nominal':'🗣️ simbólica')+' · <a href="#" onclick="expand(\''+best.id+'\');return false">ver</a></p>'):'';
+  return '<p style="margin-top:6px">• <b>'+W.fmtData(e.dataHora||e.data)+'</b> — '+esc(e.titulo||e.descricao||'Sessão')+(e.situacao?' <span class="muted">('+esc(e.situacao)+')</span>':'')+'</p>'+ref;
+ }).join('')+'</div>';
+ if(ev.length>lim||(IA.open&&ev.length>4)){
+  html+='<div style="text-align:center;margin-top:8px"><button type="button" class="btn sm" id="iaAgMore">'+(IA.open?'▲ mostrar menos':'▼ ver todas as '+ev.length+' sessões')+'</button></div>';
+ }
+ html+='<p class="muted" style="margin-top:8px">Pressione seus parlamentares ANTES da sessão: é nela que o "fica como está" decide o resultado.</p>';
+ return html;
+}
+
+W.agenda=async function(){
+ var host=D.getElementById('agenda');
+ if(!host||typeof CAM!=='function')return;
+ var dias=IA.mode==='10d'?10:(IA.mode==='mes'?31:365);
+ var itens=IA.mode==='10d'?12:(IA.mode==='mes'?30:50);
+ var hoje=new Date(),fim=new Date(Date.now()+dias*864e5);
+ host.innerHTML=agHead()+'<p class="muted">⏳ carregando pauta…</p>';
+ var r=null;
+ try{r=await W.fetchJ(CAM('eventos?itens='+itens+'&siglaOrgao=PLEN&dataInicio='+fd(hoje)+'&dataFim='+fd(fim)+'&ordem=ASC'))}catch(e){}
+ var ev=(r&&r.dados)||[];
+ IA.n=ev.length;
+ host.innerHTML=agHead()+renderAgenda(ev);
+ updateStrip();
+};
+
+function updateStrip(){
+ var tot=(typeof ALL!=='undefined'&&ALL)?ALL.length:0;
+ var nom=0;
+ if(tot){for(var i=0;i<ALL.length;i++){if(ALL[i]._tipo==='N')nom++}}
+ var f=function(id,v){var e=D.getElementById(id);if(e)e.textContent=v};
+ f('iaS1',tot);f('iaS2',nom);f('iaS3',IA.n||0);
+ f('iaS4',(typeof MEUS!=='undefined'&&MEUS)?MEUS.length:0);
+}
+
+function wire(){
+ bar.addEventListener('click',function(e){
+  var i=e.target.closest?e.target.closest('.ia-i'):null;
+  if(i){e.stopPropagation();openPop(i);return}
+  var t=e.target.closest?e.target.closest('.ia-tab'):null;
+  if(t)show(t.dataset.id);
+ });
+ bar.addEventListener('keydown',function(e){
+  var ts=TABS.map(function(t){return D.getElementById('ia-b-'+t.id)});
+  var cur=ts.indexOf(D.activeElement);
+  if(cur<0)return;
+  var nx=null;
+  if(e.key==='ArrowRight')nx=(cur+1)%ts.length;
+  else if(e.key==='ArrowLeft')nx=(cur-1+ts.length)%ts.length;
+  else if(e.key==='Home')nx=0;
+  else if(e.key==='End')nx=ts.length-1;
+  if(nx!==null){e.preventDefault();ts[nx].focus();show(ts[nx].dataset.id)}
+ });
+ D.addEventListener('click',function(e){
+  var i=e.target.closest?e.target.closest('.ia-i'):null;
+  if(i){e.stopPropagation();openPop(i);return}
+  if(pop&&pop.style.display==='block'&&!pop.contains(e.target))closePop();
+ });
+ D.addEventListener('keydown',function(e){if(e.key==='Escape')closePop()});
+ W.addEventListener('scroll',function(){closePop()},{passive:true});
+ W.addEventListener('resize',function(){closePop()});
+ var ag=D.getElementById('agenda');
+ if(ag)ag.addEventListener('click',function(e){
+  var b=e.target.closest?e.target.closest('.ia-rngb'):null;
+  if(b){IA.mode=b.dataset.m;IA.open=false;W.agenda();return}
+  var m=e.target.closest?e.target.closest('#iaAgMore'):null;
+  if(m){IA.open=!IA.open;W.agenda();return}
+ });
+ if(typeof W.render==='function'){
+  var _r=W.render;
+  W.render=function(){var a=_r.apply(this,arguments);updateStrip();return a};
+ }
+}
+
+function onb(){
+ if(ls('ia_onb'))return;
+ var ov=el('div'); ov.id='iaOnb';
+ ov.innerHTML='<div class="ia-onb-card" role="dialog" aria-modal="true" aria-label="Boas-vindas">'
+ +'<h3>Como usar esta página</h3>'
+ +'<ol><li><b>⭐ Meus Representantes</b> — marque quem você elegeu e cadastre promessas para cobrar.</li>'
+ +'<li><b>🗳️ Votações</b> — abra qualquer card em “Como foi esta votação?” para ver placar, quórum e o voto nominal de cada um.</li>'
+ +'<li><b>🧾 Materiais</b> — transforme isso em PDF, planilha, recibo de cobrança ou link para compartilhar.</li></ol>'
+ +'<p class="muted" style="margin-top:12px">Cada cartão tem um botão <b>i</b> explicando o que faz, e o <b>▾</b> recolhe o que você não usa agora. Sua lista vive só neste navegador.</p>'
+ +'<div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap"><button type="button" class="btn gold" id="iaOnbOk">Entendi</button><a class="btn" href="parlamentares.html">Ver o Radar Político</a></div>'
+ +'</div>';
+ D.body.appendChild(ov);
+ requestAnimationFrame(function(){ov.classList.add('on')});
+ D.getElementById('iaOnbOk').addEventListener('click',function(){ls('ia_onb','1');ov.remove()});
+ ov.addEventListener('click',function(e){if(e.target===ov){ls('ia_onb','1');ov.remove()}});
+}
+
+function init(){
+ if(!D.querySelector('.painel'))return;
+ pop=el('div'); pop.id='iaPop'; D.body.appendChild(pop);
+ buildBar();
+ moveNodes();
+ badges();
+ wire();
+ var h=(location.hash||'');
+ var start='vot';
+ if(h.indexOf('#tab-')===0){var id=h.slice(5);if(TABS.some(function(t){return t.id===id}))start=id}
+ else{var sv=ls('ia_tab');if(sv&&TABS.some(function(t){return t.id===sv}))start=sv}
+ show(start,true);
+ if(h.indexOf('#v')===0){try{var nid=h.slice(2);if(W.expand&&nid&&/^\d+$/.test(nid)){show('vot',true);W.agenda();W.expand(Number(nid))}}catch(e){}}
+ else{if(W.agenda)W.agenda()}
+ setTimeout(function(){badges();updateStrip()},2500);
+ onb();
+}
+if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',init);else init();
+})();
 </script>
 </body>
 </html>
