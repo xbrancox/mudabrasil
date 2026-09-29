@@ -93,7 +93,10 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
   <div class="painel"><div class="row"><span class="acwrap"><input id="mq" placeholder="⭐ Digite o nome do deputado/senador…" autocomplete="off"/><span class="ac" id="ac"></span></span><button class="btn sm gold" data-tip="Adiciona o parlamentar à sua lista (salvo só no seu navegador)." onclick="addMeu()">Adicionar</button><button class="btn sm" data-tip="Notificação do PWA quando um deputado seu vota em votação nominal." onclick="ativaAlertas()">🔔 Ativar alertas</button></div><div class="chips" id="mchips"></div></div>
   <div class="painel"><div class="row"><select id="pDep" style="max-width:220px" data-tip="Qual dos seus parlamentares terá a promessa cobrada."></select><input id="pTxt" placeholder="🤝 Promessa a cobrar (ex.: defender a educação pública…)" data-tip="Palavras-chave cruzadas com o assunto das votações nominais."/><button class="btn sm" data-tip="Cadastra a promessa para cobrança automática." onclick="addProm()">Cobrar</button></div><div class="chips" id="pChips"></div></div>
   <div class="painel"><div class="row"><select id="dDep" style="max-width:240px" data-tip="Escolha um dos seus parlamentares para o dossiê."></select><button class="btn sm" data-tip="Cruza as últimas 30 votações nominais + reclamações/apoios e monta a ficha corrida cívica." onclick="dossie()">🕰️ Gerar dossiê</button></div><div id="dossie" style="margin-top:10px"></div></div>
-  <div class="painel"><div class="row"><select id="hmUF" style="max-width:160px" data-tip="Estado cuja bancada você quer acompanhar ao longo das votações."></select><button class="btn sm" data-tip="Carrega até 20 votações nominais e desenha o mapa de calor + comparador." onclick="ciclo7()">🌡️ Carregar calor & comparador</button></div><div id="hm" style="margin-top:10px"></div><div id="cmp7" style="margin-top:10px"></div></div>
+  <div class="painel"><div class="row"><select id="hmUF" style="max-width:160px" data-tip="Estado cuja bancada você quer acompanhar ao longo das votações."></select><button class="btn sm" data-tip="Carrega até 20 votações nominais e desenha o mapa de calor + comparador." onclick="ciclo7()">🌡️ Carregar calor & comparador</button></div><div id="hm" style="margin-top:10px"></div><div id="cmp7" style="margin-top:10px"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn sm" data-tip="Combina fidelidade partidária, distância da bancada e confiança da base em um diagnóstico por deputado (3 eixos + quadrante)." onclick="representacao18()">🧭 Painel de representação (3 eixos)</button><span class="muted" style="font-size:11.5px">ⓘ diagnóstico por eixo, sem juízo de valor</span></div>
+<div id="rep18" style="margin-top:10px"></div>
+</div>
 </section>
 <div class="fbar"><div class="wrap"><div class="row">
   <input id="q" placeholder="🔎 Buscar por assunto ou matéria…" oninput="render()" data-tip="Filtra por assunto ou sigla (PL, MPV, PEC)."/>
@@ -348,6 +351,88 @@ mo.observe(document.documentElement,{childList:true,subtree:true});
 
 if(typeof window.ensureC7!=="function"){window.ensureC7=async function(){if(typeof C7!=="undefined"&&C7&&C7.length)return C7;var r=await fetchJ(CAM("votacoes?itens=60&ordem=DESC"));var ALL2=((r&&r.dados)||[]).slice(0,60);if(typeof tipagem==="function")await tipagem(ALL2.slice(0,24));if(typeof ALL!=="undefined")ALL=ALL2;var n=ALL2.filter(function(v){return v._tipo==="N"}).slice(0,20);if(typeof tipagem==="function")await tipagem(n);if(typeof C7!=="undefined")C7=n;return n};}
 })();
+</script>
+<script id="ciclo18">
+// Painel de representacao — 3 eixos + quadrante (EVOLUCAO-PROJETO v2.0, secao 1)
+// Eixos: A) Fidelidade partidaria (coerDeputado), B) Distancia da bancada (mr-pr),
+//        C) Confianca da base (termometro agregado da UF quando disponivel).
+async function rep18Dados(){
+  if(!MEUS.length)return null;
+  await needC7();
+  if(!C7||!C7.length)return null;
+  var term=null;
+  try{var tr=await fetchJ(BASE+'/api/termometro');term=tr||null}catch(e){}
+  var out=[];
+  for(var j=0;j<MEUS.length;j++){
+    var m=MEUS[j];
+    var num=String(m.id).replace('camara-','');
+    var pp=POL?POL.find(function(p){return p.id===m.id}):null;
+    var mine=[],party=[];
+    for(var k=0;k<C7.length;k++){
+      var L=CACHEV[C7[k].id].list||[];
+      for(var q=0;q<L.length;q++){
+        var y=L[q];
+        if(y.id===num)mine.push(y);
+        if(pp&&y.partido===(pp.party||pp.partido))party.push(y);
+      }
+    }
+    var mr=typeof rates==='function'?rates(mine):null;
+    var pr=typeof rates==='function'?rates(party):null;
+    var co=typeof coerDeputado==='function'?await coerDeputado(num):null;
+    var conf=null;
+    if(term){
+      if(pp){
+        var u=pp.state||pp.uf||'';
+        if(term.porUf&&term.porUf[u]!=null){
+          var e=term.porUf[u];
+          conf=(e&&typeof e.indice==='number')?e.indice:(typeof e==='number'?e:null);
+        }else if(typeof term[u]==='number'){conf=term[u]}
+      }
+      if(conf==null&&typeof term.indice==='number')conf=term.indice;
+      if(conf==null&&typeof term.confianca==='number')conf=term.confianca;
+      if(conf!=null&&conf>0&&conf<=1)conf=Math.round(conf*100);
+    }
+    out.push({m:m,mr:mr,pr:pr,dist:(mr!=null&&pr!=null)?(mr-pr):null,fid:co&&typeof co.pc==='number'?co.pc:null,conf:conf,nat:null});
+  }
+  return out;
+}
+function rep18Quadrante(r){
+  var fidAlta=r.fid!=null&&r.fid>=70;
+  var confAlta=r.conf!=null?r.conf>=50:null;
+  if(confAlta==null)return{nome:'Indeterminado',cor:'abs',txt:'Confianca da base indisponivel no momento — o quadrante requer o termometro por UF.',fid:fidAlta,conf:null};
+  if(fidAlta&&confAlta)return{nome:'Consistente',cor:'sim',txt:'Alinhado ao partido e com respaldo da base.',fid:true,conf:true};
+  if(!fidAlta&&confAlta)return{nome:'Autonomo com respaldo',cor:'sim',txt:'Vota com independencia da bancada e mantem confianca da base.',fid:false,conf:true};
+  if(fidAlta&&!confAlta)return{nome:'Partidario',cor:'out',txt:'Segue a bancada, mas a base registra confianca baixa.',fid:true,conf:false};
+  return{nome:'Em tensao',cor:'nao',txt:'Baixa fidelidade partidaria e confianca baixa da base — crise de representacao.',fid:false,conf:false};
+}
+function rep18Barra(pc,cor){var v=pc==null?0:Math.max(0,Math.min(100,pc));return '<div class="cbar" style="height:10px;margin:4px 0 2px"><div style="width:'+v+'%;background:'+cor+'"></div></div>'}
+async function representacao18(){
+  var el=document.getElementById('rep18');
+  if(!el)return;
+  if(!MEUS.length){el.innerHTML='<div class="ecard"><p class="muted">Marque ⭐ representantes na secao "Meus representantes" para ver o painel de representacao.</p></div>';return}
+  el.innerHTML='<p class="muted">⏳ Calculando 3 eixos por deputado…</p>';
+  var rows;
+  try{rows=await rep18Dados()}catch(e){el.innerHTML='<div class="ecard"><p class="muted">Falha ao calcular: '+esc(e.message)+'</p></div>';return}
+  if(!rows||!rows.length){el.innerHTML='<div class="ecard"><p class="muted">Sem votacoes nominais na janela para calcular os eixos.</p></div>';return}
+  var h='<div class="ecard"><h3>🧭 Painel de representacao — 3 eixos + quadrante</h3>';
+  h+='<div style="margin-top:8px;border-left:3px solid var(--blueL);background:rgba(74,144,240,.08);border-radius:8px;padding:10px 12px;font-size:12.5px;line-height:1.65"><p><b>ⓘ O que e:</b> combinacao de tres indicadores independentes — <b>fidelidade partidaria</b>, <b>distancia da bancada</b> e <b>confianca da base</b>.</p>';
+  h+='<p><b>Para que serve:</b> diagnosticar o padrao de representacao de cada deputado seu, sem reduzir politica a um unico delta.</p>';
+  h+='<p><b>Como interpretar:</b> fidelidade alta = segue a orientacao da bancada nas nominais; distancia em pp = quanto o deputado vota "Sim" acima/abaixo da bancada do proprio partido; confianca = termometro anonimo agregado da UF.</p>';
+  h+='<p><b>Limitacoes:</b> so votacoes nominais entram; confianca e percepcao anonima e nao posicao tematica; quadrante e diagnostico, nao juizo de valor.</p></div>';
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    var qd=rep18Quadrante(r);
+    h+='<div style="margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:12px">';
+    h+='<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><b>⭐ '+esc(r.m.nome)+'</b><span class="vb '+qd.cor+'">'+qd.nome+'</span></div>';
+    h+='<p class="muted" style="margin-top:4px;font-size:12.5px">'+qd.txt+'</p>';
+    h+='<p style="margin-top:10px;font-size:12.5px"><b>A. Fidelidade partidaria:</b> '+(r.fid==null?'— indisponivel':r.fid+'%')+' das nominais com orientacao seguida</p>'+rep18Barra(r.fid,'var(--blueL)');
+    h+='<p style="margin-top:6px;font-size:12.5px"><b>B. Distancia da bancada:</b> '+(r.dist==null?'— indisponivel':((r.dist>0?'+':'')+r.dist+' pp'))+' (deputado '+(r.mr==null?'—':r.mr+'%')+' vs bancada '+(r.pr==null?'—':r.pr+'%')+')</p>'+rep18Barra(r.mr,'var(--gold)');
+    h+='<p style="margin-top:6px;font-size:12.5px"><b>C. Confianca da base (UF):</b> '+(r.conf==null?'— indisponivel no termometro':r.conf+'%')+'</p>'+rep18Barra(r.conf,'var(--green)');
+    h+='</div>';
+  }
+  h+='</div>';
+  el.innerHTML=h;
+}
 </script>
 <div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
