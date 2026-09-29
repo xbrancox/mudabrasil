@@ -533,3 +533,27 @@ Conteúdo:
 - **Cache:** vota + candidatos em memória por 30 min; evita chamadas repetidas ao abrir/fechar a modal.
 - **Adaptação visual:** botão flutuante sobe 50 px quando há `.cmpbar.on` para não ser ocultado.
 - **Validação:** `node --check` nos dois arquivos, marcadores `busca-global.js` + `ciclo20: busca global Ctrl+K` confirmados via HTTP no raw do GitHub após push.
+
+### 5.4 Ciclo 21 — Comparador A × B de deputados (P1 do backlog)
+Entregue em commit `21-xxx` (substituir hash real). Nova ferramenta na aba **Análise** que responde à pergunta real do eleitor: *"meu deputado e o dele discordaram em quê?"*
+
+**Funcionalidades:**
+- Dois seletores (preenchidos automaticamente com a lista ⭐ do usuário) para escolher os deputados A e B.
+- Tabela das últimas votações nominais onde ambos votaram: data, matéria, voto de A, voto de B, ícone ✓/✗ de concordância/discordância e link direto para abrir a votação.
+- Taxa de convergência (%) com barra colorida (verde = iguais, vermelho = divergentes).
+- Top 5 discordâncias com links diretos.
+- Exportação em **PNG** (canvas puro, sem libs) e compartilhamento via **WhatsApp**.
+- Popover ⓘ com o template editorial obrigatório (o que é / para que serve / como interpretar / limitações).
+
+**Validações:**
+- Sintaxe de todos os 15 `<script>` inline: OK.
+- 146 nomes chamados sem funções órfãs.
+- 616 tags HTML com atributos entre aspas.
+- 138/138 `<div>` balanceadas.
+- 60+ asserções DOM (grupos A–L) passaram.
+- Bug fix aplicado: `<div style="overflow-x:auto">` agora fechado corretamente após `</table>`.
+
+**Próximos passos sugeridos (backlog priorizado):**
+- P2: Virtualização do voto a voto (513 linhas por nominal) para dispositivos fracos.
+- P3: Tema claro / alto contraste (tokens já centralizados).
+- P4: Testes no CI (Action rodando `validar-ia.js` + `testar-ia.js` em cada push).
