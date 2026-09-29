@@ -1,39 +1,54 @@
-# 📧 Configuração do Digest Semanal MeuVoto
+# 📧 Digest Semanal MeuVoto
 
-Este documento explica como ativar o envio automático de e-mails semanais com o resumo das votações.
+## Visão Geral
+O sistema de Digest Semanal envia um resumo das votações do Plenário toda segunda-feira para os e-mails inscritos. O fluxo inclui **confirmação por token** para evitar inscrições maliciosas e um **painel admin** para gerenciamento.
 
-## 1. O que o sistema faz
-- Os usuários se inscrevem via página **Votações** ou na página dedicada **Digest** (`/pages/digest.html`).
-- Os e-mails são salvos no backend em `server/data/digest-subscribers.json`.
-- Toda **segunda-feira às 12:00 UTC**, o GitHub Action (`digest.yml`) é acionado.
-- O worker (`scripts/digest-send.js`) consulta os inscritos, monta o resumo das últimas votações e envia via SMTP.
+## Fluxo do Usuário
+1. O usuário acessa `pages/digest.html` e insere seu e-mail.
+2. O backend gera um token único e salva o e-mail como "pendente".
+3. O frontend exibe um link de confirmação (ou simula o envio do e-mail).
+4. O usuário clica no link (`pages/digest-confirm.html?token=XXX`), que valida o token e move o e-mail para a lista de "confirmados".
+5. O GitHub Action semanal lê apenas a lista de confirmados e envia o resumo via SMTP.
 
-## 2. Secrets necessários no GitHub
-Vá em **Settings > Secrets and variables > Actions** do repositório `xbrancox/votabrasil` e adicione os seguintes **Repository secrets**:
+## Configuração de Secrets (GitHub Actions)
+No repositório, vá em **Settings → Secrets and variables → Actions** e adicione:
 
-| Nome do Secret | Descrição / Exemplo |
-|---|---|
-| `DIGEST_API` | URL base do backend. Ex: `https://mudabrasil-production-79eb.up.railway.app` |
-| `DIGEST_SECRET` | Uma string aleatória forte para proteger a rota `/api/digest/list`. Ex: `a8f9d2k3j4h5g6` |
-| `SMTP_HOST` | Servidor SMTP. Ex: `smtp.gmail.com`, `smtp.sendgrid.net`, `smtp.brevo.com` |
-| `SMTP_PORT` | Porta do SMTP. Ex: `587` (TLS) ou `465` (SSL) |
-| `SMTP_SECURE` | `true` se usar porta 465, `false` se usar 587 |
-| `SMTP_USER` | Usuário ou e-mail da conta SMTP |
-| `SMTP_PASS` | Senha da conta SMTP ou App Password (no Gmail, use "Senhas de app") |
-| `SMTP_FROM` | *(Opcional)* Remetente exibido. Ex: `MeuVoto <no-reply@seudominio.com>`. Se vazio, usa `SMTP_USER`. |
+| Secret | Descrição | Exemplo |
+|---|---|---|
+| `DIGEST_API` | URL base do backend | `https://mudabrasil-production-79eb.up.railway.app` |
+| `DIGEST_SECRET` | Chave secreta para proteger as rotas admin | `uma-string-aleatoria-forte-aqui` |
+| `SMTP_HOST` | Servidor SMTP | `smtp.gmail.com` ou `smtp.brevo.com` |
+| `SMTP_PORT` | Porta do SMTP | `587` (ou `465` para SSL) |
+| `SMTP_SECURE` | `true` se a porta for 465, senão `false` | `false` |
+| `SMTP_USER` | Usuário do SMTP | `seu-email@gmail.com` |
+| `SMTP_PASS` | Senha do SMTP (App Password no Gmail) | `abcd efgh ijkl mnop` |
+| `SMTP_FROM` | Remetente (opcional, usa SMTP_USER se vazio) | `MeuVoto <no-reply@seudominio>` |
 
-## 3. Como testar manualmente
-1. No GitHub, vá na aba **Actions**.
-2. Clique em **Digest semanal MeuVoto** no menu à esquerda.
-3. Clique no botão **Run workflow** (canto superior direito) e confirme.
-4. Observe os logs. Se os secrets SMTP estiverem incompletos, o worker fará um **dry-run** e imprimirá o corpo do e-mail no log, sem enviar de fato.
+> **Nota para Gmail:** Use uma "Senha de App" gerada em https://myaccount.google.com/apppasswords, não a senha normal da conta.
 
-## 4. Segurança e Privacidade
-- A rota `/api/digest/list` é protegida pelo `DIGEST_SECRET`. Sem ele, retorna `403 Forbidden`.
-- A lista de e-mails é armazenada em texto plano no servidor (`digest-subscribers.json`). Recomenda-se que o mantenedor do backend faça backups regulares desse arquivo.
-- O usuário pode cancelar a inscrição a qualquer momento pela página de Digest, removendo seu e-mail da lista imediatamente.
+## Painel Admin
+Acesse `pages/digest-admin.html` no seu site.
+1. Insira o valor de `DIGEST_SECRET` no campo de autenticação.
+2. Visualize a lista de inscritos **Confirmados** e **Pendentes**.
+3. Remova e-mails manualmente se necessário.
+4. Use o botão **"🚀 Disparar Digest Manualmente"** para testar o envio sem esperar a segunda-feira.
 
-## 5. Solução de Problemas
-- **Erro "sem permissao"**: Verifique se `DIGEST_SECRET` no GitHub Action é exatamente igual ao definido nas variáveis de ambiente do Railway (se o backend precisar validar localmente) ou se a lógica de comparação no `server/index.js` está correta.
-- **Erro de autenticação SMTP**: No Gmail, senhas normais não funcionam mais. É necessário gerar uma "Senha de app" em https://myaccount.google.com/apppasswords.
-- **E-mails indo para Spam**: Configure os registros SPF, DKIM e DMARC no seu domínio de e-mail.
+## Estrutura de Dados
+O arquivo `server/data/digest-subscribers.json` armazena os dados no seguinte formato (com migração automática de versões antigas):
+```json
+{
+  "confirmed": ["email1@exemplo.com"],
+  "pending": [
+    {
+      "email": "email2@exemplo.com",
+      "token": "a1b2c3d4...",
+      "createdAt": "2026-09-28T10:00:00.000Z"
+    }
+  ]
+}
+```
+
+## Solução de Problemas
+- **"O backend ainda não tem as rotas de digest publicadas"**: O deploy do Railway ainda está em andamento. Aguarde 1-2 minutos e recarregue a página.
+- **E-mails não chegando**: Verifique os logs da GitHub Action. Se o SMTP estiver incompleto, o worker executa em modo "dry-run" e imprime o corpo do e-mail no log, sem enviar de fato.
+- **Token inválido**: Tokens são de uso único. Se o usuário tentar confirmar duas vezes, a segunda tentativa falhará com segurança.

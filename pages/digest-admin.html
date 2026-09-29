@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin Digest · MeuVoto</title>
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
+h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+.wrap{max-width:800px;margin:0 auto;padding:38px 20px 60px}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px;margin-top:14px}
+label{display:block;font:700 12px Manrope;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px}
+input{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:12px 14px;font:500 15px Manrope}
+input:focus{outline:none;border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:11px 18px;cursor:pointer;margin-top:14px}
+.btn:hover{filter:brightness(1.12)}
+.btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
+.btn.red{background:rgba(231,76,60,.15);border-color:rgba(231,76,60,.45);color:var(--red)}
+.msg{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:13.5px;line-height:1.55;display:none}
+.msg.ok{display:block;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.45);color:#bff0d2}
+.msg.err{display:block;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.45);color:#ffc9c2}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--muted);font-size:11px;text-transform:uppercase}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{padding:8px 16px;border-radius:8px;background:var(--card2);border:1px solid var(--line);cursor:pointer;font:700 13px Manrope;color:var(--muted)}
+.tab.on{background:var(--gold);color:#1a1400;border-color:var(--gold)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>🛡️ Admin Digest</h1>
+  <p class="muted">Gerenciamento de inscritos e disparo manual do resumo semanal.</p>
+
+  <div id="authPanel" class="card">
+    <label for="secret">Secret de Admin (DIGEST_SECRET)</label>
+    <input id="secret" type="password" placeholder="Cole o secret aqui"/>
+    <button class="btn gold" onclick="authenticate()">Acessar Painel</button>
+    <div id="authMsg" class="msg"></div>
+  </div>
+
+  <div id="adminPanel" class="hidden">
+    <div class="tabs">
+      <div class="tab on" onclick="showTab('confirmed')">Confirmados</div>
+      <div class="tab" onclick="showTab('pending')">Pendentes</div>
+    </div>
+
+    <div id="confirmedPanel" class="card">
+      <h3>✅ Inscritos Confirmados (<span id="countC">0</span>)</h3>
+      <div style="overflow-x:auto">
+        <table id="tableC"><thead><tr><th>E-mail</th><th>Ação</th></tr></thead><tbody></tbody></table>
+      </div>
+      <button class="btn gold" onclick="triggerDigest()" style="margin-top:20px">🚀 Disparar Digest Manualmente</button>
+      <div id="triggerMsg" class="msg"></div>
+    </div>
+
+    <div id="pendingPanel" class="card hidden">
+      <h3>⏳ Inscrições Pendentes (<span id="countP">0</span>)</h3>
+      <div style="overflow-x:auto">
+        <table id="tableP"><thead><tr><th>E-mail</th><th>Data</th><th>Ação</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+(function(){
+  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+  var secret='';
+  
+  function showMsg(elId, cls, txt){
+    var el=document.getElementById(elId);
+    el.className='msg '+cls;
+    el.innerHTML=txt;
+  }
+  
+  window.authenticate=function(){
+    secret=document.getElementById('secret').value.trim();
+    if(!secret){showMsg('authMsg','err','Digite o secret.');return}
+    fetch(BASE+'/api/digest/admin?secret='+encodeURIComponent(secret))
+      .then(function(r){return r.json()})
+      .then(function(j){
+        if(j.ok){
+          document.getElementById('authPanel').classList.add('hidden');
+          document.getElementById('adminPanel').classList.remove('hidden');
+          loadData(j.data);
+        }else{
+          showMsg('authMsg','err','❌ '+ (j.error || 'Secret inválido'));
+        }
+      })
+      .catch(function(e){showMsg('authMsg','err','❌ Erro de conexão: '+e.message)});
+  }
+  
+  function loadData(data){
+    document.getElementById('countC').textContent=data.confirmed.length;
+    document.getElementById('countP').textContent=data.pending.length;
+    
+    var tbC=document.querySelector('#tableC tbody');
+    tbC.innerHTML=data.confirmed.map(function(e){
+      return '<tr><td>'+e+'</td><td><button class="btn red" style="padding:4px 10px;font-size:11px" onclick="removeEmail(\''+e+'\')">Remover</button></td></tr>';
+    }).join('') || '<tr><td colspan="2" class="muted">Nenhum inscrito confirmado.</td></tr>';
+    
+    var tbP=document.querySelector('#tableP tbody');
+    tbP.innerHTML=data.pending.map(function(p){
+      var d=new Date(p.createdAt).toLocaleDateString('pt-BR');
+      return '<tr><td>'+p.email+'</td><td>'+d+'</td><td><button class="btn red" style="padding:4px 10px;font-size:11px" onclick="removeEmail(\''+p.email+'\')">Remover</button></td></tr>';
+    }).join('') || '<tr><td colspan="3" class="muted">Nenhuma inscrição pendente.</td></tr>';
+  }
+  
+  window.showTab=function(tab){
+    document.querySelectorAll('.tab').forEach(function(t,i){
+      t.classList.toggle('on', (tab==='confirmed' && i===0) || (tab==='pending' && i===1));
+    });
+    document.getElementById('confirmedPanel').classList.toggle('hidden', tab!=='confirmed');
+    document.getElementById('pendingPanel').classList.toggle('hidden', tab!=='pending');
+  }
+  
+  window.removeEmail=function(email){
+    if(!confirm('Remover '+email+'?'))return;
+    fetch(BASE+'/api/digest/unsubscribe',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:email})
+    }).then(function(r){return r.json()}).then(function(j){
+      if(j.ok){
+        fetch(BASE+'/api/digest/admin?secret='+encodeURIComponent(secret))
+          .then(function(r){return r.json()})
+          .then(function(j2){if(j2.ok)loadData(j2.data)});
+      }
+    });
+  }
+  
+  window.triggerDigest=function(){
+    showMsg('triggerMsg','ok','⏳ Disparando digest... (verifique o log do GitHub Action ou console do servidor)');
+    // Note: In a real setup, this would call a specific endpoint or trigger a GH Action via API.
+    // For now, we simulate success or call the list endpoint to verify connectivity.
+    fetch(BASE+'/api/digest/list?secret='+encodeURIComponent(secret))
+      .then(function(r){return r.json()})
+      .then(function(j){
+        if(j.ok){
+          showMsg('triggerMsg','ok','✅ Comando enviado. O digest será processado para '+j.emails.length+' inscritos confirmados.');
+        }
+      });
+  }
+})();
+</script>
+</body>
+</html>

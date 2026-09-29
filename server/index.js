@@ -553,35 +553,92 @@ async function handleApi(req, res, url) {
     });
   }
 
-  /* ===== DIGEST SEMANAL ===== */
+  /* ===== DIGEST SEMANAL (com confirmação por token) ===== */
   const digestFile = path.join(__dirname, 'data', 'digest-subscribers.json');
-  const digestRead = () => { try { return JSON.parse(fs.readFileSync(digestFile, 'utf8')); } catch (e) { return []; } };
-  const digestWrite = (a) => { fs.mkdirSync(path.dirname(digestFile), { recursive: true }); fs.writeFileSync(digestFile, JSON.stringify(a, null, 2)); };
+  const digestRead = () => {
+    try {
+      const raw = fs.readFileSync(digestFile, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const migrated = { confirmed: parsed, pending: [] };
+        fs.writeFileSync(digestFile, JSON.stringify(migrated, null, 2));
+        return migrated;
+      }
+      return parsed;
+    } catch (e) {
+      return { confirmed: [], pending: [] };
+    }
+  };
+  const digestWrite = (data) => {
+    fs.mkdirSync(path.dirname(digestFile), { recursive: true });
+    fs.writeFileSync(digestFile, JSON.stringify(data, null, 2));
+  };
 
   if (p === '/api/digest/subscribe' && req.method === 'POST') {
     let body;
     try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
     const email = String(body.email || '').trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return sendJson(res, 400, { ok: false, error: 'email invalido' });
-    const arr = digestRead();
-    if (arr.indexOf(email) < 0) arr.push(email);
-    digestWrite(arr);
-    return sendJson(res, 200, { ok: true, total: arr.length });
+    
+    const data = digestRead();
+    if (data.confirmed.includes(email) || data.pending.some(x => x.email === email)) {
+      return sendJson(res, 200, { ok: true, message: 'E-mail já registrado ou pendente de confirmação.' });
+    }
+    
+    const token = crypto.randomBytes(16).toString('hex');
+    data.pending.push({ email, token, createdAt: new Date().toISOString() });
+    digestWrite(data);
+    
+    const baseUrl = process.env.BASE_URL || 'https://xbrancox.github.io/votabrasil';
+    const confirmUrl = `${baseUrl}/pages/digest-confirm.html?token=${token}`;
+    
+    return sendJson(res, 200, { 
+      ok: true, 
+      message: 'Inscrição registrada. Confirme seu e-mail.',
+      confirmUrl 
+    });
+  }
+
+  if (p === '/api/digest/confirm' && req.method === 'GET') {
+    const token = String(q.token || '');
+    if (!token) return sendJson(res, 400, { ok: false, error: 'token ausente' });
+    
+    const data = digestRead();
+    const idx = data.pending.findIndex(x => x.token === token);
+    if (idx === -1) return sendJson(res, 404, { ok: false, error: 'token invalido ou expirado' });
+    
+    const item = data.pending.splice(idx, 1)[0];
+    if (!data.confirmed.includes(item.email)) {
+      data.confirmed.push(item.email);
+    }
+    digestWrite(data);
+    
+    return sendJson(res, 200, { ok: true, message: 'E-mail confirmado com sucesso!', email: item.email });
   }
 
   if (p === '/api/digest/unsubscribe' && (req.method === 'POST' || req.method === 'DELETE')) {
     let body;
     try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
     const email = String(body.email || '').trim().toLowerCase();
-    const arr = digestRead();
-    const n = arr.length;
-    const filtered = arr.filter(e => e !== email);
-    digestWrite(filtered);
-    return sendJson(res, 200, { ok: true, removed: n - filtered.length, total: filtered.length });
+    
+    const data = digestRead();
+    const wasConfirmed = data.confirmed.includes(email);
+    const wasPending = data.pending.some(x => x.email === email);
+    
+    data.confirmed = data.confirmed.filter(e => e !== email);
+    data.pending = data.pending.filter(x => x.email !== email);
+    digestWrite(data);
+    
+    return sendJson(res, 200, { 
+      ok: true, 
+      removed: (wasConfirmed ? 1 : 0) + (wasPending ? 1 : 0), 
+      total: data.confirmed.length 
+    });
   }
 
   if (p === '/api/digest/status' && req.method === 'GET') {
-    return sendJson(res, 200, { ok: true, total: digestRead().length });
+    const data = digestRead();
+    return sendJson(res, 200, { ok: true, confirmed: data.confirmed.length, pending: data.pending.length });
   }
 
   if (p === '/api/digest/list' && req.method === 'GET') {
@@ -589,7 +646,16 @@ async function handleApi(req, res, url) {
     if (!process.env.DIGEST_SECRET || secret !== process.env.DIGEST_SECRET) {
       return sendJson(res, 403, { ok: false, error: 'sem permissao' });
     }
-    return sendJson(res, 200, { ok: true, emails: digestRead() });
+    const data = digestRead();
+    return sendJson(res, 200, { ok: true, emails: data.confirmed });
+  }
+
+  if (p === '/api/digest/admin' && req.method === 'GET') {
+    const secret = String(q.secret || '');
+    if (!process.env.DIGEST_SECRET || secret !== process.env.DIGEST_SECRET) {
+      return sendJson(res, 403, { ok: false, error: 'sem permissao' });
+    }
+    return sendJson(res, 200, { ok: true, data: digestRead() });
   }
 
   /* Backup integral (dump JSON de todas as tabelas) para a manutenção

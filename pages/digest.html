@@ -88,8 +88,15 @@ ul b{color:var(--ink)}
     var v=val(); if(!v){show('err','Digite um e-mail válido.');return}
     show('ok','⏳ inscrevendo…');
     var r=await call('/api/digest/subscribe',{email:v});
-    if(r&&r.j.ok) show('ok','✅ Pronto! <b>'+v+'</b> está na lista. Você recebe o resumo toda segunda-feira. Total de inscritos: '+r.j.total+'.');
-    else if(r) show('err','❌ '+(r.j.error||('HTTP '+r.status)));
+    if(r&&r.j.ok){
+      if(r.j.confirmUrl){
+        show('ok','✅ Inscrição registrada! <br>Um link de confirmação foi gerado. <a href="'+r.j.confirmUrl+'" style="color:var(--gold);text-decoration:underline">Clique aqui para confirmar seu e-mail</a> e ativar o recebimento.');
+      }else{
+        show('ok','✅ '+ (r.j.message || 'Pronto!') +' <b>'+v+'</b> está na lista.');
+      }
+    }else if(r){
+      show('err','❌ '+(r.j.error||('HTTP '+r.status)));
+    }
   });
   $('#bCancelar').addEventListener('click',async function(){
     var v=val(); if(!v){show('err','Digite o e-mail que quer cancelar.');return}

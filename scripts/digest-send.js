@@ -15,7 +15,8 @@ if(a.length)it=a.map(x=>"- "+fmt(x.dataHoraRegistro||x.dataHora)+" - "+String(x.
 }catch(e){it="falha votacoes: "+e.message}
 let tm="";
 try{const t=await get(API+"/api/termometro");tm="\n\nTermometro: "+JSON.stringify(t).slice(0,240)}catch(e){}
-const body="Resumo semanal MeuVoto\n\n"+it+tm+"\n\nCancelar: painel digest na pagina Votacoes.";
+const baseUrl = API.replace(/\/api\/.*$/, '') || 'https://xbrancox.github.io/votabrasil';
+const body="Resumo semanal MeuVoto\n\n"+it+tm+"\n\nPara cancelar sua inscrição, acesse: "+baseUrl+"/pages/digest.html";
 if(!process.env.SMTP_HOST||!process.env.SMTP_USER||!process.env.SMTP_PASS){console.log("SMTP incompleto; dry-run:\n"+body);return}
 const nm=require("nodemailer");
 const tr=nm.createTransport({host:process.env.SMTP_HOST,port:Number(process.env.SMTP_PORT||587),secure:String(process.env.SMTP_SECURE||"")==="true",auth:{user:process.env.SMTP_USER,pass:process.env.SMTP_PASS}});

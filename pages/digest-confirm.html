@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Confirmação de Digest · MeuVoto</title>
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
+h1,h2{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+.wrap{max-width:560px;margin:0 auto;padding:60px 20px;text-align:center}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:32px 24px;margin-top:20px}
+.msg{font-size:15px;line-height:1.6}
+.msg.ok{color:var(--green)}
+.msg.err{color:var(--red)}
+.msg.loading{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:11px 24px;cursor:pointer;margin-top:20px;text-decoration:none}
+.btn:hover{filter:brightness(1.12)}
+.btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="card">
+    <h1>📧 Confirmação de Digest</h1>
+    <p id="msg" class="msg loading">⏳ Verificando token de confirmação...</p>
+    <a id="btnBack" class="btn" href="digest.html" style="display:none">Voltar para a página de Digest</a>
+  </div>
+</main>
+<script>
+(function(){
+  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+  var params=new URLSearchParams(window.location.search);
+  var token=params.get('token');
+  var msgEl=document.getElementById('msg');
+  var btnEl=document.getElementById('btnBack');
+  
+  if(!token){
+    msgEl.className='msg err';
+    msgEl.innerHTML='❌ Token de confirmação não encontrado na URL.';
+    btnEl.style.display='inline-flex';
+    return;
+  }
+  
+  fetch(BASE+'/api/digest/confirm?token='+encodeURIComponent(token))
+    .then(function(r){return r.json()})
+    .then(function(j){
+      if(j.ok){
+        msgEl.className='msg ok';
+        msgEl.innerHTML='✅ <b>E-mail confirmado com sucesso!</b><br>Você receberá o resumo semanal do MeuVoto toda segunda-feira.';
+      }else{
+        msgEl.className='msg err';
+        msgEl.innerHTML='❌ '+ (j.error || 'Falha na confirmação. O token pode ser inválido ou já ter sido usado.');
+      }
+      btnEl.style.display='inline-flex';
+    })
+    .catch(function(e){
+      msgEl.className='msg err';
+      msgEl.innerHTML='❌ Erro de conexão com o servidor. Tente novamente mais tarde.';
+      btnEl.style.display='inline-flex';
+    });
+})();
+</script>
+</body>
+</html>
