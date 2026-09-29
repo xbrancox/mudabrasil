@@ -1,31 +1,494 @@
-# 🧠 VotaBrasil — Arquitetura, Decisões e Evoluções Cívicas
+# 🧠 VotaBrasil / MeuVoto — Arquitetura, Decisões e Evolução Cívica
 
-> Este documento registra as melhorias de produto, heurísticas de votação, métricas de fidelidade e métodos de cobrança cívica desenvolvidos para o VotaBrasil. Pode ser utilizado como referência e contexto para futuros projetos de civic-tech e interações com IA.
+> **Versão:** 2.0 — Setembro de 2026
+> **Status:** documento vivo; toda alteração substancial entra na seção **11. Histórico de revisão**.
+> **Público-alvo:** mantenedor do projeto, designers (Figma), colaboradores e futuras interações com IA.
 
----
-
-## 1. Fidelidade Partidária vs. Sentimento da Base (Termômetro Cívico)
-* **Objetivo:** Mostrar ao eleitor se o parlamentar vota alinhado às diretrizes do seu partido ou ao clamor e termômetro de confiança de sua base eleitoral.
-* **Métrica implementada:** 
-  * O sistema cruza as votações nominais do Plenário com a média da bancada partidária (Fidelidade Partidária) e compara com o índice de confiança agregado na UF daquele parlamentar no *Termômetro de Confiança*.
-  * O "Delta" exibe o desvio percentual entre o voto do deputado e o esperado pela base.
-
-## 2. Taxa de Resposta a Cobranças (Métrica de Gabinete)
-* **Objetivo:** Estimular a prestação de contas dos parlamentares através de cobranças estruturadas.
-* **Mecanismo:** 
-  * O eleitor gera um **Recibo de Cobrança Cívica** (com votações nominais específicas e promessas cobradas).
-  * O envio é feito via WhatsApp ou e-mail oficial do gabinete (extraído da API de dados abertos da Câmara/Senado).
-  * O índice de resposta reflete o engajamento do gabinete com as cobranças originadas na plataforma, criando reputação digital de transparência para o político.
-
-## 3. Pilares de Transparência e Escolha Informada
-1. **Quórum e Tipo de Votação:** Distinção clara entre votações Simbólicas ("fica como está") e Nominais (voto individual registrado).
-2. **Dossiê Cívico:** Cruzamento das últimas 30 votações nominais + presença + índice de integridade.
-3. **Mandato Revogável:** Conscientização de que 70% dos votos de origem podem revogar o mandato (mecanismo de responsabilidade política contínua).
+Este documento é a **memória de produto** do VotaBrasil/MeuVoto. Ele registra decisões arquiteturais, métricas cívicas, protocolo de cobrança, arquitetura de informação, metodologia, backlog priorizado e lições aprendidas. Ele substitui a versão 1.0 em todos os pontos em que as duas divergem.
 
 ---
 
-## 4. Evolução Recente: Janelas Agrupadas e Progressive Disclosure (Página de Votações)
-* **Reorganização Visual (`pages/votacoes.html`):**
-  * **Janelas Modulares com Ícones Informativos `ⓘ`:** As funcionalidades de acompanhamento de parlamentares, cobrança de promessas, dossiê cívico e mapa de calor foram divididas em cartões/painéis dedicados, cada um equipado com um botão explicativo `ⓘ` para instrução em tempo de execução.
-  * **Exibição Progressiva (Progressive Disclosure):** Por padrão, a listagem de votações dos últimos 10 dias agora exibe de forma enxuta apenas as **2 votações mais recentes**, reduzindo a carga cognitiva inicial. O usuário pode clicar no botão *"📖 Ver todas da janela / últimos 10 dias"* para expandir instantaneamente todas as votações disponíveis.
-  * **Links e Acessibilidade:** Validação completa e testes locais de responsividade em Desktop e Mobile. O projeto encontra-se sincronizado no GitHub e disponível para produção e testes via web.
+## 0. Como ler este documento
+
+- Se você é **designer**, vá direto à seção **6. Arquitetura de informação** e ao apêndice **A. Especificação de UI (Fase 1)**.
+- Se você é **dev**, comece pela seção **8. Qualidade e engenharia** e depois pelo roadmap (**9**).
+- Se você é **jornalista/pesquisador**, leia as seções **2. Princípios**, **3. Métricas** e **7. Metodologia**.
+- Se você é uma **IA em contexto**, leia este documento inteiro antes de propor novas métricas; evite reinventar os eixos já definidos aqui.
+
+Regras editoriais deste documento:
+
+- **Não usamos "nota única" para classificar parlamentares.** Usamos eixos separados e leitura contextual.
+- **Separamos posição legislativa de reputação de base** (confiança não é concordância temática).
+- **Separamos responsividade de prestabilidade** (gabinete responder não é o mesmo que concordar com o cidadão).
+- **Toda métrica nova** exige fórmula explícita, fonte oficial declarada, frequência de atualização e limitações conhecidas.
+
+---
+
+## 1. Posicionamento do produto
+
+O VotaBrasil responde três perguntas do eleitor, nesta ordem:
+
+1. **O que foi decidido no Plenário?** (votações recentes, agenda futura)
+2. **Como meu representante se posicionou?** (voto a voto, presença, coerência)
+3. **Ele presta contas quando cobro?** (cobranças, abertura, resposta verificada)
+
+Qualquer feature nova deve servir claramente a uma dessas três perguntas. Se não servir, é ruído.
+
+> **Anti-objetivos** (não é o que o projeto faz):
+> - Ranking moral de "bom/mau político".
+> - Vigilância individual do voto (todos os agregados são anônimos).
+> - Substituir o voto oficial em eleições.
+> - Afirmar mecanismos jurídicos que não existem no ordenamento brasileiro vigente.
+
+---
+
+## 2. Princípios de leitura responsável
+
+Os quatro princípios abaixo protegem o projeto contra leituras distorcidas. Eles **devem** aparecer na documentação pública (página `/metodologia`) e orientar qualquer UI que exponha métricas.
+
+| # | Princípio | Implicação |
+|---|---|---|
+| P1 | **Posição legislativa ≠ Reputação pessoal** | Votar "Sim" em uma PEC não diz nada sobre a integridade do parlamentar. |
+| P2 | **Confiança da base ≠ Concordância temática** | Um eleitor pode confiar pouco no deputado por ausência, escândalo ou silêncio — isso não significa que ele discordaria do voto específico. |
+| P3 | **Resposta de gabinete ≠ Aprovação política** | Um gabinete responsivo pode responder "discordamos do cidadão" com urbanidade e clareza. |
+| P4 | **Dado agregado anônimo ≠ Vigilância individual** | O termômetro é irreversível: ninguém consegue extrair o voto de uma pessoa. |
+
+### Correção em relação à v1.0
+
+A v1.0 descrevia o "Delta" como *"o desvio percentual entre o voto do deputado e o esperado pela base"*. Isso **misturava dois eixos distintos** (posição e confiança) em um único número, o que gera leitura enganosa. A v2 substitui o delta por **três eixos independentes** (seção 3.1) e por um **quadrante de representação** (seção 3.2).
+
+---
+
+## 3. Métricas de representação
+
+### 3.1 Os três eixos independentes
+
+Cada parlamentar acompanhado tem três indicadores calculados separadamente:
+
+| Eixo | Pergunta | Fonte primária | Fórmula |
+|---|---|---|---|
+| **A. Fidelidade partidária** | Quanto o parlamentar segue a orientação da própria bancada? | `GET /api/camara/votacoes/{id}/orientacoes` (orientação oficial) + votos nominais | `alinhados / votos_nominais_com_orientacao` |
+| **B. Distância da bancada** | Quão perto ou longe do comportamento médio do partido? | Votos nominais individuais vs. agregado do partido (apenas Sim/Não) | `Δpp = %Sim(deputado) − %Sim(bancada)` |
+| **C. Confiança da base** | Qual a percepção agregada (anônima) da UF? | Termômetro (`/api/termometro`), agregado por UF | Índice 0–100 com tendência (↑/↓/→) |
+
+> **O que entra no cálculo:** apenas votações nominais (tipo `N`). Simbólicas, abstenções e obstruções são excluídas dos eixos A e B; ausência entra em um quarto indicador auxiliar de **presença**.
+
+### 3.2 Quadrante de representação
+
+A combinação de (A) fidelidade partidária e (C) confiança da base gera um **quadrante** com quatro perfis interpretativos:
+
+```
+           Fidelidade partidária
+              alta       baixa
+          ┌──────────┬──────────┐
+    alta  │ Consistente │ Autônomo
+ confiança │   (alinhado │  com respaldo
+          │   e respaldado) │ popular  │
+          ├──────────┼──────────┤
+    baixa │ Partidário │ Em tensão │
+          │  (distante │ (crise de │
+          │   da base) │ representação) │
+          └──────────┴──────────┘
+```
+
+**Leitura:** nenhum quadrante é "bom" ou "ruim" por si só — o que é útil é saber em qual perfil o parlamentar está e se ele está migrando entre quadrantes ao longo do tempo.
+
+> **Limitação declarada:** o termômetro é percepção agregada, não mandato. Migrar para o quadrante "Em tensão" **não** significa que o mandato está juridicamente em risco (ver seção 5.3).
+
+### 3.3 Evolução temporal
+
+Cada eixo tem uma série histórica (últimas 30 votações nominais em que o parlamentar participou). O UI mostra **tendência** (↑/↓/→) e um sparkline SVG puro, sem bibliotecas.
+
+---
+
+## 4. Cobrança e responsividade do gabinete
+
+### 4.1 Protocolo verificável
+
+A taxa de resposta só tem valor se for **auditável**. O ciclo de vida de uma cobrança é:
+
+```
+gerada → enviada → aberta → respondida → validada
+```
+
+| Estado | Como se atinge | Peso na métrica |
+|---|---|---|
+| `gerada` | Usuário monta recibo e confirma envio | 0 |
+| `enviada` | Link rastreável com token único (UTM + id da cobrança) | 0 |
+| `aberta` | Pixel 1×1 do link no e-mail do gabinete disparado **ou** clique no link público | 1 |
+| `respondida` | Gabinete usa **link oficial de resposta** (token assinado enviado no cabeçalho do recibo) | 3 |
+| `validada` | Resposta oficial publicada e indexada na ficha pública do parlamentar | 5 |
+
+### 4.2 Métricas derivadas
+
+- **Taxa de resposta oficial** = `validadas / enviadas` (apenas cobranças entregues a endereços oficiais `@camara.leg.br` / `@senado.leg.br`).
+- **Taxa de abertura** = `abertas / enviadas` (indicador secundário; subestimado por bloqueadores de imagem).
+- **Tempo mediano de resposta** = percentil 50 de (validada.ts − enviada.ts).
+- **Relato cidadão** = marcação "recebi resposta" feita pelo próprio eleitor, exibida em camada separada e com peso visual menor.
+
+### 4.3 Selo de gabinete responsivo
+
+| Nível | Critério |
+|---|---|
+| 🥇 Ouro | Taxa ≥ 70% e mediana ≤ 7 dias |
+| 🥈 Prata | Taxa ≥ 40% e mediana ≤ 15 dias |
+| 🥉 Bronze | Taxa ≥ 20% ou qualquer resposta dentro de 30 dias |
+| ⚪ Sem registro | Nenhuma resposta validada |
+
+O selo é **descritivo**, não moralizante. Ele mede **prestabilidade do canal**, não mérito político.
+
+### 4.4 Riscos e mitigações
+
+| Risco | Mitigação |
+|---|---|
+| Eleitor marcar "recebi resposta" sem receber | Relato cidadão separado da métrica oficial |
+| Gabinete responder "pro forma" | Resposta validada só após publicação na ficha pública (texto integral) |
+| Uso político indevido do selo | Metodologia pública + disclaimer em cada ficha |
+
+---
+
+## 5. Pilares de transparência
+
+### 5.1 Quórum e tipo de votação
+
+O UI deve sempre deixar visível:
+
+- **Badge grande**: `✍️ Nominal` ou `🗣️ Simbólica`.
+- **Tooltip do badge**:
+  - Nominal: *"cada voto individual é registrado e público."*
+  - Simbólica: *"a Mesa apura o conjunto; não há registro individual. É como a maioria das matérias passa."*
+- **Linha de quórum**: *"Aprovada com folga de N votos"* ou *"Rejeitada — faltaram N votos"*.
+- **Aviso**: *"Indicativo calculado pelo MeuVoto. O resultado oficial está em [link da fonte]."*
+
+### 5.2 Dossiê cívico
+
+O dossiê de um parlamentar reúne:
+
+1. Última janela de votações nominais (padrão: 30).
+2. Presença percentual.
+3. Eixos A, B e C da seção 3.
+4. Promessas cobradas pelo usuário.
+5. Recibos de cobrança emitidos e status.
+6. Reclamações e apoios públicos.
+
+Exportável em PDF (ficha única) ou CSV (para jornalistas).
+
+### 5.3 Mandato revogável — tratamento educativo
+
+No Brasil, **não há mecanismo vigente de revogação popular direta de mandato de deputado federal ou senador**. Apresentar isso como se fosse um recurso efetivo é **tecnicamente incorreto e juridicamente arriscado**.
+
+**Como o projeto trata o tema:**
+
+- Uma página educativa `/mandato-responsavel` explica o conceito de *recall* em democracias comparadas (alguns estados dos EUA, alguns cantões suíços, casos pontuais na América Latina).
+- Um **simulador conceitual** mostra quantos eleitores da UF precisariam se mobilizar para atingir 70% — apenas como exercício aritmético, com disclaimer.
+- Chamadas para mobilização legítima (abaixo-assinados, audiências públicas, pressão via canais oficiais) são **linkadas**, nunca simuladas como efetivas.
+
+Texto obrigatório em qualquer tela que mencione revogação:
+
+> *"A revogação popular direta de mandato parlamentar não é um mecanismo vigente no ordenamento brasileiro. Este painel tem finalidade educativa e de mobilização cívica responsável."*
+
+---
+
+## 6. Arquitetura de informação
+
+### 6.1 Cinco abas principais (`pages/votacoes.html`)
+
+| Aba | Conteúdo | Pergunta que responde |
+|---|---|---|
+| 🗳️ **Votações** | Filtros + agenda futura + lista de votações (progressive disclosure) | *O que foi decidido?* |
+| ⭐ **Meus representantes** | Autocomplete, promessas, temas de interesse, alertas | *Quem me representa?* |
+| 📊 **Análise** | Quadrante, fidelidade, distância, confiança, tendência, presença, coerência no tempo | *Como se posicionam?* |
+| 🧾 **Cobranças** | Recibos, histórico, status de resposta, selo | *Prestam contas?* |
+| 🏛️ **Sistema** | API pública, status, metodologia, digest, kit de publicação | *Como o sistema funciona?* |
+
+### 6.2 Template obrigatório do `ⓘ`
+
+Cada cartão/painel com `ⓘ` tem popover com **quatro campos**, nesta ordem:
+
+1. **O que é** (1 frase)
+2. **Para que serve** (1 frase)
+3. **Como interpretar** (bullet curto)
+4. **Limitações** (bullet curto, sempre presente)
+
+Exemplo para "Fidelidade partidária":
+
+> **O que é:** porcentagem de votos nominais em que o parlamentar seguiu a orientação oficial da própria bancada.
+> **Para que serve:** identificar alinhamento partidário, não qualidade de mandato.
+> **Como interpretar:** 90%+ = alinhado; 70–89% = moderado; <70% = autônomo ou em tensão.
+> **Limitações:** só conta votações com orientação publicada; exclui abstenções; não mede acordo com a base.
+
+### 6.3 Progressive disclosure
+
+- **Lista de votações**: padrão mostra **2 cards** + botão "📖 Ver todas da janela".
+- **Agenda futura**: padrão **10 dias** mostrando até 4 sessões; botões **"último mês"** e **"todas"** para expandir.
+- **Cards de análise**: resumo em 1 linha; detalhes expandíveis (`<details>` ou accordion).
+- **Dossiê**: resumo em 3 números grandes (presença, fidelidade, confiança); voto a voto em tabela expansível.
+
+### 6.4 Barra de estatísticas no topo (contexto)
+
+Quatro números sempre visíveis, atualizados em tempo real:
+
+```
+Votações na janela  ·  Nominais registradas  ·  Sessões futuras  ·  Representantes acompanhados
+```
+
+### 6.5 Estados que o design deve prever
+
+- **Vazio** (sem representantes, sem promessas) — call-to-action, nunca tela quebrada.
+- **Recesso** (janela de 10 dias vazia por calendário real) — aviso honesto + fallback das 40 mais recentes.
+- **Offline/API fora** — cache local com timestamp; aviso "dados de DD/MM HH:MM".
+- **Simbólica** (sem voto a voto) — explicação clara + orientações de bancada.
+- **Nominal** — placar + quórum + placar por UF + coerência + voto a voto.
+- **Senado bloqueado por WAF** — fallback com link oficial, nunca erro genérico.
+
+### 6.6 Acessibilidade
+
+- `role=tablist / tab / tabpanel` na barra de abas, com setas ←/→, Home/End.
+- `role=button` + `tabindex=0` + `aria-label` em todos os `span[onclick]` e `div[onclick]` (incluindo gerados dinamicamente — MutationObserver debounced).
+- Foco visível dourado (`--gold`).
+- `aria-live="polite"` nos números de contexto.
+- `prefers-reduced-motion` respeitado (sem animações).
+- Contraste AA no tema escuro.
+
+### 6.7 URL por aba e deep-links
+
+- `#tab-votacoes`, `#tab-analise`, `#tab-cobrancas`, `#tab-sistema`.
+- `#v<id>` abre a votação específica e expande os detalhes.
+- `?meus=camara-X,camara-Y` carrega representantes de um link compartilhado (adoção aditiva).
+
+### 6.8 Modo leitura e impressão
+
+- Botão "🖨️ Modo leitura" adiciona `body.printall` — abas e controles somem, todos os cartões expandem, CSS de print limpo.
+
+### 6.9 Busca global (roadmap — Fase 2)
+
+- `⌘K` / `Ctrl+K` abre command palette sobre abas, cartões e as votações carregadas.
+- Resultados agrupados: *Aba → Cartão → Votação*.
+
+---
+
+## 7. Metodologia e fontes
+
+| Item | Fonte oficial | Frequência |
+|---|---|---|
+| Votações nominais/simbólicas | `dadosabertos.camara.leg.br` via proxy `/api/camara/votacoes` | tempo real |
+| Orientações de bancada | `dadosabertos.camara.leg.br` `/votacoes/{id}/orientacoes` | tempo real |
+| Votações do Senado | `legis.senado.leg.br/dadosabertos` (com fallback se WAF) | tempo real |
+| Parlamentares (513 dep. + 81 sen.) | APIs oficiais + cache local | atualizado diariamente |
+| Termômetro de confiança | Agregado anônimo interno (irreversível) | tempo real |
+| Digest semanal | GitHub Action cron `0 12 * * 1` via SMTP | segunda-feira 12h UTC |
+
+**O que é oficial vs. estimado:**
+
+- Oficiais: placares, votos nominais, presença, orientações publicadas.
+- Estimados: quadrante de representação (combinação), tendência (suavização), taxa de abertura (subestimada por bloqueadores), presença agregada (só conta sessões com votação nominal registrada).
+
+LGPD: nenhum dado pessoal é publicado. Termômetro é irreversível. Cobranças só são indexadas com token público do usuário. E-mails do digest são armazenados localmente no servidor, sem terceiros.
+
+---
+
+## 8. Qualidade e engenharia
+
+### 8.1 Scripts de auditoria no repositório
+
+- `scripts/auditar-votacoes.js` — sintaxe de todos os `<script>` inline de `pages/votacoes.html`, órfãs reais (exclui strings, templates, comentários, palavras-chave, globais do browser e funções CSS como `rgba`, `var`, `repeat`), duplicadas (só `function` de topo).
+- `scripts/validar-ia.js` — estende o auditor: valida atributos HTML com aspas, balanceamento de `<div>`, marcadores de ciclo.
+- `scripts/testar-ia.js` — suíte de 60+ asserções em DOM real (jsdom) com API simulada.
+- `scripts/testar-ia-real.js` — mesma suíte com dados reais de produção.
+
+**CI obrigatório** (roadmap Fase 1+): GitHub Action rodando `node scripts/validar-ia.js && node scripts/testar-ia.js` em cada push a `main`. Falha no gate **bloqueia o merge**.
+
+### 8.2 Lições aprendidas (incidentes reais)
+
+| Incidente | Causa raiz | Prevenção |
+|---|---|---|
+| **ID com traço tratado como subtração** (`onclick="expand(2634392-21)"` → `expand(2634371)`) | ID da Câmara contém `-`; passado sem aspas em gerador de HTML. | Todos os `onclick` com IDs usam template literal: `` `onclick="expand('${id}')"` ``. Varredura automatizada rejeita `/onclick="[^"]*\(.*\w-\w/`. |
+| **IIFE quebrada** (`)();\n</script>` em vez de `})();\n</script>`) | Injeção automática de shim dentro de `<script>` existente. | Shims sempre inseridos como blocos completos, validados por `new Function()` antes do commit. |
+| **Auditor acusando `rgba`, `var`, `repeat` como órfãs** | Regex contava chamadas dentro de strings CSS embutidas. | Auditor v2 faz **strip de strings, templates e comentários** antes da análise; allowlist de funções CSS. |
+| **`const` de topo não expõe em `window`** | Agenda ficava vazia porque bindings não estavam globais. | Bindings globais explícitos (`var CAM = …`) quando precisam ser acessados por scripts injetados. |
+| **`exit 1` de PowerShell fechava janela** | Erros no bloco abortavam a sessão sem log. | Zero `exit` em nível de shell; flag + transcript em arquivo `_*.txt`. |
+
+### 8.3 Política de commits
+
+- Commits atômicos: uma feature por commit.
+- Mensagem no padrão Conventional Commits (`feat(scope)`, `fix(scope)`, `docs(scope)`).
+- Nenhum merge em `main` sem gate verde.
+
+---
+
+## 9. Roadmap
+
+### Fase 1 — UX profissional (parcialmente concluída)
+
+**Objetivo:** página clara, navegável e auditável.
+
+- [x] Cinco abas principais.
+- [x] `ⓘ` padronizado em todos os blocos.
+- [x] Progressive disclosure (2 votações + expandir).
+- [x] Agenda 10 dias / mês / todas.
+- [x] Estatísticas no topo.
+- [x] Estados vazios úteis.
+- [x] Acessibilidade teclado/ARIA.
+- [x] Modo impressão.
+- [ ] **Busca global `⌘K`** (próximo).
+- [ ] CI obrigatório.
+
+### Fase 2 — Métricas de representação
+
+**Objetivo:** tirar o produto de "consulta" e levar para "análise cívica".
+
+- [ ] Fidelidade partidária (eixo A) no UI.
+- [ ] Distância da bancada (eixo B) no UI.
+- [ ] Confiança da base (eixo C) no UI.
+- [ ] Quadrante de representação (visualização).
+- [ ] Tendência no tempo (sparkline).
+- [ ] Comparador A × B de dois deputados.
+
+### Fase 3 — Cobrança verificada
+
+**Objetivo:** fechar o ciclo cidadão → gabinete → resposta pública.
+
+- [ ] Token assinado no recibo.
+- [ ] Link oficial de resposta do gabinete.
+- [ ] Página pública da cobrança.
+- [ ] Métricas de abertura/resposta.
+- [ ] Selo de gabinete responsivo (ouro/prata/bronze).
+
+### Fase 4 — Educação cívica
+
+**Objetivo:** abordar temas como *recall* e mobilização sem erro jurídico.
+
+- [ ] Página `/mandato-responsavel`.
+- [ ] Simulador conceitual (aritmético, nunca jurídico).
+- [ ] Disclaimer obrigatório em toda tela que mencione revogação.
+- [ ] Links para mobilização legítima.
+
+---
+
+## 10. Backlog sugerido (ordenado por impacto/esforço)
+
+| # | Item | Impacto | Esforço |
+|---|---|---|---|
+| P0 | Busca global `⌘K` | Alto | Médio |
+| P1 | Comparador A × B | Muito alto | Médio |
+| P2 | Tema automático por votação (tags editoriais) | Alto | Médio |
+| P3 | Linha "O que muda na prática" por matéria | Muito alto | Alto |
+| P4 | Modo cidadão (menos siglas, mais frases prontas) | Alto | Baixo |
+| P5 | Tema claro / alto contraste | Alto | Baixo |
+| P6 | Exportar card como PNG (WhatsApp) | Muito alto | Alto |
+| P7 | Notificações push inteligentes (tema + representante + prazo) | Médio | Médio |
+| P8 | Offline-first visível (timestamp da última atualização) | Médio | Baixo |
+
+---
+
+## 11. Histórico de revisão
+
+| Versão | Data | Mudança |
+|---|---|---|
+| v1.0 | 2026-09 | Primeira versão. Conceitos iniciais de delta, taxa de resposta, mandato revogável. |
+| v2.0 | 2026-09-30 | Reescrita completa. Separação de eixos (A/B/C). Quadrante de representação. Protocolo verificável de cobrança. Tratamento educativo de mandato revogável. Arquitetura de 5 abas. Template de `ⓘ`. Metodologia pública. Lições aprendidas documentadas. Roadmap priorizado. |
+
+---
+
+## Apêndice A — Especificação de UI (Fase 1)
+
+> Para entrega ao Figma/figma-free: este apêndice é o contrato visual.
+
+### A.1 Tokens de design
+
+```
+--bg        #061a3a
+--card      #0d2242
+--card2     #123059
+--line      rgba(127,176,245,.22)
+--ink       #ffffff
+--muted     #94A3B8
+--gold      #FFD700   (foco, CTA, destaque)
+--blueL     #4a90f0
+--green     #2ECC71   (Sim, sucesso)
+--red       #E74C3C   (Não, erro)
+```
+
+Tipografia: **Montserrat** 700–900 (títulos) · **Manrope** 400–800 (texto). Raios padrão: `14–16px`. Contraste AA obrigatório.
+
+### A.2 Componentes reutilizáveis
+
+`.btn` / `.btn.gold` / `.btn.sm` · `.badge(.tn/.ts)` · `.vb(.sim/.nao/.abs/.out)` · `.ecard` · `.painel` · `.vcard` · `.vtable` · `.ochips` · `.cbar` / `.cleg` · `.quorum` · `.sbox` · `.lei` · `.fonte` · `.infoBtn` (ⓘ) · `.popover`
+
+### A.3 Grid
+
+- Desktop: largura máxima 1180px; grid de 12 colunas.
+- Mobile: coluna única; abas roláveis horizontalmente com auto-scroll para aba ativa.
+- Breakpoint crítico: 860px (troca grid de 2 para 1 coluna).
+
+### A.4 Hierarquia de uma votação (card)
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ [badge: Nominal/Simbólica]        [data · Plenário]    │
+│                                                         │
+│ Título da matéria                                       │
+│ [📜 Sigla N/ANO]  (mouse: resumo · clique: oficial)    │
+│ Ementa (até 240 chars)                                  │
+│                                                         │
+│ [🔎 Como foi esta votação?]                             │
+└─────────────────────────────────────────────────────────┘
+```
+
+Quando expandida (nominal):
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Barra de placar: ██████ verde █████ vermelho ██ cinza    │
+│ Sim: X · Não: Y · Abstenção: Z · Outros: W              │
+│                                                         │
+│ 🧮 Quórum: tot presentes · necessários N · frase        │
+│                                                         │
+│ 🗺️ Placar por UF (chips; UF do usuário dourada)         │
+│                                                         │
+│ 🗣️ Coerência de bancada (chips por partido)             │
+│                                                         │
+│ ⭐ Seus deputados (chips com voto)                      │
+│                                                         │
+│ 🤝 Promessas cobradas                                   │
+│                                                         │
+│ [📄 PDF] [📲 WhatsApp] [busca] [filtro tipo]            │
+│                                                         │
+│ Tabela voto a voto (150 primeiras, lazy-load)            │
+└─────────────────────────────────────────────────────────┘
+```
+
+### A.5 Estados críticos
+
+- **Vazio**: "Marque ⭐ representantes para começar." + CTA.
+- **Recesso**: "Câmara pode estar em recesso/período eleitoral. Mostrando as 40 mais recentes."
+- **Offline**: banner amarelo com "Última atualização: DD/MM HH:MM. Algumas ações podem falhar."
+- **Senado WAF**: card explicativo + link oficial (nunca erro genérico).
+
+### A.6 Acessibilidade mínima
+
+- Foco visível em todos os elementos interativos (outline `--gold`).
+- `aria-live="polite"` nos 4 números do topo.
+- `role=tablist/tab/tabpanel` na barra de abas.
+- `role=button` + `tabindex=0` + `aria-label` em chips clicáveis.
+- `prefers-reduced-motion` desliga animações.
+- Textos sempre em `--ink` ou `--muted` (nunca branco sobre branco).
+
+---
+
+## Apêndice B — Glossário cívico do projeto
+
+- **Nominal:** votação em que cada parlamentar registra Sim/Não/Abstenção/Obstrução individualmente.
+- **Simbólica:** votação em que a Mesa apura o conjunto sem registro individual.
+- **Bancada:** conjunto de parlamentares do mesmo partido.
+- **Orientação:** voto recomendado pela liderança da bancada para uma votação específica.
+- **Fidelidade partidária:** porcentagem de alinhamento do parlamentar com a orientação da própria bancada.
+- **Distância da bancada:** diferença em pontos percentuais (Δpp) entre o %Sim do parlamentar e o %Sim agregado da bancada.
+- **Termômetro de confiança:** índice agregado anônimo da UF; irreversível.
+- **Recibo de cobrança:** documento gerado pelo usuário citando votações nominais e promessas, enviado ao gabinete.
+- **Resposta verificada:** resposta do gabinete registrada via link oficial assinado no recibo.
+- **Mandato revogável:** conceito educativo (não vigente no Brasil para deputados federais).
+
+---
+
+*Fim do documento. Para alterações, abra PR atualizando a seção 11.*
