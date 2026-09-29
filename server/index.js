@@ -541,6 +541,18 @@ async function handleApi(req, res, url) {
   if (p === '/api/health') {
     let registros = 0;
     try { registros = db.countBallots(); } catch (_) { }
+    let digestConfirmed = 0, digestPending = 0, digestLastSent = null;
+    try {
+      const digestFile = path.join(__dirname, 'data', 'digest-subscribers.json');
+      const d = JSON.parse(fs.readFileSync(digestFile, 'utf8'));
+      if (Array.isArray(d)) { digestConfirmed = d.length; }
+      else { digestConfirmed = (d.confirmed || []).length; digestPending = (d.pending || []).length; }
+    } catch (_) {}
+    try {
+      const statsFile = path.join(__dirname, 'data', 'digest-stats.json');
+      const stats = JSON.parse(fs.readFileSync(statsFile, 'utf8'));
+      digestLastSent = stats.lastSent || null;
+    } catch (_) {}
     return sendJson(res, 200, {
       ok: true,
       uptimeSec: Math.round(process.uptime()),
@@ -549,7 +561,10 @@ async function handleApi(req, res, url) {
       totalRegistros: registros,
       totalVotosAtivos: votes.totals().totalVotosAtivos,
       totalRevogados: votes.totals().totalRevogados,
-      atualizacaoDadosPublicos: 'a cada ' + REFRESH_HOURS + 'h (automática)'
+      atualizacaoDadosPublicos: 'a cada ' + REFRESH_HOURS + 'h (automática)',
+      digestConfirmed: digestConfirmed,
+      digestPending: digestPending,
+      digestLastSent: digestLastSent
     });
   }
 

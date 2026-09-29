@@ -1,74 +1,220 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MeuVoto - Status</title>
-<meta name="description" content="Status da plataforma MeuVoto: fontes de dados, saúde do backend e atualizações.">
-<link rel="canonical" href="https://mudabrasil-production-79eb.up.railway.app/pages/status.html">
-<meta property="og:title" content="Status · MeuVoto">
-<meta property="og:description" content="Status da plataforma MeuVoto: fontes de dados, saúde do backend e atualizações.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://mudabrasil-production-79eb.up.railway.app/pages/status.html">
-<meta property="og:image" content="https://mudabrasil-production-79eb.up.railway.app/og-image.png">
-<meta property="og:site_name" content="MeuVoto">
-<meta property="og:locale" content="pt_BR">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://mudabrasil-production-79eb.up.railway.app/og-image.png">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Status · MeuVoto</title>
+<meta name="description" content="Status ao vivo da plataforma MeuVoto: backend, Câmara, Senado e fallbacks de cache.">
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
-  <meta http-equiv="refresh" content="2;url=meu-voto.html#termometro">
-  <link rel="stylesheet" href="../css/design-system.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: var(--space-md);
-      text-align: center;
-    }
-    .redirect-box {
-      max-width: 480px;
-      padding: var(--space-2xl);
-      background: var(--surface-500);
-      border-radius: var(--border-radius-lg);
-      border: 1px solid var(--border-500);
-    }
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid var(--border-500);
-      border-top-color: var(--accent-500);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto var(--space-md);
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C;--yellow:#FFC107}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif}
+h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px 60px}
+.muted{color:var(--muted);font-size:12.5px}
+.hero{text-align:center;padding:38px 20px 10px}
+.hero h1{font-size:clamp(24px,4.5vw,36px)}
+.hero p{color:var(--muted);max-width:680px;margin:10px auto 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.card{border:1px solid var(--line);border-radius:16px;padding:16px 18px;background:var(--card)}
+.card h3{font-size:14px;display:flex;align-items:center;gap:8px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--green);box-shadow:0 0 0 4px rgba(46,204,113,.2)}
+.dot.warn{background:var(--yellow);box-shadow:0 0 0 4px rgba(255,193,7,.2);animation:pulse 1.6s infinite}
+.dot.err{background:var(--red);box-shadow:0 0 0 4px rgba(231,76,60,.2)}
+@keyframes pulse{50%{opacity:.6}}
+.big{font:800 28px Montserrat;line-height:1;margin-top:8px}
+.sub{color:var(--muted);font-size:12.5px;margin-top:4px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.row:last-child{border-bottom:none}
+.k{color:var(--muted)}
+.v{font-weight:700}
+.banner{margin-top:14px;border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.5}
+.banner.off{background:rgba(255,193,7,.08);border:1px solid rgba(255,193,7,.4);color:#ffe9a8}
+.banner.live{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.4);color:#bff0d2}
+.foot{text-align:center;margin-top:22px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.big{font-size:22px}}
+</style>
 </head>
 <body>
-  <div class="redirect-box">
-    <div class="spinner"></div>
-    <h2>📊 Status foi unificado!</h2>
-    <p style="color:var(--text-secondary); margin-bottom:var(--space-lg);">
-        A página de Status tinha conteúdo muito parecido com o Termômetro. Agora tudo
-        está organizado em <strong>Meu Voto</strong>, com abas claras pra cada ação.
-    </p>
-    <p style="font-size:var(--text-sm); color:var(--text-muted);">
-      Redirecionando em 2 segundos...
-    </p>
-    <a href="meu-voto.html#termometro" class="btn btn-accent" style="display:inline-block; margin-top:var(--space-md);">
-      Ir agora →
-    </a>
+<main class="wrap">
+<section class="hero">
+  <h1>📡 Status do Sistema</h1>
+  <p>Monitoramento ao vivo das fontes que alimentam o MeuVoto: backend próprio, Câmara dos Deputados e Senado Federal. Se algum serviço cair, a plataforma continua funcionando com o cache mais recente (offline-first).</p>
+</section>
+
+<div id="banner"></div>
+
+<div class="grid">
+  <div class="card">
+    <h3><span class="dot" id="dot-backend"></span> Backend MeuVoto</h3>
+    <div class="big" id="be-status">…</div>
+    <div class="sub" id="be-sub">consultando…</div>
+    <div id="be-rows"></div>
   </div>
-  <script>
-    setTimeout(function() {
-      window.location.href = 'meu-voto.html#termometro';
-    }, 2000);
-  </script>
+  <div class="card">
+    <h3><span class="dot" id="dot-camara"></span> Câmara dos Deputados</h3>
+    <div class="big" id="cm-status">…</div>
+    <div class="sub" id="cm-sub">consultando…</div>
+    <div id="cm-rows"></div>
+  </div>
+  <div class="card">
+    <h3><span class="dot" id="dot-senado"></span> Senado Federal</h3>
+    <div class="big" id="sn-status">…</div>
+    <div class="sub" id="sn-sub">consultando…</div>
+    <div id="sn-rows"></div>
+  </div>
+  <div class="card">
+    <h3><span class="dot" id="dot-pages"></span> GitHub Pages</h3>
+    <div class="big" id="pg-status">…</div>
+    <div class="sub" id="pg-sub">consultando…</div>
+    <div id="pg-rows"></div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:14px">
+  <h3 style="font-size:14px">🧱 Digest semanal</h3>
+  <div id="dg-rows" class="sub">consultando…</div>
+</div>
+
+<div class="card" style="margin-top:14px">
+  <h3 style="font-size:14px">💾 Fallback de cache</h3>
+  <div class="row"><span class="k">Status</span><span class="v" id="fb-status">…</span></div>
+  <div class="row"><span class="k">Última leitura do backend</span><span class="v" id="fb-ts">—</span></div>
+  <div class="row"><span class="k">Última leitura da Câmara</span><span class="v" id="fb-camara">—</span></div>
+  <div class="row"><span class="k">Última leitura do Senado</span><span class="v" id="fb-senado">—</span></div>
+  <div class="row"><span class="k">Ação</span><span class="v"><button id="fb-clear" style="background:transparent;border:1px solid var(--red);color:var(--red);border-radius:999px;padding:4px 12px;font:700 12px Manrope;cursor:pointer">Limpar cache</button></span></div>
+</div>
+
+<p class="foot muted">Atualizado a cada 60 segundos. Dados agregados e anônimos. <a href="votacoes.html">← Voltar</a> · <a href="stats.html">Estatísticas públicas</a> · <a href="digest-metrics.html">Métricas do digest</a></p>
+</main>
+<script>
+var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+var $=function(s){return document.querySelector(s)};
+var CACHE_KEY='mv_status_cache';
+function saveCache(obj){try{localStorage.setItem(CACHE_KEY,JSON.stringify(obj))}catch(e){}}
+function loadCache(){try{return JSON.parse(localStorage.getItem(CACHE_KEY)||'null')}catch(e){return null}}
+function fmtTime(ms){if(!ms)return '—';var d=new Date(ms);return d.toLocaleString('pt-BR')}
+function fmtDur(s){if(s==null)return '—';var h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h+'h '+m+'min'}
+function setDot(id,cls){var el=document.getElementById(id);if(!el)return;el.className='dot '+cls}
+function row(k,v){return '<div class="row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'}
+async function probe(url,opts){var t0=performance.now();var ctrl=new AbortController();var tmr=setTimeout(function(){ctrl.abort()},6000);try{var r=await fetch(url,Object.assign({signal:ctrl.signal},opts||{}));clearTimeout(tmr);return{ok:r.ok,status:r.status,ms:Math.round(performance.now()-t0),r:r}}catch(e){clearTimeout(tmr);return{ok:false,status:0,ms:Math.round(performance.now()-t0),err:e.message}}
+async function refresh(){
+  var banner=$('#banner');
+  var anyBad=false;
+  /* --- Backend --- */
+  var be=await probe(BASE+'/api/health');
+  var beData=null;
+  if(be.ok){try{beData=await be.r.json()}catch(e){be.ok=false;be.err='json inválido'}}
+  if(be.ok&&beData&&beData.ok){
+    setDot('dot-backend','ok');
+    $('#be-status').textContent='🟢 Online';
+    $('#be-sub').textContent='resposta em '+be.ms+'ms';
+    $('#be-rows').innerHTML=
+      row('Uptime',fmtDur(beData.uptimeSec))+
+      row('Storage',beData.storage||'—')+
+      row('Votos ativos',beData.totalVotosAtivos||0)+
+      row('Revogados',beData.totalRevogados||0)+
+      row('Inscritos digest',beData.digestConfirmed||0)+
+      row('Pendentes digest',beData.digestPending||0)+
+      row('Atualização',beData.atualizacaoDadosPublicos||'—');
+    try{
+      var c=loadCache()||{};c.be={t:Date.now(),d:beData};saveCache(c);
+    }catch(e){}
+  }else{
+    anyBad=true;
+    setDot('dot-backend','err');
+    $('#be-status').textContent='🔴 Offline';
+    $('#be-sub').textContent='falha: '+(be.err||'HTTP '+be.status);
+    var cached=loadCache();
+    if(cached&&cached.be){
+      $('#be-rows').innerHTML=row('Modo','dados do cache de '+fmtTime(cached.be.t))+
+        row('Uptime',fmtDur(cached.be.d.uptimeSec))+
+        row('Votos ativos',cached.be.d.totalVotosAtivos||0)+
+        row('Inscritos digest',cached.be.d.digestConfirmed||0);
+    }else{
+      $('#be-rows').innerHTML='<div class="row"><span class="k">sem cache local</span></div>';
+    }
+  }
+  /* --- Câmara --- */
+  var cm=await probe('https://dadosabertos.camara.leg.br/api/v2/deputados?itens=1');
+  if(cm.ok){
+    setDot('dot-camara','ok');
+    $('#cm-status').textContent='🟢 Online';
+    $('#cm-sub').textContent='resposta em '+cm.ms+'ms · dadosabertos.camara.leg.br';
+    $('#cm-rows').innerHTML=row('Fonte','API pública oficial')+row('HTTP','200 OK');
+    try{var c2=loadCache()||{};c2.cm={t:Date.now()};saveCache(c2)}catch(e){}
+  }else{
+    anyBad=true;
+    setDot('dot-camara','err');
+    $('#cm-status').textContent='🔴 Offline';
+    $('#cm-sub').textContent='falha: '+(cm.err||'HTTP '+cm.status);
+    var cached2=loadCache();
+    $('#cm-rows').innerHTML=cached2&&cached2.cm?row('Último acesso',fmtTime(cached2.cm.t)):'<div class="row"><span class="k">sem histórico</span></div>';
+  }
+  /* --- Senado --- */
+  var sn=await probe('https://legis.senado.leg.br/dadosabertos/senador/listaBasica');
+  if(sn.ok){
+    setDot('dot-senado','ok');
+    $('#sn-status').textContent='🟢 Online';
+    $('#sn-sub').textContent='resposta em '+sn.ms+'ms · legis.senado.leg.br';
+    $('#sn-rows').innerHTML=row('Fonte','API pública oficial')+row('HTTP','200 OK');
+    try{var c3=loadCache()||{};c3.sn={t:Date.now()};saveCache(c3)}catch(e){}
+  }else{
+    anyBad=true;
+    setDot('dot-senado','err');
+    $('#sn-status').textContent='🔴 Offline';
+    $('#sn-sub').textContent='falha: '+(sn.err||'HTTP '+sn.status);
+    var cached3=loadCache();
+    $('#sn-rows').innerHTML=cached3&&cached3.sn?row('Último acesso',fmtTime(cached3.sn.t)):'<div class="row"><span class="k">sem histórico</span></div>';
+  }
+  /* --- GitHub Pages --- */
+  var pg=await probe('https://xbrancox.github.io/votabrasil/index.html',{method:'HEAD'});
+  if(pg.ok){
+    setDot('dot-pages','ok');
+    $('#pg-status').textContent='🟢 Online';
+    $('#pg-sub').textContent='resposta em '+pg.ms+'ms · xbrancox.github.io';
+    $('#pg-rows').innerHTML=row('Status','página publicada')+row('HTTP','200 OK');
+  }else{
+    anyBad=true;
+    setDot('dot-pages','warn');
+    $('#pg-status').textContent='🟡 Degradado';
+    $('#pg-sub').textContent='falha: '+(pg.err||'HTTP '+pg.status);
+    $('#pg-rows').innerHTML='<div class="row"><span class="k">verifique github.com/xbrancox/votabrasil</span></div>';
+  }
+  /* --- Digest (público agregado, via /api/health já expandido) --- */
+  if(be.ok&&beData){
+    $('#dg-rows').innerHTML=
+      row('Inscritos confirmados',beData.digestConfirmed||0)+
+      row('Pendentes de confirmação',beData.digestPending||0)+
+      (beData.digestLastSent?row('Último envio',fmtTime(new Date(beData.digestLastSent).getTime())):'<div class="row"><span class="k">último envio</span><span class="v">—</span></div>')+
+      row('Frequência','toda segunda-feira, 09:00');
+  }else{
+    $('#dg-rows').innerHTML='<div class="row"><span class="k">indisponível enquanto o backend estiver offline</span></div>';
+  }
+  /* --- Banner --- */
+  if(anyBad){
+    banner.innerHTML='<div class="banner off">⚠️ Um ou mais serviços estão fora do ar. O site continua funcional com o cache mais recente — o fallback está ativo automaticamente em votacoes.html e nas páginas de Radar, Eleições 2026 e Fundo Eleitoral.</div>';
+  }else{
+    banner.innerHTML='<div class="banner live">✅ Todos os serviços operando normalmente.</div>';
+  }
+  /* --- Fallback info --- */
+  var c4=loadCache()||{};
+  $('#fb-status').textContent='ativo (localStorage)';
+  $('#fb-ts').textContent=fmtTime(c4.be?c4.be.t:null);
+  $('#fb-camara').textContent=fmtTime(c4.cm?c4.cm.t:null);
+  $('#fb-senado').textContent=fmtTime(c4.sn?c4.sn.t:null);
+}
+$('#fb-clear').addEventListener('click',function(){try{localStorage.removeItem(CACHE_KEY);$('#fb-ts').textContent='—';$('#fb-camara').textContent='—';$('#fb-senado').textContent='—'}catch(e){}});
+refresh();
+setInterval(refresh,60000);
+</script>
 </body>
 </html>

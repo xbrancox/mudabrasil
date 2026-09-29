@@ -313,7 +313,7 @@ async function digestStatus(){dgMsg("⏳ consultando...",true);try{var r=await d
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const trunc=(s,n)=>s&&s.length>n?s.slice(0,n)+'…':(s||'');
-async function fetchJ(u){try{const r=await fetch(u);if(!r.ok)throw new Error(r.status);return await r.json()}catch(e){return null}}
+async function fetchJ(u){try{const r=await fetch(u);if(!r.ok)throw new Error(r.status);const j=await r.json();try{localStorage.setItem('mv_api_'+u.slice(0,120),JSON.stringify({t:Date.now(),d:j}))}catch(e){}return j}catch(e){try{const raw=localStorage.getItem('mv_api_'+u.slice(0,120));if(raw){const c=JSON.parse(raw);return c.d}}catch(e2){}return null}}
 const BASE=(()=>{try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
 const CAM=u=>BASE+'/api/camara/'+u;
 const oficial=pid=>pid?('https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao='+pid):'#';
