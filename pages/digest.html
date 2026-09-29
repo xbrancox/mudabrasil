@@ -63,8 +63,19 @@ ul b{color:var(--ink)}
     <p class="muted" style="margin-top:10px">Cada e-mail tem link de descadastro. Você pode assinar/cancelar quantas vezes quiser. O envio é feito por um robô open-source (GitHub Action) que lê a lista no backend e usa SMTP configurado pelo mantenedor — seu e-mail nunca é usado para outra finalidade.</p>
   </div>
 
+  <div class="card" id="pushCard" style="display:none">
+    <h3 style="font-size:15px">🔔 Notificações no Celular (Opcional)</h3>
+    <p class="muted" style="margin-bottom:10px">Além do e-mail, receba um alerta direto no seu celular assim que o resumo semanal for publicado. Funciona mesmo com o app fechado.</p>
+    <div class="row">
+      <button class="btn gold" id="bAtivarPush">Ativar Notificações Push</button>
+      <button class="btn" id="bDesativarPush" style="display:none">Desativar</button>
+    </div>
+    <div class="msg" id="msgPush"></div>
+  </div>
+
   <p class="foot"><a href="votacoes.html">← Voltar para as Votações</a></p>
 </main>
+<script src="../js/push-notifications.js"></script>
 <script>
 (function(){
   var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
@@ -112,6 +123,53 @@ ul b{color:var(--ink)}
     else if(r) show('err','❌ '+(r.j.error||('HTTP '+r.status)));
   });
   em.addEventListener('keydown',function(e){if(e.key==='Enter')$('#bAssinar').click()});
+
+  // Web Push Logic
+  if (window.MeuvotoPush && MeuvotoPush.isSupported()) {
+    $('#pushCard').style.display = 'block';
+    
+    MeuvotoPush.getSubscriptionStatus().then(function(isSubscribed) {
+      if (isSubscribed) {
+        $('#bAtivarPush').style.display = 'none';
+        $('#bDesativarPush').style.display = 'inline-flex';
+      }
+    });
+
+    $('#bAtivarPush').addEventListener('click', async function() {
+      var granted = await MeuvotoPush.requestPermission();
+      if (granted) {
+        showPush('ok', '⏳ Ativando notificações...');
+        var sub = await MeuvotoPush.subscribe();
+        if (sub) {
+          showPush('ok', '✅ Notificações ativadas! Você receberá um alerta no celular toda segunda-feira.');
+          $('#bAtivarPush').style.display = 'none';
+          $('#bDesativarPush').style.display = 'inline-flex';
+        } else {
+          showPush('err', '❌ Falha ao ativar. Tente novamente.');
+        }
+      } else {
+        showPush('err', '❌ Permissão negada. Verifique as configurações do seu navegador.');
+      }
+    });
+
+    $('#bDesativarPush').addEventListener('click', async function() {
+      showPush('ok', '⏳ Desativando...');
+      var ok = await MeuvotoPush.unsubscribe();
+      if (ok) {
+        showPush('ok', '✅ Notificações desativadas.');
+        $('#bAtivarPush').style.display = 'inline-flex';
+        $('#bDesativarPush').style.display = 'none';
+      } else {
+        showPush('err', '❌ Falha ao desativar.');
+      }
+    });
+  }
+
+  function showPush(cls, t) {
+    var msg = $('#msgPush');
+    msg.className = 'msg ' + cls;
+    msg.innerHTML = t;
+  }
 })();
 </script>
 </body>
