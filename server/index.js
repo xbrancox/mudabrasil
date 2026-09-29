@@ -541,7 +541,7 @@ async function handleApi(req, res, url) {
   if (p === '/api/health') {
     let registros = 0;
     try { registros = db.countBallots(); } catch (_) { }
-    let digestConfirmed = 0, digestPending = 0, digestLastSent = null;
+    let digestConfirmed = 0, digestPending = 0, digestLastSent = null, digestSentTotal = 0;
     try {
       const digestFile = path.join(__dirname, 'data', 'digest-subscribers.json');
       const d = JSON.parse(fs.readFileSync(digestFile, 'utf8'));
@@ -552,6 +552,7 @@ async function handleApi(req, res, url) {
       const statsFile = path.join(__dirname, 'data', 'digest-stats.json');
       const stats = JSON.parse(fs.readFileSync(statsFile, 'utf8'));
       digestLastSent = stats.lastSent || null;
+      digestSentTotal = stats.totalSent || (Array.isArray(stats.archive) ? stats.archive.length : 0);
     } catch (_) {}
     return sendJson(res, 200, {
       ok: true,
@@ -564,7 +565,8 @@ async function handleApi(req, res, url) {
       atualizacaoDadosPublicos: 'a cada ' + REFRESH_HOURS + 'h (automática)',
       digestConfirmed: digestConfirmed,
       digestPending: digestPending,
-      digestLastSent: digestLastSent
+      digestLastSent: digestLastSent,
+      digestSentTotal: digestSentTotal
     });
   }
 
@@ -696,6 +698,79 @@ async function handleApi(req, res, url) {
         totalVotosAtivos: votes.totals().totalVotosAtivos
       }
     });
+  }
+
+  /* ===== ARQUIVO DE DIGESTS ENVIADOS (público agregado) =====
+     Permite a qualquer visitante ver o histórico de resumos semanais
+     já enviados (sem expor e-mails). O worker registra cada envio via
+     POST /api/digest/log-send (protegido por DIGEST_SECRET). */
+  const digestStatsFile = path.join(__dirname, 'data', 'digest-stats.json');
+  const digestStatsRead = () => {
+    try {
+      return JSON.parse(fs.readFileSync(digestStatsFile, 'utf8'));
+    } catch (e) {
+      return { totalSent: 0, lastSent: null, lastBody: null, archive: [] };
+    }
+  };
+  const digestStatsWrite = (s) => {
+    fs.mkdirSync(path.dirname(digestStatsFile), { recursive: true });
+    fs.writeFileSync(digestStatsFile, JSON.stringify(s, null, 2));
+  };
+
+  if (p === '/api/digest/last' && req.method === 'GET') {
+    const s = digestStatsRead();
+    return sendJson(res, 200, {
+      ok: true,
+      ts: s.lastSent || null,
+      count: s.archive && s.archive.length ? s.archive[0].count : 0,
+      body: s.lastBody || null,
+      total: s.totalSent || 0
+    });
+  }
+
+  if (p === '/api/digest/archive' && req.method === 'GET') {
+    const s = digestStatsRead();
+    const list = (s.archive || []).map(e => ({
+      ts: e.ts,
+      count: e.count,
+      body: e.body
+    }));
+    return sendJson(res, 200, {
+      ok: true,
+      total: s.totalSent || 0,
+      lastSent: s.lastSent || null,
+      entries: list
+    });
+  }
+
+  if (p === '/api/digest/log-send' && req.method === 'POST') {
+    let bodyRaw = '';
+    req.on('data', chunk => { bodyRaw += chunk; if (bodyRaw.length > 500000) req.destroy(); });
+    req.on('end', () => {
+      try {
+        const o = JSON.parse(bodyRaw || '{}');
+        const givenSecret = String(o.secret || '');
+        if (!process.env.DIGEST_SECRET || givenSecret !== process.env.DIGEST_SECRET) {
+          return sendJson(res, 403, { ok: false, error: 'sem permissao' });
+        }
+        const ts = String(o.ts || new Date().toISOString());
+        const count = Number(o.count) || 0;
+        const body = String(o.body || '').slice(0, 8000);
+        const s = digestStatsRead();
+        s.totalSent = (s.totalSent || 0) + 1;
+        s.lastSent = ts;
+        s.lastBody = body;
+        s.archive = s.archive || [];
+        s.archive.unshift({ ts: ts, count: count, body: body });
+        // Mantém apenas os últimos 52 envios (1 ano de histórico semanal)
+        if (s.archive.length > 52) s.archive = s.archive.slice(0, 52);
+        digestStatsWrite(s);
+        return sendJson(res, 200, { ok: true, total: s.totalSent });
+      } catch (e) {
+        return sendJson(res, 400, { ok: false, error: 'json invalido: ' + e.message });
+      }
+    });
+    return;
   }
 
   /* Backup integral (dump JSON de todas as tabelas) para a manutenção

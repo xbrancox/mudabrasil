@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Arquivo de Digests · MeuVoto</title>
+<meta name="description" content="Histórico completo dos resumos semanais já enviados pelo MeuVoto. Dados públicos, agregados e anônimos.">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
+h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:860px;margin:0 auto;padding:38px 20px 60px}
+.muted{color:var(--muted);font-size:12.5px}
+.hero{text-align:center}
+.hero h1{font-size:clamp(24px,4.5vw,34px)}
+.hero p{color:var(--muted);max-width:640px;margin:10px auto 0}
+.big{font:800 36px Montserrat;color:var(--gold);margin-top:8px;line-height:1}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.entries{margin-top:20px}
+.entry{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.entry:hover{border-color:rgba(255,215,0,.5)}
+.entry summary{cursor:pointer;padding:14px 18px;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;font-weight:600}
+.entry summary::-webkit-details-marker{display:none}
+.entry summary::after{content:'▸';color:var(--gold);transition:transform .2s;font-size:14px}
+.entry[open] summary::after{transform:rotate(90deg)}
+.entry-date{font-family:Montserrat,sans-serif}
+.entry-meta{color:var(--muted);font-size:12px;font-weight:500}
+.entry-body{padding:16px 18px;border-top:1px solid var(--line);background:var(--card2);white-space:pre-wrap;font-family:Menlo,Monaco,Consolas,monospace;font-size:12.5px;line-height:1.7;max-height:500px;overflow:auto;color:#e2e8f0}
+.load{padding:40px;text-align:center;color:var(--muted)}
+.err{border:1px solid rgba(231,76,60,.4);border-radius:12px;padding:16px;background:rgba(231,76,60,.08);color:#ffc9c2;margin-top:14px;font-size:13.5px}
+.warn{border:1px solid rgba(255,215,0,.4);border-radius:12px;padding:16px;background:rgba(255,215,0,.06);color:#ffe9a8;margin-top:14px;font-size:13.5px}
+.foot{text-align:center;margin-top:22px;font-size:13px}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);border:1px dashed var(--line);border-radius:14px;margin-top:20px}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero">
+  <h1>📚 Arquivo de Digests Semanais</h1>
+  <p>Histórico completo dos resumos enviados pelo MeuVoto. Todo o conteúdo é público e agregado — você não precisa estar inscrito para ler.</p>
+  <div class="big" id="total">…</div>
+  <div class="sub" id="last">consultando…</div>
+</section>
+
+<div id="list" class="entries"><div class="load">⏳ carregando histórico…</div></div>
+
+<p class="foot muted">
+  <a href="digest.html">← Assinar o digest</a> ·
+  <a href="status.html">Status do sistema</a> ·
+  <a href="votacoes.html">Votações</a> ·
+  <a href="stats.html">Estatísticas</a>
+</p>
+</main>
+<script>
+var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+var $=function(s){return document.querySelector(s)};
+function fmtDate(iso){if(!iso)return '—';var d=new Date(iso);if(isNaN(d.getTime()))return iso;return d.toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function escapeHtml(s){return esc(s)}
+async function load(){
+  var list=$('#list');
+  try{
+    var r=await fetch(BASE+'/api/digest/archive');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var ct=r.headers.get('content-type')||'';
+    if(ct.indexOf('application/json')<0)throw new Error('endpoint ainda nao disponivel');
+    var j=await r.json();
+    $('#total').textContent=(j.total||0);
+    $('#total').insertAdjacentText('afterend','');
+    $('#total').textContent=(j.total||0)+' digest'+((j.total||0)===1?'':'s')+' enviados';
+    $('#last').textContent=j.lastSent?('Último envio em '+fmtDate(j.lastSent)):'Ainda nenhum digest foi enviado. Assim que o primeiro ciclo semanal rodar, o histórico aparecerá aqui.';
+    var entries=(j.entries||[]);
+    if(!entries.length){
+      list.innerHTML='<div class="empty"><p>📭 O histórico ainda está vazio.</p><p class="muted" style="margin-top:8px">O primeiro digest será enviado na próxima segunda-feira, após a confirmação do primeiro inscrito.</p></div>';
+      return;
+    }
+    list.innerHTML=entries.map(function(e,i){
+      return '<details'+(i===0?' open':'')+' class="entry">'+
+        '<summary>'+
+          '<span class="entry-date">'+esc(fmtDate(e.ts))+'</span>'+
+          '<span class="entry-meta">'+(e.count||0)+' destinatário'+((e.count||0)===1?'':'s')+'</span>'+
+        '</summary>'+
+        '<pre class="entry-body">'+escapeHtml(e.body||'(sem conteúdo registrado)')+'</pre>'+
+      '</details>';
+    }).join('');
+  }catch(e){
+    $('#total').textContent='indisponível';
+    $('#last').textContent='falha ao consultar o backend';
+    list.innerHTML='<div class="err"><b>⚠️ Não foi possível carregar o arquivo.</b><p style="margin-top:6px">O endpoint <code>/api/digest/archive</code> pode ainda não estar em produção (deploy do Railway em andamento) ou estar fora do ar. Tente novamente em 1 minuto.<p class="muted" style="margin-top:8px">Detalhe: '+escapeHtml(e.message)+'</p></div>';
+  }
+}
+load();
+</script>
+</body>
+</html>

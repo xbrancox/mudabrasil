@@ -22,5 +22,10 @@ const nm=require("nodemailer");
 const tr=nm.createTransport({host:process.env.SMTP_HOST,port:Number(process.env.SMTP_PORT||587),secure:String(process.env.SMTP_SECURE||"")==="true",auth:{user:process.env.SMTP_USER,pass:process.env.SMTP_PASS}});
 const from=process.env.SMTP_FROM||process.env.SMTP_USER;
 for(const to of em){await tr.sendMail({from,to,subject:"MeuVoto - Resumo semanal",text:body});console.log("enviado "+to)}
+try{
+  const logRes=await fetch(API+"/api/digest/log-send",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({secret:SECRET,ts:new Date().toISOString(),count:em.length,body:body})});
+  const logJ=await logRes.json().catch(()=>({}));
+  console.log("log do envio registrado: "+(logJ.ok?("total acumulado "+logJ.total):("falhou "+logRes.status)));
+}catch(e){console.log("aviso: log do envio falhou (nao bloqueia proximo ciclo): "+e.message)}
 }
 main().catch(e=>{console.error("falha digest:",e);process.exit(1)});

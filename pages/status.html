@@ -105,7 +105,7 @@ function fmtTime(ms){if(!ms)return '—';var d=new Date(ms);return d.toLocaleStr
 function fmtDur(s){if(s==null)return '—';var h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h+'h '+m+'min'}
 function setDot(id,cls){var el=document.getElementById(id);if(!el)return;el.className='dot '+cls}
 function row(k,v){return '<div class="row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'}
-async function probe(url,opts){var t0=performance.now();var ctrl=new AbortController();var tmr=setTimeout(function(){ctrl.abort()},6000);try{var r=await fetch(url,Object.assign({signal:ctrl.signal},opts||{}));clearTimeout(tmr);return{ok:r.ok,status:r.status,ms:Math.round(performance.now()-t0),r:r}}catch(e){clearTimeout(tmr);return{ok:false,status:0,ms:Math.round(performance.now()-t0),err:e.message}}
+async function probe(url,opts){var t0=performance.now();var ctrl=new AbortController();var tmr=setTimeout(function(){ctrl.abort()},6000);try{var r=await fetch(url,Object.assign({signal:ctrl.signal},opts||{}));clearTimeout(tmr);return{ok:r.ok,status:r.status,ms:Math.round(performance.now()-t0),r:r}}catch(e){clearTimeout(tmr);return{ok:false,status:0,ms:Math.round(performance.now()-t0),err:e.message}}}
 async function refresh(){
   var banner=$('#banner');
   var anyBad=false;
@@ -194,8 +194,10 @@ async function refresh(){
     $('#dg-rows').innerHTML=
       row('Inscritos confirmados',beData.digestConfirmed||0)+
       row('Pendentes de confirmação',beData.digestPending||0)+
+      row('Total de envios desde o início',beData.digestSentTotal||0)+
       (beData.digestLastSent?row('Último envio',fmtTime(new Date(beData.digestLastSent).getTime())):'<div class="row"><span class="k">último envio</span><span class="v">—</span></div>')+
-      row('Frequência','toda segunda-feira, 09:00');
+      row('Frequência','toda segunda-feira, 09:00')+
+      '<div class="row"><span class="k">Histórico completo</span><span class="v"><a href="digest-archive.html">ver arquivo →</a></span></div>';
   }else{
     $('#dg-rows').innerHTML='<div class="row"><span class="k">indisponível enquanto o backend estiver offline</span></div>';
   }
