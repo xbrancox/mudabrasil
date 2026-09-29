@@ -519,3 +519,17 @@ Conteúdo:
 4. **Simulador conceitual (hipotético)** — entrada: votos obtidos, % da base assinando, regra conceitual (% dos votos obtidos); saída: assinaturas necessárias, assinaturas no cenário, barra de progresso e veredicto, sempre com lembrete do caráter hipotético.
 5. **Chaves de mobilização legítima** — pressão ao gabinete, requerimentos a comissões, representação ao Conselho de Ética, acionamento de MPF/TCU/TSE/CGU, organização de voto e informação, participação em audiências públicas.
 6. Navegação para Votações, Radar Político e API pública.
+
+
+### 5.3 Ciclo 20 — Busca global (Ctrl+K / ⌘K)
+**Arquivos:** `js/busca-global.js` (módulo) + 10 linhas injetadas em `js/site-header.js`.
+- **Quatro domínios de busca** cruzados em uma única modal acessível:
+  1. Páginas do site (18 rotas conhecidas) — navegação direta.
+  2. Seções da página atual (h1/h2/h3, desduplicadas) — rola até o elemento.
+  3. Votações recentes da Câmara (40, cache 30 min) — abre `expand(id)` se estiver em votacoes.html ou deep-link `#v<id>`.
+  4. Parlamentares (`/api/candidatos`, cache 30 min) — abre ficha do parlamentar.
+- **Interação:** atalho `Ctrl+K` / `⌘K`, botão flutuante `🔍`, `↑↓` para navegar, `Enter` para abrir, `Esc` para fechar, clique fora fecha.
+- **Acessibilidade:** `role=dialog`, `aria-modal`, `aria-label`, foco gerenciado, label em cada item.
+- **Cache:** vota + candidatos em memória por 30 min; evita chamadas repetidas ao abrir/fechar a modal.
+- **Adaptação visual:** botão flutuante sobe 50 px quando há `.cmpbar.on` para não ser ocultado.
+- **Validação:** `node --check` nos dois arquivos, marcadores `busca-global.js` + `ciclo20: busca global Ctrl+K` confirmados via HTTP no raw do GitHub após push.

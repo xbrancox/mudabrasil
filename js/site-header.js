@@ -159,3 +159,18 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', montar);
   else montar();
 })();
+
+/* ciclo20: busca global Ctrl+K (carregamento automático do módulo) */
+(function () {
+  var sc = document.querySelectorAll('script[src]');
+  var u = '';
+  for (var i = 0; i < sc.length; i++) {
+    var s = sc[i].src || '';
+    if (/site-header\.js(\?|$)/.test(s)) { u = s.replace(/[^/]*$/, '') + 'busca-global.js'; break; }
+  }
+  if (!u) return;
+  var t = document.createElement('script');
+  t.src = u;
+  t.async = false;
+  document.head.appendChild(t);
+})();
