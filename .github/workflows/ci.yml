@@ -30,6 +30,8 @@ jobs:
         run: node scripts/testar-ciclo29.js
       - name: Testes ciclo 31 - hub links + Open Graph tags (testar-ciclo31.js)
         run: node scripts/testar-ciclo31.js
+      - name: Testes ciclo 32 - link checker interno (testar-links.js)
+        run: node scripts/testar-links.js
       - name: Sintaxe do servidor
         run: node --check server/index.js
       - name: Sintaxe do worker digest
