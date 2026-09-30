@@ -850,3 +850,42 @@ Varre todas as 28 páginas em `pages/*.html` e valida que cada `href`/`src` inte
 6. `testar-ciclo29.js` — 51 asserções (temas automáticos, modo cidadão, metodologia)
 7. `testar-ciclo31.js` — 14 asserções (hub links.html, Open Graph tags)
 8. **`testar-links.js`** — link checker interno (187 links verificados, 0 quebrados)
+
+
+## 6.6 Ciclo 33 — Push Web, Changelog dinâmico, performance e marcadores
+
+### P0 — marcador ciclo 14
+O div do painel API/lojas em `pages/votacoes.html` agora tem `id="ciclo14"` para consistência com os demais ciclos.
+
+### P1 — Teste de performance (`scripts/testar-performance.js`)
+15 verificações automáticas de performance/bundle:
+- votacoes.html < 250KB raw e < 80KB gzip
+- Total do site (pages/) < 2MB raw e < 500KB gzip
+- Scripts inline < 25 e externos com defer/async
+- CSS inline < 15 blocos (ou externo)
+- Meta viewport, charset, `<title>` presentes
+- Sem libs legadas (jQuery/moment/lodash)
+- `<link rel="preconnect">` para Google Fonts
+
+### P2 — Web Push Notifications (completo)
+- **Backend**: rotas `/api/push/vapid-public`, `/api/push/list` (protegido), `/api/digest/subscribe-push`, `/api/digest/unsubscribe-push`. Armazenamento em `server/data/push-subscriptions.json`.
+- **Service Worker** (`app/sw.js`): listeners `push`, `notificationclick` e `pushsubscriptionchange` (re-inscrição automática).
+- **Worker** (`scripts/digest-send.js`): após os e-mails, busca inscritos push via `/api/push/list` e envia via `web-push` (opcional — requer `npm install web-push` e VAPID keys).
+- **Helper** (`scripts/gerar-vapid.js`): gera par de chaves VAPID para configurar Railway.
+- **Frontend** (`js/push-notifications.js`): `window.MeuvotoPush` expõe `subscribe/unsubscribe/getSubscriptionStatus`.
+
+### P3 — Exportar dossiê cívico como PDF
+**Já existia**: `function dossiePdf()` em `pages/votacoes.html` gera print-view via `#fichaPrint` com `window.print()`. O navegador permite salvar como PDF diretamente.
+
+### P4 — Changelog dinâmico (`pages/changelog.html`)
+Página pública que busca os últimos 30 commits do GitHub em tempo real:
+- Fonte: `https://api.github.com/repos/xbrancox/votabrasil/commits?per_page=30`
+- Classificação automática por tipo (feat/fix/docs/chore) com chips de filtro
+- Datas formatadas em pt-BR
+- Cache em localStorage por 1h (fallback se API falhar)
+- Hash/filtro preservado na URL (`#feat`, `#fix`, etc.)
+
+### Testes adicionados
+- `scripts/testar-ciclo33.js`: 28 asserções em 8 grupos (A-H) — todas passando
+- `scripts/testar-performance.js`: 15 verificações — todas passando
+- `.github/workflows/ci.yml`: adicionados os dois novos steps

@@ -665,9 +665,59 @@ async function handleApi(req, res, url) {
     });
   }
 
+  /* ciclo 33 - Web Push (rotas) */
+  const pushFile = path.join(process.cwd(),'server','data','push-subscriptions.json');
+  const pushRead = function(){ try { return JSON.parse(fs.readFileSync(pushFile,'utf8')); } catch(e){ return []; } };
+  const pushWrite = function(a){ fs.mkdirSync(path.dirname(pushFile),{recursive:true}); fs.writeFileSync(pushFile,JSON.stringify(a,null,2)); };
+
+  if (p === '/api/push/vapid-public' && req.method === 'GET') {
+    const pk = process.env.VAPID_PUBLIC_KEY || '';
+    return sendJson(res, 200, { ok: true, publicKey: pk });
+  }
+  if (p === '/api/push/list' && req.method === 'GET') {
+    const secret = String(q.secret || '');
+    if (!process.env.DIGEST_SECRET || secret !== process.env.DIGEST_SECRET) {
+      return sendJson(res, 403, { ok: false, error: 'sem permissao' });
+    }
+    return sendJson(res, 200, { ok: true, subscriptions: pushRead() });
+  }
+  if (p === '/api/digest/subscribe-push' && req.method === 'POST') {
+    let b = ''; req.on('data',c=>{b+=c;if(b.length>20000)req.destroy()});
+    req.on('end',()=>{
+      try {
+        const o = JSON.parse(b||'{}');
+        const sub = o.subscription;
+        if (!sub || !sub.endpoint || !sub.keys || !sub.keys.p256dh || !sub.keys.auth)
+          return sendJson(res,400,{ok:false,error:'subscription invalida'});
+        const arr = pushRead();
+        const exists = arr.findIndex(x => x.endpoint === sub.endpoint);
+        if (exists >= 0) arr[exists] = sub; else arr.push(sub);
+        pushWrite(arr);
+        sendJson(res,200,{ok:true,total:arr.length});
+      } catch(e){ sendJson(res,400,{ok:false,error:'json invalido'}); }
+    });
+    return;
+  }
+  if (p === '/api/digest/unsubscribe-push' && req.method === 'POST') {
+    let b = ''; req.on('data',c=>{b+=c;if(b.length>20000)req.destroy()});
+    req.on('end',()=>{
+      try {
+        const o = JSON.parse(b||'{}');
+        const endpoint = String(o.endpoint || '');
+        const arr = pushRead();
+        const n = arr.length;
+        const filtered = arr.filter(x => x.endpoint !== endpoint);
+        pushWrite(filtered);
+        sendJson(res,200,{ok:true,removed:n-filtered.length,total:filtered.length});
+      } catch(e){ sendJson(res,400,{ok:false,error:'json invalido'}); }
+    });
+    return;
+  }
+
   if (p === '/api/digest/status' && req.method === 'GET') {
     const data = digestRead();
-    return sendJson(res, 200, { ok: true, confirmed: data.confirmed.length, pending: data.pending.length });
+    const pushCount = pushRead().length;
+    return sendJson(res, 200, { ok: true, confirmed: data.confirmed.length, pending: data.pending.length, pushSubscriptions: pushCount });
   }
 
   if (p === '/api/digest/list' && req.method === 'GET') {

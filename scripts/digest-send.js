@@ -58,6 +58,62 @@ for(const sub of subs){
   await tr.sendMail({from,to:sub.email,subject:"MeuVoto - Resumo semanal",text:body,html:html});
   console.log("enviado "+sub.email+" (temas: "+((sub.topics||[]).join(",")||"todos")+")");
 }
+// ciclo 33 - Web Push (opcional, apos os e-mails)
+try {
+  let pushList = [];
+  try {
+    const pRes = await fetch(API+"/api/push/list?secret="+encodeURIComponent(SECRET));
+    if (pRes.ok) {
+      const pj = await pRes.json();
+      pushList = Array.isArray(pj.subscriptions) ? pj.subscriptions : [];
+    }
+  } catch(e){ /* ignora: push eh best-effort */ }
+
+  if (pushList.length) {
+    let webpush = null;
+    try { webpush = require("web-push"); } catch(e) {
+      console.log("web-push nao instalado; pulando "+pushList.length+" inscricoes push. Rode: npm install web-push --no-save");
+    }
+    if (webpush && process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+      webpush.setVapidDetails(
+        process.env.VAPID_SUBJECT || "mailto:contato@meuvoto.app",
+        process.env.VAPID_PUBLIC_KEY,
+        process.env.VAPID_PRIVATE_KEY
+      );
+      const title = "MeuVoto · Resumo semanal";
+      const payload = JSON.stringify({
+        title: title,
+        body: "O resumo desta semana chegou. Toque para abrir.",
+        url: baseUrl+"/pages/digest.html",
+        icon: baseUrl+"/public/icon-192.png"
+      });
+      let sent = 0, failed = 0;
+      for (const sub of pushList) {
+        try {
+          await webpush.sendNotification(sub, payload);
+          sent++;
+        } catch(e) {
+          failed++;
+          if (String(e.statusCode||"") === "410" || String(e.statusCode||"") === "404") {
+            console.log("push expirado removido: "+String(sub.endpoint||"").slice(0,80));
+            try {
+              await fetch(API+"/api/digest/unsubscribe-push",{
+                method:"POST", headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({ endpoint: sub.endpoint })
+              });
+            } catch(_){}
+          } else {
+            console.log("push falhou: "+e.message);
+          }
+        }
+      }
+      console.log("push enviados: "+sent+" OK / "+failed+" falhas (total "+pushList.length+")");
+    }
+  } else {
+    console.log("sem inscricoes push ativas");
+  }
+} catch(e) { console.log("aviso: bloco push falhou (nao bloqueia proximo ciclo): "+e.message); }
+
 try{
   const logRes=await fetch(API+"/api/digest/log-send",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({secret:SECRET,ts:new Date().toISOString(),count:subs.length})});
   const logJ=await logRes.json().catch(()=>({}));

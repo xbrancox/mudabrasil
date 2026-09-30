@@ -32,6 +32,10 @@ jobs:
         run: node scripts/testar-ciclo31.js
       - name: Testes ciclo 32 - link checker interno (testar-links.js)
         run: node scripts/testar-links.js
+      - name: Testes ciclo 33 - push, changelog, performance, ciclo14 (testar-ciclo33.js)
+        run: node scripts/testar-ciclo33.js
+      - name: Testes de performance (testar-performance.js)
+        run: node scripts/testar-performance.js
       - name: Sintaxe do servidor
         run: node --check server/index.js
       - name: Sintaxe do worker digest
