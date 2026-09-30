@@ -729,6 +729,167 @@ window.addEventListener("load",function(){setTimeout(applyAB,800);var row=docume
 window.addEventListener("hashchange",applyAB);
 })();
 </script>
+
+<style id="css29">
+.topic-chip{display:inline-block;font:600 11px Manrope;padding:2px 8px;border-radius:999px;margin:2px;background:rgba(255,215,0,.12);color:var(--gold);border:1px solid rgba(255,215,0,.3)}
+.pratica{font-size:12.5px;color:var(--muted);margin:6px 0 2px;line-height:1.5}
+.pratica b{color:var(--gold)}
+.topic-filter{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
+.topic-filter .vb{cursor:pointer}
+body.modo-cidadao .vtable th,
+body.modo-cidadao .vcard h3{font-size:14px}
+body.modo-cidadao .vtable td{font-size:13px}
+body.modo-cidadao .vb{font-size:11px}
+body.modo-cidadao .ecard{font-size:13.5px}
+#modoCidadaoBtn{position:fixed;right:18px;bottom:18px;z-index:400;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 12px Manrope;padding:8px 14px;cursor:pointer;display:none}
+</style>
+<script id="ciclo29">
+(function(){
+var TOPICS_MAP={
+  'educacao':['educacao','escola','professor','universidade','ensino','fies','prouni','fundeb','enem','pne','aluno'],
+  'saude':['saude','sus','hospital','medicamento','vacina','ans','farmacia','medico','enfermagem','oncologia'],
+  'economia':['economia','orcamento','tributo','imposto','fiscal','lrf','ppa','lda','receita','divida','reforma tributaria'],
+  'seguranca':['seguranca','policia','pena','presidio','arma','droga','trafico','violencia','susp','pronasci'],
+  'meio ambiente':['meio ambiente','amazônia','desmatamento','clima','carbono','lixo','agua','energia renovavel','solar','eolica','acordo de paris'],
+  'infraestrutura':['infraestrutura','rodovia','ferrovia','porto','aeroporto','saneamento','mobilidade','logística','dnit','antt'],
+  'trabalho':['trabalho','clt','salario','sindicato','greve','previdencia','aposentadoria','seguro-desemprego','ferias'],
+  'justica':['justica','stf','stj','juiz','tribunal','processo','recurso','cpi','impeachment','foro privilegiado'],
+  'agricultura':['agricultura','agronegocio','rural','agrotoxico','terra','reforma agraria','incra','funai','indigena'],
+  'tecnologia':['tecnologia','internet','dados pessoais','lgpd','cyberseguranca','ia','inteligencia artificial','5g','cripto']
+};
+var TOPICS_KEYS=Object.keys(TOPICS_MAP);
+function extractTopics(txt){
+  var s=(txt||'').toLowerCase();
+  var out=[];
+  for(var i=0;i<TOPICS_KEYS.length;i++){
+    var k=TOPICS_KEYS[i];
+    var kws=TOPICS_MAP[k];
+    for(var j=0;j<kws.length;j++){
+      if(s.indexOf(kws[j])>=0){out.push(k);break}
+    }
+  }
+  return out;
+}
+function praticaLine(txt){
+  var s=(txt||'').toLowerCase();
+  if(/plc|plp|projeto de lei complementar/.test(s))return 'Altera regras gerais de competência compartilhada entre União, estados e municípios.';
+  if(/pec|emenda constitucional/.test(s))return 'Proposta de alteração da Constituição; exige 3/5 de votos em 2 turnos em cada Casa.';
+  if(/mp |medida provisoria/.test(s))return 'Regra com força de lei já em vigor; o Congresso decide se mantém, altera ou derruba.';
+  if(/pl |projeto de lei/.test(s))return 'Projeto de lei ordinária; precisa de maioria simples dos presentes para ser aprovado.';
+  if(/pdl|projeto de decreto legislativo/.test(s))return 'Susta ou aprova ato do Executivo ou de agência reguladora.';
+  if(/requerimento/.test(s))return 'Define pauta ou procedimento da Casa; não altera lei diretamente.';
+  if(/orcamento|loa|ldo|ppa/.test(s))return 'Define quanto o governo pode gastar e em quê no período.';
+  return 'Matéria em tramitação; o conteúdo exato depende do texto aprovado.';
+}
+function renderTopicChips(v){
+  var t=v.tituloVotacao||v.descricao||v.assunto||'';
+  var e=v.ementa||'';
+  var tops=extractTopics(t+' '+e);
+  if(!tops.length)return '';
+  return '<div class="topic-chips">'+tops.map(function(x){return '<span class="topic-chip">'+x+'</span>'}).join('')+'</div>';
+}
+function renderPratica(v){
+  var t=v.tituloVotacao||v.descricao||'';
+  return '<p class="pratica"><b>O que muda na prática:</b> '+praticaLine(t)+'</p>';
+}
+function injectIntoCards(){
+  var cards=document.querySelectorAll('.vcard');
+  cards.forEach(function(c){
+    if(c.getAttribute('data-c29'))return;
+    c.setAttribute('data-c29','1');
+    var h3=c.querySelector('h3');
+    if(!h3)return;
+    var v=(c._votacao||null);
+    if(!v&&typeof ALL!=='undefined'){
+      var id=c.getAttribute('data-id')||'';
+      for(var i=0;i<ALL.length;i++){if(String(ALL[i].id)===id){v=ALL[i];break}}
+    }
+    if(!v)return;
+    var chips=renderTopicChips(v);
+    var prat=renderPratica(v);
+    var wrap=document.createElement('div');
+    wrap.innerHTML=chips+prat;
+    while(wrap.firstChild)h3.insertAdjacentElement('afterend',wrap.lastChild);
+  });
+}
+function topicFilterBar(){
+  var bar=document.querySelector('.topic-filter');
+  if(bar)return;
+  var fbar=document.querySelector('.fbar');
+  if(!fbar)return;
+  var d=document.createElement('div');
+  d.className='topic-filter';
+  d.setAttribute('aria-label','Filtros por tema');
+  var html='<span class="vb abs" style="cursor:default;font-weight:800">Temas:</span>';
+  for(var i=0;i<TOPICS_KEYS.length;i++){
+    var k=TOPICS_KEYS[i];
+    html+='<span class="vb abs" data-topic="'+k+'" onclick="toggleTopicFilter29(this)" style="cursor:pointer">'+k+'</span>';
+  }
+  d.innerHTML=html;
+  fbar.insertAdjacentElement('afterend',d);
+}
+window.toggleTopicFilter29=function(el){
+  var k=el.getAttribute('data-topic');
+  var on=el.classList.contains('sim');
+  el.classList.toggle('sim',!on);
+  el.classList.toggle('abs',on);
+  window.__c29Topics=window.__c29Topics||[];
+  if(on)window.__c29Topics=window.__c29Topics.filter(function(x){return x!==k});
+  else window.__c29Topics.push(k);
+  applyTopicFilter29();
+};
+function applyTopicFilter29(){
+  var sel=window.__c29Topics||[];
+  var cards=document.querySelectorAll('.vcard');
+  cards.forEach(function(c){
+    if(!sel.length){c.style.display='';return}
+    var chips=c.querySelectorAll('.topic-chip');
+    var has=false;
+    chips.forEach(function(ch){
+      var txt=(ch.textContent||'').toLowerCase();
+      for(var i=0;i<sel.length;i++){if(txt.indexOf(sel[i])>=0){has=true}}
+    });
+    c.style.display=has?'':'none';
+  });
+}
+function modoCidadao(){
+  var on=document.body.classList.toggle('modo-cidadao');
+  localStorage.setItem('mb_modo_cidadao',on?'1':'0');
+  var b=document.getElementById('modoCidadaoBtn');
+  if(b)b.textContent=on?'Modo cidadão: ON':'Modo cidadão: OFF';
+}
+function initModoBtn(){
+  if(document.getElementById('modoCidadaoBtn'))return;
+  var b=document.createElement('button');
+  b.id='modoCidadaoBtn';
+  b.textContent='Modo cidadão: OFF';
+  b.setAttribute('aria-label','Alternar modo cidadão (menos siglas, mais explicações)');
+  b.onclick=modoCidadao;
+  document.body.appendChild(b);
+  b.style.display='block';
+  if(localStorage.getItem('mb_modo_cidadao')==='1'){
+    document.body.classList.add('modo-cidadao');
+    b.textContent='Modo cidadão: ON';
+  }
+}
+function run(){
+  if(typeof ALL!=='undefined'&&ALL.length){
+    for(var i=0;i<ALL.length;i++){
+      ALL[i]._topics=extractTopics((ALL[i].tituloVotacao||'')+' '+(ALL[i].ementa||'')+' '+(ALL[i].descricao||''));
+      ALL[i]._pratica=praticaLine(ALL[i].tituloVotacao||ALL[i].descricao||'');
+    }
+  }
+  injectIntoCards();
+  topicFilterBar();
+  initModoBtn();
+}
+var mo=new MutationObserver(function(){clearTimeout(window.__c29t);window.__c29t=setTimeout(run,200)});
+mo.observe(document.documentElement,{childList:true,subtree:true});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);
+else run();
+window.addEventListener('load',run);
+})();
+</script>
 <div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
