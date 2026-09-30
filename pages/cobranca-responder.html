@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Responder Cobrança · MeuVoto</title>
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
+h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:680px;margin:0 auto;padding:38px 20px 60px}
+.muted{color:var(--muted);font-size:12.5px}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px;margin-top:14px}
+.hero{text-align:center}
+.hero h1{font-size:clamp(24px,4.5vw,34px)}
+.hero p{color:var(--muted);max-width:560px;margin:10px auto 0}
+label{display:block;font:700 12px Manrope;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px}
+input,textarea{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:12px 14px;font:500 15px Manrope}
+textarea{min-height:140px;resize:vertical}
+input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:11px 18px;cursor:pointer;width:100%;margin-top:10px}
+.btn:hover{filter:brightness(1.12)}
+.btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
+.msg{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:13.5px;line-height:1.55;display:none}
+.msg.ok{display:block;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.45);color:#bff0d2}
+.msg.err{display:block;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.45);color:#ffc9c2}
+.foot{text-align:center;margin-top:22px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <h1>📝 Responder Cobrança</h1>
+    <p>Esta página permite que o gabinete registre uma resposta oficial à cobrança cívica recebida via MeuVoto.</p>
+  </section>
+
+  <div class="card" id="form">
+    <label for="autor">Nome do autor da resposta</label>
+    <input id="autor" type="text" placeholder="Ex: Assessoria de Comunicação" autocomplete="off"/>
+    
+    <label for="resposta">Resposta oficial</label>
+    <textarea id="resposta" placeholder="Digite aqui a resposta do gabinete à cobrança recebida…"></textarea>
+    
+    <button class="btn gold" id="btnEnviar">Enviar resposta</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <p class="foot"><a href="votacoes.html">← Voltar para as Votações</a></p>
+</main>
+<script>
+const BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function show(cls,t){const m=$('#msg');m.className='msg '+cls;m.innerHTML=t}
+async function enviar(){
+  const params=new URLSearchParams(location.search);
+  const id=params.get('id');
+  const token=params.get('token');
+  if(!id||!token){show('err','ID ou token não fornecido.');return}
+  const autor=$('#autor').value.trim();
+  const resposta=$('#resposta').value.trim();
+  if(!resposta){show('err','Digite a resposta antes de enviar.');return}
+  if(resposta.length<20){show('err','Resposta muito curta (mínimo 20 caracteres).');return}
+  show('ok','⏳ enviando…');
+  try{
+    const r=await fetch(BASE+'/api/cobrancas/'+id+'/responder',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({resposta:resposta,autor:autor||'Gabinete',token:token})
+    });
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(!j.ok)throw new Error(j.error||'erro');
+    show('ok','✅ Resposta registrada com sucesso! <a href="cobranca.html?id='+esc(id)+'&token='+esc(token)+'">Ver cobrança atualizada →</a>');
+    $('#form').style.display='none';
+  }catch(e){
+    show('err','❌ Erro ao enviar: '+esc(e.message));
+  }
+}
+$('#btnEnviar').addEventListener('click',enviar);
+</script>
+</body>
+</html>

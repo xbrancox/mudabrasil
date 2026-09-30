@@ -6,153 +6,93 @@
 <title>Cobrança Cívica · MeuVoto</title>
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-<script src="../config.js"></script>
-<script src="../js/site-header.js"></script>
 <style>
-:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--blueL:#4a90f0;--green:#2ECC71;--red:#E74C3C}
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
 h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
 a{color:var(--gold);text-decoration:none}
 .wrap{max-width:760px;margin:0 auto;padding:38px 20px 60px}
 .muted{color:var(--muted);font-size:12.5px}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px;margin-top:14px}
 .hero{text-align:center}
-.hero h1{font-size:clamp(22px,4vw,32px)}
-.hero p{color:var(--muted);max-width:640px;margin:10px auto 0}
-.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px;margin-top:14px}
-.card h3{font-size:15px;margin-bottom:10px}
-.timeline{margin-top:14px;border-left:3px solid var(--line);padding-left:16px}
-.timeline .step{position:relative;padding:4px 0 12px;font-size:13.5px}
-.timeline .step::before{content:'';position:absolute;left:-24px;top:8px;width:14px;height:14px;border-radius:50%;background:var(--card2);border:2px solid var(--line)}
-.timeline .step.done::before{background:var(--green);border-color:var(--green)}
-.timeline .step b{color:var(--ink)}
-.timeline .step span{color:var(--muted);font-size:12px}
-.vot{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:8px;font-size:13px}
-.vot .assunto{font-weight:700;color:var(--ink)}
-.vot .meta{color:var(--muted);font-size:11.5px}
-.vb{font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px;white-space:nowrap}
-.vb.sim{background:rgba(46,204,113,.15);color:var(--green)}
-.vb.nao{background:rgba(231,76,60,.15);color:var(--red)}
-.vb.abs{background:rgba(148,163,184,.15);color:var(--muted)}
-.vb.out{background:rgba(255,215,0,.15);color:var(--gold)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:11px 18px;cursor:pointer}
+.hero h1{font-size:clamp(24px,4.5vw,34px)}
+.hero p{color:var(--muted);max-width:620px;margin:10px auto 0}
+.badge{font:800 11px Manrope;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);display:inline-block;margin-bottom:10px}
+.badge.gerada{color:var(--gold);border-color:rgba(255,215,0,.45)}
+.badge.aberta{color:#4a90f0;border-color:rgba(74,144,240,.45)}
+.badge.respondida{color:var(--green);border-color:rgba(46,204,113,.45)}
+.info{font-size:14px;line-height:1.7}
+.info b{color:var(--gold)}
+.vot{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:13px}
+.vot .data{color:var(--muted);font-size:11px}
+.resposta{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.35);border-radius:12px;padding:14px;margin-top:14px}
+.resposta h3{font-size:14px;color:var(--green);margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:10px 18px;cursor:pointer;margin-top:10px}
+.btn:hover{filter:brightness(1.12)}
 .btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-textarea{width:100%;min-height:120px;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:12px 14px;font:500 14px Manrope;resize:vertical}
-textarea:focus{outline:none;border-color:var(--gold)}
-.resposta{border-left:3px solid var(--gold);background:rgba(255,215,0,.07);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.6;white-space:pre-wrap;margin-top:10px}
-.selo{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font:800 12px Manrope;border:1px solid var(--line)}
-.selo.ouro{background:rgba(255,215,0,.15);color:var(--gold);border-color:rgba(255,215,0,.5)}
-.selo.prata{background:rgba(148,163,184,.15);color:#cbd5e1;border-color:rgba(148,163,184,.5)}
-.selo.bronze{background:rgba(205,127,50,.15);color:#f4a261;border-color:rgba(205,127,50,.5)}
-.selo.nenhum{background:rgba(148,163,184,.1);color:var(--muted)}
-.msg{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:13px;display:none}
-.msg.ok{display:block;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.4);color:#bff0d2}
-.msg.err{display:block;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);color:#ffc9c2}
-.aviso{margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.35);font-size:12.5px;color:#ffe9a8}
+.foot{text-align:center;margin-top:22px}
+code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:11px;color:var(--gold)}
 </style>
 </head>
 <body>
 <main class="wrap">
   <section class="hero">
-    <h1>📬 Cobrança Cívica Registrada</h1>
-    <p>Página pública de acompanhamento desta cobrança. Qualquer pessoa pode ver o que foi cobrado e se o gabinete respondeu.</p>
+    <h1>🧾 Cobrança Cívica</h1>
+    <p>Este é um registro público de cobrança enviado a um gabinete parlamentar via MeuVoto.</p>
   </section>
 
-  <div id="cobCard" class="card">
-    <p class="muted">⏳ Carregando cobrança...</p>
+  <div class="card" id="cobranca">
+    <p class="muted" style="text-align:center">⏳ Carregando cobrança…</p>
   </div>
 
-  <div id="respBox" style="display:none" class="card">
-    <h3>📝 Resposta oficial do gabinete</h3>
-    <p class="muted">Este formulário só aparece se você acessou esta cobrança pelo link oficial enviado ao gabinete (com token).</p>
-    <textarea id="respTxt" placeholder="Redija a resposta oficial do gabinete (mínimo 20 caracteres). Esta resposta ficará pública nesta página."></textarea>
-    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-      <button class="btn gold" id="btnEnviar">Registrar resposta</button>
-    </div>
-    <div class="msg" id="respMsg"></div>
-    <p class="muted" style="margin-top:10px">Ao registrar, o gabinete reconhece publicamente a cobrança. A resposta fica visível para todos os cidadãos que acessarem este link.</p>
-  </div>
-
-  <div class="card">
-    <h3>⚖️ Transparência</h3>
-    <p style="font-size:13.5px;line-height:1.6">Esta página é um <b>protótipo cívico sem valor legal</b>. A resposta registrada aqui reflete a manifestação voluntária do gabinete; não substitui canais oficiais da Câmara/Senado. Dados de votação vêm das APIs abertas oficiais.</p>
-    <p class="muted" style="margin-top:8px"><a href="votacoes.html">← Voltar para as Votações</a></p>
-  </div>
+  <p class="foot"><a href="votacoes.html">← Voltar para as Votações</a></p>
 </main>
 <script>
-(function(){
-  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
-  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-  function fmtData(d){if(!d)return '—';try{return new Date(d).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}catch(e){return d}}
-  function votoClass(v){v=(v||'').toLowerCase();if(v.indexOf('sim')===0)return'sim';if(v.indexOf('n')===0)return'nao';if(v.indexOf('absten')>=0)return'abs';return'out'}
-  function seloHtml(selo,median){
-    const labels={ouro:'🥇 Ouro',prata:'🥈 Prata',bronze:'🥉 Bronze',nenhum:'— Sem selo'};
-    const tip={ouro:'responde ≥3 cobranças em até 7 dias',prata:'responde ≥3 em até 15 dias',bronze:'respondeu ao menos 1',nenhum:'ainda sem resposta registrada'};
-    return '<span class="selo '+selo+'" title="'+tip[selo]+'">'+labels[selo]+(median!==null?' · mediana '+median+'d':'')+'</span>';
-  }
-  async function carregar(){
-    const params=new URLSearchParams(location.search);
-    const id=params.get('id');const token=params.get('token');
-    const card=document.getElementById('cobCard');
-    if(!id){card.innerHTML='<p class="muted">⚠️ Link inválido (faltou ?id=...).</p>';return}
-    try{
-      var url=BASE+'/api/cobrancas/'+encodeURIComponent(id);
-      if(token)url+='?token='+encodeURIComponent(token);
-      const r=await fetch(url);
-      if(!r.ok)throw new Error('HTTP '+r.status);
-      const j=await r.json();
-      if(!j.ok)throw new Error(j.error||'falha');
-      render(j.cobranca,token);
-    }catch(e){
-      card.innerHTML='<p>⚠️ Não foi possível carregar esta cobrança: '+esc(e.message)+'. Verifique o link ou tente mais tarde.</p>';
-    }
-  }
-  async function render(c,token){
-    const card=document.getElementById('cobCard');
-    const statusLabels={gerada:'gerada (ainda não enviada)',enviada:'enviada ao gabinete',aberta:'aberta pelo gabinete',respondida:'respondida oficialmente',validada:'validada pelo cidadão'};
-    const votacoesHtml=c.votacoes.length?'<h3 style="margin-top:14px;font-size:14px">Votações citadas nesta cobrança</h3>'+c.votacoes.map(v=>'<div class="vot"><div class="assunto">'+esc(v.assunto||'(votação '+esc(v.id)+')')+'</div><div class="meta">'+esc(fmtData(v.data))+' · voto registrado: <span class="vb '+votoClass(v.voto)+'">'+esc(v.voto||'—')+'</span></div></div>').join(''):'<p class="muted" style="margin-top:10px">Nenhuma votação específica foi anexada a esta cobrança.</p>';
-    card.innerHTML=
-      '<p class="muted">Cobrança <code style="font-size:11px">'+esc(c.id.slice(0,8))+'…</code> · criada em '+esc(fmtData(c.criadaEm))+'</p>'+
-      '<h3 style="font-size:18px;margin-top:8px">Ao(À) deputado(a) '+esc(c.politicianNome||'(parlamentar)')+'</h3>'+
-      '<p style="margin-top:10px;font-size:14px;line-height:1.65">Promessa cobrada: <b>'+esc(c.promessa)+'</b></p>'+
-      votacoesHtml+
-      '<h3 style="margin-top:18px;font-size:14px">Linha do tempo</h3>'+
-      '<div class="timeline">'+
-        '<div class="step '+(c.criadaEm?'done':'')+'"><b>Criada</b> · '+esc(fmtData(c.criadaEm))+'</div>'+
-        '<div class="step '+(c.enviadaEm?'done':'')+'"><b>Enviada ao gabinete</b> · '+esc(fmtData(c.enviadaEm)||'<span>aguardando</span>')+'</div>'+
-        '<div class="step '+(c.abertaEm?'done':'')+'"><b>Aberta</b> · '+esc(fmtData(c.abertaEm)||'<span>aguardando</span>')+'</div>'+
-        '<div class="step '+(c.respondidaEm?'done':'')+'"><b>Respondida oficialmente</b> · '+esc(fmtData(c.respondidaEm)||'<span>aguardando</span>')+'</div>'+
-      '</div>'+
-      '<p style="margin-top:14px">Status atual: <b>'+esc(statusLabels[c.status]||c.status)+'</b></p>'+
-      (c.resposta?'<h3 style="margin-top:16px;font-size:14px">✉️ Resposta oficial do gabinete</h3><div class="resposta">'+esc(c.resposta.texto)+'</div><p class="muted" style="margin-top:6px">Registrada em '+esc(fmtData(c.resposta.em))+' por '+esc(c.resposta.por||'gabinete')+'.</p>':'')+
-      '<div class="aviso" style="margin-top:14px">Esta página é pública e indexável. Qualquer cidadão que acessar verá os dados acima. Compartilhe o link (sem token) para transparência.</div>';
-
-    // Busca selo do parlamentar para mostrar
-    try{
-      const rSelo=await fetch(BASE+'/api/cobrancas?politicianId='+encodeURIComponent(c.politicianId));
-      if(rSelo.ok){const jS=await rSelo.json();if(jS.ok){card.insertAdjacentHTML('beforeend','<p style="margin-top:14px">Selo de responsividade deste gabinete: '+seloHtml(jS.selo,jS.medianDays)+'</p>')}}
-    }catch(e){}
-
-    if(c.autorizadoParaResponder){
-      document.getElementById('respBox').style.display='block';
-      document.getElementById('btnEnviar').addEventListener('click',async function(){
-        const txt=document.getElementById('respTxt').value.trim();
-        const msg=document.getElementById('respMsg');
-        if(txt.length<20){msg.className='msg err';msg.textContent='Resposta muito curta (mínimo 20 caracteres).';return}
-        this.disabled=true;msg.className='msg ok';msg.textContent='⏳ Registrando resposta...';
-        try{
-          const r=await fetch(BASE+'/api/cobrancas/'+c.id+'/responder?token='+encodeURIComponent(token),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({texto:txt,autor:'gabinete'})});
-          const j=await r.json();
-          if(!r.ok||!j.ok)throw new Error(j.error||('HTTP '+r.status));
-          msg.className='msg ok';msg.textContent='✅ Resposta registrada com sucesso! A página será recarregada em 2 segundos.';
-          setTimeout(function(){location.reload()},2000);
-        }catch(e){msg.className='msg err';msg.textContent='❌ Falha: '+e.message;this.disabled=false}
+const BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmtData(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})}catch(e){return'—'}}
+function statusBadge(s){const cls={'gerada':'gerada','aberta':'aberta','respondida':'respondida','enviada':'aberta'}[s]||'';const txt={'gerada':'Gerada','aberta':'Aberta','respondida':'Respondida','enviada':'Enviada'}[s]||s;return '<span class="badge '+cls+'">'+txt+'</span>'}
+async function load(){
+  const params=new URLSearchParams(location.search);
+  const id=params.get('id');
+  const token=params.get('token');
+  if(!id||!token){$('#cobranca').innerHTML='<p class="muted">ID ou token não fornecido.</p>';return}
+  try{
+    const r=await fetch(BASE+'/api/cobrancas/'+id+'?token='+token);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(!j.ok||!j.cobranca){$('#cobranca').innerHTML='<p class="muted">Cobrança não encontrada.</p>';return}
+    const c=j.cobranca;
+    let h=statusBadge(c.status);
+    h+='<h2 style="margin-top:10px">Para: <b>'+esc(c.politicianNome)+'</b></h2>';
+    h+='<div class="info" style="margin-top:14px">';
+    h+='<p><b>Promessa cobrada:</b> '+esc(c.promessa)+'</p>';
+    if(c.votacoes&&c.votacoes.length){
+      h+='<p style="margin-top:10px"><b>Votações citadas:</b></p>';
+      c.votacoes.forEach(function(v){
+        h+='<div class="vot"><div class="data">'+fmtData(v.data)+'</div>'+esc(v.assunto)+(v.voto?' · <b>Voto: '+esc(v.voto)+'</b>':'')+'</div>';
       });
+    }else{
+      h+='<p class="muted" style="margin-top:10px">Nenhuma votação específica citada.</p>';
     }
+    h+='</div>';
+    if(c.resposta&&c.resposta.texto){
+      h+='<div class="resposta"><h3>✅ Resposta oficial do gabinete</h3><p style="margin-top:6px">'+esc(c.resposta.texto)+'</p><p class="muted" style="margin-top:8px">Respondido por '+esc(c.resposta.autor||'Gabinete')+' em '+fmtData(c.respondidaEm)+'</p></div>';
+    }else{
+      h+='<div class="card" style="background:rgba(255,215,0,.05);border-color:rgba(255,215,0,.3)"><p class="muted">⏳ Aguardando resposta oficial do gabinete.</p></div>';
+    }
+    if(c.autorizadoParaResponder){
+      h+='<a class="btn gold" href="cobranca-responder.html?id='+esc(c.id)+'&token='+esc(token)+'">📝 Responder oficialmente</a>';
+    }
+    h+='<p class="muted" style="margin-top:14px">Gerado em '+fmtData(c.criadaEm)+' · ID: <code>'+esc(c.id)+'</code></p>';
+    $('#cobranca').innerHTML=h;
+  }catch(e){
+    $('#cobranca').innerHTML='<p class="muted">Erro ao carregar: '+esc(e.message)+'</p>';
   }
-  carregar();
-})();
+}
+load();
 </script>
 </body>
 </html>
