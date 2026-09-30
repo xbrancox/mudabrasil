@@ -573,6 +573,152 @@ c.toBlob(function(blob){if(!blob){toast25('Falha ao gerar PNG.');return}var url=
 }catch(e){toast25('Erro ao gerar PNG: '+e.message)}
 };
 </script>
+<style id="css26">
+button.ia-i,span.ia-i{background:var(--gold)!important;color:#1a1400!important;border:none!important;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:800 13px/1 Manrope,sans-serif;cursor:pointer;box-shadow:0 0 0 2px rgba(255,215,0,.25)}
+.ia-purpose{color:var(--muted);font-size:12px;margin:2px 0 8px}
+.howto26{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6}
+.howto26 b{color:var(--ink)}
+.qstrip26{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:6px 0 2px}
+.qstrip26 span{font:700 12px Manrope;border:1px dashed rgba(255,215,0,.5);color:var(--gold);border-radius:999px;padding:5px 12px}
+#totop26{position:fixed;right:18px;bottom:74px;z-index:400;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card2);color:var(--gold);font:800 16px Manrope,sans-serif;cursor:pointer;display:none;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.srcline26{text-align:center;margin:6px auto 0;font-size:12px;color:var(--muted)}
+</style>
+<script id="ciclo26">
+(function(){
+  function txt(el){return (el.textContent||'').trim()}
+  var REN=[
+    [/Carregar calor\s*&\s*comparador/i,'\uD83D\uDDFA\uFE0F Ver como cada estado votou'],
+    [/Tend[eê]ncia\s*&\s*presen/i,'\uD83D\uDCC8 Ver evolu\u00E7\u00E3o e faltas dos meus deputados'],
+    [/Gerar dossi[eê]/i,'\uD83D\uDD70\uFE0F Montar ficha corrida do deputado'],
+    [/Recibo de cobran/i,'\uD83E\uDDFE Gerar recibo para cobrar o gabinete'],
+    [/Resumo semanal autom/i,'\uD83D\uDD14 Receber resumo semanal por notifica\u00E7\u00E3o'],
+    [/Sum[aá]rio da p[aá]gina/i,'\uD83E\uDDED Ver atalhos desta p\u00E1gina']
+  ];
+  function rename(){
+    document.querySelectorAll('button,a.btn').forEach(function(b){
+      if(b.getAttribute('data-ren26'))return;
+      var t=txt(b);
+      for(var i=0;i<REN.length;i++){
+        if(REN[i][0].test(t)){b.textContent=REN[i][1];b.setAttribute('data-ren26','1');break}
+      }
+    });
+  }
+  function markI(){
+    document.querySelectorAll('button,span,a,div').forEach(function(el){
+      if(el.children.length)return;
+      var t=txt(el);
+      if((t==='\u24D8'||t==='i'||t==='\u2139')&&!el.classList.contains('ia-i')){
+        el.classList.add('ia-i');
+        el.setAttribute('role','button');
+        el.setAttribute('aria-label','Mais informa\u00E7\u00F5es');
+        if(!el.getAttribute('tabindex'))el.setAttribute('tabindex','0');
+      }
+    });
+  }
+  function autoCongresso(){
+    document.querySelectorAll('button').forEach(function(b){
+      if(/^(\uD83D\uDCCA\s*)?Meu Congresso$/.test(txt(b))&&!b.getAttribute('data-kill26')){
+        b.setAttribute('data-kill26','1');
+        b.style.display='none';
+      }
+    });
+    var out=document.getElementById('out10');
+    if(!out||out.getAttribute('data-auto26'))return;
+    var tem=false;
+    try{tem=(typeof MEUS!=='undefined'&&MEUS.length>0)}catch(e){}
+    if(tem&&typeof window.meuCongresso==='function'){
+      out.setAttribute('data-auto26','1');
+      try{window.meuCongresso()}catch(e){console.warn('[ciclo26] meuCongresso falhou',e)}
+    }else if(!tem&&!out.textContent.trim()){
+      out.innerHTML='<p class="muted">Marque \u2B50 deputados em <b>"Meus representantes"</b> (aba acima) e esta tabela aparece sozinha, sem clicar em nada.</p>';
+    }
+  }
+  function howto(){
+    var sel=document.getElementById('hmUF');
+    if(!sel||sel.getAttribute('data-how26'))return;
+    sel.setAttribute('data-how26','1');
+    sel.setAttribute('data-tip','Passo 1: escolha seu estado aqui. Passo 2: clique em "Ver como cada estado votou". Passo 3: cada quadradinho \u00E9 uma vota\u00E7\u00E3o (verde = maioria SIM, vermelho = N\u00C3O, cinza = dividida) \u2014 clique para abrir. Passo 4: seus deputados \u2B50 ficam destacados em dourado no comparador.');
+    var row=sel.closest('.row')||sel.parentElement;
+    if(row&&!row.parentElement.querySelector('.howto26')){
+      var d=document.createElement('p');
+      d.className='howto26';
+      d.innerHTML='<b>Como usar:</b> 1) escolha seu estado no seletor; 2) clique em <b>"Ver como cada estado votou"</b>; 3) cada quadradinho \u00E9 uma vota\u00E7\u00E3o (verde=SIM, vermelho=N\u00C3O, cinza=dividida) \u2014 clique para abrir; 4) seus deputados \u2B50 marcados em <b>"Meus representantes"</b> ficam destacados em dourado no comparador abaixo.';
+      row.parentElement.insertBefore(d,row.nextSibling);
+    }
+  }
+  var PURPOSE={
+    'MAPA DE CALOR':'Mostra como a bancada de cada estado votou, vota\u00E7\u00E3o a vota\u00E7\u00E3o.',
+    'MEU CONGRESSO':'Presen\u00E7a, % Sim, diferen\u00E7a vs Plen\u00E1rio e coer\u00EAncia com o partido dos seus deputados.',
+    'PAINEL DE REPRESENTA':'Diagn\u00F3stico por eixo (partido, bancada, base), sem ju\u00EDzo de valor.',
+    'BRASIL POR BANCADAS':'As 27 UFs e o % Sim de cada bancada nas nominais recentes.',
+    'ESPELHO':'Lado a lado, o que C\u00E2mara e Senado fizeram sobre o mesmo tema.',
+    'DOSSI\u00ca':'\u00DAltimas 30 nominais, presen\u00E7a, reclama\u00E7\u00F5es e apoios.',
+    'PROMESSAS':'O que voc\u00EA cobra, cruzado com cada vota\u00E7\u00E3o relacionada.',
+    'RESUMO DA SEMANA':'O que foi votado em 7 dias e como os seus se posicionaram.',
+    'SEUS DEPUTADOS VS':'% Sim de cada deputado seu vs Plen\u00E1rio vs partido.',
+    'COMPARADOR':'Escolha dois deputados e veja onde concordaram e onde divergiram, voto a voto.',
+    'COBRE, REVOGUE':'Gere recibo de cobran\u00E7a pronto para enviar ao gabinete do seu deputado.'
+  };
+  function purposes(){
+    document.querySelectorAll('.painel h3,.ecard h3').forEach(function(h){
+      if(h.parentElement.querySelector('.ia-purpose'))return;
+      var up=txt(h).toUpperCase();
+      for(var k in PURPOSE){
+        if(up.indexOf(k)>=0){
+          var p=document.createElement('p');
+          p.className='ia-purpose';
+          p.textContent=PURPOSE[k];
+          h.insertAdjacentElement('afterend',p);
+          break;
+        }
+      }
+    });
+  }
+  function qstrip(){
+    var m=document.querySelector('main');
+    if(!m||m.querySelector('.qstrip26'))return;
+    var d=document.createElement('div');
+    d.className='qstrip26';
+    d.innerHTML='<span>1 \u00B7 O que foi decidido?</span><span>2 \u00B7 Como meu deputado votou?</span><span>3 \u00B7 Ele presta contas quando cobrado?</span>';
+    var h1=m.querySelector('h1');
+    if(h1&&h1.parentElement)h1.parentElement.insertAdjacentElement('afterend',d);
+  }
+  function navAids(){
+    var b=document.getElementById('totop26');
+    if(!b){
+      b=document.createElement('button');
+      b.id='totop26';
+      b.setAttribute('aria-label','Voltar ao topo');
+      b.textContent='\u2191';
+      b.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
+      document.body.appendChild(b);
+    }
+    var vs=function(){b.style.display=window.scrollY>600?'block':'none'};
+    window.addEventListener('scroll',vs,{passive:true});vs();
+    if(!document.querySelector('.srcline26')){
+      var h1=document.querySelector('main h1');
+      if(h1){
+        var p=document.createElement('p');
+        p.className='srcline26';
+        p.textContent='Fonte oficial: dadosabertos.camara.leg.br \u00B7 dados recarregados a cada abertura desta p\u00E1gina \u00B7 prot\u00F3tipo c\u00EDvico sem valor legal.';
+        h1.parentElement.insertBefore(p,h1.nextSibling);
+      }
+    }
+    document.addEventListener('click',function(e){
+      var tb=e.target.closest?e.target.closest('[role="tab"],.tabs button'):null;
+      if(tb){
+        setTimeout(function(){var m=document.querySelector('main');if(m)m.scrollIntoView({behavior:'smooth',block:'start'})},180);
+      }
+    });
+  }
+  function run(){rename();markI();autoCongresso();howto();purposes();qstrip();navAids()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+  window.addEventListener('load',run);
+  document.addEventListener('click',function(){setTimeout(run,300)});
+  var mo=new MutationObserver(function(){clearTimeout(window.__t26);window.__t26=setTimeout(run,400)});
+  mo.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
 <div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
