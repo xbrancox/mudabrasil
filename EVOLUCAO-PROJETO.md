@@ -752,3 +752,30 @@ Fechar o ciclo cidadão → gabinete → resposta pública. Cada cobrança regis
 - `node --check scripts/digest-send.js` → OK
 - `scripts/validar-ia.js` → 18 scripts OK, 167 nomes sem órfãos, 657 tags com aspas, 145/145 divs balanceadas
 - `scripts/testar-ia.js` → todos os grupos A–L passando (60+ asserções)
+
+
+## 7. Ciclo 27 — Testes E2E, Dashboard de Temas e Correção de Bug
+
+### 7.1 Correção de bug no worker (`scripts/digest-send.js`)
+O endpoint de log de envio referenciava variáveis `em` e `body` fora de escopo (remanescentes de versão anterior que usava array simples de e-mails). Substituído por `subs.length` (array normalizado de inscritos com temas). Sem essa correção, o worker quebraria com `ReferenceError` em qualquer envio real.
+
+### 7.2 Dashboard de temas no admin (`pages/digest-admin.html`)
+Novo cartão **"📌 Temas escolhidos pelos inscritos"** entre o painel de aberturas e as abas de confirmados/pendentes. Mostra:
+- Total de inscritos confirmados
+- Quantidade com tema escolhido vs. sem tema (recebem tudo)
+- Gráfico SVG de barras com ranking de temas mais procurados
+- Tooltip em cada barra mostrando tema + contagem
+
+A página agora busca `/api/digest/list` em paralelo com `/api/digest/admin` para obter a lista completa com `topics`.
+
+### 7.3 Teste E2E do digest (`scripts/testar-digest-e2e.js`)
+Cobertura de 15 asserções em 7 grupos:
+- **[A] Filtro por temas do inscrito**: 4 cenários (tema único com match, tema sem match, sem tema, lista vazia)
+- **[B] Robustez**: case-insensitive, match parcial, recesso
+- **[C] Sintaxe**: worker compila sem erro
+- **[D] Bug corrigido**: ausência de `em.length` e `body` órfãos, presença de `subs.length`
+- **[E] Pixel de tracking**: HTML do email contém `<img>` com `/api/digest/open?i=`
+- **[F] Exportação PNG do comparador A×B (ciclo21)**: função `abPNG` existe, usa `toDataURL('image/png')`, download nomeado `meuvoto-comparador-ab.png`, `abZap` abre `wa.me`
+- **[G] Dashboard de temas**: `themesPanel`, `renderThemes`, `Promise.all`, SVG
+
+Rodar com: `node scripts/testar-digest-e2e.js`

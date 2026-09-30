@@ -59,7 +59,7 @@ for(const sub of subs){
   console.log("enviado "+sub.email+" (temas: "+((sub.topics||[]).join(",")||"todos")+")");
 }
 try{
-  const logRes=await fetch(API+"/api/digest/log-send",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({secret:SECRET,ts:new Date().toISOString(),count:em.length,body:body})});
+  const logRes=await fetch(API+"/api/digest/log-send",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({secret:SECRET,ts:new Date().toISOString(),count:subs.length})});
   const logJ=await logRes.json().catch(()=>({}));
   console.log("log do envio registrado: "+(logJ.ok?("total acumulado "+logJ.total):("falhou "+logRes.status)));
 }catch(e){console.log("aviso: log do envio falhou (nao bloqueia proximo ciclo): "+e.message)}

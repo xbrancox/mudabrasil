@@ -52,6 +52,12 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase}
       <div id="opens-rows" class="sub" style="margin-top:10px">consultando…</div>
       <div id="opens-chart" style="margin-top:12px;overflow-x:auto"></div>
     </div>
+    <div id="themesPanel" class="card">
+      <h3>📌 Temas escolhidos pelos inscritos</h3>
+      <p class="muted" style="font-size:12px;margin-top:4px">Distribuição de temas marcados pelos inscritos confirmados. Permite entender demanda por assunto.</p>
+      <div id="themes-rows" style="margin-top:10px">consultando…</div>
+      <div id="themes-chart" style="margin-top:12px;overflow-x:auto"></div>
+    </div>
     <div class="tabs">
       <div class="tab on" onclick="showTab('confirmed')">Confirmados</div>
       <div class="tab" onclick="showTab('pending')">Pendentes</div>
@@ -88,13 +94,16 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase}
   window.authenticate=function(){
     secret=document.getElementById('secret').value.trim();
     if(!secret){showMsg('authMsg','err','Digite o secret.');return}
-    fetch(BASE+'/api/digest/admin?secret='+encodeURIComponent(secret))
-      .then(function(r){return r.json()})
-      .then(function(j){
+    Promise.all([
+        fetch(BASE+'/api/digest/admin?secret='+encodeURIComponent(secret)).then(function(r){return r.json()}),
+        fetch(BASE+'/api/digest/list?secret='+encodeURIComponent(secret)).then(function(r){return r.json()}).catch(function(){return {subscribers:[]}})
+      ])
+      .then(function(arr){
+        var j=arr[0],list=arr[1];
         if(j.ok){
           document.getElementById('authPanel').classList.add('hidden');
           document.getElementById('adminPanel').classList.remove('hidden');
-          loadData(j.data);
+          loadData(j.data,list.subscribers||[]);
           loadOpensStats();
         }else{
           showMsg('authMsg','err','❌ '+ (j.error || 'Secret inválido'));
@@ -103,7 +112,7 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase}
       .catch(function(e){showMsg('authMsg','err','❌ Erro de conexão: '+e.message)});
   }
   
-  function loadData(data){
+  function loadData(data, subscribers){
     document.getElementById('countC').textContent=data.confirmed.length;
     document.getElementById('countP').textContent=data.pending.length;
     
@@ -117,6 +126,37 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase}
       var d=new Date(p.createdAt).toLocaleDateString('pt-BR');
       return '<tr><td>'+p.email+'</td><td>'+d+'</td><td><button class="btn red" style="padding:4px 10px;font-size:11px" onclick="removeEmail(\''+p.email+'\')">Remover</button></td></tr>';
     }).join('') || '<tr><td colspan="3" class="muted">Nenhuma inscrição pendente.</td></tr>';
+    renderThemes(subscribers || []);
+  }
+  
+  function renderThemes(subscribers){
+    var row=function(k,v){return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed rgba(127,176,245,.22);font-size:13px"><span>'+k+'</span><span style="font-weight:700;color:var(--gold)">'+v+'</span></div>'};
+    var counts={};
+    var withoutTheme=0;
+    (subscribers||[]).forEach(function(s){
+      var topics=Array.isArray(s)?[]:(s.topics||[]);
+      if(!topics.length){withoutTheme++;return}
+      topics.forEach(function(t){counts[t]=(counts[t]||0)+1});
+    });
+    var total=subscribers.length;
+    var rows=document.getElementById('themes-rows');
+    if(!total){rows.innerHTML='<p class="muted">Nenhum inscrito confirmado ainda.</p>';document.getElementById('themes-chart').innerHTML='';return}
+    var entries=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]});
+    rows.innerHTML=row('Total de inscritos',total)+row('Com tema escolhido',total-withoutTheme)+row('Sem tema (recebem tudo)',withoutTheme);
+    if(!entries.length){document.getElementById('themes-chart').innerHTML='<p class="muted" style="font-size:12px">Nenhum tema foi marcado ainda.</p>';return}
+    var max=Math.max.apply(null,entries.map(function(t){return counts[t]}))||1;
+    var bw=40,gap=8,svgW=Math.max(300,(bw+gap)*entries.length+gap),svgH=160;
+    var svg='<svg viewBox="0 0 '+svgW+' '+svgH+'" width="100%" style="min-width:'+(bw+gap)*entries.length+'px" xmlns="http://www.w3.org/2000/svg">';
+    svg+='<line x1="0" y1="'+(svgH-26)+'" x2="'+svgW+'" y2="'+(svgH-26)+'" stroke="rgba(127,176,245,.25)"/>';
+    entries.forEach(function(t,i){
+      var x=gap+i*(bw+gap);
+      var h=(counts[t]/max)*(svgH-60);
+      svg+='<rect x="'+x+'" y="'+(svgH-26-h)+'" width="'+bw+'" height="'+h+'" fill="#FFD700" rx="3"><title>'+t+': '+counts[t]+' inscrito(s)</title></rect>';
+      svg+='<text x="'+(x+bw/2)+'" y="'+(svgH-10)+'" fill="#94A3B8" font-size="10" text-anchor="middle" transform="rotate(-25 '+(x+bw/2)+' '+(svgH-10)+')">'+t+'</text>';
+      svg+='<text x="'+(x+bw/2)+'" y="'+(svgH-34-h)+'" fill="#FFD700" font-size="12" font-weight="700" text-anchor="middle">'+counts[t]+'</text>';
+    });
+    svg+='</svg>';
+    document.getElementById('themes-chart').innerHTML=svg;
   }
   
   window.showTab=function(tab){
