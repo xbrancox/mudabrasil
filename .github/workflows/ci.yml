@@ -26,6 +26,8 @@ jobs:
         run: node scripts/testar-digest-e2e.js
       - name: Testes E2E cobrancas (testar-cobrancas-e2e.js)
         run: node scripts/testar-cobrancas-e2e.js
+      - name: Testes ciclo 29 - temas e modo cidadao (testar-ciclo29.js)
+        run: node scripts/testar-ciclo29.js
       - name: Sintaxe do servidor
         run: node --check server/index.js
       - name: Sintaxe do worker digest

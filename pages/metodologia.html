@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Metodologia · MeuVoto</title>
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.6 Manrope,sans-serif;min-height:100vh}
+h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.25}
+h1{font-size:clamp(24px,4.5vw,34px)}
+h2{font-size:20px;margin-top:30px;color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:6px}
+h3{font-size:15px;margin-top:16px;color:var(--ink)}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:860px;margin:0 auto;padding:38px 20px 80px}
+.hero{text-align:center;margin-bottom:22px}
+.hero p{color:var(--muted);max-width:680px;margin:10px auto 0;font-size:14.5px}
+.card{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:16px 18px;margin-top:14px;font-size:14px}
+.card p+p{margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:14px}
+.metric{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card2)}
+.metric h3{margin-top:0;font-size:14px;color:var(--gold)}
+.metric p{font-size:13px;color:var(--muted);margin-top:4px}
+.metric code{display:inline-block;background:#0a1628;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:11.5px;color:var(--gold);margin-top:4px}
+.warn{border-left:4px solid var(--gold);padding:10px 14px;background:rgba(255,215,0,.06);border-radius:8px;font-size:13.5px;margin:14px 0}
+.warn b{color:var(--gold)}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--card2);font-weight:700;color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+td.ok{color:var(--green)}
+td.est{color:#f59e0b}
+.badge{display:inline-block;font:700 10px Manrope;padding:2px 8px;border-radius:999px;letter-spacing:.03em}
+.badge.ofc{background:rgba(46,204,113,.18);color:var(--green)}
+.badge.est{background:rgba(245,158,11,.18);color:#f59e0b}
+.muted{color:var(--muted);font-size:12.5px}
+.toc{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.toc a{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font:700 12px Manrope;background:var(--card2)}
+.foot{text-align:center;margin-top:32px;padding-top:22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero">
+<h1 id="metPage">📘 Metodologia do MeuVoto</h1>
+<p>Como calculamos cada indicador, de onde vêm os dados, o que é oficial e o que é estimado, e quais os limites do protótipo. Este documento é público para que qualquer pessoa (cidadã, jornalista, desenvolvedora ou gabinete) possa auditar, reproduzir ou criticar o sistema.</p>
+</section>
+
+<div class="toc">
+<a href="#fontes">Fontes oficiais</a>
+<a href="#metricas">Como calculamos</a>
+<a href="#oficial-vs-estimado">Oficial vs. estimado</a>
+<a href="#limitacoes">Limitações</a>
+<a href="#privacidade">Privacidade e LGPD</a>
+<a href="#atualizacao">Atualização e cache</a>
+<a href="#como-citar">Como citar</a>
+</div>
+
+<h2 id="fontes">1. Fontes oficiais</h2>
+<div class="card">
+<p>Todas as votações, parlamentares, partidos e UFs exibidos vêm da <b>API de Dados Abertos da Câmara dos Deputados</b> (<code>dadosabertos.camara.leg.br</code>) e, quando disponível, da <b>API do Senado Federal</b>. O MeuVoto não mantém base própria de votos: a cada abertura da página, os dados são consultados diretamente nessas fontes e, para resiliência, armazenados em cache local do navegador por até 30 minutos.</p>
+<p class="muted">O índice agregado de confiança por UF (Termômetro Cívico) é <b>exclusivo do MeuVoto</b> e não tem equivalente oficial.</p>
+</div>
+
+<h2 id="metricas">2. Como calculamos cada métrica</h2>
+<div class="grid">
+  <div class="metric">
+    <h3>Presença (%)</h3>
+    <p>Contagem de votações nominais em que o deputado teve voto registrado (Sim/Não/Abstenção/Obstrução) dividida pelo total de nominais da janela. <b>Não</b> computa votações simbólicas.</p>
+    <code>presenca = votos_nominais / total_nominais</code>
+  </div>
+  <div class="metric">
+    <h3>% Sim do deputado</h3>
+    <p>Entre as nominais em que o deputado votou, quantas foram "Sim". Não considera ausências.</p>
+    <code>sim_dep = votos_sim / (sim + nao + outros)</code>
+  </div>
+  <div class="metric">
+    <h3>% Sim do Plenário</h3>
+    <p>Mesma conta, mas sobre todos os deputados que votaram em cada sessão (não apenas os seus).</p>
+    <code>sim_plen = total_sim / total_votos_plenario</code>
+  </div>
+  <div class="metric">
+    <h3>Δ vs Plenário (pp)</h3>
+    <p>Diferença em pontos percentuais entre % Sim do deputado e % Sim do Plenário. Positivo = mais "Sim" que a média; negativo = menos.</p>
+    <code>delta = (sim_dep − sim_plen) × 100</code>
+  </div>
+  <div class="metric">
+    <h3>Coerência com a bancada (%)</h3>
+    <p>Nas nominais em que o deputado votou, em quantas seguiu a maioria dos colegas do <b>mesmo partido</b>. Só considera votações em que houve maioria partidária clara (≥ 60% do partido em um lado).</p>
+    <code>coerencia = votos_iguais_partido / nominais_com_maioria_partidaria</code>
+  </div>
+  <div class="metric">
+    <h3>Fidelidade partidária (3 eixos)</h3>
+    <p>Painel de Representação separa: <b>A)</b> fidelidade ao partido (orientação da bancada), <b>B)</b> distância da bancada (Δpp) e <b>C)</b> confiança da base (Termômetro da UF). A combinação gera 4 quadrantes interpretativos, sem juízo de valor.</p>
+  </div>
+  <div class="metric">
+    <h3>Termômetro Cívico (UF)</h3>
+    <p>Índice agregado anônimo baseado em votos registrados na plataforma. <b>Não</b> é pesquisa de opinião e não substitui voto oficial — é termômetro de sentimento da base de usuários do MeuVoto naquela UF.</p>
+  </div>
+  <div class="metric">
+    <h3>Taxa de resposta do gabinete</h3>
+    <p>Cobranças geradas na plataforma que recebem resposta oficial via link/token único. Selo 🥇 ouro (≥3 respostas em mediana ≤7 dias), 🥈 prata (≤15 dias), 🥉 bronze (≥1 resposta).</p>
+  </div>
+</div>
+
+<h2 id="oficial-vs-estimado">3. O que é oficial vs. estimado</h2>
+<table>
+<tr><th>Dado</th><th>Origem</th><th>Tipo</th></tr>
+<tr><td>Lista de deputados (nome, partido, UF, foto)</td><td>Câmara dadosabertos</td><td><span class="badge ofc">OFICIAL</span></td></tr>
+<tr><td>Votações nominais (data, ementa, resultado)</td><td>Câmara dadosabertos</td><td><span class="badge ofc">OFICIAL</span></td></tr>
+<tr><td>Voto individual (Sim/Não/Obstrução/Ausente)</td><td>Câmara dadosabertos</td><td><span class="badge ofc">OFICIAL</span></td></tr>
+<tr><td>Tipo de votação (nominal × simbólica)</td><td>Câmara dadosabertos</td><td><span class="badge ofc">OFICIAL</span></td></tr>
+<tr><td>Quórum registrado</td><td>Câmara dadosabertos</td><td><span class="badge ofc">OFICIAL</span></td></tr>
+<tr><td>% Sim, Δ pp, presença, coerência</td><td>Calculado pelo MeuVoto a partir de dados oficiais</td><td><span class="badge est">DERIVADO</span></td></tr>
+<tr><td>Temas automáticos (educação, saúde, economia…)</td><td>Classificador por palavras-chave em título+ementa</td><td><span class="badge est">ESTIMADO</span></td></tr>
+<tr><td>"O que muda na prática"</td><td>Texto heurístico por tipo de matéria (PL, PEC, MP…)</td><td><span class="badge est">ESTIMADO</span></td></tr>
+<tr><td>Termômetro Cívico (UF)</td><td>Agregado anônimo de votos na plataforma</td><td><span class="badge est">EXCLUSIVO MeuVoto</span></td></tr>
+<tr><td>Selo de resposta do gabinete</td><td>Respostas via token na plataforma</td><td><span class="badge est">EXCLUSIVO MeuVoto</span></td></tr>
+<tr><td>Promessas cadastradas</td><td>Inseridas pelo cidadão</td><td><span class="badge est">AUTO-RELATADO</span></td></tr>
+<tr><td>Votações do Senado</td><td>API do Senado (pode ser bloqueada por WAF)</td><td><span class="badge ofc">OFICIAL (quando disponível)</span></td></tr>
+</table>
+
+<h2 id="limitacoes">4. Limitações e vieses conhecidos</h2>
+<div class="card">
+<p><b>Recesso parlamentar.</b> A janela padrão é de ±10 dias. Durante recesso, a lista pode ficar vazia; nesse caso, o sistema exibe automaticamente as 40 nominais mais recentes como fallback. <i>Isso é o calendário real, não um erro.</i></p>
+
+<p><b>Votações simbólicas.</b> Em simbólicas, o voto individual não é registrado — só existe placar agregado. O painel mostra apenas placar e quórum, nunca "voto a voto".</p>
+
+<p><b>WAF do Senado.</b> A API do Senado às vezes bloqueia consultas automatizadas. Quando isso acontece, o espelho Câmara×Senado mostra aviso honesto em vez de inventar dados.</p>
+
+<p><b>Classificação de temas.</b> Usa palavras-chave em título+ementa. Pode falhar em matérias técnicas ou de emenda curta. O usuário pode filtrar manualmente por qualquer termo.</p>
+
+<p><b>Coerência partidária.</b> Só é calculada em nominais com maioria partidária clara (≥60% do partido). Votações com bancada rachada são excluídas desse cálculo para evitar ruído.</p>
+
+<p><b>Presença.</b> Um deputado pode estar em missão oficial, licença médica ou exercendo cargo no Executivo e aparecer como "ausente". O indicador não distingue ausência justificada de injustificada — para isso, é necessário consultar a própria Câmara.</p>
+
+<p><b>Termômetro Cívico.</b> Reflete apenas os usuários da plataforma, não o eleitorado da UF. Serve como sinal de sentimento dos usuários, <b>não como pesquisa representativa</b>.</p>
+
+<p><b>Respostas de gabinete.</b> A taxa de resposta depende de o gabinete efetivamente abrir o link e enviar a resposta. Selos são concedidos com base em respostas verificadas por token, mas <b>não implicam qualidade ou sinceridade</b> da resposta.</p>
+</div>
+
+<div class="warn">
+<b>⚠️ Protótipo cívico, sem valor legal.</b> O MeuVoto não substitui a apuração oficial do TSE, não valida promessas de campanha e não emite atestados. Os indicadores derivados são aproximações pedagógicas para orientar a cobrança cidadã, não notas finais.
+</div>
+
+<h2 id="privacidade">5. Privacidade e LGPD</h2>
+<div class="card">
+<p><b>Sem conta, sem login.</b> Toda a navegação é pública. Deputados ⭐ marcados ficam apenas no <code>localStorage</code> do seu navegador.</p>
+<p><b>Votos no Termômetro são anônimos.</b> Não associamos voto a IP, cookie, dispositivo ou conta. Não há reidentificação possível.</p>
+<p><b>Digest semanal requer confirmação.</b> Inscrições são double opt-in: o e-mail só é ativado após clique no link de confirmação com token único.</p>
+<p><b>Direito ao esquecimento.</b> Cancelar o digest remove o e-mail da lista imediatamente. Cookies/tokens de notificação push podem ser revogados nas configurações do navegador.</p>
+<p><b>Dados não são vendidos nem compartilhados</b> com terceiros. A lista de e-mails de digest nunca é exposta publicamente — apenas agregados anônimos (ex.: total de inscritos).</p>
+</div>
+
+<h2 id="atualizacao">6. Atualização e cache</h2>
+<div class="card">
+<p><b>Dados oficiais:</b> recarregados a cada abertura da página de Votações (quando a rede permite).</p>
+<p><b>Cache de resiliência:</b> se a API cair, o navegador usa a última resposta salva localmente (prefixo <code>mv_api_</code> no <code>localStorage</code>), com carimbo de tempo, e avisa em modo offline.</p>
+<p><b>Digest semanal:</b> enviado toda segunda-feira, às 09:00 (horário de Brasília), via GitHub Action + SMTP.</p>
+<p><b>Busca global (⌘K):</b> cache em memória de 30 min para listas de deputados e votações, para evitar sobrecarga da API.</p>
+</div>
+
+<h2 id="como-citar">7. Como citar</h2>
+<div class="card">
+<p>Em matérias jornalísticas, trabalhos acadêmicos ou redes sociais:</p>
+<p><i>"Dados: MeuVoto (agregados cívicos) + Câmara dos Deputados / Senado Federal (dados abertos oficiais). Votos do Termômetro são manifestações anônimas de usuários da plataforma, sem valor legal."</i></p>
+<p class="muted">A <a href="api-publica.html">API pública</a> está disponível sem chave para uso jornalístico e cívico, respeitando o limite de ~1 consulta/s por IP.</p>
+</div>
+
+<p class="foot">
+<a href="votacoes.html">← Voltar para Votações</a> ·
+<a href="api-publica.html">API pública</a> ·
+<a href="status.html">Status do sistema</a>
+</p>
+</section>
+</main>
+<script id="metPage">
+document.title='Metodologia · MeuVoto';
+</script>
+</body>
+</html>
