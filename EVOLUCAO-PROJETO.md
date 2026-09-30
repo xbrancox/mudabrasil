@@ -779,3 +779,44 @@ Cobertura de 15 asserções em 7 grupos:
 - **[G] Dashboard de temas**: `themesPanel`, `renderThemes`, `Promise.all`, SVG
 
 Rodar com: `node scripts/testar-digest-e2e.js`
+
+
+## 7. Ciclo 31 — Hub central de páginas + Open Graph tags estáticas
+
+### Problema resolvido
+- O projeto tem 25+ páginas HTML (votações, digest, metodologia, status, selos, admin, arquivo, etc.), mas faltava um ponto central de navegação.
+- Compartilhamento em redes sociais (WhatsApp, Twitter, LinkedIn) não mostrava preview rico porque os crawlers dessas plataformas **não executam JavaScript** — as tags OG precisam ser estáticas no HTML.
+
+### O que foi implementado
+
+#### 7.1 Hub central (`pages/links.html`)
+- Nova página com **21 links internos** organizados em 4 grupos:
+  - **Transparência legislativa** (votações, radar, congresso, termômetro, fundo eleitoral, eleições)
+  - **Acompanhamento e cobrança** (digest, selos, mandato responsável, revogar)
+  - **Sistema e transparência técnica** (metodologia, API pública, status, stats, admin, métricas, arquivo, comunidade)
+  - **Acesso rápido** (home, app PWA, privacidade, termos)
+- Layout responsivo com cards hover, tags coloridas (core/verde/vermelho/azul), footer com timestamp.
+- OG tags já incluídas no HTML estático.
+
+#### 7.2 Injeção de Open Graph tags (`scripts/inject-og-tags.js`)
+- Script Node idempotente que injeta tags OG estáticas em **25 páginas** principais.
+- Marcador `<!-- og:meuvoto --> ... <!-- /og:meuvoto -->` para não duplicar em reexecuções.
+- Tags injetadas: `og:type`, `og:site_name`, `og:title`, `og:description`, `og:image`, `og:url`, `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`.
+- Imagem OG: `og-image.png` (410 KB) no root do repositório.
+- Cada página tem título e descrição específicos (ex.: "Votações do Plenário — MeuVoto" vs. "Digest semanal — MeuVoto").
+
+#### 7.3 Navegação no cabeçalho (`js/site-header.js`)
+- Item "Hub" adicionado ao array `ITENS` entre "Votações" e "Conferir Voto".
+- Mapeamento `links.html → chave 'links'` em `chaveAtiva()` para destaque visual quando o usuário está na página.
+
+#### 7.4 Testes (`scripts/testar-ciclo31.js`)
+**14 asserções em 4 grupos**, todas passando:
+- [A] `links.html`: existe, tem marcadores OG, 10 tags, 21 links internos, DOCTYPE, lang, charset.
+- [B] 12 páginas principais têm tags OG válidas.
+- [C] `site-header.js` tem item 'links' no ITENS, aponta para `links.html`, rótulo 'Hub', mapeamento ativo.
+- [D] 12 páginas patchadas têm head/body/doctype balanceados.
+
+### Resultado
+- **Commit:** ciclo 31 commitado e publicado.
+- **CI atualizado:** `.github/workflows/ci.yml` agora executa `testar-ciclo31.js` em cada push/PR.
+- **Impacto:** compartilhamentos em redes sociais agora mostram preview rico (título, descrição, imagem) para todas as 25 páginas.

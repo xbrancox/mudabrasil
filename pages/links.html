@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Hub de páginas · MeuVoto / VotaBrasil</title>
+<!-- og:meuvoto -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MeuVoto / VotaBrasil">
+<meta property="og:title" content="Hub de páginas · MeuVoto">
+<meta property="og:description" content="Todas as páginas do projeto em um só lugar: votações, digest, cobranças, metodologia, status, selos e mais.">
+<meta property="og:image" content="https://xbrancox.github.io/votabrasil/og-image.png">
+<meta property="og:url" content="https://xbrancox.github.io/votabrasil/pages/links.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hub de páginas · MeuVoto">
+<meta name="twitter:description" content="Todas as páginas do projeto em um só lugar.">
+<meta name="twitter:image" content="https://xbrancox.github.io/votabrasil/og-image.png">
+<!-- /og:meuvoto -->
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
+h1,h2,h3{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1000px;margin:0 auto;padding:38px 20px 60px}
+.muted{color:var(--muted);font-size:12.5px}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-size:clamp(26px,5vw,38px)}
+.hero p{color:var(--muted);max-width:640px;margin:10px auto 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:16px;transition:transform .15s ease,border-color .15s ease}
+.card:hover{transform:translateY(-2px);border-color:var(--gold)}
+.card h3{font-size:15px;margin-bottom:6px}
+.card h3 a{color:var(--ink)}
+.card h3 a:hover{color:var(--gold);text-decoration:none}
+.card p{font-size:13px;color:var(--muted);line-height:1.55}
+.card .tag{display:inline-block;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px;background:rgba(255,215,0,.12);color:var(--gold);border:1px solid rgba(255,215,0,.35);margin-top:10px;text-transform:uppercase;letter-spacing:.04em}
+.card .tag.verde{background:rgba(46,204,113,.12);color:var(--green);border-color:rgba(46,204,113,.4)}
+.card .tag.vermelho{background:rgba(231,76,60,.12);color:var(--red);border-color:rgba(231,76,60,.4)}
+.card .tag.azul{background:rgba(127,176,245,.12);color:#7fb0f5;border-color:rgba(127,176,245,.4)}
+.group{margin-top:28px}
+.group h2{font-size:18px;margin-bottom:14px;padding-bottom:6px;border-bottom:1px dashed var(--line)}
+.group h2::before{content:"";display:inline-block;width:8px;height:8px;background:var(--gold);border-radius:50%;margin-right:10px;vertical-align:middle}
+footer{text-align:center;margin-top:40px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <h1>🧭 Hub de páginas do MeuVoto</h1>
+    <p>Todas as páginas do projeto em um só lugar. Clique para abrir, ou use a busca global <kbd>Ctrl</kbd>+<kbd>K</kbd> em qualquer página.</p>
+  </section>
+
+  <div class="group">
+    <h2>Transparência legislativa</h2>
+    <div class="grid">
+      <div class="card"><h3><a href="votacoes.html">🗳️ Votações do Plenário</a></h3><p>Acompanhe as votações nominais e simbólicas da Câmara, com quórum, placar por UF, coerência e voto a voto.</p><span class="tag">Core</span></div>
+      <div class="card"><h3><a href="parlamentares.html">🛰️ Radar Político</a></h3><p>Ficha de cada parlamentar: presença, votações, promessas cobradas e dossiê cívico.</p><span class="tag azul">Dados</span></div>
+      <div class="card"><h3><a href="congresso.html">📜 PLs no Congresso</a></h3><p>Projetos de lei em tramitação, com acompanhamento cidadão e votos da comunidade.</p><span class="tag azul">Dados</span></div>
+      <div class="card"><h3><a href="termometro.html">🌡️ Termômetro Cívico</a></h3><p>Índice agregado de confiança dos eleitores em cada parlamentar e UF.</p><span class="tag verde">Comunidade</span></div>
+      <div class="card"><h3><a href="fundo-eleitoral.html">💰 Fundo Eleitoral</a></h3><p>Visualização compacta do fundo eleitoral: donut, barras e custo por cadeira.</p><span class="tag">Contexto</span></div>
+      <div class="card"><h3><a href="eleicoes-2026.html">🗳️ Eleições 2026</a></h3><p>Mapa de candidaturas, partidos e cenários para as próximas eleições gerais.</p><span class="tag verde">Contexto</span></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <h2>Acompanhamento e cobrança</h2>
+    <div class="grid">
+      <div class="card"><h3><a href="digest.html">📧 Digest semanal</a></h3><p>Assine o resumo semanal por e-mail. Filtre por temas de interesse (educação, saúde, economia…).</p><span class="tag verde">Ação</span></div>
+      <div class="card"><h3><a href="cobrancas-ranking.html">🏆 Selos de responsividade</a></h3><p>Ranking público de gabinetes que respondem às cobranças: ouro, prata, bronze.</p><span class="tag">Transparência</span></div>
+      <div class="card"><h3><a href="mandato-responsavel.html">🎓 Mandato responsável</a></h3><p>Página educativa: como funcionam as regras atuais de cassação e caminhos legítimos de mobilização.</p><span class="tag azul">Educação</span></div>
+      <div class="card"><h3><a href="revogar.html">✍️ Revogar voto</a></h3><p>Recolha seu voto registrado — mecanismo conceitual de retratação cívica.</p><span class="tag">Participação</span></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <h2>Sistema e transparência técnica</h2>
+    <div class="grid">
+      <div class="card"><h3><a href="metodologia.html">📐 Metodologia</a></h3><p>Fórmulas, fontes oficiais, limitações e política de privacidade do projeto.</p><span class="tag azul">Leitura</span></div>
+      <div class="card"><h3><a href="api-publica.html">📘 API pública</a></h3><p>Documentação dos endpoints abertos, com teste ao vivo e cópia de URL — para jornalistas e devs.</p><span class="tag">Dev</span></div>
+      <div class="card"><h3><a href="status.html">🚦 Status do sistema</a></h3><p>Dashboard ao vivo dos 4 serviços monitorados (backend, Câmara, Senado, GitHub Pages).</p><span class="tag">Ops</span></div>
+      <div class="card"><h3><a href="stats.html">📊 Estatísticas públicas</a></h3><p>Métricas agregadas do projeto: votos, parlamentares, inscritos, uptime.</p><span class="tag">Métricas</span></div>
+      <div class="card"><h3><a href="digest-admin.html">🔐 Admin do digest</a></h3><p>Painel protegido por senha: inscritos, respostas, taxa de abertura, disparo manual.</p><span class="tag vermelho">Protegido</span></div>
+      <div class="card"><h3><a href="digest-metrics.html">📈 Métricas do digest</a></h3><p>Gráficos SVG de inscritos confirmados × pendentes e uptime do digest.</p><span class="tag">Métricas</span></div>
+      <div class="card"><h3><a href="digest-archive.html">📰 Arquivo de digests</a></h3><p>Todos os resumos semanais já enviados, em texto, para qualquer visitante ler.</p><span class="tag azul">Arquivo</span></div>
+      <div class="card"><h3><a href="comunidade.html">👥 Comunidade</a></h3><p>Reclamações, apoios e vozes cidadãs registradas publicamente.</p><span class="tag verde">Comunidade</span></div>
+    </div>
+  </div>
+
+  <div class="group">
+    <h2>Acesso rápido</h2>
+    <div class="grid">
+      <div class="card"><h3><a href="../index.html">🏠 Página inicial</a></h3><p>Home, conferência de voto, ajuda e quem somos.</p></div>
+      <div class="card"><h3><a href="../app/">📱 App PWA instalável</a></h3><p>Versão instalável no celular (Android/iOS) via navegador.</p></div>
+      <div class="card"><h3><a href="../privacidade.html">🔒 Política de privacidade</a></h3><p>LGPD, retenção, direitos e descadastro.</p></div>
+      <div class="card"><h3><a href="../termos.html">📄 Termos de uso</a></h3><p>Condições de uso da plataforma.</p></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Hub gerado em <span id="ts"></span> · Fonte oficial: dadosabertos.camara.leg.br · Protótipo cívico sem valor legal.</p>
+  </footer>
+</main>
+<script>
+document.getElementById('ts').textContent = new Date().toLocaleString('pt-BR');
+</script>
+</body>
+</html>

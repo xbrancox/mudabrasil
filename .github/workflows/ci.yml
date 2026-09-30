@@ -28,6 +28,8 @@ jobs:
         run: node scripts/testar-cobrancas-e2e.js
       - name: Testes ciclo 29 - temas e modo cidadao (testar-ciclo29.js)
         run: node scripts/testar-ciclo29.js
+      - name: Testes ciclo 31 - hub links + Open Graph tags (testar-ciclo31.js)
+        run: node scripts/testar-ciclo31.js
       - name: Sintaxe do servidor
         run: node --check server/index.js
       - name: Sintaxe do worker digest
