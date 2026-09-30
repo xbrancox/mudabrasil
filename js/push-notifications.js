@@ -1,4 +1,4 @@
-// MeuVoto - Web Push Notifications Manager
+// MeuVoto - Web Push Notifications Manager (com chave VAPID dinâmica)
 (function() {
   var BASE = (function() {
     try { if (window.MeuVoto && MeuVoto.API_BASE) return MeuVoto.API_BASE; } catch(e) {}
@@ -6,9 +6,28 @@
     return 'https://mudabrasil-production-79eb.up.railway.app';
   })();
 
+  // Cache em memória da chave pública VAPID
+  var _vapidPublicKey = null;
+
   var PushManager = {
     isSupported: function() {
       return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+    },
+
+    // Busca a chave pública VAPID do backend (ou usa cache)
+    getVapidPublicKey: async function() {
+      if (_vapidPublicKey) return _vapidPublicKey;
+      try {
+        var r = await fetch(BASE + '/api/push/vapid-public');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        var j = await r.json();
+        if (!j || !j.ok || !j.publicKey) throw new Error('resposta sem publicKey');
+        _vapidPublicKey = j.publicKey;
+        return _vapidPublicKey;
+      } catch (err) {
+        console.error('[push] falha ao obter VAPID pública:', err);
+        return null;
+      }
     },
 
     requestPermission: async function() {
@@ -20,9 +39,13 @@
     subscribe: async function() {
       if (!this.isSupported()) return null;
       try {
+        const vapidKey = await this.getVapidPublicKey();
+        if (!vapidKey) {
+          console.error('[push] sem chave VAPID pública disponível');
+          return null;
+        }
         const registration = await navigator.serviceWorker.ready;
-        // Usando uma chave pública de exemplo (em produção, usar VAPID real do backend)
-        const applicationServerKey = urlBase64ToUint8Array('BEl62iUYgUivxIkv69yViEuiBIa-Ib3-SJcZxJf0xVqN8K9L2M3P4Q5R6S7T8U9V0W1X2Y3Z4A5B6C7D8E9F0G1H2I3J4K5L6M7N8O9P0Q1R2S3T4U5V6W7X8Y9Z0');
+        const applicationServerKey = urlBase64ToUint8Array(vapidKey);
         const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: applicationServerKey
@@ -32,7 +55,7 @@
         await fetch(BASE + '/api/digest/subscribe-push', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subscription: subscription })
+          body: JSON.stringify({ subscription: subscription.toJSON() })
         });
         
         return subscription;
@@ -63,13 +86,17 @@
 
     getSubscriptionStatus: async function() {
       if (!this.isSupported()) return false;
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      return !!subscription;
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        return !!subscription;
+      } catch (e) {
+        return false;
+      }
     }
   };
 
-  // Helper para converter chave VAPID
+  // Helper para converter chave VAPID base64url em Uint8Array
   function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
     const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
