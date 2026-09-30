@@ -36,6 +36,8 @@ jobs:
         run: node scripts/testar-ciclo33.js
       - name: Testes ciclo 34 - VAPID dinâmico + jsPDF (testar-ciclo34.js)
         run: node scripts/testar-ciclo34.js
+      - name: Testes ciclo 35 - web-push + fichaPdf jsPDF (testar-ciclo35.js)
+        run: node scripts/testar-ciclo35.js
       - name: Testes de performance (testar-performance.js)
         run: node scripts/testar-performance.js
       - name: Sintaxe do servidor

@@ -12,7 +12,8 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "nodemailer": "^9.1.1"
+    "nodemailer": "^9.1.1",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "playwright": "^1.62.1"
