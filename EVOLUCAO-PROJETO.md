@@ -820,3 +820,33 @@ Rodar com: `node scripts/testar-digest-e2e.js`
 - **Commit:** ciclo 31 commitado e publicado.
 - **CI atualizado:** `.github/workflows/ci.yml` agora executa `testar-ciclo31.js` em cada push/PR.
 - **Impacto:** compartilhamentos em redes sociais agora mostram preview rico (título, descrição, imagem) para todas as 25 páginas.
+
+
+## 6.5 Ciclo 32 — Link Checker Interno (commit 2f2b50c)
+
+### O que faz
+Varre todas as 28 páginas em `pages/*.html` e valida que cada `href`/`src` interno aponta para um arquivo existente no disco. Ignora automaticamente:
+- URLs externas (http, https, //, mailto, tel, data, blob)
+- Template literals (`${...}`) e concatenações JS (`'+...+'`)
+- Query strings (`?v=2`) e fragments (`#secao`)
+
+### Entrega
+- **`scripts/testar-links.js`**: script standalone, executado pelo CI em cada push.
+- **Bug corrigido**: `pages/cedula-votabrasil.html` tinha 2 links quebrados (`icon.svg` e `config.local.js` sem `../` prefix). Corrigidos.
+- **CI atualizado**: novo step `Testes ciclo 32 - link checker interno` em `.github/workflows/ci.yml`.
+
+### Resultado
+- 187 links internos verificados
+- 135 links externos/dinâmicos ignorados (corretamente)
+- 0 quebrados
+- 28 páginas varridas
+
+### Suíte de testes atual (7 scripts, todos passando)
+1. `validar-ia.js` — auditoria estática (20 scripts, 180 nomes, 676 tags, 146/146 divs)
+2. `testar-ia.js` — 60+ asserções DOM (grupos A–L)
+3. `testar-ciclo23.js` — tema claro/escuro/alto + A×B + CI
+4. `testar-digest-e2e.js` — 18 asserções digest (filtro por tema, pixel tracking, PNG, dashboard temas)
+5. `testar-cobrancas-e2e.js` — 15 asserções cobranças (gerar, responder, ranking)
+6. `testar-ciclo29.js` — 51 asserções (temas automáticos, modo cidadão, metodologia)
+7. `testar-ciclo31.js` — 14 asserções (hub links.html, Open Graph tags)
+8. **`testar-links.js`** — link checker interno (187 links verificados, 0 quebrados)
