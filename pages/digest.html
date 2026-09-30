@@ -45,6 +45,9 @@ ul b{color:var(--ink)}
   <div class="card">
     <label for="em">Seu e-mail</label>
     <input id="em" type="email" inputmode="email" autocomplete="email" placeholder="voce@exemplo.com"/>
+    <label style="margin-top:18px">📌 Temas de interesse <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional — deixe vazio para receber tudo)</span></label>
+    <div id="topics" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div>
+    <p class="muted" style="margin-top:6px">Se marcar ao menos um tema, seu resumo incluirá só votações relacionadas a eles. Os temas ficam salvos no navegador e são enviados ao backend no momento da inscrição.</p>
     <div class="row">
       <button class="btn gold" id="bAssinar">Assinar digest</button>
       <button class="btn" id="bCancelar">Cancelar</button>
@@ -86,6 +89,29 @@ ul b{color:var(--ink)}
   var msg=$('#msg'), em=$('#em');
   function show(cls,t){msg.className='msg '+cls;msg.innerHTML=t}
   function val(){var v=(em.value||'').trim().toLowerCase();return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)?v:null}
+  /* ciclo P0: chips de temas */
+  var TEMAS=['educacao','saude','economia','seguranca','meio ambiente','infraestrutura','reforma tributaria','trabalho','justica'];
+  function topicsLoad(){try{return JSON.parse(localStorage.getItem('mb_digest_topics')||'[]')}catch(e){return[]}}
+  function topicsSave(a){try{localStorage.setItem('mb_digest_topics',JSON.stringify(a))}catch(e){}}
+  function topicsGet(){var chips=document.querySelectorAll('#topics .tc');var r=[];chips.forEach(function(c){if(c.classList.contains('on'))r.push(c.getAttribute('data-t'))});return r}
+  function topicsRender(){
+    var el=document.getElementById('topics');if(!el)return;
+    var sel=topicsLoad();
+    el.innerHTML=TEMAS.map(function(t){
+      var on=sel.indexOf(t)>=0;
+      return '<span class="tc'+(on?' on':'')+'" data-t="'+t+'" style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:999px;border:1px solid '+(on?'var(--gold)':'var(--line)')+';background:'+(on?'rgba(255,215,0,.12)':'var(--card2)')+';color:'+(on?'var(--gold)':'var(--ink)')+';font:700 12px Manrope;cursor:pointer;user-select:none">'+(on?'✓ ':'')+t+'</span>';
+    }).join('');
+    el.querySelectorAll('.tc').forEach(function(c){c.addEventListener('click',function(){
+      c.classList.toggle('on');
+      var on=c.classList.contains('on');
+      c.style.borderColor=on?'var(--gold)':'var(--line)';
+      c.style.background=on?'rgba(255,215,0,.12)':'var(--card2)';
+      c.style.color=on?'var(--gold)':'var(--ink)';
+      c.textContent=(on?'✓ ':'')+c.getAttribute('data-t');
+      topicsSave(topicsGet());
+    })});
+  }
+  topicsRender();
   async function call(path,body,method){
     var r;
     try{ r=await fetch(BASE+path,{method:method||'POST',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined}) }
@@ -100,13 +126,14 @@ ul b{color:var(--ink)}
   }
   $('#bAssinar').addEventListener('click',async function(){
     var v=val(); if(!v){show('err','Digite um e-mail válido.');return}
-    show('ok','⏳ inscrevendo…');
-    var r=await call('/api/digest/subscribe',{email:v});
+    var topics=topicsGet();
+    show('ok','⏳ inscrevendo…'+(topics.length?' (temas: '+topics.join(', ')+')':' (todos os temas)'));
+    var r=await call('/api/digest/subscribe',{email:v,topics:topics});
     if(r&&r.j.ok){
       if(r.j.confirmUrl){
-        show('ok','✅ Inscrição registrada! <br>Um link de confirmação foi gerado. <a href="'+r.j.confirmUrl+'" style="color:var(--gold);text-decoration:underline">Clique aqui para confirmar seu e-mail</a> e ativar o recebimento.');
+        show('ok','✅ Inscrição registrada! <br>Um link de confirmação foi gerado. <a href="'+r.j.confirmUrl+'" style="color:var(--gold);text-decoration:underline">Clique aqui para confirmar seu e-mail</a> e ativar o recebimento.'+(topics.length?' <br>Seu resumo será filtrado pelos temas: <b>'+topics.join(', ')+'</b>.':''));
       }else{
-        show('ok','✅ '+ (r.j.message || 'Pronto!') +' <b>'+v+'</b> está na lista.');
+        show('ok','✅ '+ (r.j.message || 'Pronto!') +' <b>'+v+'</b> está na lista.'+(topics.length?' Temas: <b>'+topics.join(', ')+'</b>.':''));
       }
     }else if(r){
       show('err','❌ '+(r.j.error||('HTTP '+r.status)));

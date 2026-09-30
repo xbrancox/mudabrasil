@@ -684,3 +684,71 @@ Fechar o ciclo cidadão → gabinete → resposta pública. Cada cobrança regis
 
 ### Testes
 `scripts/testar-cobrancas.js` (23 asserções, todas passando): sobe servidor real em porta efêmera (3877) e valida ciclo completo + casos de borda (token errado, resposta curta, cobrança inexistente, sem vazamento).
+
+
+### 5.6 Ciclo 24 — Cobranças Cívicas Verificadas
+
+**Objetivo:** Criar sistema de cobrança com token assinado + resposta oficial do gabinete + métricas de abertura/resposta.
+
+**Arquivos criados:**
+- `server/cobrancas.js` — módulo de gerenciamento (criar, buscar, marcar aberta, responder, stats)
+- `pages/cobranca.html` — página pública da cobrança (marca como aberta automaticamente)
+- `pages/cobranca-responder.html` — formulário para gabinete responder oficialmente
+
+**Rotas do backend (já implementadas em `server/index.js`):**
+- `POST /api/cobrancas/gerar` — cidadão gera recibo → retorna `{id, token, url}`
+- `GET /api/cobrancas/:id?token=` — página pública (marca como aberta no primeiro acesso)
+- `POST /api/cobrancas/:id/responder` — gabinete responde oficialmente (requer token)
+- `GET /api/cobrancas?politicianId=X` — agregado público do parlamentar (selo de responsividade)
+- `GET /api/cobrancas/ranking` — selos por parlamentar (ouro/prata/bronze)
+
+**Fluxo completo:**
+1. Eleitor gera recibo de cobrança (botão "📝 Registrar cobrança" no painel v9)
+2. Frontend chama `/api/cobrancas/gerar` → recebe `id`, `token` e `url` pública
+3. Eleitor copia o link oficial e envia ao gabinete (WhatsApp/e-mail)
+4. Gabinete abre o link → cobrança é marcada como "aberta" automaticamente
+5. Gabinete clica em "📝 Responder oficialmente" → preenche formulário
+6. Resposta é registrada com timestamp e aparece na página pública
+7. Cidadão recebe notificação (futuro) ou verifica manualmente
+
+**Métricas de gabinete:**
+- Taxa de abertura (% de cobranças visualizadas)
+- Taxa de resposta (% de cobranças respondidas)
+- Tempo médio de resposta (dias)
+- Selo de responsividade: ouro (≤7 dias), prata (≤15 dias), bronze (≥1 resposta)
+
+**Validações:**
+- ✅ 17 scripts inline — sintaxe OK
+- ✅ 158 nomes chamados — nenhum órfão
+- ✅ 647 tags HTML — todas com aspas
+- ✅ 145/145 divs balanceadas
+
+**Status:** Implementado e publicado (commit `d92dc9c`).
+
+
+## 6. Ciclo P0/P1/P2 — Preferências por tema, selos e tema claro
+
+### 6.1 P0 — Preferências por tema no digest (backend + worker + UI)
+- **Backend** (`server/index.js`): `/api/digest/subscribe` aceita `topics[]`; `digestRead` migra automaticamente entradas legadas de string para objeto `{email, topics:[]}`; `/api/digest/list` retorna `subscribers: [{email, topics}]` (mantendo `emails` para retrocompatibilidade); `/api/digest/confirm` preserva os topics ao mover de `pending` para `confirmed`; `/api/digest/unsubscribe` funciona com o schema normalizado.
+- **Worker** (`scripts/digest-send.js`): para cada inscrito, filtra as votações da semana pelos seus temas; se o inscrito não marcou tema, recebe tudo; se marcou tema e não houve votação relacionada, recebe mensagem honesta "Nenhuma votação nos últimos 7 dias relacionada aos seus temas: X, Y".
+- **UI** (`pages/digest.html`): chips de 9 temas (educação, saúde, economia, segurança, meio ambiente, infraestrutura, reforma tributária, trabalho, justiça) persistidos em `localStorage('mb_digest_topics')`; enviados no POST de inscrição.
+
+### 6.2 P1 — Ranking público de selos de responsividade
+- **Rota** `/api/cobrancas/ranking` já existia (implementada em ciclo anterior) com critérios: 🥇 Ouro (≥3 cobranças respondidas em mediana ≤7 dias), 🥈 Prata (mediana ≤15 dias), 🥉 Bronze (≥1 resposta), — Sem selo.
+- **Página** `pages/cobrancas-ranking.html` já estava publicada com tabela pública, critérios e metodologia.
+- **Alias** `pages/selos.html` criado como redirecionamento para `cobrancas-ranking.html`, garantindo que a URL `/selos` funcione.
+
+### 6.3 P2 — Tema claro / escuro / alto contraste
+- **Já implementado** em ciclos anteriores (`js/site-header.js` — ciclo 23 + 23b):
+  - 3 modos ciclando: Escuro → Claro → Alto contraste → Escuro.
+  - CSS de overrides via `html[data-theme="claro"]` e `html[data-theme="alto"]`.
+  - Bootstrap síncrono no `<head>` (evita flash do tema errado).
+  - Persistência em `localStorage('mb_tema')` + respeito a `prefers-color-scheme`.
+  - Botão flutuante em todas as páginas (bottom-left).
+  - Modo alto contraste com fundo preto, texto branco, foco/bordas em dourado `#ffd700` (WCAG AAA).
+
+### 6.4 Validação executada
+- `node --check server/index.js` → OK
+- `node --check scripts/digest-send.js` → OK
+- `scripts/validar-ia.js` → 18 scripts OK, 167 nomes sem órfãos, 657 tags com aspas, 145/145 divs balanceadas
+- `scripts/testar-ia.js` → todos os grupos A–L passando (60+ asserções)

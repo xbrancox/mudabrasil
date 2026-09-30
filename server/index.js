@@ -576,12 +576,19 @@ async function handleApi(req, res, url) {
     try {
       const raw = fs.readFileSync(digestFile, 'utf8');
       const parsed = JSON.parse(raw);
+      let data;
       if (Array.isArray(parsed)) {
-        const migrated = { confirmed: parsed, pending: [] };
-        fs.writeFileSync(digestFile, JSON.stringify(migrated, null, 2));
-        return migrated;
+        data = { confirmed: parsed, pending: [] };
+      } else {
+        data = parsed;
       }
-      return parsed;
+      /* ciclo P0: normaliza confirmed (string legada -> {email, topics}) */
+      data.confirmed = (data.confirmed || []).map(x =>
+        typeof x === 'string' ? { email: x, topics: [] } : { email: x.email, topics: Array.isArray(x.topics) ? x.topics : [] }
+      );
+      if (!Array.isArray(data.pending)) data.pending = [];
+      fs.writeFileSync(digestFile, JSON.stringify(data, null, 2));
+      return data;
     } catch (e) {
       return { confirmed: [], pending: [] };
     }
@@ -596,14 +603,18 @@ async function handleApi(req, res, url) {
     try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
     const email = String(body.email || '').trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return sendJson(res, 400, { ok: false, error: 'email invalido' });
+    /* ciclo P0: aceita topics (preferencias por tema) */
+    const topics = Array.isArray(body.topics)
+      ? body.topics.map(t => String(t).toLowerCase().trim()).filter(Boolean).slice(0, 20)
+      : [];
     
     const data = digestRead();
-    if (data.confirmed.includes(email) || data.pending.some(x => x.email === email)) {
+    if (data.confirmed.some(x => x.email === email) || data.pending.some(x => x.email === email)) {
       return sendJson(res, 200, { ok: true, message: 'E-mail já registrado ou pendente de confirmação.' });
     }
     
     const token = crypto.randomBytes(16).toString('hex');
-    data.pending.push({ email, token, createdAt: new Date().toISOString() });
+    data.pending.push({ email, token, topics, createdAt: new Date().toISOString() });
     digestWrite(data);
     
     const baseUrl = process.env.BASE_URL || 'https://xbrancox.github.io/votabrasil';
@@ -625,8 +636,9 @@ async function handleApi(req, res, url) {
     if (idx === -1) return sendJson(res, 404, { ok: false, error: 'token invalido ou expirado' });
     
     const item = data.pending.splice(idx, 1)[0];
-    if (!data.confirmed.includes(item.email)) {
-      data.confirmed.push(item.email);
+    /* ciclo P0: preserva topics ao mover para confirmed */
+    if (!data.confirmed.some(x => x.email === item.email)) {
+      data.confirmed.push({ email: item.email, topics: item.topics || [] });
     }
     digestWrite(data);
     
@@ -639,10 +651,10 @@ async function handleApi(req, res, url) {
     const email = String(body.email || '').trim().toLowerCase();
     
     const data = digestRead();
-    const wasConfirmed = data.confirmed.includes(email);
+    const wasConfirmed = data.confirmed.some(x => x.email === email);
     const wasPending = data.pending.some(x => x.email === email);
     
-    data.confirmed = data.confirmed.filter(e => e !== email);
+    data.confirmed = data.confirmed.filter(x => x.email !== email);
     data.pending = data.pending.filter(x => x.email !== email);
     digestWrite(data);
     
@@ -664,7 +676,9 @@ async function handleApi(req, res, url) {
       return sendJson(res, 403, { ok: false, error: 'sem permissao' });
     }
     const data = digestRead();
-    return sendJson(res, 200, { ok: true, emails: data.confirmed });
+    /* ciclo P0: retorna subscribers com topics + emails p/ retrocompat */
+    const subs = data.confirmed.map(x => ({ email: x.email, topics: x.topics || [] }));
+    return sendJson(res, 200, { ok: true, emails: subs.map(s => s.email), subscribers: subs });
   }
 
   if (p === '/api/digest/admin' && req.method === 'GET') {
