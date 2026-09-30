@@ -8,4 +8,4 @@
 - Digest backend: /api/digest/* (subscribe/unsubscribe/status/list), worker SMTP, GitHub Action semanal, página pública digest.html, confirmação por token, admin, métricas, arquivo público, tracking de abertura (commits até 6a24a68).
 - Votações v16-final (6a24a68): sumário navegável, meus temas (filtro client-side do resumo), impressão modo leitura, FIGMA-HANDOFF.md.
 - v17 (este): acessibilidade de teclado em todos os chips clicáveis + auditor corrigido em scripts/auditar-votacoes.js.
-Pendências que dependem do mantenedor: domínio omeuvoto.app (Registro.br), publicação Play Store (conta), secrets SMTP/DIGEST no GitHub.
+Pendências que dependem do mantenedor: domínio omeuvoto.app (Registro.br), publicação Play Store (conta), secrets SMTP/DIGEST no GitHub.- v24 (fecha a fase Votacoes): export de card PNG da votacao aberta (canvas 900x560 nativo) + CI obrigatorio (.github/workflows/ci.yml) rodando validar-ia, testar-ia e node --check em todo push/PR.

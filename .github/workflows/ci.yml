@@ -1,0 +1,28 @@
+name: CI MeuVoto
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instalar jsdom (dependencia de teste)
+        run: npm install --no-save --no-audit --no-fund jsdom
+      - name: Auditoria estatica (validar-ia.js)
+        run: node scripts/validar-ia.js
+      - name: Testes DOM A-L (testar-ia.js)
+        run: node scripts/testar-ia.js
+      - name: Testes P2/P3/P5 (testar-ciclo23.js)
+        run: node scripts/testar-ciclo23.js
+      - name: Sintaxe do servidor
+        run: node --check server/index.js
+      - name: Sintaxe do worker digest
+        run: node --check scripts/digest-send.js

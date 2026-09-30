@@ -611,3 +611,37 @@ Resultado: a funcionalidade de abrir votações nominais ficou mais robusta, com
 - **Acessibilidade**: botão nativo `<button>`, `aria-label` dinâmico, `title`, foco visível herdado, `color-scheme` ajustado (claro/escuro).
 - **Bug corrigido**: `pages/cedula-votabrasil.html` tinha include quebrado (`js/site-header.js` sem `../`) — agora `../js/site-header.js?v=3`.
 - **API pública**: `window.mbGetTema()` e `window.mbSetTema(t)` permitem integração por outros módulos; evento `mb:tema` disparado em cada troca.
+
+### 5.7 Ciclo 24 - Export PNG + CI obrigatorio (FECHA A FASE VOTACOES)
+- `pages/votacoes.html` ciclo24: botao "Exportar card PNG" que gera, via canvas nativo 900x560, imagem com cabecalho dourado, assunto, data, barra de placar Sim/Nao/Abstencao/Outros, linha de quorum e rodape de fonte. Wrapper de expand() registra a ultima votacao aberta.
+- `.github/workflows/ci.yml`: em todo push/PR roda `scripts/validar-ia.js`, `scripts/testar-ia.js`, `node --check server/index.js`, `node --check scripts/digest-send.js`. Bloqueia merge de regressoes.
+- FECHAMENTO DA FASE VOTACOES: transparencia, analise (3 eixos + quadrante + AxB), educacao civica, acessibilidade, busca global, tema claro/escuro global, virtualizacao, PNG e CI completos.
+- Permanecem externos (dependem do mantenedor): dominio omeuvoto.app (Registro.br + DNS), publicacao Play Store (conta + trilhas), secrets SMTP/DIGEST no GitHub. Proxima fase de produto: Cobrancas verificadas (token + selo gabinete responsivo).
+
+### 5.6 Ciclo 23 — P3 (alto contraste), P2 (revisão do comparador) e P5 (CI unificado)
+
+#### P3 — Tema claro / escuro / alto contraste
+O `js/site-header.js` já trazia o ciclo claro/escuro. O ciclo 23b adiciona o **terceiro modo: alto contraste**, com:
+- fundo preto, texto branco, bordas/foco em dourado `#ffd700` (contraste WCAG AAA);
+- outline reforçado (3 px sólidos) em todos os elementos com foco — essencial para navegação por teclado e baixa visão;
+- botão flutuante cicla `escuro → claro → alto contraste → escuro`, com `aria-label` atualizado a cada clique;
+- persistência em `localStorage('mb_tema')` e respeita `prefers-color-scheme` como fallback;
+- API pública `window.mbSetTema('escuro'|'claro'|'alto')` para integração com outras páginas.
+
+#### P2 — Comparador A × B (revisão e cobertura de testes)
+Confirmados via teste DOM (`scripts/testar-ciclo23.js`):
+- container `#cmpAB` e funções `cmpABUI`/`cmpABRun` presentes;
+- exportação PNG via `canvas.toDataURL`/`toBlob`;
+- compartilhamento WhatsApp com resumo formatado;
+- selects `abA`/`abB` pré-preenchidos com os deputados do usuário.
+
+#### P5 — CI unificado (.github/workflows/ci.yml)
+Pipeline obrigatório em push/PR para `main`:
+1. Instala `jsdom` para testes DOM.
+2. `node scripts/validar-ia.js` — sintaxe, órfãos, tags com aspas, divs balanceadas.
+3. `node scripts/testar-ia.js` — 60+ asserções em grupos A–L (abas, cartões, ⓘ, agenda, estatísticas, lista de votações, acessibilidade, onboarding).
+4. `node scripts/testar-ciclo23.js` — **novo**: cobre o ciclo de tema (3 modos + persistência + API), os marcadores do comparador A×B e a integridade do próprio ci.yml.
+5. `node --check server/index.js` — sintaxe do backend.
+6. `node --check scripts/digest-send.js` — sintaxe do worker SMTP.
+
+Falha em qualquer passo → bloqueia merge.

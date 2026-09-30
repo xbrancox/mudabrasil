@@ -321,3 +321,71 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', criaBtn);
   else criaBtn();
 })();
+
+/* ciclo23b: modo ALTO CONTRASTE — terceiro modo do botão de tema
+   - injeta CSS extra para html[data-theme="alto"] (fundo preto, texto branco,
+     bordas/foco em dourado alto visível, contraste WCAG AAA)
+   - sobrepõe mbSetTema para aceitar 'alto' como valor válido
+   - sobrepõe o clique do botão para ciclar escuro → claro → alto → escuro
+   - atualiza label/aria-label conforme modo ativo */
+(function () {
+  var CSS = [
+    'html[data-theme="alto"]{color-scheme:dark;--bg:#000000;--card:#0a0a0a;--card2:#111111;--line:#ffd700;--ink:#ffffff;--muted:#f2f2f2;--gold:#ffd700;--blue:#4da3ff;--blueL:#8ec9ff;--green:#00e676;--red:#ff5252}',
+    'html[data-theme="alto"] body,html[data-theme="alto"] .fbar,html[data-theme="alto"] .cmpbar,html[data-theme="alto"] #mbtopo,html[data-theme="alto"] .ecard,html[data-theme="alto"] .painel,html[data-theme="alto"] .vcard,html[data-theme="alto"] .card,html[data-theme="alto"] .mnav,html[data-theme="alto"] input,html[data-theme="alto"] select,html[data-theme="alto"] textarea,html[data-theme="alto"] .btn,html[data-theme="alto"] .tabs button,html[data-theme="alto"] .tabs button.on{background:#000000!important;color:#ffffff!important;border-color:#ffd700!important}',
+    'html[data-theme="alto"] a,html[data-theme="alto"] .fonte,html[data-theme="alto"] .lei{color:#ffd700!important;border-color:#ffd700!important}',
+    'html[data-theme="alto"] .btn.gold{background:#ffd700!important;color:#000000!important;border:none!important}',
+    'html[data-theme="alto"] :focus,html[data-theme="alto"] :focus-visible{outline:3px solid #ffd700!important;outline-offset:2px!important}',
+    'html[data-theme="alto"] .vb.sim{background:#003d1f!important;color:#00e676}',
+    'html[data-theme="alto"] .vb.nao{background:#3d0000!important;color:#ff5252}',
+    'html[data-theme="alto"] .mbTemaBtn{background:#000000!important;color:#ffd700!important;border-color:#ffd700!important;box-shadow:0 0 0 2px #ffd700!important}'
+  ].join('\n');
+  var st = document.createElement('style');
+  st.id = 'mb-tema-alto-css';
+  st.textContent = CSS;
+  (document.head || document.documentElement).appendChild(st);
+
+  var MODOS = ['escuro', 'claro', 'alto'];
+  var LABELS = { escuro: '☀️ Claro', claro: '◐ Alto contraste', alto: '🌙 Escuro' };
+  var LBLAR  = { escuro: 'Mudar para claro', claro: 'Mudar para alto contraste', alto: 'Mudar para escuro' };
+
+  function cur() {
+    var t = document.documentElement.getAttribute('data-theme');
+    if (t === 'claro') return 'claro';
+    if (t === 'alto') return 'alto';
+    return 'escuro';
+  }
+  function up() {
+    var b = document.getElementById('mbTemaBtn');
+    if (!b) return;
+    var t = cur();
+    b.textContent = LABELS[t];
+    b.setAttribute('aria-label', LBLAR[t]);
+    b.setAttribute('title', LBLAR[t]);
+  }
+
+  // Sobrepõe mbSetTema para aceitar 'alto'
+  window.mbSetTema = function (t) {
+    var v = (t === 'claro' || t === 'alto') ? t : 'escuro';
+    document.documentElement.setAttribute('data-theme', v);
+    try { localStorage.setItem('mb_tema', v); } catch (e) {}
+    try { document.dispatchEvent(new CustomEvent('mb:tema', { detail: { tema: v } })); } catch (e) {}
+    up();
+  };
+
+  function patch() {
+    var b = document.getElementById('mbTemaBtn');
+    if (!b) return;
+    if (b.getAttribute('data-c23b') === '1') return up();
+    b.setAttribute('data-c23b', '1');
+    var nb = b.cloneNode(true);
+    b.parentNode.replaceChild(nb, b);
+    nb.addEventListener('click', function () {
+      var i = MODOS.indexOf(cur());
+      window.mbSetTema(MODOS[(i + 1) % 3]);
+    });
+    up();
+    document.addEventListener('mb:tema', up);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', patch);
+  else patch();
+})();
