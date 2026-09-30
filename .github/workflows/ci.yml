@@ -22,6 +22,10 @@ jobs:
         run: node scripts/testar-ia.js
       - name: Testes P2/P3/P5 (testar-ciclo23.js)
         run: node scripts/testar-ciclo23.js
+      - name: Testes E2E digest (testar-digest-e2e.js)
+        run: node scripts/testar-digest-e2e.js
+      - name: Testes E2E cobrancas (testar-cobrancas-e2e.js)
+        run: node scripts/testar-cobrancas-e2e.js
       - name: Sintaxe do servidor
         run: node --check server/index.js
       - name: Sintaxe do worker digest

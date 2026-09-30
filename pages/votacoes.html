@@ -719,6 +719,16 @@ button.ia-i,span.ia-i{background:var(--gold)!important;color:#1a1400!important;b
   mo.observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
+
+<script id="ciclo28">
+(function(){
+function parseAB(){var h=location.hash||"";var m=h.match(/#ab=([^,]+),([^&]+)/);return m?[decodeURIComponent(m[1]),decodeURIComponent(m[2])]:null}
+function applyAB(){var p=parseAB();if(!p)return;var a=document.getElementById("abA"),b=document.getElementById("abB");if(!a||!b)return;if(a.options.length<2){setTimeout(applyAB,600);return}a.value=p[0];b.value=p[1];if(typeof window.cmpABRun==="function")window.cmpABRun();var el=document.getElementById("cmpAB");if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}
+function abLink(){var a=document.getElementById("abA"),b=document.getElementById("abB");if(!a||!b||!a.value||!b.value)return alert("Escolha os dois deputados primeiro.");var u=location.href.split("#")[0]+"#ab="+encodeURIComponent(a.value)+","+encodeURIComponent(b.value);if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(function(){alert("🔗 Link da comparação copiado!")})}else{prompt("Copie o link:",u)}}
+window.addEventListener("load",function(){setTimeout(applyAB,800);var row=document.getElementById("abA");if(row){var wrap=row.closest(".row")||row.parentElement;if(wrap&&!wrap.querySelector("[data-ablink28]")){var btn=document.createElement("button");btn.className="btn sm";btn.setAttribute("data-ablink28","1");btn.setAttribute("data-tip","Copia URL com os dois deputados embutidos para compartilhar a comparação.");btn.textContent="🔗 Link da comparação";btn.onclick=abLink;wrap.appendChild(btn)}}});
+window.addEventListener("hashchange",applyAB);
+})();
+</script>
 <div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
