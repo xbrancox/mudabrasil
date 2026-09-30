@@ -835,6 +835,149 @@ async function handleApi(req, res, url) {
     return res.end(gif);
   }
 
+  /* ===== COBRANCAS CIVICAS VERIFICADAS =====
+     POST /api/cobrancas/gerar                  cidadao gera recibo -> {id, token, url}
+     GET  /api/cobrancas?politicianId=X         agregado publico do parlamentar (selo)
+     GET  /api/cobrancas/:id                    pagina publica da cobranca (marca aberta)
+     POST /api/cobrancas/:id/responder?token=   gabinete responde oficialmente
+     GET  /api/cobrancas/ranking                selos por parlamentar                */
+  const COB_FILE = path.join(__dirname, 'data', 'cobrancas.json');
+  function cobRead() {
+    try { return JSON.parse(fs.readFileSync(COB_FILE, 'utf8')); }
+    catch (e) { return { cobrancas: [], meta: {} }; }
+  }
+  function cobWrite(obj) {
+    fs.mkdirSync(path.dirname(COB_FILE), { recursive: true });
+    fs.writeFileSync(COB_FILE, JSON.stringify(obj, null, 2));
+  }
+  function cobSecret() {
+    return process.env.COB_SECRET || process.env.DIGEST_SECRET || 'meuvoto-cob-default-v1';
+  }
+  function cobToken(id, ts) {
+    return crypto.createHmac('sha256', cobSecret()).update(id + '.' + ts).digest('hex').slice(0, 32);
+  }
+
+  if (p === '/api/cobrancas/gerar' && req.method === 'POST') {
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    const { politicianId, politicianNome, promessa, votacoes } = body || {};
+    if (!politicianId || !promessa) {
+      return sendJson(res, 400, { ok: false, error: 'politicianId e promessa sao obrigatorios' });
+    }
+    const id = crypto.randomUUID();
+    const ts = new Date().toISOString();
+    const token = cobToken(id, ts);
+    const doc = {
+      id, token,
+      politicianId: String(politicianId),
+      politicianNome: String(politicianNome || ''),
+      promessa: String(promessa).slice(0, 2000),
+      votacoes: Array.isArray(votacoes) ? votacoes.slice(0, 10).map(v => ({
+        id: String(v.id || ''),
+        assunto: String(v.assunto || '').slice(0, 200),
+        data: String(v.data || ''),
+        voto: String(v.voto || '')
+      })) : [],
+      status: 'gerada',
+      criadaEm: ts,
+      enviadaEm: null,
+      abertaEm: null,
+      respondidaEm: null,
+      resposta: null
+    };
+    const data = cobRead();
+    data.cobrancas.push(doc);
+    cobWrite(data);
+    const base = process.env.SITE_BASE || 'https://xbrancox.github.io/votabrasil';
+    const url = base + '/pages/cobranca.html?id=' + id + '&token=' + token;
+    return sendJson(res, 201, { ok: true, id, token, url });
+  }
+
+  if (p === '/api/cobrancas' && req.method === 'GET') {
+    const data = cobRead();
+    if (q.politicianId) {
+      const list = data.cobrancas.filter(c => c.politicianId === q.politicianId);
+      const counts = { total: list.length, gerada: 0, enviada: 0, aberta: 0, respondida: 0, validada: 0 };
+      list.forEach(c => { counts[c.status] = (counts[c.status] || 0) + 1; });
+      const respondidas = list.filter(c => c.status === 'respondida' || c.status === 'validada');
+      const medianDays = respondidas.length
+        ? Math.round(respondidas.reduce((s, c) => s + (new Date(c.respondidaEm) - new Date(c.criadaEm)) / 864e5, 0) / respondidas.length)
+        : null;
+      let selo = 'nenhum';
+      if (counts.respondida + counts.validada >= 3 && medianDays !== null && medianDays <= 7) selo = 'ouro';
+      else if (counts.respondida + counts.validada >= 3 && medianDays !== null && medianDays <= 15) selo = 'prata';
+      else if (counts.respondida + counts.validada >= 1) selo = 'bronze';
+      return sendJson(res, 200, { ok: true, politicianId: q.politicianId, counts, medianDays, selo });
+    }
+    return sendJson(res, 200, { ok: true, total: data.cobrancas.length });
+  }
+
+  const cobIdMatch = p.match(/^\/api\/cobrancas\/([0-9a-f-]{36})$/);
+  if (cobIdMatch && req.method === 'GET') {
+    const data = cobRead();
+    const c = data.cobrancas.find(x => x.id === cobIdMatch[1]);
+    if (!c) return sendJson(res, 404, { ok: false, error: 'cobranca nao encontrada' });
+    if (!c.abertaEm && !c.respondidaEm) {
+      c.abertaEm = new Date().toISOString();
+      c.status = 'aberta';
+      cobWrite(data);
+    }
+    const withToken = !!(q.token && q.token === c.token);
+    const publicView = {
+      id: c.id, politicianId: c.politicianId, politicianNome: c.politicianNome,
+      promessa: c.promessa, votacoes: c.votacoes,
+      status: c.status, criadaEm: c.criadaEm, abertaEm: c.abertaEm,
+      respondidaEm: c.respondidaEm, resposta: c.resposta,
+      autorizadoParaResponder: withToken
+    };
+    return sendJson(res, 200, { ok: true, cobranca: publicView });
+  }
+
+  const cobResMatch = p.match(/^\/api\/cobrancas\/([0-9a-f-]{36})\/responder$/);
+  if (cobResMatch && req.method === 'POST') {
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    const data = cobRead();
+    const c = data.cobrancas.find(x => x.id === cobResMatch[1]);
+    if (!c) return sendJson(res, 404, { ok: false, error: 'cobranca nao encontrada' });
+    if (!q.token || q.token !== c.token) {
+      return sendJson(res, 403, { ok: false, error: 'token invalido (use o link oficial recebido pelo gabinete)' });
+    }
+    if (!body || typeof body.texto !== 'string' || body.texto.trim().length < 20) {
+      return sendJson(res, 400, { ok: false, error: 'resposta muito curta (minimo 20 caracteres)' });
+    }
+    c.resposta = { texto: body.texto.slice(0, 5000), em: new Date().toISOString(), por: String(body.autor || 'gabinete') };
+    c.respondidaEm = c.resposta.em;
+    c.status = 'respondida';
+    cobWrite(data);
+    return sendJson(res, 200, { ok: true, respondidaEm: c.respondidaEm });
+  }
+
+  if (p === '/api/cobrancas/ranking' && req.method === 'GET') {
+    const data = cobRead();
+    const byPol = {};
+    data.cobrancas.forEach(c => {
+      const k = c.politicianId;
+      byPol[k] = byPol[k] || { politicianId: k, politicianNome: c.politicianNome, total: 0, respondidas: 0, dias: [] };
+      byPol[k].total++;
+      if (c.status === 'respondida' || c.status === 'validada') {
+        byPol[k].respondidas++;
+        byPol[k].dias.push((new Date(c.respondidaEm) - new Date(c.criadaEm)) / 864e5);
+      }
+    });
+    const list = Object.values(byPol).map(b => {
+      const median = b.dias.length ? Math.round(b.dias.reduce((s, v) => s + v, 0) / b.dias.length) : null;
+      let selo = 'nenhum';
+      if (b.respondidas >= 3 && median !== null && median <= 7) selo = 'ouro';
+      else if (b.respondidas >= 3 && median !== null && median <= 15) selo = 'prata';
+      else if (b.respondidas >= 1) selo = 'bronze';
+      return { politicianId: b.politicianId, politicianNome: b.politicianNome, total: b.total, respondidas: b.respondidas, medianDays: median, selo };
+    });
+    list.sort((a, b) => (a.medianDays === null ? 9999 : a.medianDays) - (b.medianDays === null ? 9999 : b.medianDays));
+    return sendJson(res, 200, { ok: true, ranking: list });
+  }
+  /* ===== FIM COBRANCAS ===== */
+
   if (p === '/api/admin/backup' && req.method === 'GET') {
     const tok = process.env.BACKUP_TOKEN || '';
     const given = String(req.headers['x-backup-token'] || q.t || '');

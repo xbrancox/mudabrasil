@@ -113,6 +113,13 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 </div>
 <div id="out9" style="margin-top:10px"></div>
 </div>
+<div class="painel-cob" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
+<div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn sm" data-tip="Lista de cobranças que você registrou via 📝 Registrar cobrança, com status atualizado ao vivo." onclick="renderMinhasCobrancas()">📬 Minhas cobranças</button>
+<a class="btn sm" href="cobrancas-ranking.html" data-tip="Ranking público de selos de responsividade dos gabinetes (ouro/prata/bronze).">🏆 Ranking de selos</a>
+</div>
+<div id="outCob" style="margin-top:10px"><p class="muted">Clique em "📬 Minhas cobranças" para ver o status das cobranças registradas.</p></div>
+</div>
 <script id="ciclo9">
 function isoWeek(d){var t=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()));var day=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-day+3);var first=new Date(Date.UTC(t.getUTCFullYear(),0,4));var w=1+Math.round(((t-first)/864e5-3+((first.getUTCDay()+6)%7))/7);return t.getUTCFullYear()+'-W'+(w<10?'0':'')+w}
 async function c7local(){var r=await fetchJ(CAM('votacoes?itens=60&ordem=DESC'));ALL=((r&&r.dados)||[]).slice(0,60);await tipagem(ALL.slice(0,24));var n=ALL.filter(function(v){return v._tipo==='N'}).slice(0,20);await tipagem(n);C7=n;return C7}
@@ -137,6 +144,38 @@ var mr=rates(mine),pr=rates(party);var d=(mr!=null&&nat!=null)?(mr-nat):'';
 rows.push([m.nome,(mr==null?'':mr),(nat==null?'':nat),(pr==null?'':pr),d,Math.round(100*part/C7.length)])}
 var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(';')}).join('\r\n');
 var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='meuvoto-comparador.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href)}
+function cobGet(){try{return JSON.parse(localStorage.getItem('mb_cobrancas')||'[]')}catch(e){return[]}}
+function cobSet(a){localStorage.setItem('mb_cobrancas',JSON.stringify(a))}
+async function registrarCobranca(i,btn){
+var pr=PROMS[i];if(!pr)return alert('Promessa invalida.');
+var ks=kws(pr.txt);var hits=C7.filter(function(v){var a=vInfo(v).assunto.toLowerCase();return ks.some(function(k){return a.indexOf(k)>=0})});
+var num=String(pr.depId).replace('camara-','');
+var votos=hits.slice(0,10).map(function(v){var x=CACHEV[v.id].list.find(function(y){return y.id===num});return{id:v.id,assunto:vInfo(v).assunto,data:v.dataHora,voto:x?x.voto:'nao participou'}});
+if(btn){btn.disabled=true;btn.textContent='Registrando...'}
+try{
+var r=await fetch(BASE+'/api/cobrancas/gerar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({politicianId:pr.depId,politicianNome:pr.nome,promessa:pr.txt,votacoes:votos})});
+var j=await r.json();
+if(!r.ok||!j.ok)throw new Error(j.error||('HTTP '+r.status));
+var arr=cobGet();arr.push({id:j.id,token:j.token,url:j.url,depId:pr.depId,depNome:pr.nome,promessa:pr.txt,criadaEm:new Date().toISOString()});cobSet(arr);
+if(btn){btn.disabled=false;btn.textContent='✅ Cobrança registrada';}
+alert('✅ Cobrança registrada!\n\nLink oficial (com token do gabinete):\n'+j.url+'\n\nEnvie este link por e-mail ao gabinete: quem abrir com o token poderá registrar a resposta oficial. Guarde o link no painel "Minhas cobranças".');
+renderMinhasCobrancas();
+}catch(e){if(btn){btn.disabled=false;btn.textContent='📝 Registrar cobrança'}alert('❌ Falha ao registrar: '+e.message)}
+}
+async function statusCobranca(id){try{var r=await fetch(BASE+'/api/cobrancas/'+encodeURIComponent(id));var j=await r.json();return j.ok?j.cobranca:null}catch(e){return null}}
+async function renderMinhasCobrancas(){
+var el=document.getElementById('outCob');if(!el)return;
+var arr=cobGet();
+if(!arr.length){el.innerHTML='<p class="muted">Nenhuma cobrança registrada ainda. Ao gerar um recibo 🧾, clique em "📝 Registrar cobrança" para criar um link oficial rastreável.</p>';return}
+el.innerHTML='<p class="muted">⏳ Verificando status de '+arr.length+' cobrança(s)...</p>';
+var html='';
+for(var i=0;i<arr.length;i++){
+var c=arr[i];var st=await statusCobranca(c.id);
+var statusTxt=st?('Status: <b>'+(st.status||'?')+'</b> · aberta '+(st.abertaEm?'em '+esc(fmtData(st.abertaEm)):'(ainda não)')+' · respondida '+(st.respondidaEm?'em '+esc(fmtData(st.respondidaEm)):'(ainda não)')):'<span class="muted">sem conexão com o servidor</span>';
+html+='<div class="ecard" style="margin-top:8px"><p><b>'+esc(c.depNome)+'</b> — "'+esc(trunc(c.promessa,80))+'"</p><p class="muted" style="margin-top:4px">'+statusTxt+'</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><a class="btn sm" href="'+c.url+'" target="_blank" rel="noopener">🔗 Abrir página pública</a><button class="btn sm" onclick="navigator.clipboard.writeText(\''+esc(c.url).replace(/'/g,"\\'")+'\').then(function(){alert(\'📋 Link copiado!\')})">📋 Copiar link oficial (com token)</button><button class="btn sm" onclick="removerCobranca('+i+')">🗑️ Remover</button></div>'+(st&&st.resposta?'<div style="margin-top:8px;border-left:3px solid var(--gold);padding:8px 12px;border-radius:8px;background:rgba(255,215,0,.07)"><b>Resposta oficial:</b> '+esc(st.resposta.texto.slice(0,400))+' <span class="muted">(em '+esc(fmtData(st.resposta.em))+')</span></div>':'')+'</div>'}
+el.innerHTML=html;
+}
+function removerCobranca(i){if(!confirm('Remover esta cobrança do seu navegador? O registro no servidor continua público.'))return;var a=cobGet();a.splice(i,1);cobSet(a);renderMinhasCobrancas()}
 async function recibo9(){if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');if(!PROMS.length)return alert('Cadastre ao menos uma promessa 🤝 para emitir o recibo.');await needC7();if(!C7.length)return alert('Sem votações nominais na janela.');
 var h='';
 for(var i=0;i<PROMS.length;i++){var pr=PROMS[i];var ks=kws(pr.txt);var hits=C7.filter(function(v){var a=vInfo(v).assunto.toLowerCase();return ks.some(function(k){return a.indexOf(k)>=0})});
@@ -146,7 +185,7 @@ if(hits.length){for(var j=0;j<Math.min(5,hits.length);j++){var v=hits[j];var x=C
 var part=0;for(var k2=0;k2<C7.length;k2++){if(CACHEV[C7[k2].id].list.some(function(y){return y.id===num}))part++}
 body+='\n\nPresença nas últimas '+C7.length+' votações nominais: '+Math.round(100*part/C7.length)+'%.\nSolicito alinhamento entre o discurso de campanha e os votos em Plenário nas próximas sessões.\n\nAtenciosamente,\neleitor acompanhado pelo MeuVoto (protótipo cívico, sem valor legal).';
 var enc=encodeURIComponent(body);
-h+='<div class="ecard"><h3>🧾 Recibo — '+esc(pr.nome)+' · "'+esc(trunc(pr.txt,60))+'"</h3><pre style="white-space:pre-wrap;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px;font:12px/1.5 Manrope,sans-serif">'+esc(body)+'</pre><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" onclick="navigator.clipboard.writeText(decodeURIComponent(\''+enc+'\')).then(function(){alert(\'📋 Copiado!\')})">📋 Copiar</button><button class="btn sm" onclick="window.open(\'https://wa.me/?text='+enc+'\',\'_blank\')">📲 WhatsApp</button>'+(email?'<button class="btn sm" onclick="location.href=\'mailto:'+esc(email)+'?subject='+encodeURIComponent('Recibo de cobrança — MeuVoto')+'&body='+enc+'">✉️ E-mail ao gabinete</button>':'<span class="muted">sem e-mail oficial cadastrado</span>')+'</div></div>'}
+h+='<div class="ecard"><h3>🧾 Recibo — '+esc(pr.nome)+' · "'+esc(trunc(pr.txt,60))+'"</h3><pre style="white-space:pre-wrap;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px;font:12px/1.5 Manrope,sans-serif">'+esc(body)+'</pre><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" onclick="navigator.clipboard.writeText(decodeURIComponent(\''+enc+'\')).then(function(){alert(\'📋 Copiado!\')})">📋 Copiar</button><button class="btn sm" onclick="window.open(\'https://wa.me/?text='+enc+'\',\'_blank\')">📲 WhatsApp</button><button class="btn sm gold" onclick="registrarCobranca('+i+',this)">📝 Registrar cobrança</button>'+(email?'<button class="btn sm" onclick="location.href=\'mailto:'+esc(email)+'?subject='+encodeURIComponent('Recibo de cobrança — MeuVoto')+'&body='+enc+'">✉️ E-mail ao gabinete</button>':'<span class="muted">sem e-mail oficial cadastrado</span>')+'</div></div>'}
 document.getElementById('out9').innerHTML=h}
 window.addEventListener('load',function(){setTimeout(function(){maybeAuto9(false)},1500)});
 </script><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">

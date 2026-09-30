@@ -645,3 +645,42 @@ Pipeline obrigatório em push/PR para `main`:
 6. `node --check scripts/digest-send.js` — sintaxe do worker SMTP.
 
 Falha em qualquer passo → bloqueia merge.
+
+
+## 5.6 Ciclo 23 — Cobranças Cívicas Verificadas (pipeline com token)
+
+### Objetivo
+Fechar o ciclo cidadão → gabinete → resposta pública. Cada cobrança registrada emite um link oficial com token exclusivo que só o gabinete pode usar para registrar resposta oficial verificada.
+
+### Rotas do backend (server/index.js, bloco "COBRANCAS CIVICAS VERIFICADAS")
+
+| Método | Rota | Função |
+|---|---|---|
+| POST | `/api/cobrancas/gerar` | Cidadão gera recibo → recebe `{id, token, url}` |
+| GET | `/api/cobrancas?politicianId=X` | Agregado público (counts, mediana em dias, selo) |
+| GET | `/api/cobrancas/:id` | Página pública da cobrança; marca como `aberta` no primeiro acesso; se token correto, `autorizadoParaResponder=true` |
+| POST | `/api/cobrancas/:id/responder?token=` | Gabinete responde oficialmente; valida token via HMAC-SHA256 |
+| GET | `/api/cobrancas/ranking` | Selo por parlamentar (ouro/prata/bronze/nenhum) |
+
+### Armazenamento
+`server/data/cobrancas.json` — array de documentos com: `id, token (HMAC), politicianId, politicianNome, promessa, votacoes[], status (gerada/enviada/aberta/respondida/validada), criadaEm, enviadaEm, abertaEm, respondidaEm, resposta`.
+
+### Selos de responsividade (critérios)
+- **🥇 Ouro**: responde ≥3 cobranças em ≤7 dias (mediana).
+- **🥈 Prata**: responde ≥3 cobranças em ≤15 dias (mediana).
+- **🥉 Bronze**: responde ao menos 1 cobrança.
+- **— Sem selo**: ainda sem resposta registrada.
+
+### Frontend
+- `pages/cobranca.html` — página pública de acompanhamento da cobrança, com linha do tempo (criada → enviada → aberta → respondida) e formulário de resposta oficial se token for válido.
+- `pages/cobrancas-ranking.html` — ranking público de selos, com metodologia explícita.
+- `pages/votacoes.html` — função `registrarCobranca(i,btn)` integrada em `recibo9`: após gerar o recibo, botão "📝 Registrar cobrança" chama `/api/cobrancas/gerar`, salva em `localStorage` (`mb_cobrancas`) e mostra link oficial com token. Painel "📬 Minhas cobranças" lista cobranças registradas com status ao vivo.
+
+### Segurança
+- Token: HMAC-SHA256(id+timestamp) com `process.env.COB_SECRET` (fallback `DIGEST_SECRET`, fallback hardcoded).
+- Resposta registrada sem token: HTTP 403 com mensagem clara.
+- Ranking público: **nunca vaza tokens nem e-mails** (testado em `scripts/testar-cobrancas.js` asserção #23).
+- `autorizadoParaResponder` só retorna `true` quando o token coincide.
+
+### Testes
+`scripts/testar-cobrancas.js` (23 asserções, todas passando): sobe servidor real em porta efêmera (3877) e valida ciclo completo + casos de borda (token errado, resposta curta, cobrança inexistente, sem vazamento).

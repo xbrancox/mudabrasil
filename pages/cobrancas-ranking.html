@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ranking de Selos · MeuVoto</title>
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="../config.js"></script>
+<script src="../js/site-header.js"></script>
+<style>
+:root{--bg:#061a3a;--card:#0d2242;--card2:#123059;--line:rgba(127,176,245,.22);--ink:#fff;--muted:#94A3B8;--gold:#FFD700;--green:#2ECC71}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transparent 50%),var(--bg);color:var(--ink);font:15px/1.5 Manrope,sans-serif;min-height:100vh}
+h1,h2{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.2}
+a{color:var(--gold);text-decoration:none}
+.wrap{max-width:900px;margin:0 auto;padding:38px 20px 60px}
+.muted{color:var(--muted);font-size:12.5px}
+.hero{text-align:center}
+.hero h1{font-size:clamp(22px,4vw,32px)}
+.hero p{color:var(--muted);max-width:640px;margin:10px auto 0}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px;margin-top:14px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(127,176,245,.12)}
+th{font:700 12px Manrope;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.selo{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font:800 12px Manrope;border:1px solid var(--line);white-space:nowrap}
+.selo.ouro{background:rgba(255,215,0,.15);color:var(--gold);border-color:rgba(255,215,0,.5)}
+.selo.prata{background:rgba(148,163,184,.15);color:#cbd5e1;border-color:rgba(148,163,184,.5)}
+.selo.bronze{background:rgba(205,127,50,.15);color:#f4a261;border-color:rgba(205,127,50,.5)}
+.selo.nenhum{background:rgba(148,163,184,.1);color:var(--muted)}
+.metodo{border-left:3px solid var(--gold);background:rgba(255,215,0,.07);border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.6;margin-top:14px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <h1>🏆 Ranking de Selos de Responsividade</h1>
+    <p>Classificação pública dos gabinetes que responderam oficialmente a cobranças cívicas registradas por cidadãos.</p>
+  </section>
+
+  <div class="card">
+    <h2 style="font-size:15px;margin-bottom:10px">Critérios dos selos</h2>
+    <p style="font-size:13.5px">Os selos refletem <b>transparência e responsividade</b>, não avaliação política.</p>
+    <table>
+      <tr><th>Selo</th><th>Critério</th></tr>
+      <tr><td><span class="selo ouro">🥇 Ouro</span></td><td>respondeu ≥3 cobranças em até 7 dias (mediana)</td></tr>
+      <tr><td><span class="selo prata">🥈 Prata</span></td><td>respondeu ≥3 cobranças em até 15 dias (mediana)</td></tr>
+      <tr><td><span class="selo bronze">🥉 Bronze</span></td><td>respondeu ao menos 1 cobrança</td></tr>
+      <tr><td><span class="selo nenhum">— Sem selo</span></td><td>ainda sem resposta registrada</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:15px;margin-bottom:10px">Ranking atual</h2>
+    <div id="ranking">
+      <p class="muted">⏳ Carregando...</p>
+    </div>
+  </div>
+
+  <div class="metodo">
+    <b>📘 Metodologia:</b> cada cobrança registrada emite um link com token exclusivo; só o gabinete com o token pode registrar a resposta oficial. A mediana é calculada em dias entre a criação da cobrança e a resposta. Rankings são ordenados por menor mediana. Dados públicos, agregados, sem PII.
+  </div>
+
+  <p class="muted" style="margin-top:18px;text-align:center"><a href="votacoes.html">← Voltar para as Votações</a></p>
+</main>
+<script>
+(function(){
+  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function seloHtml(selo,median){
+    const labels={ouro:'🥇 Ouro',prata:'🥈 Prata',bronze:'🥉 Bronze',nenhum:'— Sem selo'};
+    return '<span class="selo '+selo+'">'+labels[selo]+(median!==null?' · '+median+'d':'')+'</span>';
+  }
+  async function carregar(){
+    const el=document.getElementById('ranking');
+    try{
+      const r=await fetch(BASE+'/api/cobrancas/ranking');
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const j=await r.json();
+      if(!j.ok)throw new Error(j.error||'falha');
+      if(!j.ranking||!j.ranking.length){el.innerHTML='<p class="muted">Ainda não há gabinetes com cobranças registradas. Seja o primeiro a cobrar!</p>';return}
+      el.innerHTML='<table><thead><tr><th>Parlamentar</th><th>Total</th><th>Respondidas</th><th>Mediana</th><th>Selo</th></tr></thead><tbody>'+j.ranking.map(function(r){return '<tr><td>'+esc(r.politicianNome||r.politicianId)+'</td><td>'+r.total+'</td><td>'+r.respondidas+'</td><td>'+(r.medianDays===null?'—':r.medianDays+'d')+'</td><td>'+seloHtml(r.selo,r.medianDays)+'</td></tr>'}).join('')+'</tbody></table>';
+    }catch(e){el.innerHTML='<p>⚠️ Falha ao carregar ranking: '+esc(e.message)+'</p>'}
+  }
+  carregar();
+})();
+</script>
+</body>
+</html>
