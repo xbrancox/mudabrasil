@@ -492,6 +492,48 @@ function abPNG(){var R=window.ABRES;if(!R)return;var W=900,rowH=26,head=120,n=Ma
  var y2=head+n*rowH+30;x.fillStyle="#94A3B8";x.font="11px sans-serif";x.fillText("Fonte: dadosabertos.camara.leg.br · gerado em "+new Date().toLocaleString("pt-BR"),24,y2);
  var a2=document.createElement("a");a2.download="meuvoto-comparador-ab.png";a2.href=c.toDataURL("image/png");document.body.appendChild(a2);a2.click();a2.remove();}
 </script>
+
+<script id="ciclo25">
+function ufList25(){var m={};var src=(typeof C7!=='undefined'&&C7.length)?C7:[];for(var i=0;i<src.length;i++){var o=(typeof CACHEV!=='undefined')?CACHEV[src[i].id]:null;if(!o)continue;for(var q=0;q<o.list.length;q++){if(o.list[q].uf)m[o.list[q].uf]=1}}return Object.keys(m).sort()}
+function populaUF25(){var sel=document.getElementById('hmUF');if(!sel)return false;var ufs=ufList25();if(!ufs.length)return false;var cur=sel.value;sel.innerHTML=ufs.map(function(u){return '<option>'+u+'</option>'}).join('');if(ufs.indexOf(cur)>=0)sel.value=cur;return true}
+async function garanteUF25(){if(populaUF25())return;try{await window.ensureC7()}catch(e){}populaUF25();var sel=document.getElementById('hmUF');if(sel&&!sel.options.length&&!sel.parentNode.querySelector('.ufvazio25')){var s=document.createElement('span');s.className='muted ufvazio25';s.style.marginLeft='8px';s.textContent='sem UFs: nenhuma votacao nominal nas ultimas 60 (recesso)';sel.parentNode.appendChild(s)}}
+window.addEventListener('load',function(){garanteUF25();var sel=document.getElementById('hmUF');if(sel){sel.addEventListener('focus',function(){if(!sel.options.length)garanteUF25()});sel.addEventListener('click',function(){if(!sel.options.length)garanteUF25()})}if(typeof window.ciclo7==='function'&&!window.__c7wrap){window.__c7wrap=1;var _c=window.ciclo7;window.ciclo7=async function(){var r=await _c.apply(this,arguments);populaUF25();return r}}});
+</script>
+
+<script id="ciclo25png">
+function toast25(m){var el=document.getElementById('toast');if(el){el.textContent=m;el.style.display='block';setTimeout(function(){el.style.display='none'},4000);return}alert(m)}
+function votAberta25(){var ds=document.querySelectorAll('.vdet');for(var i=0;i<ds.length;i++){if(!ds[i].hidden&&ds[i].id.indexOf('vd-')===0)return ds[i].id.slice(3)}return null}
+window.exportPNG24=function(){
+var id=(typeof LASTEXP24!=='undefined'&&LASTEXP24)?LASTEXP24:votAberta25();
+if(!id&&typeof ALL!=='undefined'){for(var k=0;k<ALL.length;k++){var o0=(typeof CACHEV!=='undefined')?CACHEV[ALL[k].id]:null;if(o0&&o0.nominal){id=ALL[k].id;break}}}
+if(!id){toast25('Abra uma votacao nominal primeiro (botao "Como foi esta votacao?").');return}
+var v=null;if(typeof ALL!=='undefined'){for(var i2=0;i2<ALL.length;i2++){if(String(ALL[i2].id)===String(id)){v=ALL[i2];break}}}
+if(!v){toast25('Votacao nao encontrada na lista atual.');return}
+var o=(typeof CACHEV!=='undefined')?CACHEV[id]:null;
+if(!o||!o.nominal){toast25('Esta votacao nao e nominal (sem voto a voto para o card).');return}
+try{
+var inf=(typeof vInfo==='function')?vInfo(v):{assunto:String(v.descricao||''),rot:''};
+var q=(typeof quorumTxt==='function')?quorumTxt(o,inf):null;
+var W=900,H=560,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+x.fillStyle='#061a3a';x.fillRect(0,0,W,H);x.fillStyle='#0d2242';x.fillRect(0,0,W,110);
+x.fillStyle='#FFD700';x.font='bold 26px Manrope,sans-serif';x.fillText('MeuVoto - Ficha de votacao',32,48);
+x.fillStyle='#94A3B8';x.font='14px Manrope,sans-serif';x.fillText(((typeof fmtData==='function')?fmtData(v.dataHora):'')+' - Plenario da Camara',32,78);
+x.fillStyle='#fff';x.font='bold 22px Manrope,sans-serif';
+var words=String(inf.assunto||'').split(' '),line='',yy=150;
+for(var w=0;w<words.length;w++){var tt=line+words[w]+' ';if(x.measureText(tt).width>W-64){x.fillText(line,32,yy);line=words[w]+' ';yy+=30;if(yy>240)break}else line=tt}
+if(yy<=240&&line)x.fillText(line,32,yy);
+var y0=280;
+if(q){var tot=q.tot||1;var wS=Math.round((W-64)*q.sim/tot),wN=Math.round((W-64)*q.nao/tot),wA=Math.round((W-64)*q.abs/tot);var wO=Math.max(0,(W-64)-wS-wN-wA);
+x.fillStyle='#2ECC71';x.fillRect(32,y0,wS,26);x.fillStyle='#E74C3C';x.fillRect(32+wS,y0,wN,26);x.fillStyle='#64748b';x.fillRect(32+wS+wN,y0,wA,26);x.fillStyle='#FFD700';x.fillRect(32+wS+wN+wA,y0,wO,26);
+x.fillStyle='#fff';x.font='16px Manrope,sans-serif';x.fillText('Sim '+q.sim+'   Nao '+q.nao+'   Abstencao '+q.abs+'   Presentes '+q.tot,32,y0+52);
+x.fillStyle='#94A3B8';x.font='14px Manrope,sans-serif';x.fillText('Quorum: necessarios '+q.nec+' -> '+q.frase.replace(/[✅⛔] /,''),32,y0+78);
+}else{x.fillStyle='#94A3B8';x.font='16px Manrope,sans-serif';x.fillText('Votacao simbolica: sem registro individual de votos.',32,y0+20)}
+x.fillStyle='#94A3B8';x.font='12px Manrope,sans-serif';x.fillText('Fonte: dadosabertos.camara.leg.br - MeuVoto (prototipo civico, sem valor legal) - '+new Date().toLocaleDateString('pt-BR'),32,H-24);
+var nome='meuvoto-votacao-'+String(id).replace(/[^0-9A-Za-z-]/g,'_')+'.png';
+c.toBlob(function(blob){if(!blob){toast25('Falha ao gerar PNG.');return}var url=URL.createObjectURL(blob);var a=document.createElement('a');a.download=nome;a.href=url;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);toast25('PNG gerado: '+nome)},'image/png');
+}catch(e){toast25('Erro ao gerar PNG: '+e.message)}
+};
+</script>
 <div id="tip"></div><div id="btip"></div>
 <div id="fichaPrint"></div>
 <script>
