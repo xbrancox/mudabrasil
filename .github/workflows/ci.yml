@@ -38,6 +38,12 @@ jobs:
         run: node scripts/testar-ciclo34.js
       - name: Testes ciclo 35 - web-push + fichaPdf jsPDF (testar-ciclo35.js)
         run: node scripts/testar-ciclo35.js
+      - name: Testes de acessibilidade (testar-acessibilidade.js)
+        run: node scripts/testar-acessibilidade.js
+      - name: Testes de SEO (testar-seo.js)
+        run: node scripts/testar-seo.js
+      - name: Testes de PWA (testar-pwa.js)
+        run: node scripts/testar-pwa.js
       - name: Testes de performance (testar-performance.js)
         run: node scripts/testar-performance.js
       - name: Sintaxe do servidor

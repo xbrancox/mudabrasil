@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline - MeuVoto</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<style>
+:root{--bg:#0A1628;--card:#12305c;--gold:#FFD700;--ink:#fff;--muted:#94A3B8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Manrope','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:20px;
+  text-align:center;
+}
+.container{
+  max-width:500px;
+  background:var(--card);
+  border-radius:16px;
+  padding:40px 30px;
+  box-shadow:0 8px 32px rgba(0,0,0,.3);
+}
+.icon{
+  font-size:4rem;
+  margin-bottom:1rem;
+  display:block;
+}
+h1{
+  font-family:'Montserrat',sans-serif;
+  font-size:clamp(1.5rem,4vw,2rem);
+  font-weight:800;
+  margin-bottom:1rem;
+  color:var(--gold);
+}
+p{
+  font-size:1rem;
+  line-height:1.6;
+  color:var(--muted);
+  margin-bottom:1.5rem;
+}
+button{
+  background:var(--gold);
+  color:var(--bg);
+  border:none;
+  border-radius:999px;
+  padding:12px 28px;
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+}
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 16px rgba(255,215,0,.4);
+}
+button:active{
+  transform:translateY(0);
+}
+.tip{
+  margin-top:2rem;
+  padding-top:1.5rem;
+  border-top:1px solid rgba(255,255,255,.1);
+  font-size:.875rem;
+  color:var(--muted);
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <span class="icon">📡</span>
+  <h1>Você está offline</h1>
+  <p>
+    Não foi possível conectar ao servidor.<br>
+    Verifique sua conexão com a internet e tente novamente.
+  </p>
+  <button onclick="window.location.reload()">
+    🔄 Tentar novamente
+  </button>
+  <div class="tip">
+    <strong>Dica:</strong> Algumas páginas podem estar disponíveis no cache do seu navegador.
+  </div>
+</div>
+<script>
+// Tentar recarregar automaticamente quando voltar online
+window.addEventListener('online', function() {
+  console.log('[offline] Conexão restaurada, recarregando...');
+  window.location.reload();
+});
+
+// Mostrar status de conexão
+if (navigator.onLine) {
+  // Se estiver online mas chegou aqui, tentar recarregar
+  setTimeout(function() {
+    window.location.reload();
+  }, 1000);
+}
+</script>
+</body>
+</html>

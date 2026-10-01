@@ -3,7 +3,8 @@ var SHELL = 'meuvoto-shell-v2';
 var PRE = [
   './', './index.html', './config.js', 
   './js/cache.js', './js/offline.js', './js/push-notifications.js',
-  './pages/digest.html', './pages/digest-confirm.html', './pages/digest-admin.html'
+  './pages/digest.html', './pages/digest-confirm.html', './pages/digest-admin.html',
+  './offline.html'
 ];
 
 self.addEventListener('install', function(e) {
@@ -47,6 +48,10 @@ self.addEventListener('fetch', function(e) {
           }
           return r;
         }).catch(function() {
+          // Se for navegação e falhar, retorna página offline
+          if (e.request.mode === 'navigate') {
+            return caches.match('./offline.html');
+          }
           return hit || Response.error();
         });
         return hit || net;

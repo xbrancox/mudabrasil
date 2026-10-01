@@ -1,0 +1,22 @@
+# robots.txt para MeuVoto / VotaBrasil
+# https://xbrancox.github.io/votabrasil/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /server/
+Disallow: /scripts/
+Disallow: /tests/
+Disallow: /node_modules/
+Disallow: /.git/
+
+# Permitir crawling de páginas principais
+Allow: /index.html
+Allow: /pages/
+Allow: /app/
+
+# Sitemap
+Sitemap: https://xbrancox.github.io/votabrasil/sitemap.xml
+
+# Crawl-delay (opcional, para não sobrecarregar)
+# Crawl-delay: 1
