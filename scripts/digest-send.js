@@ -1,4 +1,4 @@
-const API=process.env.DIGEST_API,SECRET=process.env.DIGEST_SECRET;
+﻿const API=process.env.DIGEST_API,SECRET=process.env.DIGEST_SECRET;
 if(!API||!SECRET){console.log("sem DIGEST_API/SECRET; nada enviado");process.exit(0)}
 async function get(u){const r=await fetch(u);if(!r.ok)throw new Error(u+" HTTP "+r.status);return r.json()}
 function fmt(d){try{return new Date(d).toLocaleDateString("pt-BR")}catch(e){return String(d||"")}}
@@ -20,7 +20,7 @@ allItems=(v.dados||[]).filter(x=>{const d=x.dataHoraRegistro||x.dataHora;return 
 
 let tm="";
 try{const t=await get(API+"/api/termometro");tm="\n\nTermometro: "+JSON.stringify(t).slice(0,240)}catch(e){}
-const baseUrl = API.replace(/\/api\/.*$/, '') || 'https://xbrancox.github.io/votabrasil';
+const baseUrl = API.replace(/\/api\/.*$/, '') || 'https://meu-voto.app';
 
 let nextIdx = 0;
 try{

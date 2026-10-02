@@ -77,7 +77,7 @@ th{font:700 12px Manrope;text-transform:uppercase;letter-spacing:.05em;color:var
 </main>
 <script>
 (function(){
-  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}return 'https://meu-voto.app'})();
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function seloHtml(selo,median){
     const labels={ouro:'🥇 Ouro',prata:'🥈 Prata',bronze:'🥉 Bronze',nenhum:'— Sem selo'};

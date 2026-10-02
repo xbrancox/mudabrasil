@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = process.cwd();
-const BASE_URL = 'https://xbrancox.github.io/votabrasil';
+const BASE_URL = 'https://meu-voto.app';
 const OG_IMAGE = BASE_URL + '/og-image.png';
 const SITE_NAME = 'MeuVoto / VotaBrasil';
 

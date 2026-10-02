@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -250,7 +250,7 @@
    ============================================================ */
 /* URL base do backend: mesma origem (vazio) ou https://... . Em producao MeuVoto usamos Railway.
    NUNCA usar || com API_BASE — o valor '' (mesma origem) é válido e seria substituído. */
-const API=(window.MeuVoto&&typeof window.MeuVoto.API_BASE==='string')?window.MeuVoto.API_BASE:'https://mudabrasil-production-79eb.up.railway.app';
+const API=(window.MeuVoto&&typeof window.MeuVoto.API_BASE==='string')?window.MeuVoto.API_BASE:'https://meu-voto.app';
 /* Prefixo das chaves localStorage — mude se usar o template lado a lado com outro app na mesma origem. */
 const LS={rascunho:'cv_rascunho',uf:'cv_uf',session:'cv_session',comprov:'cv_comprovante'};
 /* Cargos da eleicao: [rotulo, numeroTSE]. No DF a linha "Deputado Estadual" vira
@@ -416,7 +416,7 @@ function irConferir(){
 }
 /* Link para conferir no SITE oficial MeuVoto (mesmo contrato de API).
    Troque a constante se publicar o site num domínio próprio. */
-const SITE_CONFERIR='https://mudabrasil-production-79eb.up.railway.app/index.html#conferir-voto';
+const SITE_CONFERIR='https://meu-voto.app/index.html#conferir-voto';
 function abrirConferirNoSite(){window.open(SITE_CONFERIR,'_blank','noopener')}
 function copiarLinkSite(){navigator.clipboard.writeText(SITE_CONFERIR).then(()=>showToast('🔗 Link do site copiado!'))}
 async function votarDeNovo(){

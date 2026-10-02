@@ -15,5 +15,5 @@
     if(k.indexOf('mudabrasil')===0) n=k.replace(/^mudabrasil/,'meuvoto');
     else if(k.indexOf('votabrasil')===0) n=k.replace(/^votabrasil/,'meuvoto');
     if(n&&localStorage.getItem(n)===null) localStorage.setItem(n,localStorage.getItem(k)); }); }catch(e){}
-  console.log('[MeuVoto] modo='+MV.MODO+' backend='+API_BASE);
 })();
+

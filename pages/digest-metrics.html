@@ -101,7 +101,7 @@ input:focus{outline:none;border-color:var(--gold)}
 </main>
 <script>
 (function(){
-  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+  var BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://meu-voto.app'})();
   var $=function(s){return document.querySelector(s)};
   var msg=$('#msg');
   function show(cls,t){msg.className='msg '+cls;msg.innerHTML=t}

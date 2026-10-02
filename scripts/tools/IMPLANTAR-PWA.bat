@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 setlocal
 title VotaBrasil - PWA Instalavel (v8) + LOG
 cd /d "%~dp0"
@@ -98,7 +98,7 @@ git commit -m "feat: PWA instalavel (manifest + sw + icons) v8"
 git push origin main
 echo.
 echo [4/4] Concluido.
-echo Confira em ~2 min: https://xbrancox.github.io/mudabrasilv4/
+echo Confira em ~2 min: https://meu-voto.app/
 echo.
 echo Teste no Chrome: menu > Install VotaBrasil (ou icone de install na barra de endereco).
 exit /b 0

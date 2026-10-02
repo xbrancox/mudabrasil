@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 setlocal
 title VotaBrasil - Notificacoes PWA (v7) + LOG
 cd /d "%~dp0"
@@ -20,5 +20,5 @@ echo [3/4] Commit e push...
 git add -A
 git commit -m "feat: notificacoes PWA 50/70 v7"
 git push origin main
-echo [4/4] Concluido. Confira em ~2 min: https://xbrancox.github.io/mudabrasilv4/
+echo [4/4] Concluido. Confira em ~2 min: https://meu-voto.app/
 exit /b 0

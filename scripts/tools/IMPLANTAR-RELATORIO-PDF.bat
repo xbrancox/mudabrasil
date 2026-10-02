@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 setlocal
 title VotaBrasil - Implante PDF (v6) + LOG
 cd /d "%~dp0"
@@ -35,5 +35,5 @@ git commit -m "feat: relatorio PDF de cassacao v6"
 git push origin main
 
 echo [4/4] Concluido.
-echo Confira em ~2 min: https://xbrancox.github.io/mudabrasilv4/
+echo Confira em ~2 min: https://meu-voto.app/
 exit /b 0

@@ -1,4 +1,4 @@
-cd C:\Users\euler\VotaBrasil
+﻿cd C:\Users\euler\VotaBrasil
 New-Item -ItemType Directory -Force -Path app | Out-Null
 
 @'
@@ -216,7 +216,7 @@ git push origin master
 
 Write-Host "`n=== TESTE EXAUSTIVO (aguarde o Pages) ===" -ForegroundColor Yellow
 Start-Sleep -Seconds 50
-$base='https://xbrancox.github.io/votabrasil/'
+$base='https://meu-voto.app/'
 $urls=@('app/','app/index.html','app/app.js','app/app.css','app/manifest.webmanifest','app/sw.js','app/icon.svg','index.html','pages/congresso.html','pages/parlamentares.html','pages/votacoes.html','pages/eleicoes-2026.html','js/header-unificado.js','config.js')
 foreach($u in $urls){ try{ $r=Invoke-WebRequest ($base+$u) -UseBasicParsing -TimeoutSec 20; Write-Host ($r.StatusCode+'  OK   '+$u) -ForegroundColor Green }catch{ Write-Host ('FAIL      '+$u) -ForegroundColor Red } }
 foreach($e in @('api/health','api/pls','api/votos-pl','api/camara/votacoes','api/termometro')){ try{ $r=Invoke-WebRequest ('https://VotaBrasil-redesign-production.up.railway.app/'+$e) -UseBasicParsing -TimeoutSec 20; Write-Host ($r.StatusCode+'  OK   '+$e) -ForegroundColor Green }catch{ Write-Host ('FAIL      '+$e) -ForegroundColor Red } }

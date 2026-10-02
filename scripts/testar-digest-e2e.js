@@ -1,4 +1,4 @@
-
+﻿
 /* Teste E2E do fluxo digest (mockado, sem rede real) */
 const assert = require('assert');
 
@@ -54,7 +54,7 @@ function bodyFor(sub, allItems) {
   const it = items.length
     ? items.map(x => '- ' + x.dataHoraRegistro.slice(0,10) + ' - ' + String(x.descricao).slice(0, 140)).join('\n')
     : (topics.length ? 'Nenhuma votacao nos ultimos 7 dias relacionada aos seus temas: ' + topics.join(', ') + '.' : 'Nenhuma votacao nos ultimos 7 dias (recesso).');
-  return 'Resumo semanal MeuVoto\n\n' + it + '\n\nPara cancelar: https://xbrancox.github.io/votabrasil/pages/digest.html';
+  return 'Resumo semanal MeuVoto\n\n' + it + '\n\nPara cancelar: https://meu-voto.app/pages/digest.html';
 }
 
 // ====== TESTES ======

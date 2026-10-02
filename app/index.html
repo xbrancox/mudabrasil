@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -480,7 +480,7 @@ header{position:sticky;top:0;background:rgba(10,22,40,0.96);backdrop-filter:blur
 </nav>
 
 <script>
-const API=(window.MeuVoto&&typeof window.MeuVoto.API_BASE==='string')?window.MeuVoto.API_BASE:((window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')?'':'https://mudabrasil-production-79eb.up.railway.app');
+const API=(window.MeuVoto&&typeof window.MeuVoto.API_BASE==='string')?window.MeuVoto.API_BASE:((window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1')?'':'https://meu-voto.app');
 if(API)document.getElementById('bdg').style.display='flex';
 let tt=null;
 function showToast(m,bl,fn){const t=document.getElementById('toast'),b=document.getElementById('tb');document.getElementById('tm').textContent=m;if(bl){b.style.display='block';b.textContent=bl;b.onclick=()=>{hideToast();fn&&fn()}}else{b.style.display='none'}t.style.display='flex';clearTimeout(tt);tt=setTimeout(hideToast,5500)}

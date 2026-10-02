@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 setlocal
 title VotaBrasil - Gamificacao Civica (v10) + LOG
 cd /d "%~dp0"
@@ -24,5 +24,5 @@ echo [3/3] Commit e push ...
 git add -A
 git commit -m "feat: gamificacao civica v10"
 git push origin main
-echo Concluido. Confira em ~2 min: https://xbrancox.github.io/mudabrasilv4/
+echo Concluido. Confira em ~2 min: https://meu-voto.app/
 exit /b 0

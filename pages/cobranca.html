@@ -61,7 +61,7 @@ code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padd
   <p class="foot"><a href="votacoes.html">← Voltar para as Votações</a></p>
 </main>
 <script>
-const BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+const BASE=(function(){try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}return 'https://meu-voto.app'})();
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function fmtData(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})}catch(e){return'—'}}

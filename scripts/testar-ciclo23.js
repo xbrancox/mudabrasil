@@ -1,4 +1,4 @@
-/* Testes do ciclo 23: tema claro/escuro/alto contraste (P3),
+﻿/* Testes do ciclo 23: tema claro/escuro/alto contraste (P3),
    comparador A×B (P2 revisado) e CI (P5). Roda em jsdom. */
 const { JSDOM } = require('jsdom');
 const fs = require('fs');
@@ -22,7 +22,7 @@ ok(/mbSetTema/.test(sh), 'API pública mbSetTema exposta');
 ok(/window\.mbSetTema\s*=/.test(sh), 'mbSetTema sobrescrevível (aceita "alto")');
 
 const dom = new JSDOM('<!doctype html><html><head></head><body></body></html>', {
-  url: 'https://xbrancox.github.io/votabrasil/pages/',
+  url: 'https://meu-voto.app/pages/',
   pretendToBeVisual: true
 });
 const W = dom.window;

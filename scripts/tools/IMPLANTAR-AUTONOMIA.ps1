@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # VotaBrasil - autonomia total: namespace, marcas, offline-first, validacao, commit, push.
 # Idempotente. Payloads 100% ASCII. Nao toca no backend -79eb (ele E o seu backend).
 $ErrorActionPreference='Stop'
@@ -39,9 +39,9 @@ $cfg=@'
   VB.MODO=API_BASE?'producao':'offline';
   VB.URLS={camara:'https://dadosabertos.camara.leg.br/api/v2',senado:'https://legis.senado.leg.br/dadosabertos',tse:'https://divulgacandcontas.tse.jus.br/divulga/app/',transparencia:'https://www.portaltransparencia.gov.br/',cnj:'https://www.cnj.jus.br/'};
   VB.CONTATO={ /* MIGRACAO-PENDENTE: trocar apos MX do dominio proprio testado */
-    email_geral:'contato@mudabrasil.app',
-    email_anuncie:'anuncie@mudabrasil.app',
-    email_imprensa:'imprensa@mudabrasil.app'};
+    email_geral:'contato@meu-voto.app',
+    email_anuncie:'anuncie@meu-voto.app',
+    email_imprensa:'imprensa@meu-voto.app'};
   VB.REGRA_REVOGACAO={percentual_cassacao:0.70,abre_apos_posse:true,descricao:'70% dos votos que elegeram o pol\u00EDtico = cassa\u00E7\u00E3o (validacao server-side)'};
   VB.TERMOMETRO={decaimento_cheio_dias:90,decaimento_piso_dias:180,piso_confianca:0.5};
   window.MudaBrasil=VB; /* ALIAS-RETRO: codigo antigo continua funcionando */
@@ -59,8 +59,8 @@ $htmls=Get-ChildItem -Path $repo -Include *.html -Recurse -File | Where-Object {
 foreach($f in $htmls){
   $t=[IO.File]::ReadAllText($f.FullName); $o=$t
   $t=$t.Replace('MudaBrasil','VotaBrasil').Replace('MUDABRASIL','VOTABRASIL').Replace('mudaBrasil','VotaBrasil')
-  $t=$t.Replace('mudabrasil.app','votabrasil.app')
-  $t=$t.Replace('xbrancox.github.io/mudabrasil','xbrancox.github.io/votabrasil')
+  $t=$t.Replace('meu-voto.app','votabrasil.app')
+  $t=$t.Replace('meu-voto.app','meu-voto.app')
   if($t -ne $o){ [IO.File]::WriteAllText($f.FullName,$t,(New-Object System.Text.UTF8Encoding $false)); Say ('[3] marca migrada: '+$f.Name) }
 }
 
@@ -68,7 +68,7 @@ foreach($f in $htmls){
 foreach($f in @('app\config.js','app\config.local.js','config.local.js')){
   $p=Join-Path $repo $f
   if(Test-Path $p){ $t=[IO.File]::ReadAllText($p); $o=$t
-    $t=$t.Replace('mudabrasil.app','votabrasil.app').Replace('xbrancox.github.io/mudabrasil','xbrancox.github.io/votabrasil').Replace('MudaBrasil','VotaBrasil')
+    $t=$t.Replace('meu-voto.app','votabrasil.app').Replace('meu-voto.app','meu-voto.app').Replace('MudaBrasil','VotaBrasil')
     if($t -ne $o){ [IO.File]::WriteAllText($p,$t,(New-Object System.Text.UTF8Encoding $false)); Say ('[4] tokens migrados: '+$f) } }
 }
 
@@ -150,7 +150,7 @@ if(-not $c.Contains('sw.js')){
 $ix2=[IO.File]::ReadAllText($ix); $cf2=[IO.File]::ReadAllText((Join-Path $repo 'config.js')); $ap=Join-Path $repo 'app\index.html'; $ap2=if(Test-Path $ap){[IO.File]::ReadAllText($ap)}else{''}
 $ok = $cf2.Contains('window.VotaBrasil=window.VotaBrasil') -and $cf2.Contains('ALIAS-RETRO') -and $cf2.Contains('MIGRACAO-PENDENTE')
 $ok = $ok -and $ix2.Contains('sw.js') -and (Test-Path (Join-Path $repo 'js\offline.js'))
-$ok = $ok -and (-not $ix2.Contains('MudaBrasil')) -and (-not $ix2.Contains('mudabrasil.app'))
+$ok = $ok -and (-not $ix2.Contains('MudaBrasil')) -and (-not $ix2.Contains('meu-voto.app'))
 $ok = $ok -and (($ap2 -eq '') -or $ap2.Contains('-79eb'))   # app nao pode ter perdido o backend
 if(-not $ok){ Say 'VALIDACAO-FALHOU - nenhum commit sera feito'; Say ('  config VotaBrasil: '+$cf2.Contains('window.VotaBrasil=window.VotaBrasil')); Say ('  index sem MudaBrasil: '+(-not $ix2.Contains('MudaBrasil'))); Say ('  app com -79eb: '+(($ap2 -eq '') -or $ap2.Contains('-79eb'))); pause; exit 1 }
 Say '[8] validacao OK'

@@ -15,6 +15,9 @@
 <!-- /og:meuvoto -->
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="Acompanhe como seus deputados votam, monitore promessas de campanha e cobre seus representantes. Dados oficiais da Câmara em linguagem simples, sem jargão político.">
+<link rel="canonical" href="https://meu-voto.app/pages/votacoes.html">
+
 <title>Votações do Plenário · MeuVoto</title>
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -501,7 +504,7 @@ var o=document.getElementById('out13');if(o)o.innerHTML='<div class="ecard"><p>�
   <p class="muted" style="margin-top:6px">Envio semanal via GitHub Action com SMTP nos secrets do repositório. <a href="digest.html" style="color:var(--gold)">Gerenciar inscrição →</a> | <a href="digest-metrics.html" style="color:var(--gold)">Métricas do sistema →</a> | <a href="stats.html" style="color:var(--gold)">Estatísticas públicas →</a></p>
 </div>
 <script id="ciclo15">
-var B15=(typeof BASE!=="undefined"?BASE:"https://mudabrasil-production-79eb.up.railway.app");
+var B15=(typeof BASE!=="undefined"?BASE:"https://meu-voto.app");
 function dgMsg(m,ok){var el=document.getElementById("out15");if(!el)return;el.textContent=m;el.style.color=ok?"var(--green)":"var(--red)"}
 async function dgFetch(p,body,method){var r=await fetch(B15+p,{method:method||"POST",headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});var j=await r.json().catch(function(){return{}});return{status:r.status,j:j}}
 async function digestAssinar(){var e=(document.getElementById("dgEmail").value||"").trim();if(!e)return dgMsg("Digite seu e-mail.",false);dgMsg("⏳ inscrevendo...",true);try{var r=await dgFetch("/api/digest/subscribe",{email:e});if(r.j.ok){if(r.j.confirmUrl){dgMsg("✅ Inscrição registrada! <a href='"+r.j.confirmUrl+"' style='color:var(--gold)'>Clique aqui para confirmar</a> e ativar.",true);}else{dgMsg("✅ "+(r.j.message||"Inscrito!"),true);}}else{dgMsg("❌ "+(r.j.error||("HTTP "+r.status)),false)}}catch(err){dgMsg("❌ Conexao: "+err.message,false)}}
@@ -1056,7 +1059,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const trunc=(s,n)=>s&&s.length>n?s.slice(0,n)+'…':(s||'');
 async function fetchJ(u){try{const r=await fetch(u);if(!r.ok)throw new Error(r.status);const j=await r.json();try{localStorage.setItem('mv_api_'+u.slice(0,120),JSON.stringify({t:Date.now(),d:j}))}catch(e){}return j}catch(e){try{const raw=localStorage.getItem('mv_api_'+u.slice(0,120));if(raw){const c=JSON.parse(raw);return c.d}}catch(e2){}return null}}
-const BASE=(()=>{try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://mudabrasil-production-79eb.up.railway.app'})();
+const BASE=(()=>{try{if(window.MeuVoto&&MeuVoto.API_BASE)return MeuVoto.API_BASE}catch(e){}try{if(window.VotaBrasil&&VotaBrasil.API_BASE)return VotaBrasil.API_BASE}catch(e){}try{if(window.API_BASE)return window.API_BASE}catch(e){}return 'https://meu-voto.app'})();
 const CAM=u=>BASE+'/api/camara/'+u;
 const oficial=pid=>pid?('https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao='+pid):'#';
 const fd=d=>d.toISOString().slice(0,10);
@@ -1636,3 +1639,4 @@ document.addEventListener('DOMContentLoaded', function() {
   hero.insertBefore(guide, tabs.nextSibling);
 })();
 </script>
+

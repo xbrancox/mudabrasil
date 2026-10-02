@@ -1,13 +1,13 @@
 ﻿/* ============================================================
    MeuVoto — Configuração Global
    -----------------------------------------------------------
-   Backend: https://mudabrasil-production-79eb.up.railway.app (Railway - Projeto VotaBrasil 198baa4d)
-   Frontend: https://xbrancox.github.io/MeuVoto/
+   Backend: https://api.meu-voto.app (Railway - Projeto VotaBrasil 198baa4d)
+   Frontend: https://meu-voto.app/
    ============================================================ */
 
 let API_BASE = (typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
   ? ''
-  : 'https://mudabrasil-production-79eb.up.railway.app';
+  : 'https://api.meu-voto.app';
 
 /* Para que o localhost use exatamente o mesmo backend e dados da Produção (Railway),
    mantemos API_BASE apontando para o servidor de produção. */
@@ -52,7 +52,4 @@ window.MeuVoto.TERMOMETRO = {
   piso_confianca: 0.5
 };
 
-// Aviso de protótipo
-console.log('%c🟡 MeuVoto', 'font-size:16px;font-weight:bold;color:#FFD700');
-console.log('%cModo: ' + window.MeuVoto.MODO, 'color:#94A3B8');
-console.log('%cBackend: ' + API_BASE, 'color:#2ECC71');
+// Aviso de protótipo (desabilitado em produção)

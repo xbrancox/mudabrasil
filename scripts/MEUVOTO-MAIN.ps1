@@ -1,8 +1,8 @@
-# MEUVOTO-MAIN.ps1 - migra VotaBrasil/MudaBrasil -> MeuVoto de forma coerente. 100% ASCII. Idempotente.
+﻿# MEUVOTO-MAIN.ps1 - migra VotaBrasil/MudaBrasil -> MeuVoto de forma coerente. 100% ASCII. Idempotente.
 $ErrorActionPreference='Stop'
 $repo='C:\Users\euler\votabrasil'
 Set-Location $repo
-$EXT='meuvoto.app.br'
+$EXT='meu-voto.app'
 $BE='https://mudabrasil-production-79eb.up.railway.app'   # backend SEU; nao e marca; nao trocar aqui
 function Say($m){ Write-Host $m }
 if(-not (Test-Path (Join-Path $repo 'index.html'))){ Say 'ERRO: repo nao achado'; exit 1 }
@@ -22,11 +22,11 @@ $cfg=@'
 (function(){
   var ov=null; try{ ov=window.__MEUVOTO_ENV__&&window.__MEUVOTO_ENV__.API_BASE; }catch(e){}
   var st=null; try{ st=localStorage.getItem('mv_api_base'); }catch(e){}
-  var API_BASE=ov||st||'https://mudabrasil-production-79eb.up.railway.app'; /* MIGRACAO-PENDENTE: api.meuvoto.app.br */
+  var API_BASE=ov||st||'https://mudabrasil-production-79eb.up.railway.app'; /* MIGRACAO-PENDENTE: api.meu-voto.app */
   var MV=window.MeuVoto=window.MeuVoto||{};
   MV.API_BASE=API_BASE; MV.MODO=API_BASE?'producao':'offline';
   MV.URLS={camara:'https://dadosabertos.camara.leg.br/api/v2',senado:'https://legis.senado.leg.br/dadosabertos',tse:'https://divulgacandcontas.tse.jus.br/divulga/app/',transparencia:'https://www.portaltransparencia.gov.br/',cnj:'https://www.cnj.jus.br/'};
-  MV.CONTATO={email_geral:'contato@meuvoto.app.br',email_anuncie:'anuncie@meuvoto.app.br',email_imprensa:'imprensa@meuvoto.app.br'}; /* MIGRACAO-PENDENTE: so vale apos MX testado */
+  MV.CONTATO={email_geral:'contato@meu-voto.app',email_anuncie:'anuncie@meu-voto.app',email_imprensa:'imprensa@meu-voto.app'}; /* MIGRACAO-PENDENTE: so vale apos MX testado */
   MV.REGRA_REVOGACAO={percentual_cassacao:0.70,abre_apos_posse:true,descricao:'70% dos votos que elegeram o politico = cassacao (validacao server-side)'};
   MV.TERMOMETRO={decaimento_cheio_dias:90,decaimento_piso_dias:180,piso_confianca:0.5};
   MV.MARCA={nome:'MeuVoto',eslogan:'Meu voto coloca, meu voto tira.',logo:'assets/logo-meuvoto.svg'};
@@ -48,7 +48,7 @@ foreach($f in $files){
   $t=[IO.File]::ReadAllText($f.FullName); $o=$t
   $t=$t.Replace('VotaBrasil','MeuVoto').Replace('VOTABRASIL','MEUVOTO').Replace('votaBrasil','meuVoto')
   $t=$t.Replace('MudaBrasil','MeuVoto').Replace('MUDABRASIL','MEUVOTO').Replace('mudaBrasil','meuVoto')
-  $t=$t.Replace('votabrasil.app.br',$EXT).Replace('votabrasil.app',$EXT).Replace('mudabrasil.app',$EXT)
+  $t=$t.Replace('votabrasil.app.br',$EXT).Replace('votabrasil.app',$EXT).Replace('meu-voto.app',$EXT)
   $t=$t.Replace('votabrasil_cache_','meuvoto_cache_').Replace('mudabrasil_cache_','meuvoto_cache_')
   if($t -ne $o){ [IO.File]::WriteAllText($f.FullName,$t,(New-Object System.Text.UTF8Encoding $false)); $n++ }
 }
@@ -58,9 +58,9 @@ Say ('[3] marcas migradas em '+$n+' arquivo(s)')
 foreach($f in @('app\config.js','app\config.local.js','config.local.js')){
   $p=Join-Path $repo $f
   if(Test-Path $p){ $t=[IO.File]::ReadAllText($p); $o=$t
-    $t=$t.Replace('votabrasil.app.br',$EXT).Replace('votabrasil.app',$EXT).Replace('mudabrasil.app',$EXT)
+    $t=$t.Replace('votabrasil.app.br',$EXT).Replace('votabrasil.app',$EXT).Replace('meu-voto.app',$EXT)
     $t=$t.Replace('VotaBrasil','MeuVoto').Replace('MudaBrasil','MeuVoto').Replace('mudaBrasil','meuVoto').Replace('votaBrasil','meuVoto')
-    $t=$t.Replace('xbrancox.github.io/mudabrasil','xbrancox.github.io/votabrasil')
+    $t=$t.Replace('meu-voto.app','meu-voto.app')
     if($t -ne $o){ [IO.File]::WriteAllText($p,$t,(New-Object System.Text.UTF8Encoding $false)); Say ('[4] '+$f+' -> MeuVoto') }
   }
 }
@@ -121,7 +121,7 @@ Get-ChildItem -Path $repo -Include *.js,*.html -Recurse -File | Where-Object { $
 Say '  Marca = 0 ocorrencias de MudaBrasil/VotaBrasil. O que sobrar de "mudabrasil" e URL de infra (-79eb / repo).'
 Say ''
 Say 'PROXIMO (seu painel: CPF/dinheiro/senha, nao consigo fazer de sandbox):'
-Say '  - Registro.br: confirmar meuvoto.app.br (R$40/ano, PIX). O CNAME ja esta no repo.'
-Say '  - Railway: custom domain api.meuvoto.app.br OU servico novo com slug limpo (banco tem 0 votos = perda zero).'
-Say '  - Zoho Mail Free: caixas @meuvoto.app.br + MX/SPF/DKIM/DMARC; so entao os emails saem de MIGRACAO-PENDENTE.'
-Say '  - GitHub Pages: Settings > Custom domain = meuvoto.app.br.'
+Say '  - Registro.br: confirmar meu-voto.app (R$40/ano, PIX). O CNAME ja esta no repo.'
+Say '  - Railway: custom domain api.meu-voto.app OU servico novo com slug limpo (banco tem 0 votos = perda zero).'
+Say '  - Zoho Mail Free: caixas @meu-voto.app + MX/SPF/DKIM/DMARC; so entao os emails saem de MIGRACAO-PENDENTE.'
+Say '  - GitHub Pages: Settings > Custom domain = meu-voto.app.'

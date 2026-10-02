@@ -952,7 +952,7 @@ setTimeout(initSSE, 2000);
   <script src="api-publica.js" defer></script>
 <script id="vb-fundo-render">
 (function(){
-  var BASE=(window.MeuVoto&&window.MeuVoto.API_BASE)||'https://mudabrasil-production-79eb.up.railway.app';
+  var BASE=(window.MeuVoto&&window.MeuVoto.API_BASE)||'https://meu-voto.app';
   var COLORS=['#FFD700','#115FCB','#22c55e','#e74c3c','#9b59b6','#f39c12','#1abc9c','#e67e22','#607d8b'];
   fetch('data/fundo-eleitoral.json').then(function(r){return r.json()}).then(function(fe){
     var section=document.querySelector('[id*="fundo" i],[href*="fundo" i]');

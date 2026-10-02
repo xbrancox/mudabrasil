@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 cd /d C:\Users\euler\votabrasil
 echo ============================================
 echo  PUBLICAR VotaBrasil - persiste correcoes
@@ -15,5 +15,5 @@ echo == Ultimos 3 commits ==
 git log --oneline -3
 echo.
 echo Publicando... o GitHub Pages atualiza em ~1-2 min.
-echo Confira em: https://xbrancox.github.io/votabrasil/
+echo Confira em: https://meu-voto.app/
 pause

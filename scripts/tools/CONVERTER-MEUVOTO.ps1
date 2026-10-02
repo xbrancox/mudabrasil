@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # VotaBrasil -> MeuVoto : renomeacao integral, idempotente, valida antes do commit.
 # NAO toca na URL -79eb (e o seu backend) nem no basename github.io/votabrasil (so o repo).
 $ErrorActionPreference='Stop'
@@ -6,7 +6,7 @@ $repo='C:\Users\euler\votabrasil'
 Set-Location $repo
 function Say($m){ Write-Host $m }
 if(-not (Test-Path (Join-Path $repo 'index.html'))){ Say 'ERRO: repo nao achado'; pause; exit 1 }
-$EXT='meuvoto.app.br'   # alinhe aqui se registrar outra extensao (.com.br / .org.br)
+$EXT='meu-voto.app'   # alinhe aqui se registrar outra extensao (.com.br / .org.br)
 
 # [0] runner no repo
 $sd=Join-Path $repo 'scripts'; New-Item -ItemType Directory -Force -Path $sd | Out-Null
@@ -25,7 +25,7 @@ Say ('[1] backup: '+$bk)
 $cfg=@'
 /* ============================================================
    MeuVoto - Configuracao Global (autonomo)
-   Backend atual: -79eb  [MIGRACAO-PENDENTE: api.meuvoto.app.br quando o
+   Backend atual: -79eb  [MIGRACAO-PENDENTE: api.meu-voto.app quando o
    dominio/custom domain existir; ou slug novo do servico no Railway]
    ============================================================ */
 (function(){
@@ -37,9 +37,9 @@ $cfg=@'
   MV.MODO=API_BASE?'producao':'offline';
   MV.URLS={camara:'https://dadosabertos.camara.leg.br/api/v2',senado:'https://legis.senado.leg.br/dadosabertos',tse:'https://divulgacandcontas.tse.jus.br/divulga/app/',transparencia:'https://www.portaltransparencia.gov.br/',cnj:'https://www.cnj.jus.br/'};
   MV.CONTATO={ /* MIGRACAO-PENDENTE: confirmar apos MX do dominio testado */
-    email_geral:'contato@'+('meuvoto.app.br'),
-    email_anuncie:'anuncie@'+('meuvoto.app.br'),
-    email_imprensa:'imprensa@'+('meuvoto.app.br')};
+    email_geral:'contato@'+('meu-voto.app'),
+    email_anuncie:'anuncie@'+('meu-voto.app'),
+    email_imprensa:'imprensa@'+('meu-voto.app')};
   MV.REGRA_REVOGACAO={percentual_cassacao:0.70,abre_apos_posse:true,descricao:'70% dos votos que elegeram o pol\u00EDtico = cassa\u00E7\u00E3o (validacao server-side)'};
   MV.TERMOMETRO={decaimento_cheio_dias:90,decaimento_piso_dias:180,piso_confianca:0.5};
   MV.MARCA={nome:'MeuVoto',eslogan:'Meu voto coloca, meu voto tira.',logo:'assets/logo-meuvoto.svg'};
@@ -107,9 +107,9 @@ else { Say '[7] nada a commitar' }
 # [8] relatorio de acoplamento preservado de proposito
 Say ''
 Say '=========== PRESERVADO DE PROPOSITO (nao e bug) ==========='
-Say '  - URL backend -79eb  : e o SEU backend; troca por api.meuvoto.app.br so com custom domain.'
+Say '  - URL backend -79eb  : e o SEU backend; troca por api.meu-voto.app so com custom domain.'
 Say '  - github.io/votabrasil : basename do REPO no GitHub; so muda se renomear o repo (infra).'
-Say '  - e-mails @meuvoto.app.br : MARCADOS MIGRACAO-PENDENTE ate o MX do dominio ser testado.'
+Say '  - e-mails @meu-voto.app : MARCADOS MIGRACAO-PENDENTE ate o MX do dominio ser testado.'
 Say '  - logo copiada p/ assets, mas AINDA NAO injetada nos 3 pontos do HTML (ver nota abaixo).'
 Say ''
 pause

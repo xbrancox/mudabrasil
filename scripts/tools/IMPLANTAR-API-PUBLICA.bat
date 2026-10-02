@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 setlocal
 title VotaBrasil - API Publica (v11) + LOG
 cd /d "%~dp0"
@@ -34,5 +34,5 @@ git commit -m "feat: API publica para terceiros v11"
 git push origin main
 
 echo.
-echo Concluido. Confira em ~2 min: https://xbrancox.github.io/mudabrasilv4/
+echo Concluido. Confira em ~2 min: https://meu-voto.app/
 exit /b 0

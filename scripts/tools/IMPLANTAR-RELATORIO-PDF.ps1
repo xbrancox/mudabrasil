@@ -1,4 +1,4 @@
-# IMPLANTAR-RELATORIO-PDF.ps1 - VotaBrasil
+﻿# IMPLANTAR-RELATORIO-PDF.ps1 - VotaBrasil
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 
@@ -84,7 +84,7 @@ if ($diffs) {
 }
 
 Write-Host "`nComo testar:" -ForegroundColor Cyan
-Write-Host "  1. Acesse: https://xbrancox.github.io/mudabrasilv4/"
+Write-Host "  1. Acesse: https://meu-voto.app/"
 Write-Host "  2. Role ate 'POLITICOS COM VOTOS REVOGADOS'"
 Write-Host "  3. Qualquer politico com pct >= 70% tera botao vermelho"
 Write-Host "     'Relatorio de Cassacao' - clique para baixar PDF."

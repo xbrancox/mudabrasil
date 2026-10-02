@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # CONFIGURAR-DOMINIO.ps1 - VotaBrasil
 # Troca os e-mails do config.js e os meta tags do index.html
 # para o novo dominio votabrasil.app.br. Faz commit + push.
@@ -45,9 +45,9 @@ Write-Host "[3/6] Atualizando e-mails no config.js ..." -ForegroundColor Yellow
 $cfg = Get-Content -LiteralPath 'config.js' -Raw -Encoding UTF8
 
 $substituicoesCfg = @(
-    @{ old = "email_geral:'contato@mudabrasil.app'";    new = "email_geral:'contato@votabrasil.app.br'" },
-    @{ old = "email_anuncie:'anuncie@mudabrasil.app'";  new = "email_anuncie:'anuncie@votabrasil.app.br'" },
-    @{ old = "email_imprensa:'imprensa@mudabrasil.app'"; new = "email_imprensa:'imprensa@votabrasil.app.br'" }
+    @{ old = "email_geral:'contato@meu-voto.app'";    new = "email_geral:'contato@votabrasil.app.br'" },
+    @{ old = "email_anuncie:'anuncie@meu-voto.app'";  new = "email_anuncie:'anuncie@votabrasil.app.br'" },
+    @{ old = "email_imprensa:'imprensa@meu-voto.app'"; new = "email_imprensa:'imprensa@votabrasil.app.br'" }
 )
 
 $cfgTrocas = 0

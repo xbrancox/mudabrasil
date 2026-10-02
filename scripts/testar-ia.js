@@ -1,4 +1,4 @@
-const { JSDOM } = require('jsdom');
+﻿const { JSDOM } = require('jsdom');
 const fs = require('fs');
 const path = require('path');
 
@@ -47,7 +47,7 @@ const bad = m => { fails++; console.log('  ❌ ' + m); };
 const chk = (cond, msg) => cond ? ok(msg) : bad(msg);
 
 const dom = new JSDOM(html, {
-  url: 'https://xbrancox.github.io/votabrasil/pages/votacoes.html',
+  url: 'https://meu-voto.app/pages/votacoes.html',
   runScripts: 'dangerously',
   pretendToBeVisual: true,
   beforeParse(window) {

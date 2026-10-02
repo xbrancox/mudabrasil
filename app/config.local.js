@@ -2,7 +2,7 @@
    MeuVoto — Configuração Global
    -----------------------------------------------------------
    Backend: https://mudabrasil-production-79eb.up.railway.app (Railway - Projeto VotaBrasil 198baa4d)
-   Frontend: https://xbrancox.github.io/MeuVoto/
+   Frontend: https://meu-voto.app/
    ============================================================ */
 
 let API_BASE = (typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))

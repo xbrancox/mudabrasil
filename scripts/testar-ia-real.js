@@ -1,4 +1,4 @@
-// Teste com DADOS REAIS da API de producao (sem stubs): prova que o reparo dos
+﻿// Teste com DADOS REAIS da API de producao (sem stubs): prova que o reparo dos
 // ids com traco ("2634392-21") funciona no payload verdadeiro da Camara.
 const { JSDOM } = require('jsdom');
 const fs = require('fs');
@@ -13,7 +13,7 @@ const bad = m => { fails++; console.log('  ❌ ' + m); };
 const chk = (c, m) => c ? ok(m) : bad(m);
 
 const dom = new JSDOM(html, {
-  url: 'https://xbrancox.github.io/votabrasil/pages/votacoes.html',
+  url: 'https://meu-voto.app/pages/votacoes.html',
   runScripts: 'dangerously',
   pretendToBeVisual: true,
   beforeParse(window) {

@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 #  IMPLANTAR-RADAR-COMPLETO.ps1 - VotaBrasil
 #  Publica o site COMPLETO (pasta MudaBrasil/) como site principal
 #  com rebrand MudaBrasil -> VotaBrasil.
@@ -109,7 +109,7 @@ Write-Host ''
 Write-Host '============================================================' -ForegroundColor Green
 Write-Host "  CONCLUIDO! Commit: $hash" -ForegroundColor Green
 Write-Host '  Confira em ~2 min:' -ForegroundColor Green
-Write-Host '    https://xbrancox.github.io/mudabrasilv4/' -ForegroundColor Green
-Write-Host '    https://xbrancox.github.io/mudabrasilv4/app/' -ForegroundColor Green
+Write-Host '    https://meu-voto.app/' -ForegroundColor Green
+Write-Host '    https://meu-voto.app/app/' -ForegroundColor Green
 Write-Host '============================================================' -ForegroundColor Green
 Read-Host 'Enter para sair'

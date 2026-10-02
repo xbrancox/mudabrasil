@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 # DIAG-MEUVOTO.ps1 - SOMENTE LEITURA. Nao altera arquivo, nao faz push, nao faz commit.
 # Mede: (a) sha local, (b) sha remoto dos 3 repos (chega o push?), (c) registro dos dominios meuvoto.*
 # 100% ASCII. Rode com 2 cliques no RODAR-DIAG.bat e me mande o print inteiro.
@@ -76,7 +76,7 @@ function Get-DomainStatus {
   }
   return 'NAO SEI (sem rede / bloqueado / timeout)'
 }
-foreach($d in @('meuvoto.app.br','meuvoto.com.br','meuvoto.app')){
+foreach($d in @('meu-voto.app','meuvoto.com.br','meuvoto.app')){
   Say ('  ' + $d.PadRight(18) + ' : ' + (Get-DomainStatus $d))
 }
 
@@ -86,7 +86,7 @@ $chegouEm = @(); foreach($r in $repos){ if($remoteSha[$r] -eq $localFull){ $cheg
 if($chegouEm.Count -gt 0){ Say ('  Push CONFIRMADO em: ' + ($chegouEm -join ', ')) }
 else { Say '  Push NAO confirmado em nenhum dos 3 (ou divergente). O commit esta SO no seu disco.' }
 Say '  Site ao vivo que voce apontou = repo "mudabrasil".'
-Say '  CNAME no commit = meuvoto.app.br  ->  se o dominio acima nao estiver REGISTRADO,'
+Say '  CNAME no commit = meu-voto.app  ->  se o dominio acima nao estiver REGISTRADO,'
 Say '     NAO publique este commit no repo que serve o site (Pages pode quebrar).'
 Say '  Proximo passo (MEU, no proximo turno, com este print): empurro para o repo certo e,'
 Say '     se preciso, neutralizo o CNAME antes de publicar. Voce nao faz nada alem deste clique.'
