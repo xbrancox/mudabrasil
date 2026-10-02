@@ -1,5 +1,5 @@
 # robots.txt para MeuVoto / VotaBrasil
-# https://xbrancox.github.io/votabrasil/robots.txt
+# https://meu-voto.app/robots.txt
 
 User-agent: *
 Allow: /
@@ -16,7 +16,7 @@ Allow: /pages/
 Allow: /app/
 
 # Sitemap
-Sitemap: https://xbrancox.github.io/votabrasil/sitemap.xml
+Sitemap: https://meu-voto.app/sitemap.xml
 
 # Crawl-delay (opcional, para não sobrecarregar)
 # Crawl-delay: 1

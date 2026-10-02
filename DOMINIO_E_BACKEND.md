@@ -1,4 +1,4 @@
-# 🏗️ Arquitetura de Backend e Domínio — MeuVoto
+﻿# 🏗️ Arquitetura de Backend e Domínio — MeuVoto
 
 ## Status Atual (28/09/2026)
 
@@ -18,7 +18,7 @@
 - **Repositório**: `xbrancox/votabrasil`
 - **Branch**: `main`
 - **Workflow**: `.github/workflows/pages.yml` (auto-deploy a cada push)
-- **URL**: `https://xbrancox.github.io/votabrasil/`
+- **URL**: `https://meu-voto.app/`
 - **Status**: ✅ Ativo
 
 ---
@@ -146,10 +146,10 @@ GET https://mudabrasil-production-79eb.up.railway.app/api/stream (SSE)
 
 ### Frontend (GitHub Pages)
 ```
-https://xbrancox.github.io/votabrasil/
-https://xbrancox.github.io/votabrasil/pages/candidatos.html
-https://xbrancox.github.io/votabrasil/pages/termometro.html
-https://xbrancox.github.io/votabrasil/pages/parlamentares.html
+https://meu-voto.app/
+https://meu-voto.app/pages/candidatos.html
+https://meu-voto.app/pages/termometro.html
+https://meu-voto.app/pages/parlamentares.html
 ```
 
 ---

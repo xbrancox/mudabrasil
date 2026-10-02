@@ -1,4 +1,4 @@
-# 📱 PWA AUDIT - MeuVoto
+﻿# 📱 PWA AUDIT - MeuVoto
 
 > Auditoria completa de Progressive Web App do projeto MeuVoto/VotaBrasil
 > Data da auditoria: 2026-10-01
@@ -176,17 +176,17 @@
 **Como instalar**:
 
 **Desktop (Chrome/Edge)**:
-1. Acessar `https://xbrancox.github.io/votabrasil`
+1. Acessar `https://meu-voto.app`
 2. Clicar no ícone de instalação na barra de endereço
 3. Confirmar instalação
 
 **Mobile (Android)**:
-1. Acessar `https://xbrancox.github.io/votabrasil` no Chrome
+1. Acessar `https://meu-voto.app` no Chrome
 2. Menu → "Adicionar à tela inicial"
 3. Confirmar instalação
 
 **iOS (Safari)**:
-1. Acessar `https://xbrancox.github.io/votabrasil` no Safari
+1. Acessar `https://meu-voto.app` no Safari
 2. Compartilhar → "Adicionar à Tela de Início"
 3. Confirmar instalação
 

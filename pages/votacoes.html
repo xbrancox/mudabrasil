@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <!-- og:meuvoto -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MeuVoto / VotaBrasil">
 <meta property="og:title" content="Votações do Plenário — MeuVoto">
-<meta property="og:description" content="Votações nominais e simbólicas da Câmara com quórum, placar por UF, coerência de bancada e voto a voto. Filtros por deputado, tema e janela de tempo.">
-<meta property="og:image" content="https://xbrancox.github.io/votabrasil/og-image.png">
-<meta property="og:url" content="https://xbrancox.github.io/votabrasil/pages/votacoes.html">
+<meta property="og:description" content="Acompanhe como seus deputados votam, monitore promessas de campanha e cobre seus representantes. Dados oficiais da Câmara em linguagem simples.">
+<meta property="og:image" content="https://meu-voto.app/og-image.png">
+<meta property="og:url" content="https://meu-voto.app/pages/votacoes.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Votações do Plenário — MeuVoto">
-<meta name="twitter:description" content="Votações nominais e simbólicas da Câmara com quórum, placar por UF, coerência de bancada e voto a voto. Filtros por deputado, tema e janela de tempo.">
-<meta name="twitter:image" content="https://xbrancox.github.io/votabrasil/og-image.png">
+<meta name="twitter:description" content="Acompanhe como seus deputados votam, monitore promessas de campanha e cobre seus representantes. Dados oficiais da Câmara em linguagem simples.">
+<meta name="twitter:image" content="https://meu-voto.app/og-image.png">
 <!-- /og:meuvoto -->
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -73,6 +73,13 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 .cbar div{height:100%}
 .cleg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px}
 .quorum{margin-top:10px;border:1px dashed rgba(74,144,240,.5);border-radius:12px;padding:10px 12px;font-size:13px;background:rgba(17,95,203,.08)}
+.guia-rapido{max-width:960px;margin:18px auto 0;background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(74,144,240,.08));border:2px solid rgba(255,215,0,.4);border-radius:16px;padding:18px 20px}
+.guia-rapido h3{color:var(--gold);font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.guia-passos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.guia-passo{display:flex;gap:10px;align-items:flex-start}
+.guia-num{background:var(--gold);color:#1a1400;font:800 18px Montserrat;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.guia-passo b{color:var(--ink);display:block;margin-bottom:2px}
+.guia-passo span{color:var(--muted);font-size:12.5px;line-height:1.4}
 .meusres{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
 .promx{margin-top:8px;border-left:3px solid var(--gold);background:rgba(255,215,0,.07);border-radius:8px;padding:8px 10px;font-size:12.5px}
 .vtable{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
@@ -236,39 +243,39 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 <main>
 <section class="hero">
   <h1>🗳️ Votações do Plenário</h1>
-  <p>O que <b>já foi votado nos últimos 10 dias</b> e o que <b>será votado nos próximos 10</b> — com placar por estado, coerência de bancada, quórum, dossiê, <b>mapa de calor</b> e comparador <b>seu deputado × Plenário</b>.</p>
+  <p>Acompanhe <b>como seus deputados votam</b>, monitore promessas de campanha e <b>cobre seus representantes</b>. Tudo em linguagem simples, sem jargão político — <b>você no controle</b> do mandato que ajudou a eleger.</p>
   <div class="edu">
     <div class="ecard simb"><h3>🗣️ Simbólica — "fica como está"</h3>Quem é a favor <b>permanece como está</b>; a Mesa conta o conjunto. <b>Não há registro individual</b> — e é assim que a maioria passa, em segundos.</div>
-    <div class="ecard nom"><h3>✍️ Nominal — voto por voto</h3>Placar, <b>quórum</b>, voto a voto, <b>placar por UF</b>, <b>coerência</b>, promessas, <b>dossiê</b>, <b>calor</b> e PDF.</div>
+    <div class="ecard nom"><h3>✍️ Nominal — voto por voto</h3>Cada deputado tem seu voto registrado. Você vê o placar, quem votou a favor ou contra, o resultado por estado, o histórico de promessas e pode gerar um relatório completo em PDF.</div>
   </div>
   <div class="tabs"><button id="tbC" class="on" data-tip="Votações do Plenário da Câmara (últimos 10 dias)." onclick="setTab('camara')">🏛️ Câmara</button><button id="tbS" data-tip="Votações do Plenário do Senado (últimos 30 dias)." onclick="setTab('senado')">🏛️ Senado</button></div>
-  <div id="sec37-representantes" class="sec37"><div class="sec37-title">⭐ Meus Representantes <span class="sec37-info" data-tip="Marque deputados e senadores para acompanhar como votam, criar promessas de cobrança e gerar dossiês completos de cada parlamentar.">ⓘ</span></div><div class="painel"><div class="row"><span class="acwrap"><input id="mq" placeholder="⭐ Digite o nome do deputado/senador…" autocomplete="off"/><span class="ac" id="ac"></span></span><button class="btn sm gold" data-tip="Adiciona o parlamentar à sua lista (salvo só no seu navegador)." onclick="addMeu()">Adicionar</button><button class="btn sm" data-tip="Notificação do PWA quando um deputado seu vota em votação nominal." onclick="ativaAlertas()">🔔 Ativar alertas</button></div><div class="chips" id="mchips"></div></div>
-  <div class="painel"><div class="row"><select id="pDep" style="max-width:220px" data-tip="Qual dos seus parlamentares terá a promessa cobrada."></select><input id="pTxt" placeholder="🤝 Promessa a cobrar (ex.: defender a educação pública…)" data-tip="Palavras-chave cruzadas com o assunto das votações nominais."/><button class="btn sm" data-tip="Cadastra a promessa para cobrança automática." onclick="addProm()">Cobrar</button></div><div class="chips" id="pChips"></div></div>
-  <div class="painel"><div class="row"><select id="dDep" style="max-width:240px" data-tip="Escolha um dos seus parlamentares para o dossiê."></select><button class="btn sm" data-tip="Cruza as últimas 30 votações nominais + reclamações/apoios e monta a ficha corrida cívica." onclick="dossie()">🕰️ Gerar dossiê</button><a class="btn sm" href="mandato-responsavel.html" data-tip="Página educativa: revogabilidade, como mandatos terminam hoje e mobilização legítima." style="margin-left:6px">🎓 Mandato responsável</a></div><div id="dossie" style="margin-top:10px"></div></div></div>
-  <div id="sec37-analise" class="sec37"><div class="sec37-title">📊 Análise e Comparação <span class="sec37-info" data-tip="Ferramentas avançadas de análise: mapa de calor por estado, comparador entre deputados, painel de representação com 3 eixos (fidelidade partidária, distância da bancada e confiança da base).">ⓘ</span></div><div class="painel"><div class="row"><select id="hmUF" style="max-width:160px" data-tip="Estado cuja bancada você quer acompanhar ao longo das votações."></select><button class="btn sm" data-tip="Carrega até 20 votações nominais e desenha o mapa de calor + comparador." onclick="ciclo7()">🌡️ Carregar calor & comparador</button></div><div id="hm" style="margin-top:10px"></div><div id="cmp7" style="margin-top:10px"></div>
-<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn sm" data-tip="Combina fidelidade partidária, distância da bancada e confiança da base em um diagnóstico por deputado (3 eixos + quadrante)." onclick="representacao18()">🧭 Painel de representação (3 eixos)</button><span class="muted" style="font-size:11.5px">ⓘ diagnóstico por eixo, sem juízo de valor</span><a class="btn sm" href="mandato-responsavel.html" data-tip="Página educativa: o que é recall, como mandatos terminam no Brasil e chaves de mobilização legítima." style="margin-left:6px">🎓 Mandato responsável</a><button class="btn sm" data-tip="Compara voto a voto dois parlamentares nas últimas votações nominais: taxa de convergência, discordâncias e links diretos." onclick="cmpABUI()" style="margin-left:6px">⚖️ Comparador A × B</button></div>
+  <div id="sec37-representantes" class="sec37"><div class="sec37-title">⭐ Meus Representantes <span class="sec37-info" data-tip="Escolha os deputados e senadores que você quer acompanhar de perto. O sistema mostra como eles votam, se cumprem promessas e gera relatórios para você cobrar o gabinete.">ⓘ</span></div><div class="painel"><div class="row"><span class="acwrap"><input id="mq" placeholder="⭐ Digite o nome do deputado/senador…" autocomplete="off"/><span class="ac" id="ac"></span></span><button class="btn sm gold" data-tip="Adicione o deputado ou senador à sua lista pessoal de acompanhamento (fica salvo só no seu navegador)." onclick="addMeu()">Adicionar</button><button class="btn sm" data-tip="Receba um aviso no celular quando um dos seus deputados registrar voto em uma votação importante." onclick="ativaAlertas()">🔔 Ativar alertas</button></div><div class="chips" id="mchips"></div></div>
+  <div class="painel"><div class="row"><select id="pDep" style="max-width:220px" data-tip="Escolha qual deputado você quer cobrar uma promessa de campanha."></select><input id="pTxt" placeholder="🤝 Promessa a cobrar (ex.: defender a educação pública…)" data-tip="Digite uma promessa de campanha (ex: "defender a educação pública"). O sistema avisa quando o deputado votar algo relacionado."/><button class="btn sm" data-tip="Cadastre a promessa para cobrar automaticamente quando houver votação sobre o tema." onclick="addProm()">Cobrar</button></div><div class="chips" id="pChips"></div></div>
+  <div class="painel"><div class="row"><select id="dDep" style="max-width:240px" data-tip="Escolha um dos seus parlamentares para ver o histórico completo."></select><button class="btn sm" data-tip="Veja o histórico completo do seu deputado: em quais votações ele participou, como votou, ausências e o que a população diz sobre ele." onclick="dossie()">🕰️ Ver Histórico do Parlamentar</button><a class="btn sm" href="mandato-responsavel.html" data-tip="Página educativa: revogabilidade, como mandatos terminam hoje e mobilização legítima." style="margin-left:6px">🎓 Mandato responsável</a></div><div id="dossie" style="margin-top:10px"></div></div></div>
+  <div id="sec37-analise" class="sec37"><div class="sec37-title">🔍 Ferramentas de Investigação e Comparações <span class="sec37-info" data-tip="Descubra se a bancada do seu estado apoia ou rejeita as principais pautas, compare dois deputados lado a lado e veja o perfil de independência de cada parlamentar.">ⓘ</span></div><div class="painel"><div class="row"><select id="hmUF" style="max-width:160px" data-tip="Escolha seu estado para ver como a bancada votou nas últimas sessões."></select><button class="btn sm" data-tip="Veja em segundos quais deputados do seu estado votaram a favor ou contra o projeto, comparando-os com a média do restante do país." onclick="ciclo7()">🔍 Ver como cada estado votou</button></div><div id="hm" style="margin-top:10px"></div><div id="cmp7" style="margin-top:10px"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn sm" data-tip="Mostra se o deputado segue rigorosamente as ordens do partido, se vota diferente da própria legenda e qual a avaliação geral da base." onclick="representacao18()">📊 Perfil de Independência do Deputado</button><span class="muted" style="font-size:11.5px">ⓘ diagnóstico por eixo, sem juízo de valor</span><a class="btn sm" href="mandato-responsavel.html" data-tip="Página educativa: o que é recall, como mandatos terminam no Brasil e chaves de mobilização legítima." style="margin-left:6px">🎓 Mandato responsável</a><button class="btn sm" data-tip="Escolha dois deputados para descobrir em quais projetos eles votam igual e em quais divergem radicalmente." onclick="cmpABUI()" style="margin-left:6px">⚖️ Comparar dois Parlamentares Voto a Voto</button></div>
 <div id="rep18" style="margin-top:10px"></div><div id="cmpAB" style="margin-top:10px"></div>
 </div></div>
 </section>
 <div class="fbar"><div class="wrap"><div class="row">
-  <input id="q" placeholder="🔎 Buscar por assunto ou matéria…" oninput="render()" data-tip="Filtra por assunto ou sigla (PL, MPV, PEC)."/>
-  <select id="fTipo" onchange="filtraTipo()" data-tip="Nominais (voto registrado) ou simbólicas (sem registro)."><option value="">Todos os tipos</option><option value="N">✍️ Nominais</option><option value="S">🗣️ Simbólicas</option></select>
+  <input id="q" placeholder="🔎 Buscar por assunto ou matéria…" oninput="render()" data-tip="Digite o tema que te interessa (ex: saúde, educação) ou o número do projeto (PL, PEC)."/>
+  <select id="fTipo" onchange="filtraTipo()" data-tip="Nominais: cada deputado tem seu voto registrado. Simbólicas: votação em conjunto, sem registro individual."><option value="">Todos os tipos</option><option value="N">✍️ Nominais</option><option value="S">🗣️ Simbólicas</option></select>
   <span class="muted" id="count"></span>
 </div></div></div>
 <div class="wrap"><div id="agenda"></div><div id="sec37-votacoes" class="sec37"><div class="sec37-title">🗳️ Votações Recentes <span class="sec37-info" data-tip="Veja as votações nominais e simbólicas dos últimos 10 dias. Filtre por tipo (nominal/simbólica) e busque por assunto. Clique em uma votação para ver detalhes, placar por estado e voto dos seus deputados.">ⓘ</span></div><h2 class="secT" id="lblPassado">🗳️ O que JÁ foi votado — últimos 10 dias</h2><div id="list"></div><div id="ver-todas-container" style="display:none"><button class="btn-ver-todas" onclick="mostrarTodasVotacoes()">Ver todas as votações (<span id="total-votacoes">0</span> encontradas)</button></div><div class="loadmore"><button id="more" class="btn gold" hidden onclick="mais()" data-tip="Carrega mais votações da janela."></button></div></div>
 </main>
 <div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
 <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn sm" data-tip="Liga/desliga: ao abrir o site numa semana nova, você recebe o resumo da semana como notificação do PWA." onclick="ciclo9auto()">🔔 Resumo semanal automático</button>
-<button class="btn sm" data-tip="Baixa planilha CSV com % Sim de cada deputado seu vs Plenário vs partido, delta e presença." onclick="csv9()">📥 Exportar CSV</button>
-<button class="btn sm" data-tip="Gera mensagem pronta (copiar/WhatsApp/e-mail ao gabinete) citando votações nominais ligadas às suas promessas." onclick="recibo9()">🧾 Recibo de cobrança</button>
+<button class="btn sm" data-tip="Ative para receber automaticamente o resumo das votações da semana direto no seu navegador." onclick="ciclo9auto()">🔔 Resumo semanal automático</button>
+<button class="btn sm" data-tip="Baixe uma planilha com os números dos seus deputados para compartilhar ou analisar." onclick="csv9()">📥 Exportar CSV</button>
+<button class="btn sm" data-tip="Gere uma mensagem formal ou link com os votos reais do seu deputado para enviar por WhatsApp ou e-mail cobrando explicações." onclick="recibo9()">✉️ Cobrar Compromisso do Gabinete</button>
 </div>
 <div id="out9" style="margin-top:10px"></div>
 </div>
 <div class="painel-cob" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
 <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn sm" data-tip="Lista de cobranças que você registrou via 📝 Registrar cobrança, com status atualizado ao vivo." onclick="renderMinhasCobrancas()">📬 Minhas cobranças</button>
-<a class="btn sm" href="cobrancas-ranking.html" data-tip="Ranking público de selos de responsividade dos gabinetes (ouro/prata/bronze).">🏆 Ranking de selos</a>
+<button class="btn sm" data-tip="Veja o status das cobranças que você enviou aos gabinetes dos seus deputados." onclick="renderMinhasCobrancas()">📬 Minhas cobranças</button>
+<a class="btn sm" href="cobrancas-ranking.html" data-tip="Veja quais gabinetes respondem mais rápido às cobranças dos cidadãos.">🏆 Ranking de selos</a>
 </div>
 <div id="outCob" style="margin-top:10px"><p class="muted">Clique em "📬 Minhas cobranças" para ver o status das cobranças registradas.</p></div>
 </div></div>
@@ -342,8 +349,8 @@ document.getElementById('out9').innerHTML=h}
 window.addEventListener('load',function(){setTimeout(function(){maybeAuto9(false)},1500)});
 </script><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
 <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn sm" data-tip="Tabela consolidada dos seus deputados: presença, % Sim, delta vs Plenário, coerência com a bancada e promessas." onclick="meuCongresso()">📊 Meu Congresso</button>
-<button class="btn sm" data-tip="Imprime/salva em PDF a tabela consolidada do Meu Congresso." onclick="mcPdf()">🖨️ PDF do Meu Congresso</button>
+<button class="btn sm" data-tip="Veja num só lugar: presença, como votou, se segue o partido e quantas promessas você cadastrou para cobrar." onclick="meuCongresso()">📊 Resumo dos Meus Parlamentares</button>
+<button class="btn sm" data-tip="Salve a tabela dos seus parlamentares em PDF para compartilhar ou imprimir." onclick="mcPdf()">🖨️ PDF do Resumo dos Meus Parlamentares</button>
 </div>
 <div id="out10" style="margin-top:10px"></div>
 </div>
@@ -359,13 +366,13 @@ for(var j=0;j<MEUS.length;j++){var m=MEUS[j];var num=String(m.id).replace('camar
 var part=0,mine=[];for(var k=0;k<C7.length;k++){var L=CACHEV[C7[k].id].list;for(var q=0;q<L.length;q++){if(L[q].id===num){part++;mine.push(L[q])}}}
 var mr=rates(mine);var d=(mr!=null&&nat!=null)?(mr-nat):null;var co=await coerDeputado(num);var np=PROMS.filter(function(p){return p.depId===m.id}).length;
 rows+='<tr><td>⭐ '+esc(m.nome)+'</td><td><b>'+Math.round(100*part/C7.length)+'%</b></td><td>'+(mr==null?'—':mr+'%')+'</td><td>'+(d==null?'—':((d>0?'+':'')+d+' pp'))+'</td><td>'+(co?(co.pc+'% ('+co.dev+' desvio(s))'):'—')+'</td><td>'+np+'</td></tr>'}
-$('#out10').innerHTML='<div class="ecard"><h3>📊 Meu Congresso — visão consolidada (últimas '+C7.length+' nominais)</h3><div style="overflow-x:auto"><table class="vtable"><tr><th>Deputado</th><th>Presença</th><th>% Sim</th><th>Δ vs Plenário</th><th>Coerência c/ bancada</th><th>🤝 Promessas</th></tr>'+rows+'</table></div><p class="muted" style="margin-top:8px">Coerência = % dos votos Sim/Não alinhados à orientação do próprio partido. Δ = pontos percentuais acima/abaixo da média do Plenário.</p></div>'}
-function mcPdf(){var el=$('#out10');if(!el||!el.innerHTML.trim())return alert('Gere o 📊 Meu Congresso primeiro.');$('#fichaPrint').innerHTML='<h1>MeuVoto · Meu Congresso</h1>'+el.innerHTML+'<p style="margin-top:8px">Gerado em '+new Date().toLocaleString('pt-BR')+' · fontes: dadosabertos.camara.leg.br</p>';window.print()}
+$('#out10').innerHTML='<div class="ecard"><h3>📊 Resumo dos Meus Parlamentares — visão consolidada (últimas '+C7.length+' nominais)</h3><div style="overflow-x:auto"><table class="vtable"><tr><th>Deputado</th><th>Presença</th><th>% Sim</th><th>Comparado à média</th><th>Alinhamento com o partido</th><th>🤝 Promessas</th></tr>'+rows+'</table></div><p class="muted" style="margin-top:8px">Alinhamento = % dos votos Sim/Não alinhados à orientação do próprio partido. Δ = pontos percentuais acima/abaixo da média do Plenário.</p></div>'}
+function mcPdf(){var el=$('#out10');if(!el||!el.innerHTML.trim())return alert('Gere o 📊 Resumo dos Meus Parlamentares primeiro.');$('#fichaPrint').innerHTML='<h1>MeuVoto · Resumo dos Meus Parlamentares</h1>'+el.innerHTML+'<p style="margin-top:8px">Gerado em '+new Date().toLocaleString('pt-BR')+' · fontes: dadosabertos.camara.leg.br</p>';window.print()}
 (function(){var b=window.buildResumo9;if(typeof b==='function'){window.buildResumo9=async function(){var r=null;try{r=await b()}catch(e){}if(r){try{localStorage.setItem('mb_resumo_cache',JSON.stringify(r))}catch(e){}}else{var c=localStorage.getItem('mb_resumo_cache');if(c){try{r=JSON.parse(c);if(r)r.fromCache=true}catch(e){}}}return r}}}());
 </script><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
 <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn sm" data-tip="Cruza a pauta dos próximos 10 dias com suas promessas e avisa até 72h antes de cada sessão ligada a um tema seu." onclick="alertaFuturo(true)">📅 Alertas de pauta (seus temas)</button>
-<button class="btn sm" data-tip="Linha do tempo em SVG da coerência acumulada de cada deputado seu com a orientação do próprio partido." onclick="grafCoerencia()">📈 Coerência ao longo do tempo</button>
+<button class="btn sm" data-tip="Avisamos você antes de votações cruciais sobre os temas que você escolheu (ex: Educação, Saúde, Economia)." onclick="alertaFuturo(true)">🔔 Alerta de Votações Importantes</button>
+<button class="btn sm" data-tip="Gráfico mostrando quando o deputado votou diferente do próprio partido ao longo do tempo." onclick="grafCoerencia()">📈 Alinhamento ao longo do tempo</button>
 </div>
 <div id="out11" style="margin-top:10px"></div>
 </div>
@@ -384,7 +391,7 @@ localStorage.setItem('mb_alerta_fut',JSON.stringify(done.slice(-40)));
 if(show){$('#out11').innerHTML=hits.length?'<div class="ecard"><h3>📅 Pauta dos próximos 10 dias ligada às suas promessas</h3>'+hits.map(function(h){return '<p style="margin-top:6px">• <b>'+fmtData(h.e.dataHora||h.e.data)+'</b> — '+esc(h.e.titulo||h.e.descricao||'Sessão')+' <span class="vb out">tema: '+esc(h.k)+'</span> <span class="muted">promessa de '+esc(h.p.nome)+'</span></p>'}).join('')+'<p class="muted" style="margin-top:8px">Você será notificado até 72h antes de cada sessão destas.</p></div>':'<div class="ecard"><p class="muted">Nenhuma sessão futura (10 dias) cruza com suas promessas agora — ou a pauta ainda não foi publicada (recesso).</p></div>'}}
 async function grafCoerencia(){
 if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');
-$('#out11').innerHTML='<p class="muted">⏳ Calculando coerência acumulada…</p>';
+$('#out11').innerHTML='<p class="muted">⏳ Calculando Alinhamento acumulada…</p>';
 await needC7();if(!C7.length)return $('#out11').innerHTML='<p class="muted">Sem votações nominais na janela.</p>';
 var chron=C7.slice().reverse();var n=chron.length;
 var cols=['#FFD700','#4a90f0','#2ECC71','#E74C3C','#94A3B8','#c084fc'];
@@ -400,15 +407,15 @@ for(var i=0;i<n;i++){var v=chron[i];var L=(CACHEV[v.id]||{list:[]}).list;var x=n
 if(x){var vv=(x.voto||'').trim().toLowerCase();if(vv.indexOf('sim')===0||vv.indexOf('n')===0){var om=await orientOf(v.id);var o=om[(x.partido||'').toUpperCase()];if(o){tot++;if(vv.indexOf(o)!==0)dev++;pts.push({x:i+1,pc:Math.round(100*(1-dev/tot)),d:v.dataHora})}}}}
 if(pts.length<2)continue;
 paths+='<polyline fill="none" stroke="'+cols[j]+'" stroke-width="2.5" points="'+pts.map(function(p){return X(p.x).toFixed(1)+','+Y(p.pc).toFixed(1)}).join(' ')+'"/>';
-for(var k3=0;k3<pts.length;k3++){var p=pts[k3];paths+='<circle cx="'+X(p.x).toFixed(1)+'" cy="'+Y(p.pc).toFixed(1)+'" r="3" fill="'+cols[j]+'"><title>'+esc(m.nome)+' · '+fmtData(p.d)+' · coerência '+p.pc+'%</title></circle>'}
+for(var k3=0;k3<pts.length;k3++){var p=pts[k3];paths+='<circle cx="'+X(p.x).toFixed(1)+'" cy="'+Y(p.pc).toFixed(1)+'" r="3" fill="'+cols[j]+'"><title>'+esc(m.nome)+' · '+fmtData(p.d)+' · Alinhamento '+p.pc+'%</title></circle>'}
 legend+='<span style="color:'+cols[j]+';font:700 12px Manrope;margin-right:10px">— '+esc(m.nome)+'</span>'}
 if(!paths){$('#out11').innerHTML='<p class="muted">Dados insuficientes para o gráfico (precisa de 2+ votações com orientação de bancada publicada).</p>';return}
-$('#out11').innerHTML='<div class="ecard"><h3>📈 Coerência acumulada com a bancada (linha do tempo)</h3><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:720px;background:var(--card2);border:1px solid var(--line);border-radius:12px">'+grid+paths+'</svg><p style="margin-top:8px">'+legend+'</p><p class="muted">Cada ponto = uma votação nominal com orientação de partido; passe o mouse nos pontos para ver data e %.</p></div>'}
+$('#out11').innerHTML='<div class="ecard"><h3>📈 Alinhamento acumulada com a bancada (linha do tempo)</h3><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:720px;background:var(--card2);border:1px solid var(--line);border-radius:12px">'+grid+paths+'</svg><p style="margin-top:8px">'+legend+'</p><p class="muted">Cada ponto = uma votação nominal com orientação de partido; passe o mouse nos pontos para ver data e %.</p></div>'}
 window.addEventListener('load',function(){setTimeout(function(){alertaFuturo(false)},3000)});
 </script><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
 <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn sm" data-tip="Um único PDF: tabela consolidada + seção por deputado (presença, coerência, faixa de votos, últimas 10 votações) + promessas." onclick="dossieCompleto()">🧾 Dossiê completo (PDF)</button>
-<button class="btn sm" data-tip="Copia URL com seus deputados embutidos; quem abrir vê o comparador já carregado com sua lista." onclick="linkCompartilhar()">🔗 Link público do comparador</button>
+<button class="btn sm" data-tip="Baixe um relatório completo com tudo sobre seus deputados: presença, votos, promessas e histórico recente." onclick="dossieCompleto()">📄 Ficha Completa do Parlamentar (PDF)</button>
+<button class="btn sm" data-tip="Compartilhe o link com amigos: quem abrir verá seus deputados já selecionados para comparação." onclick="linkCompartilhar()">🔗 Link público do comparador</button>
 </div>
 <div id="out12" style="margin-top:10px"></div>
 </div>
@@ -419,11 +426,11 @@ function adotaShare(){var p=null;try{p=new URLSearchParams(location.search).get(
 pols().then(function(P){var add=0;ids.forEach(function(id){var exists=MEUS.some(function(m){return m.id===id});if(!exists){var pp=P.find(function(x){return x.id===id});if(pp){MEUS.push({id:id,nome:pp.name||pp.nome});add++}}});
 if(add){localStorage.setItem('mb_meus',JSON.stringify(MEUS));renderChips();var el=document.getElementById('out12');if(el)el.innerHTML='<div class="ecard"><p>🔗 Comparador compartilhado carregado: +'+add+' deputado(s) na sua lista (você pode removê-los pelos chips ⭐).</p></div>'}})}
 async function dossieCompleto(){if(!MEUS.length)return alert('Marque ⭐ representantes primeiro.');
-var o12=document.getElementById('out12');if(o12)o12.innerHTML='<p class="muted">⏳ Montando dossiê completo…</p>';
+var o12=document.getElementById('out12');if(o12)o12.innerHTML='<p class="muted">⏳ Montando Ficha Completa…</p>';
 await needC7();if(!C7.length){if(o12)o12.innerHTML='<p class="muted">Sem votações nominais na janela.</p>';return}
 var allList=[];for(var i=0;i<C7.length;i++){allList=allList.concat(CACHEV[C7[i].id].list)}var nat=rates(allList);
-var h='<h1>MeuVoto · Dossiê completo do acompanhamento</h1><p>Gerado em '+new Date().toLocaleString('pt-BR')+' · janela: últimas '+C7.length+' votações nominais · fontes: dadosabertos.camara.leg.br</p>';
-h+='<h2>1. Visão consolidada (Meu Congresso)</h2><table><tr><th>Deputado</th><th>Presença</th><th>% Sim</th><th>Δ vs Plenário</th><th>Coerência</th><th>Promessas</th></tr>';
+var h='<h1>MeuVoto · Ficha Completa do acompanhamento</h1><p>Gerado em '+new Date().toLocaleString('pt-BR')+' · janela: últimas '+C7.length+' votações nominais · fontes: dadosabertos.camara.leg.br</p>';
+h+='<h2>1. Visão consolidada (Resumo dos Meus Parlamentares)</h2><table><tr><th>Deputado</th><th>Presença</th><th>% Sim</th><th>Comparado à média</th><th>Alinhamento</th><th>Promessas</th></tr>';
 var secs='';
 for(var j=0;j<MEUS.length;j++){var m=MEUS[j];var num=String(m.id).replace('camara-','');
 var part=0,mine=[];for(var k=0;k<C7.length;k++){var L=CACHEV[C7[k].id].list;for(var q=0;q<L.length;q++){if(L[q].id===num){part++;mine.push(L[q])}}}
@@ -436,7 +443,7 @@ var vv=(x.voto||'').toLowerCase();
 if(vv.indexOf('sim')===0){s++;cells+='<span style="display:inline-block;width:10px;height:10px;background:#2ECC71;border-radius:3px;margin:1px" title="Sim"></span>'}
 else if(vv.indexOf('n')===0){n2++;cells+='<span style="display:inline-block;width:10px;height:10px;background:#E74C3C;border-radius:3px;margin:1px" title="Não"></span>'}
 else cells+='<span style="display:inline-block;width:10px;height:10px;background:#64748b;border-radius:3px;margin:1px" title="'+esc(x.voto)+'"></span>'}
-secs+='<h2>'+(j+2)+'. '+esc(m.nome)+'</h2><p>Presença '+Math.round(100*part/C7.length)+'% · Sim '+s+' · Não '+n2+' · coerência com a bancada '+(co?(co.pc+'% ('+co.dev+' desvios)'):'—')+' · % Sim '+ (mr==null?'—':mr+'%')+' (Plenário: '+(nat==null?'—':nat+'%')+')</p><p>'+cells+'</p>';
+secs+='<h2>'+(j+2)+'. '+esc(m.nome)+'</h2><p>Presença '+Math.round(100*part/C7.length)+'% · Sim '+s+' · Não '+n2+' · Alinhamento com a bancada '+(co?(co.pc+'% ('+co.dev+' desvios)'):'—')+' · % Sim '+ (mr==null?'—':mr+'%')+' (Plenário: '+(nat==null?'—':nat+'%')+')</p><p>'+cells+'</p>';
 var last=[];for(var a3=C7.length-1;a3>=0&&last.length<10;a3--){var v3=C7[a3];var L3=CACHEV[v3.id].list;for(var q3=0;q3<L3.length;q3++){if(L3[q3].id===num){last.push({v:v3,x:L3[q3]});break}}}
 if(last.length){secs+='<table><tr><th>Data</th><th>Matéria</th><th>Voto</th></tr>'+last.map(function(o2){return '<tr><td>'+fmtData(o2.v.dataHora)+'</td><td>'+esc(trunc(vInfo(o2.v).assunto,60))+'</td><td>'+esc(o2.x.voto)+'</td></tr>'}).join('')+'</table>'}
 if(prs.length){secs+='<p><b>Promessas em cobrança:</b> '+prs.map(function(p){return '"'+esc(p.txt)+'"'}).join(', ')+'</p>'}}
@@ -445,9 +452,9 @@ $('#fichaPrint').innerHTML=h;if(o12)o12.innerHTML='<p class="muted">✅ Dossiê 
 window.addEventListener('load',function(){setTimeout(adotaShare,800)});
 </script><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
 <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn sm" data-tip="Grade com as 27 UFs e o % Sim de cada bancada; clique para o calor detalhado da UF." onclick="mapaBrasil()">🗺️ Brasil por bancadas</button>
-<button class="btn sm" data-tip="Compare, para um tema, o que Câmara e Senado fizeram (datas, assuntos, resultados)." onclick="espelhoCasas()">🏛️ Espelho Câmara × Senado</button>
-<button class="btn sm" data-tip="Monta o resumo semanal, copia o texto e abre seu app de e-mail preenchido (opt-in)." onclick="digestMail()">📧 Digest semanal (e-mail)</button>
+<button class="btn sm" data-tip="Descubra se a bancada do seu estado apoia ou rejeita as principais pautas." onclick="mapaBrasil()">🗺️ Brasil por bancadas</button>
+<button class="btn sm" data-tip="Compare o que Câmara e Senado fizeram sobre o mesmo tema: datas, assuntos e resultados lado a lado." onclick="espelhoCasas()">🏛️ Espelho Câmara × Senado</button>
+<button class="btn sm" data-tip="Receba o resumo da semana direto no seu e-mail, com as votações mais importantes." onclick="digestMail()">📧 Digest semanal (e-mail)</button>
 </div>
 <div id="out13" style="margin-top:10px"></div>
 </div>
@@ -460,7 +467,7 @@ var h='<div class="ecard"><h3>🗺️ Brasil por bancadas — % Sim nas últimas
 for(var j=0;j<ufs.length;j++){var u=ufs[j];var pc=m[u].t?Math.round(100*m[u].s/m[u].t):null;
 var bg=pc==null?'#334155':(pc>=60?'rgba(46,204,113,'+(0.25+0.75*pc/100).toFixed(2)+')':(pc>=40?'rgba(148,163,184,.5)':'rgba(231,76,60,'+(0.25+0.75*(100-pc)/100).toFixed(2)+')'));
 h+='<button class="btn sm" style="background:'+bg+';justify-content:space-between;border-color:rgba(127,176,245,.25)" data-tip="Bancada '+u+': '+m[u].s+' Sim de '+m[u].t+' votos Sim/Não · clique para o calor detalhado" onclick="ufClick(\''+u+'\')">'+u+' <b>'+(pc==null?'—':pc+'%')+'</b></button>'}
-h+='</div><p class="muted" style="margin-top:8px">Clique numa UF para carregar acima o mapa de calor detalhado da bancada.</p></div>';
+h+='</div><p class="muted" style="margin-top:8px">Clique numa UF para carregar acima o Mapa de Votação detalhado da bancada.</p></div>';
 o.innerHTML=h}
 async function espelhoCasas(){var kw=prompt('Tema para comparar Câmara × Senado (ex.: orçamento, saúde, educação):');if(!kw)return;kw=kw.trim().toLowerCase();
 var o=document.getElementById('out13');if(!o)return;o.innerHTML='<p class="muted">⏳ Buscando nas duas casas…</p>';
@@ -632,9 +639,9 @@ async function cmpABUI(){var el=document.getElementById("cmpAB");if(!el)return;
  if(!MEUS.length||MEUS.length<2){el.innerHTML='<div class="ecard"><p class="muted">Marque ⭐ ao menos 2 representantes para comparar.</p></div>';return}
  await needC7(); if(!C7.length){el.innerHTML='<div class="ecard"><p class="muted">Sem votações nominais na janela.</p></div>';return}
  var opts=MEUS.map(function(m){return '<option value="'+m.id+'">'+esc(m.nome)+'</option>'}).join('');
- el.innerHTML='<div class="ecard"><h3>⚖️ Comparador A × B <span class="vb abs" style="cursor:pointer" onclick="abInfo()" title="Info">ⓘ</span></h3>'+
+ el.innerHTML='<div class="ecard"><h3>⚖️ Comparar dois Parlamentares Voto a Voto <span class="vb abs" style="cursor:pointer" onclick="abInfo()" title="Info">ⓘ</span></h3>'+
  '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><select id="abA" style="max-width:220px">'+opts+'</select><select id="abB" style="max-width:220px">'+opts+'</select><button class="btn sm gold" onclick="cmpABRun()">Comparar</button></div>'+
- '<div id="abInfoBox" class="muted" style="display:none;margin-top:8px">Compara voto a voto dois parlamentares nas últimas votações nominais: taxa de convergência, discordâncias e links diretos. Fonte: dadosabertos.camara.leg.br.</div>'+
+ '<div id="abInfoBox" class="muted" style="display:none;margin-top:8px">Escolha dois deputados para descobrir em quais projetos eles votam igual e em quais divergem radicalmente. Fonte: dadosabertos.camara.leg.br.</div>'+
  '<div id="abOut" style="margin-top:10px"></div></div>';
  var sB=document.getElementById("abB"); if(MEUS.length>1)sB.value=MEUS[1].id;
 }
@@ -769,7 +776,7 @@ button.ia-i,span.ia-i{background:var(--gold)!important;color:#1a1400!important;b
   }
   function autoCongresso(){
     document.querySelectorAll('button').forEach(function(b){
-      if(/^(\uD83D\uDCCA\s*)?Meu Congresso$/.test(txt(b))&&!b.getAttribute('data-kill26')){
+      if(/^(\uD83D\uDCCA\s*)?Resumo dos Meus Parlamentares$/.test(txt(b))&&!b.getAttribute('data-kill26')){
         b.setAttribute('data-kill26','1');
         b.style.display='none';
       }
@@ -780,7 +787,7 @@ button.ia-i,span.ia-i{background:var(--gold)!important;color:#1a1400!important;b
     try{tem=(typeof MEUS!=='undefined'&&MEUS.length>0)}catch(e){}
     if(tem&&typeof window.meuCongresso==='function'){
       out.setAttribute('data-auto26','1');
-      try{window.meuCongresso()}catch(e){console.warn('[ciclo26] meuCongresso falhou',e)}
+      try{window.meuCongresso()}catch(e){console.warn('meuCongresso falhou',e)}
     }else if(!tem&&!out.textContent.trim()){
       out.innerHTML='<p class="muted">Marque \u2B50 deputados em <b>"Meus representantes"</b> (aba acima) e esta tabela aparece sozinha, sem clicar em nada.</p>';
     }
@@ -799,8 +806,8 @@ button.ia-i,span.ia-i{background:var(--gold)!important;color:#1a1400!important;b
     }
   }
   var PURPOSE={
-    'MAPA DE CALOR':'Mostra como a bancada de cada estado votou, vota\u00E7\u00E3o a vota\u00E7\u00E3o.',
-    'MEU CONGRESSO':'Presen\u00E7a, % Sim, diferen\u00E7a vs Plen\u00E1rio e coer\u00EAncia com o partido dos seus deputados.',
+    'Mapa de Votação':'Mostra como a bancada de cada estado votou, vota\u00E7\u00E3o a vota\u00E7\u00E3o.',
+    'Resumo dos Meus Parlamentares':'Presen\u00E7a, % Sim, diferen\u00E7a vs Plen\u00E1rio e coer\u00EAncia com o partido dos seus deputados.',
     'PAINEL DE REPRESENTA':'Diagn\u00F3stico por eixo (partido, bancada, base), sem ju\u00EDzo de valor.',
     'BRASIL POR BANCADAS':'As 27 UFs e o % Sim de cada bancada nas nominais recentes.',
     'ESPELHO':'Lado a lado, o que C\u00E2mara e Senado fizeram sobre o mesmo tema.',
@@ -1099,7 +1106,7 @@ async function carrega(){$('#list').innerHTML='<p class="muted" style="padding:4
 function filtrados(){const q=($('#q').value||'').toLowerCase();const t=$('#fTipo').value;return ALL.filter(v=>{const i=vInfo(v);if(t&&v._tipo!==t)return false;if(q&&!(i.assunto+' '+i.rot).toLowerCase().indexOf(q)>=0)return false;return true})}
 async function filtraTipo(){const t=$('#fTipo').value;if(t){const falta=ALL.filter(v=>!v._tipo);if(falta.length)await tipagem(falta)}render()}
 function render(){const L=filtrados();const isPreview=typeof window.__showAllVotacoes==="undefined"||!window.__showAllVotacoes;$('#count').textContent=L.length+' votação(ões) na janela';const vis=isPreview?L.slice(0,3):L.slice(0,SHOW);$('#more').hidden=L.length<=SHOW;$('#more').textContent='⬇️ Carregar mais ('+(L.length-SHOW)+' restantes)';
-$('#list').innerHTML=vis.map(v=>{const i=vInfo(v);const t=v._tipo;return '<div class="vcard"><div class="vtop"><span class="badge '+(t==='N'?'tn':'ts')+'">'+(t==='N'?'✍️ Nominal · voto registrado':'🗣️ Simbólica · sem registro individual')+'</span><span class="muted">'+fmtData(v.dataHora)+' · Plenário da Câmara</span></div><h3>'+esc(i.assunto)+'</h3>'+(i.rot?'<p style="margin:8px 0 0"><a class="lei" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener" data-prop="'+i.idProp+'">📜 '+esc(i.rot)+'</a> <span class="muted">— mouse: resumo · clique: oficial</span></p>':'')+'<p class="ementa muted" id="em-'+v.id+'">'+(i.idProp&&CACHEE[i.idProp]?esc(trunc(CACHEE[i.idProp],240)):'⏳ carregando resumo da matéria…')+'</p><div style="margin-top:12px"><button class="btn sm" data-tip="Placar, quórum, placar por UF, coerência de bancada e voto a voto." onclick="expand(\''+v.id+'\')">🔎 Como foi esta votação?</button></div><div class="vdet" id="vd-'+v.id+'" hidden></div></div>'}).join('')||'<p class="muted" style="padding:40px;text-align:center">Nada encontrado com esses filtros.</p>';
+$('#list').innerHTML=vis.map(v=>{const i=vInfo(v);const t=v._tipo;return '<div class="vcard"><div class="vtop"><span class="badge '+(t==='N'?'tn':'ts')+'">'+(t==='N'?'✍️ Nominal · voto registrado':'🗣️ Simbólica · sem registro individual')+'</span><span class="muted">'+fmtData(v.dataHora)+' · Plenário da Câmara</span></div><h3>'+esc(i.assunto)+'</h3>'+(i.rot?'<p style="margin:8px 0 0"><a class="lei" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener" data-prop="'+i.idProp+'">📜 '+esc(i.rot)+'</a> <span class="muted">— mouse: resumo · clique: oficial</span></p>':'')+'<p class="ementa muted" id="em-'+v.id+'">'+(i.idProp&&CACHEE[i.idProp]?esc(trunc(CACHEE[i.idProp],240)):'⏳ carregando resumo da matéria…')+'</p><div style="margin-top:12px"><button class="btn sm" data-tip="Placar, quórum, placar por UF, Alinhamento de bancada e voto a voto." onclick="expand(\''+v.id+'\')">🔎 Como foi esta votação?</button></div><div class="vdet" id="vd-'+v.id+'" hidden></div></div>'}).join('')||'<p class="muted" style="padding:40px;text-align:center">Nada encontrado com esses filtros.</p>';
 vis.forEach(v=>{const i=vInfo(v);if(i.idProp&&CACHEE[i.idProp]===undefined)ementaDe(i.idProp).then(e=>{const el=document.getElementById('em-'+v.id);if(el)el.textContent=e?trunc(e,240):'Matéria sem resumo público disponível.'})})}
 async function mais(){const antes=SHOW;SHOW+=12;await tipagem(filtrados().slice(antes,SHOW));render()}
 async function expand(id){var el=document.getElementById('vd-'+id);var v=ALL.find(function(x){return x.id==id});if(!el||!v){console.warn('[expand] nao encontrou el/v para',id,{el:!!el,v:!!v});return};if(!el.hidden){el.hidden=true;return}el.hidden=false;el.innerHTML='<p class="muted">⏳ carregando…</p>';const i=vInfo(v);const o=await votosDe(id);var orr=await fetchJ(CAM('votacoes/'+id+'/orientacoes'));var ors=(orr&&orr.dados)||[];if(!o||!o.list){console.warn('[expand] votosDe vazio para',id);el.innerHTML='<div class="sbox"><p>Nao foi possivel carregar os votos desta votacao agora. Tente novamente em instantes.</p><p class="muted">ID: '+esc(id)+' · se o problema persistir, recarregue a pagina.</p></div>';return}
@@ -1109,7 +1116,7 @@ const ufs=placarUF(o);const meuUfs={};mv.forEach(x=>{if(x.uf)meuUfs[x.uf]=1});
 const co=coer(o,ors);
 const ks=PROMS.map(p=>({p,k:kws(p.txt)})).filter(x=>x.k.length);
 const promHit=ks.filter(x=>x.k.some(k=>i.assunto.toLowerCase().indexOf(k)>=0));
-el.innerHTML='<h4 style="font-size:13px">✍️ Votação NOMINAL — voto a voto</h4><div class="cbar"><div style="width:'+(q.sim/q.tot*100)+'%;background:var(--green)"></div><div style="width:'+(q.nao/q.tot*100)+'%;background:var(--red)"></div><div style="width:'+(q.abs/q.tot*100)+'%;background:#64748b"></div><div style="width:'+(out/q.tot*100)+'%;background:var(--gold)"></div></div><div class="cleg"><span style="color:var(--green)">Sim: '+q.sim+'</span><span style="color:var(--red)">Não: '+q.nao+'</span><span>Abstenção: '+q.abs+'</span><span style="color:var(--gold)">Outros: '+out+'</span></div><div class="quorum">🧮 <b>Quórum:</b> '+q.tot+' presentes · necessários <b>'+q.nec+'</b> ('+(/^PEC/i.test(i.sigla)?'3/5 da Casa — PEC':'maioria dos presentes')+') · Sim '+q.sim+' → '+q.frase+' <span class="muted">(indicativo calculado; o oficial está no link da matéria)</span></div><p class="muted" style="margin-top:10px">🗺️ Placar da bancada por estado:</p><div class="ochips">'+ufs.map(u=>'<span'+(meuUfs[u.u]?' style="border-color:var(--gold);color:var(--gold)"':'')+' title="Bancada de '+esc(u.u)+': '+u.s+' Sim, '+u.n+' Não, '+u.a+' Abstenção">'+esc(u.u)+': '+u.s+'S·'+u.n+'N·'+u.a+'A</span>').join('')+'</div><p class="muted" style="margin-top:10px">🗣️ Coerência com a orientação da bancada:</p>'+(Object.keys(co.res).length?'<div class="ochips">'+Object.keys(co.res).map(p=>{const r=co.res[p];const pc=Math.round(100*(1-r.d/r.t));const cls=pc>=90?'sim':pc>=70?'out':'nao';return '<span class="vb '+cls+'" title="Orientação da bancada: '+esc(co.map[p])+'">'+esc(p)+': '+pc+'% coerente · '+r.d+' desvio(s)</span>'}).join('')+'</div>':'<p class="muted">Sem orientações de bancada publicadas para esta votação.</p>')+(mv.length?'<div class="meusres">'+mv.map(x=>{const v2=x.voto||'—';const cls=/^sim$/i.test(v2)?'sim':/^n[aã]o$/i.test(v2)?'nao':/absten/i.test(v2)?'abs':'out';return '<span class="vb '+cls+'">⭐ '+esc(x.nome)+': '+esc(v2)+'</span>'}).join('')+'</div>':'')+(promHit.length?promHit.map(x=>{const voto=(o.list.find(y=>meusIds().includes('camara-'+y.id)&&y.nome===x.p.nome)||{}).voto;return '<div class="promx">🤝 Promessa cobrada: “'+esc(x.p.txt)+'” → '+esc(x.p.nome)+' votou <b>'+(voto?esc(voto):'não participou')+'</b> nesta matéria.</div>'}).join(''):'')+'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn sm" data-tip="Ficha de 1 página em linguagem simples para imprimir/salvar PDF." onclick="ficha(\''+id+'\')">📄 Ficha-resumo (PDF)</button><button class="btn sm" data-tip="Compartilha o resumo com link no WhatsApp." onclick="zap(\''+id+'\')">📲 WhatsApp</button><input id="nvq-'+id+'" placeholder="🔎 Buscar deputado…" oninput="tab(\''+id+'\')" style="flex:1;min-width:160px" data-tip="Filtra a tabela por nome, partido ou UF."/><select id="nvs-'+id+'" onchange="tab(\''+id+'\')" data-tip="Filtra a tabela pelo tipo de voto."><option value="">Todos os votos</option><option>Sim</option><option>Não</option><option>Abstenção</option></select></div><div style="overflow-x:auto"><table class="vtable"><tbody id="nvt-'+id+'"></tbody></table></div>';tab(id);return}
+el.innerHTML='<h4 style="font-size:13px">✍️ Votação NOMINAL — voto a voto</h4><div class="cbar"><div style="width:'+(q.sim/q.tot*100)+'%;background:var(--green)"></div><div style="width:'+(q.nao/q.tot*100)+'%;background:var(--red)"></div><div style="width:'+(q.abs/q.tot*100)+'%;background:#64748b"></div><div style="width:'+(out/q.tot*100)+'%;background:var(--gold)"></div></div><div class="cleg"><span style="color:var(--green)">Sim: '+q.sim+'</span><span style="color:var(--red)">Não: '+q.nao+'</span><span>Abstenção: '+q.abs+'</span><span style="color:var(--gold)">Outros: '+out+'</span></div><div class="quorum">🧮 <b>Quórum:</b> '+q.tot+' presentes · necessários <b>'+q.nec+'</b> ('+(/^PEC/i.test(i.sigla)?'3/5 da Casa — PEC':'maioria dos presentes')+') · Sim '+q.sim+' → '+q.frase+' <span class="muted">(indicativo calculado; o oficial está no link da matéria)</span></div><p class="muted" style="margin-top:10px">🗺️ Placar da bancada por estado:</p><div class="ochips">'+ufs.map(u=>'<span'+(meuUfs[u.u]?' style="border-color:var(--gold);color:var(--gold)"':'')+' title="Bancada de '+esc(u.u)+': '+u.s+' Sim, '+u.n+' Não, '+u.a+' Abstenção">'+esc(u.u)+': '+u.s+'S·'+u.n+'N·'+u.a+'A</span>').join('')+'</div><p class="muted" style="margin-top:10px">🗣️ Alinhamento com a orientação da bancada:</p>'+(Object.keys(co.res).length?'<div class="ochips">'+Object.keys(co.res).map(p=>{const r=co.res[p];const pc=Math.round(100*(1-r.d/r.t));const cls=pc>=90?'sim':pc>=70?'out':'nao';return '<span class="vb '+cls+'" title="Orientação da bancada: '+esc(co.map[p])+'">'+esc(p)+': '+pc+'% coerente · '+r.d+' desvio(s)</span>'}).join('')+'</div>':'<p class="muted">Sem orientações de bancada publicadas para esta votação.</p>')+(mv.length?'<div class="meusres">'+mv.map(x=>{const v2=x.voto||'—';const cls=/^sim$/i.test(v2)?'sim':/^n[aã]o$/i.test(v2)?'nao':/absten/i.test(v2)?'abs':'out';return '<span class="vb '+cls+'">⭐ '+esc(x.nome)+': '+esc(v2)+'</span>'}).join('')+'</div>':'')+(promHit.length?promHit.map(x=>{const voto=(o.list.find(y=>meusIds().includes('camara-'+y.id)&&y.nome===x.p.nome)||{}).voto;return '<div class="promx">🤝 Promessa cobrada: “'+esc(x.p.txt)+'” → '+esc(x.p.nome)+' votou <b>'+(voto?esc(voto):'não participou')+'</b> nesta matéria.</div>'}).join(''):'')+'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn sm" data-tip="Ficha de 1 página em linguagem simples para imprimir/salvar PDF." onclick="ficha(\''+id+'\')">📄 Ficha-resumo (PDF)</button><button class="btn sm" data-tip="Compartilha o resumo com link no WhatsApp." onclick="zap(\''+id+'\')">📲 WhatsApp</button><input id="nvq-'+id+'" placeholder="🔎 Buscar deputado…" oninput="tab(\''+id+'\')" style="flex:1;min-width:160px" data-tip="Filtra a tabela por nome, partido ou UF."/><select id="nvs-'+id+'" onchange="tab(\''+id+'\')" data-tip="Filtra a tabela pelo tipo de voto."><option value="">Todos os votos</option><option>Sim</option><option>Não</option><option>Abstenção</option></select></div><div style="overflow-x:auto"><table class="vtable"><tbody id="nvt-'+id+'"></tbody></table></div>';tab(id);return}
 el.innerHTML='<div class="sbox"><h4 style="font-size:13px">🗣️ Votação SIMBÓLICA</h4><p style="margin-top:6px">Quem era a favor <b>permaneceu como estava</b>. Não há registro individual — a Mesa conta o conjunto. É assim que a maioria das matérias passa, em segundos.</p><p class="muted" style="margin-top:6px">Um partido pode exigir votação <b>nominal</b> (selo ✍️). Cobrar registro nominal é exigir responsabilidade.</p>'+(ors.length?'<p class="muted" style="margin-top:10px">Orientações das bancadas:</p><div class="ochips">'+ors.map(x=>'<span>'+esc(x.siglaPartido||x.partido||'?')+': '+esc(x.voto||x.orientacao||'—')+'</span>').join('')+'</div>':'')+'<p style="margin-top:12px"><a class="fonte" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener">📜 Matéria oficial</a> <button class="btn sm" data-tip="Compartilha o resumo com link no WhatsApp." onclick="zap(\''+id+'\')">📲 WhatsApp</button></p></div>'}
 var TABROWS={},TABPAGE={};
 function tabRowHtml(x){const meu=meusIds().includes('camara-'+x.id);const v=x.voto||'—';const cls=/^sim$/i.test(v)?'sim':(/^n[aã]o$/i.test(v)?'nao':(/absten/i.test(v)?'abs':'out'));const ft=x.foto||('https://www.camara.leg.br/internet/deputado/bandep/'+x.id+'.jpg');return '<tr class="'+(meu?'meu':'')+'"><td><img loading="lazy" src="'+ft+'" alt=""></td><td>'+(meu?'⭐ ':'')+'<a href="parlamentares.html?id=camara-'+x.id+'">'+esc(x.nome||'—')+'</a></td><td class="muted">'+esc(x.partido)+'-'+esc(x.uf)+'</td><td><span class="vb '+cls+'">'+esc(v)+'</span></td></tr>'}
@@ -1130,7 +1137,7 @@ const sel=$('#hmUF');const cur=sel.value;sel.innerHTML=Object.keys(ufs).sort().m
 let meuUf='';if(MEUS.length){const pp=POL.find(p=>p.id===MEUS[0].id);if(pp)meuUf=pp.state||pp.uf||''}
 if(!ufs[sel.value])sel.value=ufs[cur]?cur:(ufs[meuUf]?meuUf:Object.keys(ufs).sort()[0]);
 drawHM();drawCmp()}
-function drawHM(){const uf=$('#hmUF').value;let h='<div class="ecard"><h3>🌡️ Mapa de calor — bancada de '+esc(uf)+' (% Sim em cada uma das últimas '+C7.length+' nominais)</h3><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px">';
+function drawHM(){const uf=$('#hmUF').value;let h='<div class="ecard"><h3>🌡️ Mapa de Votação — bancada de '+esc(uf)+' (% Sim em cada uma das últimas '+C7.length+' nominais)</h3><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px">';
 for(const v of C7){const o=CACHEV[v.id];let s=0,n=0,t=0;for(const x of o.list){if(x.uf!==uf)continue;t++;const vv=(x.voto||'').toLowerCase();if(vv.indexOf('sim')===0)s++;else if(vv.indexOf('n')===0)n++}
 const pc=t?Math.round(100*s/t):null;const i=vInfo(v);
 const col=pc==null?'#334155':(pc>=60?'rgba(46,204,113,'+(0.3+0.7*pc/100).toFixed(2)+')':(pc>=40?'rgba(148,163,184,.6)':'rgba(231,76,60,'+(0.3+0.7*(100-pc)/100).toFixed(2)+')'));
@@ -1157,11 +1164,11 @@ for(const v of vs){const o=CACHEV[v.id];if(!o||!o.nominal)continue;const x=o.lis
 const sim=rows.filter(x=>/^sim$/i.test(x.voto)).length,nao=rows.filter(x=>/^n[aã]o$/i.test(x.voto)).length;
 const rec=await fetchJ(BASE+'/api/reclamacoes?politicianId='+encodeURIComponent(id)+'&limit=50');const aps=await fetchJ(BASE+'/api/apoios?politicianId='+encodeURIComponent(id)+'&limit=50');
 const nrec=((rec&&rec.complaints)||[]).length,napo=((aps&&aps.supports)||[]).length;
-$('#dossie').innerHTML='<div class="ecard"><h3>🕰️ Dossiê cívico — '+esc(p.name||p.nome||'')+'</h3><p style="margin-top:6px">✍️ Participou de <b>'+rows.length+'</b> das '+vs.length+' últimas votações nominais: Sim '+sim+' · Não '+nao+' · ausente/obstrução em '+aus+'.</p><p>📣 Reclamações recebidas: '+nrec+' · 👍 Apoios: '+napo+'</p><div style="overflow-x:auto"><table class="vtable"><tbody>'+rows.slice(0,30).map(x=>{const cls=/^sim$/i.test(x.voto)?'sim':/^n[aã]o$/i.test(x.voto)?'nao':/absten/i.test(x.voto)?'abs':'out';return '<tr><td class="muted">'+fmtData(x.data)+'</td><td>'+esc(trunc(x.i.assunto,60))+'</td><td><span class="vb '+cls+'">'+esc(x.voto)+'</span></td><td><a href="#" onclick="expand(\''+x.id+'\');return false">ver</a></td></tr>'}).join('')+'</tbody></table></div><div style="margin-top:10px"><button class="btn sm" data-tip="Imprime/salva o dossiê em PDF." onclick="dossiePdf()">📄 PDF do dossiê</button> <a class="fonte" href="parlamentares.html?id='+esc(id)+'" target="_blank" rel="noopener">📡 Ficha completa no Radar</a></div></div>';
+$('#dossie').innerHTML='<div class="ecard"><h3>🕰️ Histórico Completo — '+esc(p.name||p.nome||'')+'</h3><p style="margin-top:6px">✍️ Participou de <b>'+rows.length+'</b> das '+vs.length+' últimas votações nominais: Sim '+sim+' · Não '+nao+' · ausente/obstrução em '+aus+'.</p><p>📣 Reclamações recebidas: '+nrec+' · 👍 Apoios: '+napo+'</p><div style="overflow-x:auto"><table class="vtable"><tbody>'+rows.slice(0,30).map(x=>{const cls=/^sim$/i.test(x.voto)?'sim':/^n[aã]o$/i.test(x.voto)?'nao':/absten/i.test(x.voto)?'abs':'out';return '<tr><td class="muted">'+fmtData(x.data)+'</td><td>'+esc(trunc(x.i.assunto,60))+'</td><td><span class="vb '+cls+'">'+esc(x.voto)+'</span></td><td><a href="#" onclick="expand(\''+x.id+'\');return false">ver</a></td></tr>'}).join('')+'</tbody></table></div><div style="margin-top:10px"><button class="btn sm" data-tip="Imprime/salva o dossiê em PDF." onclick="dossiePdf()">📄 PDF do dossiê</button> <a class="fonte" href="parlamentares.html?id='+esc(id)+'" target="_blank" rel="noopener">📡 Ficha completa no Radar</a></div></div>';
 window.DOSS={p,rows,aus,sim,nao,nrec,napo}}
 function dossiePdf(){const D=window.DOSS;if(!D)return;
 if(window.jspdf&&window.jspdf.jsPDF){try{const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'a4'});const W=doc.internal.pageSize.getWidth();let y=40;doc.setFontSize(16);doc.setFont('helvetica','bold');doc.text('MeuVoto · Dossie civico',40,y);y+=24;doc.setFontSize(13);doc.text(D.p.name||D.p.nome||'',40,y);y+=18;doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('Participacao nominal: '+D.rows.length+' votacoes · Sim '+D.sim+' · Nao '+D.nao+' · ausencias '+D.aus,40,y);y+=14;doc.text('Reclamacoes: '+D.nrec+' · Apoios: '+D.napo,40,y);y+=20;doc.setFont('helvetica','bold');doc.text('Data',40,y);doc.text('Materia',100,y);doc.text('Voto',500,y);y+=4;doc.setLineWidth(0.5);doc.line(40,y,W-40,y);y+=12;doc.setFont('helvetica','normal');D.rows.forEach(function(row){if(y>760){doc.addPage();y=40}doc.text(fmtData(row.data)||'',40,y);var assunto=trunc(row.i.assunto,80);var lines=doc.splitTextToSize(assunto,380);doc.text(lines,100,y);doc.text(row.voto||'',500,y);y+=Math.max(14,lines.length*12)+4});y+=10;doc.setFontSize(8);doc.setTextColor(100);doc.text('Fontes: dadosabertos.camara.leg.br · MeuVoto em '+new Date().toLocaleDateString('pt-BR'),40,y);doc.save('meuvoto-dossie-'+(D.p.id||'deputado')+'.pdf');return}catch(e){console.warn('[dossiePdf] jsPDF falhou, usando print:',e)}}
-$('#fichaPrint').innerHTML='<h1>MeuVoto · Dossiê cívico</h1><h2>'+esc(D.p.name||D.p.nome||'')+'</h2><p>Participação nominal: '+D.rows.length+' votações · Sim '+D.sim+' · Não '+D.nao+' · ausências/obstruções '+D.aus+'</p><p>Reclamações recebidas: '+D.nrec+' · Apoios: '+D.napo+'</p><table><tr><th>Data</th><th>Matéria</th><th>Voto</th></tr>'+D.rows.map(x=>'<tr><td>'+fmtData(x.data)+'</td><td>'+esc(trunc(x.i.assunto,70))+'</td><td>'+esc(x.voto)+'</td></tr>').join('')+'</table><p style="margin-top:8px">Fontes: dadosabertos.camara.leg.br · Gerado por MeuVoto em '+new Date().toLocaleDateString('pt-BR')+'</p>';window.print()}
+$('#fichaPrint').innerHTML='<h1>MeuVoto · Histórico Completo</h1><h2>'+esc(D.p.name||D.p.nome||'')+'</h2><p>Participação nominal: '+D.rows.length+' votações · Sim '+D.sim+' · Não '+D.nao+' · ausências/obstruções '+D.aus+'</p><p>Reclamações recebidas: '+D.nrec+' · Apoios: '+D.napo+'</p><table><tr><th>Data</th><th>Matéria</th><th>Voto</th></tr>'+D.rows.map(x=>'<tr><td>'+fmtData(x.data)+'</td><td>'+esc(trunc(x.i.assunto,70))+'</td><td>'+esc(x.voto)+'</td></tr>').join('')+'</table><p style="margin-top:8px">Fontes: dadosabertos.camara.leg.br · Gerado por MeuVoto em '+new Date().toLocaleDateString('pt-BR')+'</p>';window.print()}
 function resumoTxt(id){const v=ALL.find(x=>x.id==id);const i=vInfo(v);const o=CACHEV[id];let t='🗳️ '+i.assunto+'\n📅 '+fmtData(v.dataHora)+' · Plenário da Câmara\n';if(o&&o.nominal){const q=quorumTxt(o,i);t+='✍️ Nominal: Sim '+q.sim+' · Não '+q.nao+' · Abstenção '+q.abs+'\n🧮 Necessários '+q.nec+' → '+q.frase.replace(/[✅⛔] /,'')+'\n';const mv=o.list.filter(x=>meusIds().includes('camara-'+x.id));if(mv.length)t+='⭐ Seus deputados: '+mv.map(x=>x.nome+'='+x.voto).join(', ')+'\n'}else t+='🗣️ Simbólica: sem registro individual ("fica como está")\n';t+='🔎 Detalhes: '+location.href.split('#')[0]+'#v'+id;return t}
 function zap(id){window.open('https://wa.me/?text='+encodeURIComponent(resumoTxt(id)),'_blank')}
 function ficha(id){const v=ALL.find(x=>x.id==id);const i=vInfo(v);const o=CACHEV[id];const q=o&&o.nominal?quorumTxt(o,i):null;const mv=o&&o.nominal?o.list.filter(x=>meusIds().includes('camara-'+x.id)):[];
@@ -1261,9 +1268,9 @@ function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorag
 function escH(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 
 var TABS=[
-{id:'vot',ic:'🗳️',nm:'Votações',info:'O coração da página: o que já foi votado (últimos 10 dias) e o que será votado. Abra qualquer card em "🔎 Como foi esta votação?" para ver placar, quórum, voto a voto, mapa por estado e coerência de bancada.'},
+{id:'vot',ic:'🗳️',nm:'Votações',info:'O coração da página: o que já foi votado (últimos 10 dias) e o que será votado. Abra qualquer card em "🔎 Como foi esta votação?" para ver placar, quórum, voto a voto, mapa por estado e Alinhamento de bancada.'},
 {id:'meus',ic:'⭐',nm:'Meus Representantes',info:'Defina quem você acompanha: marque deputados e senadores, cadastre promessas de campanha para cobrar e escolha os temas do seu interesse. Tudo fica salvo apenas neste navegador — nada é enviado a servidor.'},
-{id:'analise',ic:'📊',nm:'Análise',info:'Ferramentas de comparação e medição: mapa de calor das bancadas, seu deputado contra a média do Plenário e do partido, tabela consolidada do Meu Congresso e coerência partidária no tempo.'},
+{id:'analise',ic:'📊',nm:'Análise',info:'Ferramentas de comparação e medição: Mapa de Votação das bancadas, seu deputado contra a média do Plenário e do partido, tabela consolidada do Resumo dos Meus Parlamentares e Alinhamento partidária no tempo.'},
 {id:'gerar',ic:'🧾',nm:'Materiais & Avisos',info:'Transforme os dados em documentos e notificações: dossiê do parlamentar, ficha-resumo em PDF, recibo de cobrança pronto para enviar, planilha CSV, link público para compartilhar e resumo automático.'},
 {id:'avisos',ic:'📧',nm:'Digest por e-mail',info:'Inscrição, confirmação e cancelamento do resumo semanal enviado por e-mail, com filtragem por tema e proteção anti-spam (confirmação por link).'},
 {id:'brasil',ic:'🏛️',nm:'Brasil & Sistema',info:'Visão nacional e área técnica: Brasil por bancadas, espelho Câmara × Senado sobre o mesmo tema, documentação da API pública para jornalistas e kit de publicação do aplicativo.'}
@@ -1273,12 +1280,12 @@ var RULES=[
 ['#mq','meus','⭐ Acompanhar parlamentares','Digite ao menos 2 letras e escolha na lista com foto, partido e UF. Os marcados ficam salvos só neste navegador. O botão 🔔 pede permissão para avisar quando um deles registrar voto nominal.'],
 ['#pDep','meus','🤝 Promessas a cobrar','Cadastre uma promessa de campanha ligada a um parlamentar seu. As palavras-chave (5+ letras) são cruzadas com o assunto das votações nominais: quando há correspondência, o card da votação mostra o voto dele naquele compromisso.'],
 ['#temas16','meus','📌 Meus temas','Ao marcar temas, os cards da lista ganham o selo 📌 e o resumo semanal passa a listar apenas o que interessa a você.'],
-['#hmUF','analise','🌡️ Mapa de calor + ⚖️ comparador','Calor: uma célula por votação nominal, colorida pelo % de SIM da bancada do estado escolhido — clique numa célula para abrir a votação. Comparador: % de SIM de cada deputado seu contra a média do Plenário e do partido, em pontos percentuais (pp).'],
-['#out10','analise','📊 Meu Congresso','Tabela consolidada dos seus parlamentares: presença, % SIM, diferença para o Plenário, coerência com a orientação da bancada e promessas cadastradas. O botão 🖨️ gera um PDF de uma página.'],
-['#out11','analise','📅 Alertas de pauta · 📈 coerência no tempo','Cruza a agenda dos próximos dias com suas promessas e avisa até 72h antes das sessões do seu interesse. O gráfico mostra a coerência acumulada com o partido, ponto a ponto, em SVG puro.'],
+['#hmUF','analise','🌡️ Mapa de Votação + ⚖️ comparador','Calor: uma célula por votação nominal, colorida pelo % de SIM da bancada do estado escolhido — clique numa célula para abrir a votação. Comparador: % de SIM de cada deputado seu contra a média do Plenário e do partido, em pontos percentuais (pp).'],
+['#out10','analise','📊 Resumo dos Meus Parlamentares','Tabela consolidada dos seus parlamentares: presença, % SIM, diferença para o Plenário, Alinhamento com a orientação da bancada e promessas cadastradas. O botão 🖨️ gera um PDF de uma página.'],
+['#out11','analise','📅 Alertas de pauta · 📈 Alinhamento no tempo','Cruza a agenda dos próximos dias com suas promessas e avisa até 72h antes das sessões do seu interesse. O gráfico mostra a Alinhamento acumulada com o partido, ponto a ponto, em SVG puro.'],
 ['#dDep','gerar','🕰️ Dossiê do parlamentar','Varre as últimas 30 votações nominais e monta a ficha corrida cívica: em quantas participou, como votou, ausências e obstruções, além de reclamações e apoios recebidos. Exportável em PDF.'],
 ['#out9','gerar','🔔 resumo automático · 📥 CSV · 🧾 recibo','Liga o resumo semanal como notificação do navegador, baixa uma planilha com os números do comparador (separador ";", compatível com Excel brasileiro) e gera o recibo de cobrança — texto pronto para copiar, enviar por WhatsApp ou e-mail ao gabinete.'],
-['#out12','gerar','🧾 dossiê completo · 🔗 link público','Um único PDF com a tabela consolidada, a faixa de votos e as últimas votações de cada parlamentar seu. O link embute sua lista de favoritos para que qualquer pessoa abra o comparador já configurado.'],
+['#out12','gerar','🧾 Ficha Completa · 🔗 link público','Um único PDF com a tabela consolidada, a faixa de votos e as últimas votações de cada parlamentar seu. O link embute sua lista de favoritos para que qualquer pessoa abra o comparador já configurado.'],
 ['#dgEmail','avisos','📧 Digest semanal por e-mail','Recebe toda segunda-feira o resumo da semana. A inscrição passa por confirmação de e-mail para evitar spam; o endereço fica apenas na lista de envio e pode ser removido a qualquer momento.'],
 ['#out13','brasil','🗺️ Brasil por bancadas · 🏛️ espelho · 📧 digest','Grade com as 27 unidades da federação e o % de SIM de cada bancada — clique para o detalhe. O espelho compara o mesmo tema nas duas Casas. O digest monta o texto e abre seu aplicativo de e-mail.'],
 ['a[href="api-publica.html"]','brasil','📘 API pública · 📦 kit de lojas','Documentação viva dos endpoints abertos, com teste ao vivo, para jornalistas e desenvolvedores. O kit reúne a configuração de empacotamento do aplicativo para a Play Store.']
@@ -1608,3 +1615,24 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+<script id="quickGuide">
+(function(){
+  // Inject Quick Guide banner after hero section
+  var hero = document.querySelector('section.hero');
+  if (!hero) return;
+  var tabs = hero.querySelector('.tabs');
+  if (!tabs) return;
+  
+  var guide = document.createElement('div');
+  guide.className = 'quick-guide';
+  guide.style.cssText = 'max-width:960px;margin:18px auto 0;border:2px solid rgba(255,215,0,.5);border-radius:16px;background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,165,0,.04));padding:20px 24px;text-align:left';
+  guide.innerHTML = '<h3 style="font-size:16px;margin-bottom:12px;color:var(--gold)">💡 Como usar esta página para influenciar seu deputado</h3>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;font-size:13px;line-height:1.6">' +
+    '<div style="border-left:3px solid var(--gold);padding-left:12px"><b>1️⃣ Marque seus representantes</b><br>Escolha seu estado e seus deputados favoritos para segui-los de perto.</div>' +
+    '<div style="border-left:3px solid var(--green);padding-left:12px"><b>2️⃣ Monitore promessas vs votos</b><br>Cadastre uma promessa de campanha; o sistema cruza automaticamente com os votos reais no plenário.</div>' +
+    '<div style="border-left:3px solid var(--blueL);padding-left:12px"><b>3️⃣ Use o recibo de cobrança</b><br>Copie a mensagem pronta com os dados oficiais e envie para o WhatsApp ou e-mail do gabinete. Políticos respondem melhor quando percebem eleitores informados.</div>' +
+    '</div>';
+  
+  hero.insertBefore(guide, tabs.nextSibling);
+})();
+</script>

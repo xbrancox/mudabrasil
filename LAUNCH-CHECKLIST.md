@@ -1,4 +1,4 @@
-# 🚀 LAUNCH CHECKLIST - MeuVoto
+﻿# 🚀 LAUNCH CHECKLIST - MeuVoto
 
 > Checklist completo para lançamento público do projeto MeuVoto/VotaBrasil
 > Última atualização: 2026-10-01
@@ -23,7 +23,7 @@
 
 - [x] **Railway**: Projeto VotaBrasil ativo (198baa4d-6141-418c-96dd-d7826831249f)
 - [x] **Volume persistente**: 5GB montado em `/app/server/data`
-- [x] **GitHub Pages**: Frontend em `xbrancox.github.io/votabrasil`
+- [x] **GitHub Pages**: Frontend em `meu-voto.app`
 - [x] **Backup automático**: GitHub faz backup do código
 - [ ] **Domínio próprio**: Comprar `voto.online` ou outro escolhido
 - [ ] **DNS configurado**: Apontar domínio para Railway + GitHub Pages
@@ -237,7 +237,7 @@ Se algo der errado no lançamento:
 ## 📝 NOTAS
 
 - **Domínio atual**: `mudabrasil-production-79eb.up.railway.app` (funcional, mas não definitivo)
-- **Frontend atual**: `xbrancox.github.io/votabrasil` (funcional)
+- **Frontend atual**: `meu-voto.app` (funcional)
 - **Domínio disponível**: `voto.online` (confirmado via RDAP)
 - **Outros domínios**: `euvoto.site`, `euvoto.ong`, `meuvoto.org` (status desconhecido)
 

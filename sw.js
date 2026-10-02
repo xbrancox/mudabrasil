@@ -1,4 +1,4 @@
-/* MeuVoto SW - shell offline + runtime cache + Web Push */
+﻿/* MeuVoto SW - shell offline + runtime cache + Web Push */
 var SHELL = 'meuvoto-shell-v2';
 var PRE = [
   './', './index.html', './config.js', 
@@ -85,7 +85,7 @@ self.addEventListener('push', function(e) {
     icon: '/public/icon-192.png',
     badge: '/public/icon-maskable-512.png',
     data: {
-      url: data.url || 'https://xbrancox.github.io/votabrasil/pages/digest.html'
+      url: data.url || 'https://meu-voto.app/pages/digest.html'
     },
     actions: [
       { action: 'open', title: 'Abrir Resumo' },
@@ -105,7 +105,7 @@ self.addEventListener('notificationclick', function(e) {
     return;
   }
   
-  var urlToOpen = e.notification.data.url || 'https://xbrancox.github.io/votabrasil/';
+  var urlToOpen = e.notification.data.url || 'https://meu-voto.app/';
   
   e.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {

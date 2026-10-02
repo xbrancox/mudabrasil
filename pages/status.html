@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <!-- og:meuvoto -->
@@ -6,12 +6,12 @@
 <meta property="og:site_name" content="MeuVoto / VotaBrasil">
 <meta property="og:title" content="Status do sistema — MeuVoto">
 <meta property="og:description" content="Dashboard ao vivo dos 4 serviços: backend Railway, Câmara, Senado e GitHub Pages.">
-<meta property="og:image" content="https://xbrancox.github.io/votabrasil/og-image.png">
-<meta property="og:url" content="https://xbrancox.github.io/votabrasil/pages/status.html">
+<meta property="og:image" content="https://meu-voto.app/og-image.png">
+<meta property="og:url" content="https://meu-voto.app/pages/status.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Status do sistema — MeuVoto">
 <meta name="twitter:description" content="Dashboard ao vivo dos 4 serviços: backend Railway, Câmara, Senado e GitHub Pages.">
-<meta name="twitter:image" content="https://xbrancox.github.io/votabrasil/og-image.png">
+<meta name="twitter:image" content="https://meu-voto.app/og-image.png">
 <!-- /og:meuvoto -->
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -197,7 +197,7 @@ async function refresh(){
     $('#sn-rows').innerHTML=cached3&&cached3.sn?row('Último acesso',fmtTime(cached3.sn.t)):'<div class="row"><span class="k">sem histórico</span></div>';
   }
   /* --- GitHub Pages --- */
-  var pg=await probe('https://xbrancox.github.io/votabrasil/index.html',{method:'HEAD'});
+  var pg=await probe('https://meu-voto.app/index.html',{method:'HEAD'});
   if(pg.ok){
     setDot('dot-pages','ok');
     $('#pg-status').textContent='🟢 Online';

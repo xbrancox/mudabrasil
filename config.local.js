@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    MeuVoto — Configuração Global
    -----------------------------------------------------------
    Backend: https://mudabrasil-production-79eb.up.railway.app (Railway - Projeto VotaBrasil 198baa4d)
@@ -35,9 +35,9 @@ window.MeuVoto.URLS = {
 };
 
 window.MeuVoto.CONTATO = {
-  email_geral: 'contato@meuvoto.app.br',
-  email_anuncie: 'anuncie@meuvoto.app.br',
-  email_imprensa: 'imprensa@meuvoto.app.br'
+  email_geral: 'contato@meu-voto.app',
+  email_anuncie: 'anuncie@meu-voto.app',
+  email_imprensa: 'imprensa@meu-voto.app'
 };
 
 window.MeuVoto.REGRA_REVOGACAO = {

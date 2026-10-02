@@ -1,4 +1,4 @@
-/* MeuVoto - Configuracao Global (autonomo). Backend -79eb = seu servidor (nao e marca). */
+﻿/* MeuVoto - Configuracao Global (autonomo). Backend -79eb = seu servidor (nao e marca). */
 (function(){
   var ov=null; try{ ov=window.__MEUVOTO_ENV__&&window.__MEUVOTO_ENV__.API_BASE; }catch(e){}
   var st=null; try{ st=localStorage.getItem('mv_api_base'); }catch(e){}
@@ -6,7 +6,7 @@
   var MV=window.MeuVoto=window.MeuVoto||{};
   MV.API_BASE=API_BASE; MV.MODO=API_BASE?'producao':'offline';
   MV.URLS={camara:'https://dadosabertos.camara.leg.br/api/v2',senado:'https://legis.senado.leg.br/dadosabertos',tse:'https://divulgacandcontas.tse.jus.br/divulga/app/',transparencia:'https://www.portaltransparencia.gov.br/',cnj:'https://www.cnj.jus.br/'};
-  MV.CONTATO={email_geral:'contato@meuvoto.app.br',email_anuncie:'anuncie@meuvoto.app.br',email_imprensa:'imprensa@meuvoto.app.br'}; /* MIGRACAO-PENDENTE: so vale apos MX testado */
+  MV.CONTATO={email_geral:'contato@meu-voto.app',email_anuncie:'anuncie@meu-voto.app',email_imprensa:'imprensa@meu-voto.app'};
   MV.REGRA_REVOGACAO={percentual_cassacao:0.70,abre_apos_posse:true,descricao:'70% dos votos que elegeram o politico = cassacao (validacao server-side)'};
   MV.TERMOMETRO={decaimento_cheio_dias:90,decaimento_piso_dias:180,piso_confianca:0.5};
   MV.MARCA={nome:'MeuVoto',eslogan:'Meu voto coloca, meu voto tira.',logo:'assets/logo-meuvoto.svg'};

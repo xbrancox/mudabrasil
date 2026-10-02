@@ -1,4 +1,4 @@
-# 🗳️ VotaBrasil — Redesign v2.0
+﻿# 🗳️ VotaBrasil — Redesign v2.0
 
 Plataforma cívica de **revogação do voto** com foco em **transparência total**.
 Esta é a versão **redesign**, criada em arquivos novos sem alterar o projeto original.
@@ -384,7 +384,7 @@ data: {"tipo":"voto","ts":"2026-08-19T12:00:00.000Z","totalVotosAtivos":124,"tot
 - **Repositório**: `xbrancox/votabrasil`
 - **Branch**: `main`
 - **Workflow**: `.github/workflows/pages.yml`
-- **URL**: `https://xbrancox.github.io/votabrasil/`
+- **URL**: `https://meu-voto.app/`
 
 ### Plano de Migração de Domínio
 1. **Registrar domínio**: `omeuvoto.app` (pendente)

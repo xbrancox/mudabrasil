@@ -1,4 +1,4 @@
-# 📋 RESUMO DA EXECUÇÃO - Planos B, C, D
+﻿# 📋 RESUMO DA EXECUÇÃO - Planos B, C, D
 
 > Data: 2026-10-01
 > Status: ✅ **TODOS OS PLANOS CONCLUÍDOS**
@@ -132,7 +132,7 @@ node scripts/testar-pwa.js
 5. Verificar se `offline.html` aparece
 
 ### 3. Testar PWA
-1. Abrir `https://xbrancox.github.io/votabrasil`
+1. Abrir `https://meu-voto.app`
 2. Verificar se ícone de instalação aparece
 3. Instalar app
 4. Verificar se funciona offline

@@ -1,4 +1,4 @@
-# 🗳️ MeuVoto / VotaBrasil — Guia Rápido para o Usuário
+﻿# 🗳️ MeuVoto / VotaBrasil — Guia Rápido para o Usuário
 
 Este é o guia simples para você entender o projeto e saber o que está funcionando.
 
@@ -6,8 +6,8 @@ Este é o guia simples para você entender o projeto e saber o que está funcion
 
 ## 🌐 Onde acessar
 
-- **Site principal:** https://xbrancox.github.io/votabrasil/
-- **App celular (PWA):** https://xbrancox.github.io/votabrasil/app/
+- **Site principal:** https://meu-voto.app/
+- **App celular (PWA):** https://meu-voto.app/app/
 - **Servidor (backend):** https://mudabrasil-production-79eb.up.railway.app
 
 > ⚠️ O nome do domínio (`mudabrasil-production-...`) é temporário. Quando você comprar seu domínio próprio (ex: `omeuvoto.app`), a gente muda.
@@ -53,12 +53,12 @@ Este é o guia simples para você entender o projeto e saber o que está funcion
 ## 📱 Como instalar o app no celular
 
 ### Android (Chrome):
-1. Abra https://xbrancox.github.io/votabrasil/app/
+1. Abra https://meu-voto.app/app/
 2. Toque nos **3 pontinhos** → "Instalar aplicativo"
 3. Pronto! O ícone aparece na tela inicial
 
 ### iPhone (Safari):
-1. Abra https://xbrancox.github.io/votabrasil/app/
+1. Abra https://meu-voto.app/app/
 2. Toque no **ícone de compartilhar** → "Adicionar à Tela de Início"
 3. Pronto! O ícone aparece na tela inicial
 
@@ -66,7 +66,7 @@ Este é o guia simples para você entender o projeto e saber o que está funcion
 
 ## 📧 Como assinar o digest semanal
 
-1. Acesse https://xbrancox.github.io/votabrasil/pages/digest.html
+1. Acesse https://meu-voto.app/pages/digest.html
 2. Digite seu e-mail
 3. Marque os temas que te interessam (saúde, educação, economia...)
 4. Clique em **"Assinar digest"**
@@ -116,14 +116,14 @@ Este é o guia simples para você entender o projeto e saber o que está funcion
 
 | Página | O que faz | Link |
 |---|---|---|
-| **Home** | Visão geral + notícias | [Abrir](https://xbrancox.github.io/votabrasil/) |
-| **Radar Político** | Ficha completa de cada político | [Abrir](https://xbrancox.github.io/votabrasil/pages/parlamentares.html) |
-| **Votações** | Todas as votações do Congresso | [Abrir](https://xbrancox.github.io/votabrasil/pages/votacoes.html) |
-| **Eleições 2026** | Candidatos e propostas | [Abrir](https://xbrancox.github.io/votabrasil/pages/eleicoes-2026.html) |
-| **Meu Voto** | Seus deputados + promessas | [Abrir](https://xbrancox.github.io/votabrasil/pages/meu-voto.html) |
-| **Digest** | Assinar resumo semanal | [Abrir](https://xbrancox.github.io/votabrasil/pages/digest.html) |
-| **Metodologia** | Como calculamos tudo | [Abrir](https://xbrancox.github.io/votabrasil/pages/metodologia.html) |
-| **Status** | Saúde do sistema | [Abrir](https://xbrancox.github.io/votabrasil/pages/status.html) |
+| **Home** | Visão geral + notícias | [Abrir](https://meu-voto.app/) |
+| **Radar Político** | Ficha completa de cada político | [Abrir](https://meu-voto.app/pages/parlamentares.html) |
+| **Votações** | Todas as votações do Congresso | [Abrir](https://meu-voto.app/pages/votacoes.html) |
+| **Eleições 2026** | Candidatos e propostas | [Abrir](https://meu-voto.app/pages/eleicoes-2026.html) |
+| **Meu Voto** | Seus deputados + promessas | [Abrir](https://meu-voto.app/pages/meu-voto.html) |
+| **Digest** | Assinar resumo semanal | [Abrir](https://meu-voto.app/pages/digest.html) |
+| **Metodologia** | Como calculamos tudo | [Abrir](https://meu-voto.app/pages/metodologia.html) |
+| **Status** | Saúde do sistema | [Abrir](https://meu-voto.app/pages/status.html) |
 
 ---
 

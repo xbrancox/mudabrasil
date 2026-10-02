@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    MEUVOTO — SERVIDOR (frontend + API de dados públicos + VOTO)
    ------------------------------------------------------------
    Um único comando sobe o site inteiro e a API:
@@ -345,7 +345,7 @@ async function refreshNoticias(force) {
   const now = Date.now();
   if (!force && now - NEWS_CACHE.ts < 600000 && NEWS_CACHE.items.length) return;
   try {
-    const cab = { Accept: 'application/rss+xml,application/xml,text/xml', 'User-Agent': 'MeuVoto/1.0 (+https://meuvoto.app.br)' };
+    const cab = { Accept: 'application/rss+xml,application/xml,text/xml', 'User-Agent': 'MeuVoto/1.0 (+https://meu-voto.app)' };
     const fetchFeed = url => fetch(url, { headers: cab, signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined })
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); });
     const nacionais = await Promise.all(NEWS_FEEDS.map(f =>
@@ -617,7 +617,7 @@ async function handleApi(req, res, url) {
     data.pending.push({ email, token, topics, createdAt: new Date().toISOString() });
     digestWrite(data);
     
-    const baseUrl = process.env.BASE_URL || 'https://xbrancox.github.io/votabrasil';
+    const baseUrl = process.env.BASE_URL || 'https://meu-voto.app';
     const confirmUrl = `${baseUrl}/pages/digest-confirm.html?token=${token}`;
     
     return sendJson(res, 200, { 
@@ -952,7 +952,7 @@ async function handleApi(req, res, url) {
     const data = cobRead();
     data.cobrancas.push(doc);
     cobWrite(data);
-    const base = process.env.SITE_BASE || 'https://xbrancox.github.io/votabrasil';
+    const base = process.env.SITE_BASE || 'https://meu-voto.app';
     const url = base + '/pages/cobranca.html?id=' + id + '&token=' + token;
     return sendJson(res, 201, { ok: true, id, token, url });
   }

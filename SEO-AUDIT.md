@@ -1,4 +1,4 @@
-# 🔍 SEO AUDIT - MeuVoto
+﻿# 🔍 SEO AUDIT - MeuVoto
 
 > Auditoria completa de SEO do projeto MeuVoto/VotaBrasil
 > Data da auditoria: 2026-10-01
@@ -53,8 +53,8 @@
 ```html
 <meta property="og:title" content="Votações do Plenário — MeuVoto">
 <meta property="og:description" content="Votações nominais e simbólicas da Câmara...">
-<meta property="og:image" content="https://xbrancox.github.io/votabrasil/og-image.png">
-<meta property="og:url" content="https://xbrancox.github.io/votabrasil/pages/votacoes.html">
+<meta property="og:image" content="https://meu-voto.app/og-image.png">
+<meta property="og:url" content="https://meu-voto.app/pages/votacoes.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MeuVoto / VotaBrasil">
 ```
@@ -71,7 +71,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Votações do Plenário — MeuVoto">
 <meta name="twitter:description" content="Votações nominais e simbólicas...">
-<meta name="twitter:image" content="https://xbrancox.github.io/votabrasil/og-image.png">
+<meta name="twitter:image" content="https://meu-voto.app/og-image.png">
 ```
 
 ### 4. Sitemap
@@ -81,7 +81,7 @@
 - ✅ **URLs**: Contém todas as 29 páginas
 - ✅ **Última modificação**: Datas atualizadas
 
-**Verificar**: https://xbrancox.github.io/votabrasil/sitemap.xml
+**Verificar**: https://meu-voto.app/sitemap.xml
 
 ### 5. Favicon
 
@@ -114,7 +114,7 @@ Disallow: /server/
 Disallow: /scripts/
 Disallow: /tests/
 
-Sitemap: https://xbrancox.github.io/votabrasil/sitemap.xml
+Sitemap: https://meu-voto.app/sitemap.xml
 ```
 
 **Prioridade**: 🔴 Alta
@@ -135,8 +135,8 @@ Sitemap: https://xbrancox.github.io/votabrasil/sitemap.xml
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "MeuVoto",
-  "url": "https://xbrancox.github.io/votabrasil",
-  "logo": "https://xbrancox.github.io/votabrasil/icon.svg",
+  "url": "https://meu-voto.app",
+  "logo": "https://meu-voto.app/icon.svg",
   "description": "Plataforma cívica de acompanhamento parlamentar",
   "sameAs": []
 }
@@ -148,10 +148,10 @@ Sitemap: https://xbrancox.github.io/votabrasil/sitemap.xml
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "MeuVoto",
-  "url": "https://xbrancox.github.io/votabrasil",
+  "url": "https://meu-voto.app",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://xbrancox.github.io/votabrasil/pages/votacoes.html?q={search_term_string}",
+    "target": "https://meu-voto.app/pages/votacoes.html?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
@@ -197,8 +197,8 @@ Sitemap: https://xbrancox.github.io/votabrasil/sitemap.xml
 
 **Solução**: Adicionar em todas as páginas
 ```html
-<link rel="alternate" hreflang="pt-BR" href="https://xbrancox.github.io/votabrasil/pages/votacoes.html">
-<link rel="alternate" hreflang="x-default" href="https://xbrancox.github.io/votabrasil/pages/votacoes.html">
+<link rel="alternate" hreflang="pt-BR" href="https://meu-voto.app/pages/votacoes.html">
+<link rel="alternate" hreflang="x-default" href="https://meu-voto.app/pages/votacoes.html">
 ```
 
 **Prioridade**: 🟢 Baixa
@@ -221,13 +221,13 @@ Sitemap: https://xbrancox.github.io/votabrasil/sitemap.xml
       "@type": "ListItem",
       "position": 1,
       "name": "Início",
-      "item": "https://xbrancox.github.io/votabrasil"
+      "item": "https://meu-voto.app"
     },
     {
       "@type": "ListItem",
       "position": 2,
       "name": "Votações",
-      "item": "https://xbrancox.github.io/votabrasil/pages/votacoes.html"
+      "item": "https://meu-voto.app/pages/votacoes.html"
     }
   ]
 }
@@ -278,7 +278,7 @@ Sitemap: https://xbrancox.github.io/votabrasil/sitemap.xml
    ```
 
 2. **Submeter sitemap ao Google**
-   - Google Search Console → Sitemaps → Adicionar `https://xbrancox.github.io/votabrasil/sitemap.xml`
+   - Google Search Console → Sitemaps → Adicionar `https://meu-voto.app/sitemap.xml`
 
 3. **Submeter sitemap ao Bing**
    - Bing Webmaster Tools → Sitemaps → Adicionar URL
@@ -357,7 +357,7 @@ Sitemap: https://xbrancox.github.io/votabrasil/sitemap.xml
 
 ## 📝 NOTAS
 
-- **Domínio atual**: `xbrancox.github.io/votabrasil` (subdomínio do GitHub)
+- **Domínio atual**: `meu-voto.app` (subdomínio do GitHub)
 - **Domínio futuro**: `voto.online` (disponível para compra)
 - **Concorrência**: Atlas Político, Congresso Aberto, Excelências
 - **Diferencial**: Foco em revogação, cobrança verificada, UX moderna
