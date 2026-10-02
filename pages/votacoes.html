@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-<script src="../config.js" defer></script>
+<script src="../config.local.js" defer></script>
 <script src="../js/site-header.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js" defer></script>
 <style>
@@ -790,7 +790,7 @@ button.ia-i,span.ia-i{background:var(--gold)!important;color:#1a1400!important;b
     try{tem=(typeof MEUS!=='undefined'&&MEUS.length>0)}catch(e){}
     if(tem&&typeof window.meuCongresso==='function'){
       out.setAttribute('data-auto26','1');
-      try{window.meuCongresso()}catch(e){console.warn('meuCongresso falhou',e)}
+      try{window.meuCongresso()}catch(e){}
     }else if(!tem&&!out.textContent.trim()){
       out.innerHTML='<p class="muted">Marque \u2B50 deputados em <b>"Meus representantes"</b> (aba acima) e esta tabela aparece sozinha, sem clicar em nada.</p>';
     }
@@ -1093,7 +1093,7 @@ async function alertaCheck(){if(!('Notification' in window)||Notification.permis
 function addProm(){const t=($('#pTxt').value||'').trim();const d=MEUS.find(m=>m.id===$('#pDep').value);if(t.length<6)return alert('Descreva a promessa (6+ caracteres).');if(!d)return alert('Marque primeiro um deputado no painel ⭐.');PROMS.push({txt:t,depId:d.id,nome:d.nome});localStorage.setItem('mb_promessas',JSON.stringify(PROMS));$('#pTxt').value='';renderChips()}
 function vInfo(v){const p=v.proposicao||{};const idProp=p.id||((v.uriProposicao||'').split('/').pop())||'';const sigla=v.siglaProposicao||p.sigla||'';const num=v.numeroProposicao||p.numero||'';const ano=v.anoProposicao||p.ano||'';const rot=(sigla||num)?(sigla+' '+num+'/'+ano):'';const assunto=v.tituloVotacao||v.descricaoProposicao||p.titulo||p.descricao||rot||('Votação '+v.id);return{idProp,rot,assunto,sigla}}
 function fmtData(d){if(!d)return'';const t=new Date(d);return t.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' às '+t.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
-async function votosDe(id){if(CACHEV[id])return CACHEV[id];try{var r=await fetchJ(CAM('votacoes/'+id+'/votos?itens=600'));}catch(e){console.warn('[votosDe] fetch falhou',id,e);r=null}const d=(r&&r.dados)||[];const list=d.map(normVoto);const o={nominal:list.length>0,votos:list,list,counts:{}};if(o.nominal)for(const x of list){const k=x.voto||'Outro';o.counts[k]=(o.counts[k]||0)+1}CACHEV[id]=o;return o}
+async function votosDe(id){if(CACHEV[id])return CACHEV[id];try{var r=await fetchJ(CAM('votacoes/'+id+'/votos?itens=600'));}catch(e){r=null}const d=(r&&r.dados)||[];const list=d.map(normVoto);const o={nominal:list.length>0,votos:list,list,counts:{}};if(o.nominal)for(const x of list){const k=x.voto||'Outro';o.counts[k]=(o.counts[k]||0)+1}CACHEV[id]=o;return o}
 async function tipagem(arr){const pool=[...arr];const run=async()=>{while(pool.length){const v=pool.shift();const o=await votosDe(v.id);v._tipo=o.nominal?'N':'S'}};await Promise.all([run(),run(),run(),run()])}
 function ementaDe(pid){if(!pid)return Promise.resolve('');if(CACHEE[pid]!==undefined)return Promise.resolve(CACHEE[pid]);return fetchJ(CAM('proposicoes/'+pid)).then(r=>{const p=(r&&r.dados)||r||{};const e=p.ementa||p.descricao||'';CACHEE[pid]=e;return e}).catch(()=>{CACHEE[pid]='';return ''})}
 function quorumTxt(o,i){const c=o.counts;const tot=o.list.length;const sim=c['Sim']||0,nao=c['Não']||0,abs=c['Abstenção']||0;const nec=/^PEC/i.test(i.sigla)?308:Math.floor(tot/2)+1;let frase;if(sim>=nec)frase='✅ Indicativo: APROVADA com folga de '+(sim-nec)+' voto(s).';else frase='⛔ Indicativo: REJEITADA — faltaram '+(nec-sim)+' voto(s) para aprovar.';return{tot,sim,nao,abs,nec,frase}}
@@ -1112,7 +1112,7 @@ function render(){const L=filtrados();const isPreview=typeof window.__showAllVot
 $('#list').innerHTML=vis.map(v=>{const i=vInfo(v);const t=v._tipo;return '<div class="vcard"><div class="vtop"><span class="badge '+(t==='N'?'tn':'ts')+'">'+(t==='N'?'✍️ Nominal · voto registrado':'🗣️ Simbólica · sem registro individual')+'</span><span class="muted">'+fmtData(v.dataHora)+' · Plenário da Câmara</span></div><h3>'+esc(i.assunto)+'</h3>'+(i.rot?'<p style="margin:8px 0 0"><a class="lei" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener" data-prop="'+i.idProp+'">📜 '+esc(i.rot)+'</a> <span class="muted">— mouse: resumo · clique: oficial</span></p>':'')+'<p class="ementa muted" id="em-'+v.id+'">'+(i.idProp&&CACHEE[i.idProp]?esc(trunc(CACHEE[i.idProp],240)):'⏳ carregando resumo da matéria…')+'</p><div style="margin-top:12px"><button class="btn sm" data-tip="Placar, quórum, placar por UF, Alinhamento de bancada e voto a voto." onclick="expand(\''+v.id+'\')">🔎 Como foi esta votação?</button></div><div class="vdet" id="vd-'+v.id+'" hidden></div></div>'}).join('')||'<p class="muted" style="padding:40px;text-align:center">Nada encontrado com esses filtros.</p>';
 vis.forEach(v=>{const i=vInfo(v);if(i.idProp&&CACHEE[i.idProp]===undefined)ementaDe(i.idProp).then(e=>{const el=document.getElementById('em-'+v.id);if(el)el.textContent=e?trunc(e,240):'Matéria sem resumo público disponível.'})})}
 async function mais(){const antes=SHOW;SHOW+=12;await tipagem(filtrados().slice(antes,SHOW));render()}
-async function expand(id){var el=document.getElementById('vd-'+id);var v=ALL.find(function(x){return x.id==id});if(!el||!v){console.warn('[expand] nao encontrou el/v para',id,{el:!!el,v:!!v});return};if(!el.hidden){el.hidden=true;return}el.hidden=false;el.innerHTML='<p class="muted">⏳ carregando…</p>';const i=vInfo(v);const o=await votosDe(id);var orr=await fetchJ(CAM('votacoes/'+id+'/orientacoes'));var ors=(orr&&orr.dados)||[];if(!o||!o.list){console.warn('[expand] votosDe vazio para',id);el.innerHTML='<div class="sbox"><p>Nao foi possivel carregar os votos desta votacao agora. Tente novamente em instantes.</p><p class="muted">ID: '+esc(id)+' · se o problema persistir, recarregue a pagina.</p></div>';return}
+async function expand(id){var el=document.getElementById('vd-'+id);var v=ALL.find(function(x){return x.id==id});if(!el||!v){return};if(!el.hidden){el.hidden=true;return}el.hidden=false;el.innerHTML='<p class="muted">⏳ carregando…</p>';const i=vInfo(v);const o=await votosDe(id);var orr=await fetchJ(CAM('votacoes/'+id+'/orientacoes'));var ors=(orr&&orr.dados)||[];if(!o||!o.list){console.warn('[expand] votosDe vazio para',id);el.innerHTML='<div class="sbox"><p>Nao foi possivel carregar os votos desta votacao agora. Tente novamente em instantes.</p><p class="muted">ID: '+esc(id)+' · se o problema persistir, recarregue a pagina.</p></div>';return}
 if(o.nominal){const q=quorumTxt(o,i);const out=q.tot-q.sim-q.nao-q.abs;
 const mv=o.list.filter(x=>meusIds().includes('camara-'+x.id));
 const ufs=placarUF(o);const meuUfs={};mv.forEach(x=>{if(x.uf)meuUfs[x.uf]=1});

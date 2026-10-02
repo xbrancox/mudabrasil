@@ -116,6 +116,7 @@ h2{margin:26px 0 10px}
   <section class="hero">
     <h1>PLs no Congresso</h1>
     <p>Acompanhe projetos de lei em tramitação no Congresso Nacional. Aqui quem escolhe é você: busque, opine e veja — com dados REAIS — se o Congresso está sincronizado com a sua vontade.</p>
+    <p class="mini" style="margin-top:8px;color:var(--gold)">📅 Projetos atualizados em: <b id="pls-date">06/09/2026</b> · Total: <span id="pls-count">30</span> PLs</p>
   </section>
 
   <div class="legenda">
@@ -391,7 +392,17 @@ $('#popup-ok').onclick=()=>{LS.set('mb_popup_congresso',1);$('#popup').style.dis
    if(rs.ok){
     const dr=await rs.json();
     const generica=p=>!p.author||/^(deputado|deputada|senador|senadora|mesa|comiss|lideran|poder executivo)/i.test(String(p.author).trim());
-    if(Array.isArray(dr.pls)&&dr.pls.length&&PLS.some(generica)){PLS=dr.pls}
+    if(Array.isArray(dr.pls)&&dr.pls.length&&PLS.some(generica)){
+      PLS=dr.pls;
+      /* Atualiza badge de data e contagem a partir do snapshot */
+      const dateEl=document.getElementById('pls-date');
+      const countEl=document.getElementById('pls-count');
+      if(dateEl&&dr.atualizadoEm){
+        const d=new Date(dr.atualizadoEm);
+        dateEl.textContent=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+      }
+      if(countEl&&dr.total){countEl.textContent=dr.total}
+    }
    }
   }
  }catch(e){}
