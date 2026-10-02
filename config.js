@@ -2,7 +2,7 @@
 (function(){
   var ov=null; try{ ov=window.__MEUVOTO_ENV__&&window.__MEUVOTO_ENV__.API_BASE; }catch(e){}
   var st=null; try{ st=localStorage.getItem('mv_api_base'); }catch(e){}
-  var API_BASE=ov||st||'https://mudabrasil-production-79eb.up.railway.app'; /* Backend: Projeto VotaBrasil Railway (198baa4d). TODO: migrar para api.meuvoto.app.br quando domínio for registrado */
+  var API_BASE=ov||st||'https://api.meu-voto.app'; /* Backend: Projeto VotaBrasil Railway (198baa4d). Domínio customizado configurado via Cloudflare. */
   var MV=window.MeuVoto=window.MeuVoto||{};
   MV.API_BASE=API_BASE; MV.MODO=API_BASE?'producao':'offline';
   MV.URLS={camara:'https://dadosabertos.camara.leg.br/api/v2',senado:'https://legis.senado.leg.br/dadosabertos',tse:'https://divulgacandcontas.tse.jus.br/divulga/app/',transparencia:'https://www.portaltransparencia.gov.br/',cnj:'https://www.cnj.jus.br/'};
