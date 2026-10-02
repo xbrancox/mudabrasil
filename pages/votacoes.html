@@ -94,6 +94,143 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 @media(max-width:860px){.edu{grid-template-columns:1fr}}
 @media print{body *{visibility:hidden}#fichaPrint,#fichaPrint *{visibility:visible}#fichaPrint{position:absolute;left:0;top:0;width:100%;padding:28px;background:#fff;color:#000;font:13px/1.5 Manrope,sans-serif}#fichaPrint h1,#fichaPrint h2{color:#000}#fichaPrint table{width:100%;border-collapse:collapse}#fichaPrint td,#fichaPrint th{border:1px solid #999;padding:6px}}
 </style>
+
+<style id="css37">
+.sec37 { margin: 24px auto 0; max-width: 960px; }
+.sec37-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+.sec37-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--blueL);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: help;
+  position: relative;
+  flex-shrink: 0;
+}
+.sec37-info:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card2);
+  color: var(--ink);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 400;
+  white-space: normal;
+  width: 280px;
+  max-width: 90vw;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.votacoes-preview {
+  max-height: 600px;
+  overflow: hidden;
+  position: relative;
+}
+.votacoes-preview::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+  pointer-events: none;
+}
+.votacoes-preview.expanded {
+  max-height: none;
+  overflow: visible;
+}
+.votacoes-preview.expanded::after {
+  display: none;
+}
+.btn-ver-todas {
+  display: block;
+  margin: 16px auto;
+  padding: 12px 24px;
+  background: var(--gold);
+  color: #1a1400;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-ver-todas:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+.sumario37 {
+  position: sticky;
+  top: 60px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 20px auto;
+  max-width: 960px;
+  z-index: 90;
+}
+.sumario37 h3 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: var(--muted);
+}
+.sumario37-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sumario37-link {
+  padding: 6px 12px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.sumario37-link:hover {
+  background: var(--blueL);
+  border-color: var(--blueL);
+}
+</style>
+
+<div id="sumario37" class="sumario37">
+  <h3>🧭 Navegação Rápida</h3>
+  <div class="sumario37-links">
+    <a class="sumario37-link" onclick="document.getElementById('sec37-representantes').scrollIntoView({behavior:'smooth'})">⭐ Meus Representantes</a>
+    <a class="sumario37-link" onclick="document.getElementById('sec37-votacoes').scrollIntoView({behavior:'smooth'})">🗳️ Votações</a>
+    <a class="sumario37-link" onclick="document.getElementById('sec37-analise').scrollIntoView({behavior:'smooth'})">📊 Análise</a>
+    <a class="sumario37-link" onclick="document.getElementById('sec37-ferramentas').scrollIntoView({behavior:'smooth'})">📈 Ferramentas</a>
+    <a class="sumario37-link" onclick="document.getElementById('sec37-cobrancas').scrollIntoView({behavior:'smooth'})">📬 Cobranças</a>
+  </div>
+</div>
 </head>
 <body>
 <main>
@@ -105,20 +242,20 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
     <div class="ecard nom"><h3>✍️ Nominal — voto por voto</h3>Placar, <b>quórum</b>, voto a voto, <b>placar por UF</b>, <b>coerência</b>, promessas, <b>dossiê</b>, <b>calor</b> e PDF.</div>
   </div>
   <div class="tabs"><button id="tbC" class="on" data-tip="Votações do Plenário da Câmara (últimos 10 dias)." onclick="setTab('camara')">🏛️ Câmara</button><button id="tbS" data-tip="Votações do Plenário do Senado (últimos 30 dias)." onclick="setTab('senado')">🏛️ Senado</button></div>
-  <div class="painel"><div class="row"><span class="acwrap"><input id="mq" placeholder="⭐ Digite o nome do deputado/senador…" autocomplete="off"/><span class="ac" id="ac"></span></span><button class="btn sm gold" data-tip="Adiciona o parlamentar à sua lista (salvo só no seu navegador)." onclick="addMeu()">Adicionar</button><button class="btn sm" data-tip="Notificação do PWA quando um deputado seu vota em votação nominal." onclick="ativaAlertas()">🔔 Ativar alertas</button></div><div class="chips" id="mchips"></div></div>
+  <div id="sec37-representantes" class="sec37"><div class="sec37-title">⭐ Meus Representantes <span class="sec37-info" data-tip="Marque deputados e senadores para acompanhar como votam, criar promessas de cobrança e gerar dossiês completos de cada parlamentar.">ⓘ</span></div><div class="painel"><div class="row"><span class="acwrap"><input id="mq" placeholder="⭐ Digite o nome do deputado/senador…" autocomplete="off"/><span class="ac" id="ac"></span></span><button class="btn sm gold" data-tip="Adiciona o parlamentar à sua lista (salvo só no seu navegador)." onclick="addMeu()">Adicionar</button><button class="btn sm" data-tip="Notificação do PWA quando um deputado seu vota em votação nominal." onclick="ativaAlertas()">🔔 Ativar alertas</button></div><div class="chips" id="mchips"></div></div>
   <div class="painel"><div class="row"><select id="pDep" style="max-width:220px" data-tip="Qual dos seus parlamentares terá a promessa cobrada."></select><input id="pTxt" placeholder="🤝 Promessa a cobrar (ex.: defender a educação pública…)" data-tip="Palavras-chave cruzadas com o assunto das votações nominais."/><button class="btn sm" data-tip="Cadastra a promessa para cobrança automática." onclick="addProm()">Cobrar</button></div><div class="chips" id="pChips"></div></div>
-  <div class="painel"><div class="row"><select id="dDep" style="max-width:240px" data-tip="Escolha um dos seus parlamentares para o dossiê."></select><button class="btn sm" data-tip="Cruza as últimas 30 votações nominais + reclamações/apoios e monta a ficha corrida cívica." onclick="dossie()">🕰️ Gerar dossiê</button><a class="btn sm" href="mandato-responsavel.html" data-tip="Página educativa: revogabilidade, como mandatos terminam hoje e mobilização legítima." style="margin-left:6px">🎓 Mandato responsável</a></div><div id="dossie" style="margin-top:10px"></div></div>
-  <div class="painel"><div class="row"><select id="hmUF" style="max-width:160px" data-tip="Estado cuja bancada você quer acompanhar ao longo das votações."></select><button class="btn sm" data-tip="Carrega até 20 votações nominais e desenha o mapa de calor + comparador." onclick="ciclo7()">🌡️ Carregar calor & comparador</button></div><div id="hm" style="margin-top:10px"></div><div id="cmp7" style="margin-top:10px"></div>
+  <div class="painel"><div class="row"><select id="dDep" style="max-width:240px" data-tip="Escolha um dos seus parlamentares para o dossiê."></select><button class="btn sm" data-tip="Cruza as últimas 30 votações nominais + reclamações/apoios e monta a ficha corrida cívica." onclick="dossie()">🕰️ Gerar dossiê</button><a class="btn sm" href="mandato-responsavel.html" data-tip="Página educativa: revogabilidade, como mandatos terminam hoje e mobilização legítima." style="margin-left:6px">🎓 Mandato responsável</a></div><div id="dossie" style="margin-top:10px"></div></div></div>
+  <div id="sec37-analise" class="sec37"><div class="sec37-title">📊 Análise e Comparação <span class="sec37-info" data-tip="Ferramentas avançadas de análise: mapa de calor por estado, comparador entre deputados, painel de representação com 3 eixos (fidelidade partidária, distância da bancada e confiança da base).">ⓘ</span></div><div class="painel"><div class="row"><select id="hmUF" style="max-width:160px" data-tip="Estado cuja bancada você quer acompanhar ao longo das votações."></select><button class="btn sm" data-tip="Carrega até 20 votações nominais e desenha o mapa de calor + comparador." onclick="ciclo7()">🌡️ Carregar calor & comparador</button></div><div id="hm" style="margin-top:10px"></div><div id="cmp7" style="margin-top:10px"></div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><button class="btn sm" data-tip="Combina fidelidade partidária, distância da bancada e confiança da base em um diagnóstico por deputado (3 eixos + quadrante)." onclick="representacao18()">🧭 Painel de representação (3 eixos)</button><span class="muted" style="font-size:11.5px">ⓘ diagnóstico por eixo, sem juízo de valor</span><a class="btn sm" href="mandato-responsavel.html" data-tip="Página educativa: o que é recall, como mandatos terminam no Brasil e chaves de mobilização legítima." style="margin-left:6px">🎓 Mandato responsável</a><button class="btn sm" data-tip="Compara voto a voto dois parlamentares nas últimas votações nominais: taxa de convergência, discordâncias e links diretos." onclick="cmpABUI()" style="margin-left:6px">⚖️ Comparador A × B</button></div>
 <div id="rep18" style="margin-top:10px"></div><div id="cmpAB" style="margin-top:10px"></div>
-</div>
+</div></div>
 </section>
 <div class="fbar"><div class="wrap"><div class="row">
   <input id="q" placeholder="🔎 Buscar por assunto ou matéria…" oninput="render()" data-tip="Filtra por assunto ou sigla (PL, MPV, PEC)."/>
   <select id="fTipo" onchange="filtraTipo()" data-tip="Nominais (voto registrado) ou simbólicas (sem registro)."><option value="">Todos os tipos</option><option value="N">✍️ Nominais</option><option value="S">🗣️ Simbólicas</option></select>
   <span class="muted" id="count"></span>
 </div></div></div>
-<div class="wrap"><div id="agenda"></div><h2 class="secT" id="lblPassado">🗳️ O que JÁ foi votado — últimos 10 dias</h2><div id="list"></div><div class="loadmore"><button id="more" class="btn gold" hidden onclick="mais()" data-tip="Carrega mais votações da janela."></button></div></div>
+<div class="wrap"><div id="agenda"></div><div id="sec37-votacoes" class="sec37"><div class="sec37-title">🗳️ Votações Recentes <span class="sec37-info" data-tip="Veja as votações nominais e simbólicas dos últimos 10 dias. Filtre por tipo (nominal/simbólica) e busque por assunto. Clique em uma votação para ver detalhes, placar por estado e voto dos seus deputados.">ⓘ</span></div><h2 class="secT" id="lblPassado">🗳️ O que JÁ foi votado — últimos 10 dias</h2><div id="list"></div><div id="ver-todas-container" style="display:none"><button class="btn-ver-todas" onclick="mostrarTodasVotacoes()">Ver todas as votações (<span id="total-votacoes">0</span> encontradas)</button></div><div class="loadmore"><button id="more" class="btn gold" hidden onclick="mais()" data-tip="Carrega mais votações da janela."></button></div></div>
 </main>
 <div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
 <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
@@ -134,7 +271,7 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 <a class="btn sm" href="cobrancas-ranking.html" data-tip="Ranking público de selos de responsividade dos gabinetes (ouro/prata/bronze).">🏆 Ranking de selos</a>
 </div>
 <div id="outCob" style="margin-top:10px"><p class="muted">Clique em "📬 Minhas cobranças" para ver o status das cobranças registradas.</p></div>
-</div>
+</div></div>
 <script id="ciclo9">
 function isoWeek(d){var t=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()));var day=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-day+3);var first=new Date(Date.UTC(t.getUTCFullYear(),0,4));var w=1+Math.round(((t-first)/864e5-3+((first.getUTCDay()+6)%7))/7);return t.getUTCFullYear()+'-W'+(w<10?'0':'')+w}
 async function c7local(){var r=await fetchJ(CAM('votacoes?itens=60&ordem=DESC'));ALL=((r&&r.dados)||[]).slice(0,60);await tipagem(ALL.slice(0,24));var n=ALL.filter(function(v){return v._tipo==='N'}).slice(0,20);await tipagem(n);C7=n;return C7}
@@ -345,7 +482,7 @@ try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.wr
 location.href='mailto:'+(to||'')+'?subject='+encodeURIComponent('MeuVoto · Resumo semanal')+'&body='+encodeURIComponent(body);
 var o=document.getElementById('out13');if(o)o.innerHTML='<div class="ecard"><p>📧 Digest preparado e copiado para a área de transferência; seu app de e-mail deve abrir com destinatário, assunto e corpo preenchidos. Envio automático servidor-a-servidor (opt-in) vem no ciclo 14.</p></div>'}
 </script>
-<div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
+<div id="sec37-cobrancas" class="sec37"><div class="sec37-title">📬 Cobranças e Digest <span class="sec37-info" data-tip="Assine o digest semanal por e-mail, gerencie sua inscrição, veja métricas do sistema e acesse a API pública para jornalistas e desenvolvedores.">ⓘ</span></div><div class="painel" style="max-width:960px;margin:12px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 14px">
   <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
     <input id="dgEmail" type="email" placeholder="📧 seu@email.com" style="flex:1;min-width:220px" />
     <button class="btn sm gold" onclick="digestAssinar()">Assinar digest</button>
@@ -375,7 +512,7 @@ async function digestStatus(){dgMsg("⏳ consultando...",true);try{var r=await d
 <div id="temas16" style="margin-top:10px"></div>
 </div>
 <style id="css16">@media print{body.printall #fichaPrint{display:none!important}body.printall *{visibility:visible!important}body.printall .fbar{position:static!important}}</style>
-<script id="ciclo16">
+</div><script id="ciclo16">
 var TEMAS16=['educacao','saude','economia','seguranca','meio ambiente','infraestrutura','reforma'];
 function temasGet16(){try{return JSON.parse(localStorage.getItem('mb_temas')||'[]')}catch(e){return[]}}
 function temasSet16(a){localStorage.setItem('mb_temas',JSON.stringify(a))}
@@ -961,7 +1098,7 @@ $('#agenda').innerHTML='<h2 class="secT">📅 O que SERÁ votado — próximos 1
 async function carrega(){$('#list').innerHTML='<p class="muted" style="padding:40px;text-align:center">⏳ Carregando votações dos últimos 10 dias…</p>';const hoje=new Date(),ini=new Date(Date.now()-10*864e5);const r=await fetchJ(CAM('votacoes?itens=100&ordem=DESC'));let dados=(r&&r.dados)||[];ALL=dados.filter(v=>{const d=v.dataHoraRegistro||v.dataHora;if(!d)return false;const t=new Date(d);return t>=ini&&t<=hoje});if(!ALL.length&&dados.length){ALL=dados.slice(0,40);$('#lblPassado').textContent='🗳️ Sem votações nos últimos 10 dias — mostrando as 40 mais recentes'}if(!ALL.length){$('#list').innerHTML='<p class="muted" style="padding:40px;text-align:center">Nenhuma votação carregada. Tente em instantes.</p>';return}await tipagem(ALL.slice(0,SHOW));render();agenda();alertaCheck();const h=location.hash.match(/^#v(\d+)/);if(h)expand(+h[1])}
 function filtrados(){const q=($('#q').value||'').toLowerCase();const t=$('#fTipo').value;return ALL.filter(v=>{const i=vInfo(v);if(t&&v._tipo!==t)return false;if(q&&!(i.assunto+' '+i.rot).toLowerCase().indexOf(q)>=0)return false;return true})}
 async function filtraTipo(){const t=$('#fTipo').value;if(t){const falta=ALL.filter(v=>!v._tipo);if(falta.length)await tipagem(falta)}render()}
-function render(){const L=filtrados();$('#count').textContent=L.length+' votação(ões) na janela';const vis=L.slice(0,SHOW);$('#more').hidden=L.length<=SHOW;$('#more').textContent='⬇️ Carregar mais ('+(L.length-SHOW)+' restantes)';
+function render(){const L=filtrados();const isPreview=typeof window.__showAllVotacoes==="undefined"||!window.__showAllVotacoes;$('#count').textContent=L.length+' votação(ões) na janela';const vis=isPreview?L.slice(0,3):L.slice(0,SHOW);$('#more').hidden=L.length<=SHOW;$('#more').textContent='⬇️ Carregar mais ('+(L.length-SHOW)+' restantes)';
 $('#list').innerHTML=vis.map(v=>{const i=vInfo(v);const t=v._tipo;return '<div class="vcard"><div class="vtop"><span class="badge '+(t==='N'?'tn':'ts')+'">'+(t==='N'?'✍️ Nominal · voto registrado':'🗣️ Simbólica · sem registro individual')+'</span><span class="muted">'+fmtData(v.dataHora)+' · Plenário da Câmara</span></div><h3>'+esc(i.assunto)+'</h3>'+(i.rot?'<p style="margin:8px 0 0"><a class="lei" href="'+oficial(i.idProp)+'" target="_blank" rel="noopener" data-prop="'+i.idProp+'">📜 '+esc(i.rot)+'</a> <span class="muted">— mouse: resumo · clique: oficial</span></p>':'')+'<p class="ementa muted" id="em-'+v.id+'">'+(i.idProp&&CACHEE[i.idProp]?esc(trunc(CACHEE[i.idProp],240)):'⏳ carregando resumo da matéria…')+'</p><div style="margin-top:12px"><button class="btn sm" data-tip="Placar, quórum, placar por UF, coerência de bancada e voto a voto." onclick="expand(\''+v.id+'\')">🔎 Como foi esta votação?</button></div><div class="vdet" id="vd-'+v.id+'" hidden></div></div>'}).join('')||'<p class="muted" style="padding:40px;text-align:center">Nada encontrado com esses filtros.</p>';
 vis.forEach(v=>{const i=vInfo(v);if(i.idProp&&CACHEE[i.idProp]===undefined)ementaDe(i.idProp).then(e=>{const el=document.getElementById('em-'+v.id);if(el)el.textContent=e?trunc(e,240):'Matéria sem resumo público disponível.'})})}
 async function mais(){const antes=SHOW;SHOW+=12;await tipagem(filtrados().slice(antes,SHOW));render()}
@@ -1420,6 +1557,54 @@ function init(){
 }
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',init);else init();
 })();
+</script>
+
+<script id="ciclo37">
+// Função para mostrar todas as votações
+function mostrarTodasVotacoes() {
+  window.__showAllVotacoes = true;
+  const preview = document.getElementById('list');
+  if (preview) {
+    preview.parentElement.classList.add('votacoes-preview', 'expanded');
+  }
+  const container = document.getElementById('ver-todas-container');
+  if (container) container.style.display = 'none';
+  if (typeof render === 'function') render();
+}
+
+// Hook para mostrar botão "Ver todas" quando houver mais de 3 votações
+(function() {
+  const originalRender = window.render;
+  if (originalRender) {
+    window.render = function() {
+      const result = originalRender.apply(this, arguments);
+      setTimeout(() => {
+        const L = typeof filtrados === 'function' ? filtrados() : [];
+        const container = document.getElementById('ver-todas-container');
+        const totalSpan = document.getElementById('total-votacoes');
+        if (container && totalSpan && L.length > 3 && !window.__showAllVotacoes) {
+          totalSpan.textContent = L.length;
+          container.style.display = 'block';
+          const listDiv = document.getElementById('list');
+          if (listDiv) {
+            listDiv.parentElement.classList.add('votacoes-preview');
+          }
+        } else if (container) {
+          container.style.display = 'none';
+        }
+      }, 100);
+      return result;
+    };
+  }
+})();
+
+// Inicializar sumário
+document.addEventListener('DOMContentLoaded', function() {
+  const sumario = document.getElementById('sumario37');
+  if (sumario && window.innerWidth < 768) {
+    sumario.style.display = 'none'; // Esconder em mobile para não poluir
+  }
+});
 </script>
 </body>
 </html>
