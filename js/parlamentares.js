@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    MEUVOTO — PARLAMENTARES
    Aba unificada: Candidatos + Radar + PLs + Revogados + Conferir + Revogar
    Alinhado com os .docx do projeto
@@ -16,7 +16,7 @@
      NUNCA usar || com API_BASE — o valor '' (mesma origem) é válido e sumiria. */
   const API = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string')
     ? window.MeuVoto.API_BASE
-    : 'https://mudabrasil-production-79eb.up.railway.app';
+    : '';
 
   const session = () => {
     try { return JSON.parse(localStorage.getItem('votabrasil.session') || 'null'); }
@@ -256,9 +256,27 @@
     renderCandidatos();
   }
 
+  let candObserver = null;
+
   function loadMoreCandidatos() {
     state.visibleCount += 60;
     renderCandidatos();
+  }
+
+  function setupInfiniteScroll() {
+    if (!('IntersectionObserver' in window)) return;
+    if (candObserver) candObserver.disconnect();
+    
+    const holder = document.querySelector('#cand-load-more-holder');
+    if (!holder || holder.hidden) return;
+
+    candObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && state.filteredPoliticians.length > (state.visibleCount || 60)) {
+        loadMoreCandidatos();
+      }
+    }, { rootMargin: '300px' });
+
+    candObserver.observe(holder);
   }
 
   function renderCandidatos() {
@@ -341,6 +359,9 @@
         holder.hidden = true;
       }
     }
+    
+    // Ativa o carregamento infinito suave
+    setupInfiniteScroll();
   }
 
   function toggleCompare(id) {

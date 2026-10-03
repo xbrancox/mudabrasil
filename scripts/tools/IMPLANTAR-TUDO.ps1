@@ -35,7 +35,7 @@ Say ('[1] logos copiados: '+$found+' de 4')
 
 # ---------- [2] API_BASE unico: mata qualquer fallback para o backend redesign ----------
 $oldUrl='https://mudabrasil-redesign-production.up.railway.app'
-$newUrl='https://mudabrasil-production-79eb.up.railway.app'
+$newUrl=''''
 $n=0
 Get-ChildItem -Path $repo -Include *.html,*.js -Recurse -File | Where-Object { $_.FullName -notmatch '\\node_modules\\|\\_tmp_mb\\|\\scripts\\' } | ForEach-Object {
   $t=[IO.File]::ReadAllText($_.FullName)

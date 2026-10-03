@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    MEUVOTO - TERMÔMETRO DE CONFIANÇA (revogação do voto)
    ------------------------------------------------------------
    Regra "tudo real": só dados oficiais. O antigo bloco DEMO com
@@ -24,11 +24,10 @@
   const LS_LOCAL = 'mb_local';
   const REFRESH_MS = 15000;      // rede de segurança (SSE é o canal principal)
 
-  /* Base da API: absoluta em file:// (config.local.js aponta p/ Railway),
-     relativa ('') quando servido por http(s) na mesma origem do backend. */
+  /* Base da API: absoluta via config.js, relativa ('') quando servido na mesma origem. */
   const API = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string')
     ? window.MeuVoto.API_BASE
-    : 'https://mudabrasil-production-79eb.up.railway.app';
+    : '';
 
   /* ---------- ESTADO ---------- */
   let mode = 'demo';

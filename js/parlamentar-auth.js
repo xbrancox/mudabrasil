@@ -15,7 +15,7 @@
      NUNCA usar || com API_BASE — '' (mesma origem) é valor válido. */
   const API_AUTH = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string')
     ? window.MeuVoto.API_BASE
-    : 'https://mudabrasil-production-79eb.up.railway.app';
+    : '';
 
   const state = {
     session: loadSession(),

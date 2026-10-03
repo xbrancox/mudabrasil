@@ -15,7 +15,7 @@ No repositório, vá em **Settings → Secrets and variables → Actions** e adi
 
 | Secret | Descrição | Exemplo |
 |---|---|---|
-| `DIGEST_API` | URL base do backend | `https://mudabrasil-production-79eb.up.railway.app` |
+| `DIGEST_API` | URL base do backend | `https://meu-voto.app` |
 | `DIGEST_SECRET` | Chave secreta para proteger as rotas admin | `uma-string-aleatoria-forte-aqui` |
 | `SMTP_HOST` | Servidor SMTP | `smtp.gmail.com` ou `smtp.brevo.com` |
 | `SMTP_PORT` | Porta do SMTP | `587` (ou `465` para SSL) |

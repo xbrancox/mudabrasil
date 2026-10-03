@@ -3,7 +3,7 @@
   var BASE = (function() {
     try { if (window.MeuVoto && MeuVoto.API_BASE) return MeuVoto.API_BASE; } catch(e) {}
     try { if (window.VotaBrasil && VotaBrasil.API_BASE) return VotaBrasil.API_BASE; } catch(e) {}
-    return 'https://mudabrasil-production-79eb.up.railway.app';
+    return '';
   })();
 
   // Cache em memória da chave pública VAPID

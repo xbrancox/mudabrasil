@@ -6,9 +6,9 @@ echo ========================================
 echo  VALIDAR BACKEND RAILWAY
 echo ========================================
 echo.
-echo Backend: https://mudabrasil-production-79eb.up.railway.app
+echo Backend: ''
 echo.
-node scripts/validar-backend.js https://mudabrasil-production-79eb.up.railway.app
+node scripts/validar-backend.js ''
 if errorlevel 1 (
   echo.
   echo ❌ ALGUMA VALIDAÇÃO FALHOU

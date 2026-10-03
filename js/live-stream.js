@@ -20,11 +20,10 @@
   function initLiveUpdate(refreshFn, opts) {
     opts = opts || {};
     const intervalMs = opts.intervalMs || 15000;
-    /* Base da API: absoluta em file:// (config.local.js aponta p/ Railway),
-       relativa ('') quando servido por http(s) na mesma origem do backend. */
+    /* Base da API: absoluta via config.js, relativa ('') quando servido na mesma origem. */
     const API = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string')
       ? window.MeuVoto.API_BASE
-      : 'https://mudabrasil-production-79eb.up.railway.app';
+      : '';
     let es = null;
     let timer = null;
     let sseFails = 0;

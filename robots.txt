@@ -1,6 +1,3 @@
-# robots.txt para MeuVoto / VotaBrasil
-# https://meu-voto.app/robots.txt
-
 User-agent: *
 Allow: /
 Disallow: /api/
@@ -8,15 +5,33 @@ Disallow: /server/
 Disallow: /scripts/
 Disallow: /tests/
 Disallow: /node_modules/
-Disallow: /.git/
+Disallow: /admin/
 
-# Permitir crawling de páginas principais
-Allow: /index.html
-Allow: /pages/
-Allow: /app/
+# Bloquear bots maliciosos
+User-agent: AhrefsBot
+Disallow: /
 
-# Sitemap
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Permitir bots legítimos
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Sitemaps
 Sitemap: https://meu-voto.app/sitemap.xml
 
-# Crawl-delay (opcional, para não sobrecarregar)
-# Crawl-delay: 1
+# Crawl-delay para não sobrecarregar
+Crawl-delay: 1

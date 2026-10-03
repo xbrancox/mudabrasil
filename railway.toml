@@ -13,6 +13,9 @@ healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5
+# Otimizações de deploy
+healthcheckRetries = 3
+sleepTimeout = 300
 
 [env]
 PORT = "8080"

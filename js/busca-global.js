@@ -19,7 +19,7 @@
     try { if (window.MeuVoto && window.MeuVoto.API_BASE) return window.MeuVoto.API_BASE; } catch (e) {}
     try { if (window.VotaBrasil && window.VotaBrasil.API_BASE) return window.VotaBrasil.API_BASE; } catch (e) {}
     try { if (window.API_BASE) return window.API_BASE; } catch (e) {}
-    return 'https://mudabrasil-production-79eb.up.railway.app';
+    return '';
   }
   function rootPath() {
     return (location.pathname || '').indexOf('/pages/') >= 0 ? '../' : '';

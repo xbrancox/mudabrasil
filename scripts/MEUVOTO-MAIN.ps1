@@ -1,9 +1,9 @@
-﻿# MEUVOTO-MAIN.ps1 - migra VotaBrasil/MudaBrasil -> MeuVoto de forma coerente. 100% ASCII. Idempotente.
+# MEUVOTO-MAIN.ps1 - migra VotaBrasil/MudaBrasil -> MeuVoto de forma coerente. 100% ASCII. Idempotente.
 $ErrorActionPreference='Stop'
 $repo='C:\Users\euler\votabrasil'
 Set-Location $repo
 $EXT='meu-voto.app'
-$BE='https://mudabrasil-production-79eb.up.railway.app'   # backend SEU; nao e marca; nao trocar aqui
+$BE=''''   # backend SEU; nao e marca; nao trocar aqui
 function Say($m){ Write-Host $m }
 if(-not (Test-Path (Join-Path $repo 'index.html'))){ Say 'ERRO: repo nao achado'; exit 1 }
 
@@ -22,7 +22,7 @@ $cfg=@'
 (function(){
   var ov=null; try{ ov=window.__MEUVOTO_ENV__&&window.__MEUVOTO_ENV__.API_BASE; }catch(e){}
   var st=null; try{ st=localStorage.getItem('mv_api_base'); }catch(e){}
-  var API_BASE=ov||st||'https://mudabrasil-production-79eb.up.railway.app'; /* MIGRACAO-PENDENTE: api.meu-voto.app */
+  var API_BASE=ov||st||''''; /* MIGRACAO-PENDENTE: api.meu-voto.app */
   var MV=window.MeuVoto=window.MeuVoto||{};
   MV.API_BASE=API_BASE; MV.MODO=API_BASE?'producao':'offline';
   MV.URLS={camara:'https://dadosabertos.camara.leg.br/api/v2',senado:'https://legis.senado.leg.br/dadosabertos',tse:'https://divulgacandcontas.tse.jus.br/divulga/app/',transparencia:'https://www.portaltransparencia.gov.br/',cnj:'https://www.cnj.jus.br/'};

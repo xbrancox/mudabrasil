@@ -6,10 +6,10 @@
  * 
  * Uso:
  *   node scripts/validar-backend.js
- *   node scripts/validar-backend.js https://mudabrasil-production-79eb.up.railway.app
+ *   node scripts/validar-backend.js ''
  */
 
-const BASE = process.argv[2] || 'https://mudabrasil-production-79eb.up.railway.app';
+const BASE = process.argv[2] || '''';
 
 let pass = 0, fail = 0;
 function ok(label, cond, detail = '') {

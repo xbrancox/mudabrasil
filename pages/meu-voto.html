@@ -16,6 +16,29 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://meu-voto.app/og-image.png">
 
+<!-- Dados Estruturados (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "MeuVoto",
+  "description": "Plataforma cívica de revogação do voto. Expresse confiança em políticos de forma anônima e revogável.",
+  "url": "https://meu-voto.app/pages/meu-voto.html",
+  "applicationCategory": "CivicTech",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "MeuVoto",
+    "url": "https://meu-voto.app"
+  }
+}
+</script>
+
 <link rel="icon" type="image/x-icon" href="../images/logo/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="../images/logo/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="../images/logo/favicon-16x16.png">
@@ -361,20 +384,33 @@
 
   <!-- MODAL: CÓDIGO GERADO (mostrado uma única vez) -->
   <div class="modal" id="code-modal">
-    <div class="modal-content code-modal-content">
-      <h2>✅ Voto registrado!</h2>
-      <p>Guarde este código com segurança. Ele é o seu <strong>comprovante único</strong>
-      para consultar, manter ou revogar seu voto. <strong>Não será mostrado novamente.</strong></p>
+    <div class="modal-content code-modal-content" style="max-width: 500px; text-align: center;">
+      <h2>✅ Voto registrado com sucesso!</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+        Guarde este código com segurança. Ele é o seu <strong>comprovante único</strong>
+        para consultar, manter ou revogar seu voto. <strong>Não será mostrado novamente.</strong>
+      </p>
+      
       <div class="code-display" id="code-display">—</div>
-      <p class="code-pol" id="code-pol"></p>
-      <div class="info-box warning">
+      <p class="code-pol" id="code-pol" style="color: var(--text-muted); font-size: var(--text-sm);"></p>
+      
+      <div class="info-box warning" style="text-align: left; margin: var(--space-lg) 0;">
         <strong>⚠️ Anote agora!</strong> Copie o código para um lugar seguro (bloco de notas,
-        senha do celular, etc.). Se perder, não tem como recuperar.
+        senha do celular, etc.) ou baixe o comprovante em PDF. Se perder, não tem como recuperar.
       </div>
-      <div class="btn-row" style="margin-top:var(--space-lg);">
-        <button class="btn btn-secondary btn-sm" id="btn-copy-code">📋 Copiar código</button>
-        <button class="btn btn-primary" id="btn-close-code">Entendi, guardar</button>
+      
+      <div class="code-actions">
+        <button class="btn-copy" id="btn-copy-code">
+          <span>📋</span> <span id="copy-text">Copiar código</span>
+        </button>
+        <button class="btn-download" id="btn-download-code">
+          <span>📄</span> Baixar PDF
+        </button>
       </div>
+      
+      <button class="btn btn-primary" id="btn-close-code" style="margin-top: var(--space-lg); width: 100%;">
+        Entendi, já guardei meu código
+      </button>
     </div>
   </div>
 

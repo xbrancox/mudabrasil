@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # VotaBrasil - autonomia total: namespace, marcas, offline-first, validacao, commit, push.
 # Idempotente. Payloads 100% ASCII. Nao toca no backend -79eb (ele E o seu backend).
 $ErrorActionPreference='Stop'
@@ -33,7 +33,7 @@ $cfg=@'
 (function(){
   var override=null; try{ override=window.__VOTABRASIL_ENV__&&window.__VOTABRASIL_ENV__.API_BASE; }catch(e){}
   var stored=null;   try{ stored=localStorage.getItem('vb_api_base'); }catch(e){}
-  var API_BASE=override||stored||'https://mudabrasil-production-79eb.up.railway.app'; /* MIGRACAO-PENDENTE */
+  var API_BASE=override||stored||''''; /* MIGRACAO-PENDENTE */
   var VB=window.VotaBrasil=window.VotaBrasil||{};
   VB.API_BASE=API_BASE;
   VB.MODO=API_BASE?'producao':'offline';

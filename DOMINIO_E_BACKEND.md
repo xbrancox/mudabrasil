@@ -1,43 +1,43 @@
-Ôªø# üèóÔ∏è Arquitetura de Backend e Dom√≠nio ‚Äî MeuVoto
+# ??? Arquitetura de Backend e DomÌnio ó MeuVoto
 
 ## Status Atual (28/09/2026)
 
-### ‚úÖ Backend Railway (Produ√ß√£o)
+### ? Backend Railway (ProduÁ„o)
 - **Projeto**: `VotaBrasil` (`198baa4d-6141-418c-96dd-d7826831249f`)
-- **Servi√ßo**: `VotaBrasil` (`4d5f569d-9c54-45f5-a25a-b474fb218b18`)
+- **ServiÁo**: `VotaBrasil` (`4d5f569d-9c54-45f5-a25a-b474fb218b18`)
 - **Ambiente**: `production` (`930d0397-a453-4377-93e2-0c2f42f3abe0`)
-- **Dom√≠nio atual**: `https://mudabrasil-production-79eb.up.railway.app`
-- **Status**: ‚úÖ SUCCESS (funcionando)
-- **Uptime**: Cont√≠nuo
-- **Regi√£o**: Amsterdam (ams)
+- **DomÌnio atual**: `https://meu-voto.app`
+- **Status**: ? SUCCESS (funcionando)
+- **Uptime**: ContÌnuo
+- **Regi„o**: Amsterdam (ams)
 - **Builder**: RAILPACK (Node 22)
-- **Storage**: SQLite nativo (`node:sqlite`) ‚Äî `/app/server/data/votos.db`
+- **Storage**: SQLite nativo (`node:sqlite`) ó `/app/server/data/votos.db`
 - **Volume**: 500MB persistente
 
-### ‚úÖ Frontend GitHub Pages
-- **Reposit√≥rio**: `xbrancox/votabrasil`
+### ? Frontend GitHub Pages
+- **RepositÛrio**: `xbrancox/votabrasil`
 - **Branch**: `main`
 - **Workflow**: `.github/workflows/pages.yml` (auto-deploy a cada push)
 - **URL**: `https://meu-voto.app/`
-- **Status**: ‚úÖ Ativo
+- **Status**: ? Ativo
 
 ---
 
-## üéØ Por Que o Dom√≠nio Railway Ainda √â `mudabrasil-*`?
+## ?? Por Que o DomÌnio Railway Ainda … `mudabrasil-*`?
 
-O projeto Railway foi criado originalmente como `mudabrasil` e renomeado para `votabrasil` no GitHub. O dom√≠nio Railway (`mudabrasil-production-79eb.up.railway.app`) **n√£o pode ser renomeado via CLI** ‚Äî ele √© gerado automaticamente pelo Railway com um ID √∫nico (`-79eb`).
+O projeto Railway foi criado originalmente como `mudabrasil` e renomeado para `votabrasil` no GitHub. O domÌnio Railway (`mudabrasil-production-79eb.up.railway.app`) **n„o pode ser renomeado via CLI** ó ele È gerado automaticamente pelo Railway com um ID ˙nico (`-79eb`).
 
-**Isso n√£o √© um problema** porque:
-1. ‚úÖ O backend est√° **isolado no projeto VotaBrasil Railway** (n√£o depende do projeto `mudabrasil-redesign`)
-2. ‚úÖ O dom√≠nio funciona perfeitamente (SSL, CORS, rate-limit)
-3. ‚úÖ O frontend aponta para ele via `API_BASE` em `config.js`
-4. ‚úÖ Todos os dados (votos, SQLite) vivem no projeto VotaBrasil Railway
+**Isso n„o È um problema** porque:
+1. ? O backend est· **isolado no projeto VotaBrasil Railway** (n„o depende do projeto `mudabrasil-redesign`)
+2. ? O domÌnio funciona perfeitamente (SSL, CORS, rate-limit)
+3. ? O frontend aponta para ele via `API_BASE` em `config.js`
+4. ? Todos os dados (votos, SQLite) vivem no projeto VotaBrasil Railway
 
 ---
 
-## üìã Plano de Migra√ß√£o para `omeuvoto.app`
+## ?? Plano de MigraÁ„o para `omeuvoto.app`
 
-### Passo 1: Registrar o Dom√≠nio
+### Passo 1: Registrar o DomÌnio
 ```bash
 # No Registro.br ou outro registrador
 Registrar: omeuvoto.app
@@ -49,7 +49,7 @@ Adicionar os seguintes registros no painel do registrador:
 ```
 Tipo: CNAME
 Nome: api
-Valor: meuvoto-production.up.railway.app (ou o dom√≠nio que o Railway gerar)
+Valor: meuvoto-production.up.railway.app (ou o domÌnio que o Railway gerar)
 
 Tipo: CNAME
 Nome: www
@@ -57,17 +57,17 @@ Valor: xbrancox.github.io
 
 Tipo: TXT
 Nome: _railway.api
-Valor: (Railway fornecer√° ap√≥s adicionar o dom√≠nio custom)
+Valor: (Railway fornecer· apÛs adicionar o domÌnio custom)
 ```
 
-### Passo 3: Adicionar Dom√≠nio Custom no Railway
+### Passo 3: Adicionar DomÌnio Custom no Railway
 ```bash
-# No diret√≥rio do projeto votabrasil
+# No diretÛrio do projeto votabrasil
 railway link
 railway domain omeuvoto.app
 ```
 
-O Railway exibir√° os registros DNS necess√°rios. Configure-os no registrador e aguarde propaga√ß√£o (at√© 72h).
+O Railway exibir· os registros DNS necess·rios. Configure-os no registrador e aguarde propagaÁ„o (atÈ 72h).
 
 ### Passo 4: Atualizar `API_BASE` nos Arquivos
 Atualizar em todos os arquivos que referenciam o backend:
@@ -85,7 +85,7 @@ Atualizar em todos os arquivos que referenciam o backend:
 **Substituir:**
 ```js
 // De:
-'https://mudabrasil-production-79eb.up.railway.app'
+'https://meu-voto.app'
 
 // Para:
 'https://api.omeuvoto.app'
@@ -100,7 +100,7 @@ git push origin main
 
 ### Passo 6: Validar
 ```bash
-# Testar o novo dom√≠nio
+# Testar o novo domÌnio
 curl https://api.omeuvoto.app/api/health
 curl https://api.omeuvoto.app/api/candidatos
 curl https://api.omeuvoto.app/api/stream
@@ -108,7 +108,7 @@ curl https://api.omeuvoto.app/api/stream
 
 ---
 
-## üîß Comandos √öteis Railway
+## ?? Comandos ⁄teis Railway
 
 ### Ver Status do Projeto
 ```bash
@@ -125,7 +125,7 @@ railway logs
 railway open
 ```
 
-### Vari√°veis de Ambiente
+### Vari·veis de Ambiente
 ```bash
 railway variables
 railway variables set API_BASE=https://api.omeuvoto.app
@@ -133,15 +133,15 @@ railway variables set API_BASE=https://api.omeuvoto.app
 
 ---
 
-## üìä URLs de Valida√ß√£o
+## ?? URLs de ValidaÁ„o
 
 ### Backend (Railway)
 ```
-GET https://mudabrasil-production-79eb.up.railway.app/api/health
-GET https://mudabrasil-production-79eb.up.railway.app/api/candidatos
-GET https://mudabrasil-production-79eb.up.railway.app/api/senadores
-GET https://mudabrasil-production-79eb.up.railway.app/api/termometro
-GET https://mudabrasil-production-79eb.up.railway.app/api/stream (SSE)
+GET https://meu-voto.app/api/health
+GET https://meu-voto.app/api/candidatos
+GET https://meu-voto.app/api/senadores
+GET https://meu-voto.app/api/termometro
+GET https://meu-voto.app/api/stream (SSE)
 ```
 
 ### Frontend (GitHub Pages)
@@ -154,14 +154,14 @@ https://meu-voto.app/pages/parlamentares.html
 
 ---
 
-## üö® Importante
+## ?? Importante
 
-1. **Nunca delete o projeto Railway `mudabrasil-redesign`** at√© confirmar que o VotaBrasil est√° 100% funcional
-2. **Sempre teste localmente** antes de fazer push para produ√ß√£o
-3. **Fa√ßa backup do SQLite** regularmente (workflow `manutencao.yml` j√° faz isso diariamente)
+1. **Nunca delete o projeto Railway `mudabrasil-redesign`** atÈ confirmar que o VotaBrasil est· 100% funcional
+2. **Sempre teste localmente** antes de fazer push para produÁ„o
+3. **FaÁa backup do SQLite** regularmente (workflow `manutencao.yml` j· faz isso diariamente)
 4. **Monitore os logs** do Railway para detectar erros de CORS, rate-limit ou crashes
 
 ---
 
-**√öltima atualiza√ß√£o**: 28/09/2026 13:45  
-**Status**: ‚úÖ Backend e frontend funcionais, aguardando registro de dom√≠nio custom
+**⁄ltima atualizaÁ„o**: 28/09/2026 13:45  
+**Status**: ? Backend e frontend funcionais, aguardando registro de domÌnio custom

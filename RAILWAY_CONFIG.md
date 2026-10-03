@@ -24,7 +24,7 @@ Este documento descreve a configuração completa do backend do **MeuVoto** hosp
 ## 🌐 Domínios
 
 ### Domínios Railway (Service Domains)
-- **Primary**: `https://mudabrasil-production-79eb.up.railway.app`
+- **Primary**: `https://meu-voto.app`
 - **Secondary**: `https://mudabrasil-production.up.railway.app`
 
 ### Por que o nome ainda é "mudabrasil"?
@@ -188,13 +188,13 @@ Todo push na branch `main` do repositório `xbrancox/votabrasil` dispara automat
 ### Teste Rápido
 ```bash
 # Health check
-curl https://mudabrasil-production-79eb.up.railway.app/api/health
+curl https://meu-voto.app/api/health
 
 # Lista de candidatos
-curl https://mudabrasil-production-79eb.up.railway.app/api/candidatos
+curl https://meu-voto.app/api/candidatos
 
 # SSE (tempo real)
-curl -N https://mudabrasil-production-79eb.up.railway.app/api/stream
+curl -N https://meu-voto.app/api/stream
 ```
 
 ### Resposta Esperada (Health)

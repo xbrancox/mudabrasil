@@ -182,6 +182,32 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
   <script src="js/site-header.js?v=3"></script>
 <link rel="icon" type="image/svg+xml" href="/assets/icon.svg">
 <link rel="manifest" href="/manifest.json">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "MeuVoto / VotaBrasil",
+  "url": "https://meu-voto.app/",
+  "description": "Plataforma cívica de revogação do voto: confie em deputados e senadores, revogue quando descumprirem, opine nos PLs e acompanhe as Eleições 2026 com dados reais.",
+  "applicationCategory": "CivicTech",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "MeuVoto",
+    "url": "https://meu-voto.app/",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "contato@meu-voto.app",
+      "contactType": "customer support"
+    }
+  }
+}
+</script>
 </head>
 <body>
 
@@ -1267,6 +1293,7 @@ window.addEventListener('load',function(){setTimeout(work,250);});
 <p style="margin-top:30px;text-align:center;font-size:0.9em;color:#6b7280">Todas as fontes citadas s&#227;o p&#250;blicas e verific&#225;veis: TSE, C&#226;mara dos Deputados, Senado Federal, Portal da Transpar&#234;ncia, CNJ.</p>
 </section>
 <script defer src="js/offline.js"></script>
+<script defer src="js/analytics.js"></script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 </body>
 </html>

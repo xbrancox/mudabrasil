@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # VotaBrasil -> MeuVoto : renomeacao integral, idempotente, valida antes do commit.
 # NAO toca na URL -79eb (e o seu backend) nem no basename github.io/votabrasil (so o repo).
 $ErrorActionPreference='Stop'
@@ -31,7 +31,7 @@ $cfg=@'
 (function(){
   var override=null; try{ override=window.__MEUVOTO_ENV__&&window.__MEUVOTO_ENV__.API_BASE; }catch(e){}
   var stored=null;   try{ stored=localStorage.getItem('mv_api_base'); }catch(e){}
-  var API_BASE=override||stored||'https://mudabrasil-production-79eb.up.railway.app'; /* MIGRACAO-PENDENTE */
+  var API_BASE=override||stored||''''; /* MIGRACAO-PENDENTE */
   var MV=window.MeuVoto=window.MeuVoto||{};
   MV.API_BASE=API_BASE;
   MV.MODO=API_BASE?'producao':'offline';
