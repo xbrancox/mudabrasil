@@ -11,10 +11,10 @@
   const CONFIG = {
     GA4_ID: 'G-XXXXXXXXXX',           // Substitua pelo seu GA4 Measurement ID
     PLAUSIBLE_DOMAIN: 'meu-voto.app',  // Seu domínio no Plausible
-    CLARITY_ID: 'xxxxxxxxxx',          // Substitua pelo seu Clarity Project ID
+    CLARITY_ID: 'yyyyq7krfi',          // Microsoft Clarity - VotaBrasil
     ENABLE_GA4: false,                 // Ativar após configurar GA4
     ENABLE_PLAUSIBLE: false,           // Ativar após configurar Plausible
-    ENABLE_CLARITY: false              // Ativar após configurar Clarity
+    ENABLE_CLARITY: true               // Microsoft Clarity ATIVO
   };
 
   // Respeitar Do Not Track
