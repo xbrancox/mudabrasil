@@ -26,7 +26,7 @@
       color: #fff; text-decoration: none; white-space: nowrap;
     }
     .mb-logo:hover { opacity: 0.9; }
-    .mb-logo .mv-slogan{display:block;color:#FFD700;font-size:0.65rem;font-weight:700;white-space:nowrap;font-style:italic;letter-spacing:0.01em}
+    .mb-logo .mv-slogan{display:block;color:#D4AF37;font-size:0.65rem;font-weight:700;white-space:nowrap;font-style:italic;letter-spacing:0.02em;margin-top:2px}
     .mb-nav-links {
       display: flex; align-items: center; gap: 2px;
       list-style: none; margin: 0; padding: 0; flex-wrap: wrap;
@@ -37,10 +37,10 @@
       transition: all 0.25s; white-space: nowrap; text-decoration: none;
     }
     .mb-nav-links a:hover {
-      background: rgba(52,101,164,0.22); color: #fff;
+      background: rgba(26,115,232,0.22); color: #fff;
     }
     .mb-nav-links a.mb-active {
-      background: #3465A4; color: #fff;
+      background: #1A73E8; color: #fff;
     }
     .mb-nav-cta { display: flex; gap: 8px; align-items: center; }
     .mb-btn-entrar {
@@ -49,14 +49,20 @@
       font-weight: 700; font-size: 0.8rem; cursor: pointer;
       transition: all 0.2s;
     }
-    .mb-btn-entrar:hover { border-color: #3465A4; color: #fff; }
+    .mb-btn-entrar:hover { border-color: #1A73E8; color: #fff; }
     .mb-btn-cadastrar {
-      background: #AECF00; color: #0E1726; border: none;
+      background: linear-gradient(135deg, #1A73E8 0%, #1557b9 100%); 
+      color: #FFFFFF; border: none;
       padding: 8px 18px; border-radius: 9999px;
       font-weight: 800; font-size: 0.8rem; cursor: pointer;
-      transition: filter 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
     }
-    .mb-btn-cadastrar:hover { filter: brightness(1.1); }
+    .mb-btn-cadastrar:hover { 
+      filter: brightness(1.1); 
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
+    }
     .mb-mobile-toggle { display: none; font-size: 1.6rem; color: #fff; cursor: pointer; }
     @media (max-width: 1080px) {
       .mb-nav-links { display: none; }
@@ -156,9 +162,9 @@
     return `
 <header class="mb-header">
   <div class="mb-nav-inner">
-    <a href="${prefix}index.html" class="mb-logo" aria-label="MeuVoto">
-      <img src="${prefix}icon.svg" alt="" width="56" height="56" style="border-radius:14px;display:block">
-      <span><b>MeuVoto</b><span class="mv-slogan">Meu voto coloca, meu voto tira.</span></span>
+    <a href="${prefix}index.html" class="mb-logo" aria-label="VotaBrasil">
+      <img src="${prefix}icon.svg" alt="VotaBrasil" width="48" height="48" style="border-radius:10px;display:block">
+      <span><b style="background:linear-gradient(90deg,#fff 0%,#fff 45%,#D4AF37 45%,#D4AF37 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#fff">VotaBrasil</b><span class="mv-slogan">Meu voto coloca, meu voto tira.</span></span>
     </a>
     <nav aria-label="Navegação principal">
       <ul class="mb-nav-links" id="mb-nav-links">

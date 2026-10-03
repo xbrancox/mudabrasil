@@ -1,0 +1,10 @@
+# Cloudflare Pages / Netlify / Vercel redirects
+# SPA fallback: todas as rotas vão para index.html
+/*    /index.html   200
+
+# API proxy para Railway (se necessário)
+/api/*    https://api.meu-voto.app/api/:splat    200
+
+# Assets com cache longo
+/assets/*    /assets/:splat    200
+/images/*    /images/:splat    200

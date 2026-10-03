@@ -1,30 +1,27 @@
 /* ============================================================
-   MeuVoto — Configuração Global
+   MeuVoto — Configuração Global (App Mobile)
    -----------------------------------------------------------
-   Backend: Configuração centralizada via config.js
-   Frontend: https://meu-voto.app/
+   Backend: https://api.meu-voto.app (Railway - Projeto VotaBrasil 198baa4d)
+   Frontend: https://meu-voto.app/app/
    ============================================================ */
 
-let API_BASE = (typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
-  ? ''
-  : ''; // Fallback para mesma origem (relative path) em produção
+// Detecta ambiente: localhost usa API local, produção usa Railway
+let API_BASE = (typeof window !== 'undefined' && window.location && 
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+  ? 'http://localhost:8080'
+  : 'https://api.meu-voto.app';
 
-/* Para que o localhost use exatamente o mesmo backend e dados da Produção (Railway),
-   mantemos API_BASE apontando para o servidor de produção. */
-const SERVIDO_PELO_BACKEND = false;
-
-// Backend Railway = modo PRODUÇÃO (votos ao vivo, selo real, reclamações persistentes)
-// API_BASE vazio = modo DEMO (só frontend, dados públicos + localStorage)
+// Quando servido pelo próprio backend Railway, usa mesma origem
+if (typeof window !== 'undefined' && window.location && 
+    window.location.hostname.includes('railway.app')) {
+  API_BASE = '';
+}
 
 window.MeuVoto = window.MeuVoto || {};
 
 window.MeuVoto.API_BASE = API_BASE;
-/* Global legado usado inline pela home (index.html). Sem ele, um <script> próprio
-   com `const API_BASE` lança SyntaxError e derruba TODA a lógica da página —
-   era isso que fazia o Radar Político cair no modo demo. */
 window.API_BASE = API_BASE;
-window.MeuVoto.MODO = 'producao';
-window.MeuVoto.SERVIDO_PELO_BACKEND = SERVIDO_PELO_BACKEND;
+window.MeuVoto.MODO = API_BASE ? 'producao' : 'offline';
 
 window.MeuVoto.URLS = {
   camara: 'https://dadosabertos.camara.leg.br/api/v2',
@@ -53,6 +50,6 @@ window.MeuVoto.TERMOMETRO = {
 };
 
 // Aviso de protótipo
-console.log('%c🟡 MeuVoto', 'font-size:16px;font-weight:bold;color:#FFD700');
+console.log('%c📱 MeuVoto App', 'font-size:16px;font-weight:bold;color:#FFD700');
 console.log('%cModo: ' + window.MeuVoto.MODO, 'color:#94A3B8');
 console.log('%cBackend: ' + API_BASE, 'color:#2ECC71');

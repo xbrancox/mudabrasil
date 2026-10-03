@@ -1204,15 +1204,9 @@ document.head.appendChild(st);
 function sa(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
 function tx(e){return (e&&e.textContent||'').trim();}
 function logo(){
- var hdr=document.querySelector('header')||document.querySelector('nav');if(!hdr)return;
- var img=hdr.querySelector('img[src*="logo"],img[src*="icon"],img[alt*="Vota"],svg');
- var brand=null;var cs=[].slice.call(hdr.querySelectorAll('a,div,span'));
- for(var i=0;i<cs.length;i++){var t=sa(tx(cs[i]));if(t==='votabrasil'||t.indexOf('votabrasil')===0){brand=cs[i];break;}}
- var target=brand||hdr;
- if(img){img.style.setProperty('width','56px','important');img.style.setProperty('height','56px','important');img.style.setProperty('max-width','none','important');}
- var ts=[].slice.call(target.querySelectorAll('span,div,p,em,small,b,strong'));
- for(var k=0;k<ts.length;k++){var tt=sa(tx(ts[k]));if(tt==='votabrasil'||tt.indexOf('participacao')===0){ts[k].style.setProperty('display','none','important');}}
- if(brand&&brand.setAttribute)brand.setAttribute('aria-label','MeuVoto');
+ /* Logo refatorada: o header agora é gerado por js/header.js com SVG vetorial premium.
+    Esta função ficou obsoleta após a migração da identidade visual. */
+ return false;
 }
 function fundo(){
  /* Removido: o painel compacto com donut + ranking + tabela agora é renderizado

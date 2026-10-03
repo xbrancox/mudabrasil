@@ -1,16 +1,21 @@
-﻿/* MeuVoto SW - shell offline + runtime cache + Web Push */
-var SHELL = 'meuvoto-shell-v2';
+/* MeuVoto SW - shell offline + runtime cache + Web Push */
+var SHELL = 'meuvoto-shell-v4';
 var PRE = [
-  './', './index.html', './config.js', 
+  './', './index.html', './config.local.js', 
   './js/cache.js', './js/offline.js', './js/push-notifications.js',
-  './pages/digest.html', './pages/digest-confirm.html', './pages/digest-admin.html',
-  './offline.html'
+  './js/site-header.js', './js/shared-ui.js',
+  './icon.svg', './logo.svg', './og-image.png',
+  './offline.html',
+  './pages/digest.html', './pages/digest-confirm.html',
+  './css/main.css', './css/design-system.css'
 ];
 
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(SHELL).then(function(c) {
-      return c.addAll(PRE);
+      return Promise.allSettled(
+        PRE.map(url => c.add(url).catch(err => console.warn('[SW] Falha ao cachear:', url, err)))
+      );
     }).then(function() {
       return self.skipWaiting();
     })
@@ -61,7 +66,7 @@ self.addEventListener('fetch', function(e) {
   }
   
   // Estratégia Network-First com fallback para APIs externas
-  if (/dadosabertos\.camara|legis\.senado|portaltransparencia|cnj\.jus|tse\.jus/.test(u.host)) {
+  if (/dadosabertos\.camara|legis\.senado|portaltransparencia|cnj\.jus|tse\.jus|api\.meu-voto\.app/.test(u.host)) {
     e.respondWith(
       fetch(e.request).then(function(r) {
         var c = r.clone();
@@ -82,8 +87,8 @@ self.addEventListener('push', function(e) {
   var title = data.title || 'MeuVoto · Resumo Semanal';
   var options = {
     body: data.body || 'O resumo semanal das votações está disponível.',
-    icon: '/public/icon-192.png',
-    badge: '/public/icon-maskable-512.png',
+    icon: '/icon.svg',
+    badge: '/icon.svg',
     data: {
       url: data.url || 'https://meu-voto.app/pages/digest.html'
     },
