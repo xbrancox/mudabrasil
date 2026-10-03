@@ -1,8 +1,8 @@
-const CACHE = 'votabrasil-v36';
+const CACHE = 'meuvoto-app-v1';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.webmanifest',
+  '/manifest.json',
   './icon.svg',
   './logo.svg'
 ];
