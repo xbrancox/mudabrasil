@@ -101,7 +101,7 @@
     topo.id = 'mbtopo';
     topo.innerHTML =
       '<header>' +
-      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'icon.svg" alt="MeuVoto" width="48" height="48" style="border-radius:14px;display:block"></span><span><b>MeuVoto</b><span class="mv-slogan">Seu voto coloca, seu voto tira.</span></span></a>' +
+      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'icon.svg" alt="MeuVoto" width="48" height="48" style="border-radius:14px;display:block"></span><span><b>MeuVoto</b><span class="mv-slogan">Meu voto coloca, meu voto tira.</span></span></a>' +
       ' <button class="ham" aria-label="Menu" onclick="document.getElementById(\'mbtopo-mnav\').classList.toggle(\'open\')"><i class="fa-solid fa-bars"></i></button>' +
       ' <nav>' + nav + '</nav>' +
       ' <div class="hact"><span class="hbadge" id="mbtopo-badge" hidden>conectando\u2026</span>' +

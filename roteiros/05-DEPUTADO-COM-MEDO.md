@@ -91,7 +91,7 @@
 > E os deputados que ainda não aprenderam...
 > **vão aprender em breve.**"
 
-**TEXTO NA TELA:** "Seu voto coloca. Seu voto tira."
+**TEXTO NA TELA:** "Meu voto coloca. Meu voto tira."
 **NARRAÇÃO:**
 > "Entre em **votabrasil.app**.
 > E faça o seu deputado sentir medo também."

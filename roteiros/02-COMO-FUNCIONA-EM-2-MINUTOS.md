@@ -95,7 +95,7 @@
 **NARRAÇÃO:**
 > "Você não precisa esperar 4 anos pra ter voz.
 > Entre em **votabrasil.app**. Coloque seu voto. Guarde seu código.
-> **Seu voto coloca. Seu voto tira.**"
+> **Meu voto coloca. Meu voto tira.**"
 
 **LOGO + URL + QR CODE**
 

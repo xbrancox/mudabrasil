@@ -94,7 +94,7 @@
 > Entre em **votabrasil.app**.
 > E faça o que eu fiz: **recupere o seu poder**."
 
-**TEXTO NA TELA:** "Seu voto coloca. Seu voto tira."
+**TEXTO NA TELA:** "Meu voto coloca. Meu voto tira."
 **LOGO + QR CODE**
 
 ---

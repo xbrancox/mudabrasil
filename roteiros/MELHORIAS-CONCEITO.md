@@ -439,7 +439,7 @@ Não pela força. Não pela violência. Não pela revolução.
 Mas pela **pressão organizada, verificável, contínua e silenciosa** de milhões de cidadãos
 que finalmente entenderam:
 
-> **"Seu voto coloca. Seu voto tira."**
+> **"Meu voto coloca. Meu voto tira."**
 
 E isso muda tudo.
 

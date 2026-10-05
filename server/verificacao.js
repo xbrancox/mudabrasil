@@ -93,7 +93,7 @@ async function sendVerificationEmail(email, token, politicianName, baseUrl) {
         <p style="font-size: 14px; color: #666;">Ou acesse diretamente: <a href="${confirmUrl}">${confirmUrl}</a></p>
         <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 24px 0;">
         <p style="font-size: 12px; color: #999;">Este link expira em 24 horas. Se não solicitou esta verificação, ignore este e-mail.</p>
-        <p style="font-size: 12px; color: #999;">MeuVoto — Seu voto coloca. Seu voto tira.</p>
+        <p style="font-size: 12px; color: #999;">MeuVoto — Meu voto coloca. Meu voto tira.</p>
       </div>
     </body>
     </html>
@@ -112,7 +112,7 @@ async function sendVerificationEmail(email, token, politicianName, baseUrl) {
     
     Este link expira em 24 horas. Se não solicitou esta verificação, ignore este e-mail.
     
-    MeuVoto — Seu voto coloca. Seu voto tira.
+    MeuVoto — Meu voto coloca. Meu voto tira.
   `;
 
   if (transporter) {

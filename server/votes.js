@@ -3,7 +3,7 @@
    ------------------------------------------------------------
    O coração da plataforma: um "termômetro de confiança" em que o
    cidadão expressa VOTO DE CONFIANÇA em um parlamentar e pode
-   REVOGÁ-LO a qualquer momento ("Seu voto coloca, seu voto tira").
+   REVOGÁ-LO a qualquer momento ("Meu voto coloca, meu voto tira").
 
    DECISÕES DE PROJETO (regras inegociáveis do fundador):
    - ANONIMATO / ANTI-COERÇÃO (R1, R6, LGPD): o sistema NUNCA liga

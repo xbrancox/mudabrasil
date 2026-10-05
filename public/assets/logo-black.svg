@@ -1,9 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
-  <defs>
-    <!-- Filter: convert all colors to black, preserving alpha -->
-    <filter id="toBlack">
-      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
-    </filter>
-  </defs>
-  <image filter="url(#toBlack)" href="logo.svg" width="1024" height="1024"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Black version for light backgrounds -->
+  
+  <!-- Stylized "V" mark -->
+  <path d="M 280 360 L 512 720 L 744 360" 
+        stroke="#1a1a2e" 
+        stroke-width="72" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        fill="none"/>
+  
+  <!-- Citizen dot -->
+  <circle cx="512" cy="320" r="64" fill="#1a1a2e"/>
+  
+  <!-- Accent lines -->
+  <path d="M 460 320 L 440 280" 
+        stroke="#1a1a2e" 
+        stroke-width="24" 
+        stroke-linecap="round"/>
+  <path d="M 564 320 L 584 280" 
+        stroke="#1a1a2e" 
+        stroke-width="24" 
+        stroke-linecap="round"/>
 </svg>

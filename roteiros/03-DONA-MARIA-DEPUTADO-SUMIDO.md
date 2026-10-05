@@ -53,7 +53,7 @@
 > "Mas isso não é só pra eleição, não?"
 
 **JÉSSICA:**
-> "Não, vó. É pra vida toda. **Seu voto coloca, seu voto tira.**"
+> "Não, vó. É pra vida toda. **Meu voto coloca, meu voto tira.**"
 
 ---
 
@@ -102,7 +102,7 @@
 > "A dona Maria descobriu. E você?"
 
 **VISUAL:** QR Code + URL
-**TEXTO NA TELA:** "SEU VOTO COLOCA. SEU VOTO TIRA."
+**TEXTO NA TELA:** "MEU VOTO COLOCA. MEU VOTO TIRA."
 **NARRAÇÃO:**
 > "Entre em **votabrasil.app**.
 > E descubra que o seu voto **não acabou na urna**."

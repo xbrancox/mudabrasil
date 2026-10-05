@@ -1,7 +1,7 @@
 {
   "name": "VotaBrasil - Urna Digital",
   "short_name": "VotaBrasil",
-  "description": "VotaBrasil: seu voto coloca, seu voto tira. Protótipo de viabilidade, sem valor jurídico.",
+  "description": "VotaBrasil: meu voto coloca, meu voto tira. Protótipo de viabilidade, sem valor jurídico.",
   "start_url": "index.html",
   "scope": "./",
   "display": "standalone",

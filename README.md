@@ -1,75 +1,75 @@
-# ??? VotaBrasil — Redesign v2.0
+# ??? VotaBrasil ï¿½ Redesign v2.0
 
-Plataforma cívica de **revogação do voto** com foco em **transparência total**.
-Esta é a versão **redesign**, criada em arquivos novos sem alterar o projeto original.
+Plataforma cï¿½vica de **revogaï¿½ï¿½o do voto** com foco em **transparï¿½ncia total**.
+Esta ï¿½ a versï¿½o **redesign**, criada em arquivos novos sem alterar o projeto original.
 
 > ? **Modo duplo de dados:** com o servidor Node rodando, o site exibe a **lista REAL
-> de 513 deputados federais** (dados abertos da Câmara dos Deputados, com fotos) **e o
-> Termômetro de Confiança ao vivo** (votos reais colocados no navegador). Aberto sem
-> servidor (ex.: `file://`), cai automaticamente no **modo demo** com dados sintéticos —
+> de 513 deputados federais** (dados abertos da Cï¿½mara dos Deputados, com fotos) **e o
+> Termï¿½metro de Confianï¿½a ao vivo** (votos reais colocados no navegador). Aberto sem
+> servidor (ex.: `file://`), cai automaticamente no **modo demo** com dados sintï¿½ticos ï¿½
 > sempre funcional, nunca quebra.
 >
-> ??? **"Seu voto coloca, seu voto tira."** O Termômetro é um *termômetro de confiança*
-> ("IBOPE em tempo real"): um índice agregado e anônimo de apoio contínuo a cada
-> parlamentar. Protótipo de pesquisa/opinião — **sem valor legal e sem vínculo com
-> eleições oficiais**.
+> ??? **"Meu voto coloca, meu voto tira."** O Termï¿½metro ï¿½ um *termï¿½metro de confianï¿½a*
+> ("IBOPE em tempo real"): um ï¿½ndice agregado e anï¿½nimo de apoio contï¿½nuo a cada
+> parlamentar. Protï¿½tipo de pesquisa/opiniï¿½o ï¿½ **sem valor legal e sem vï¿½nculo com
+> eleiï¿½ï¿½es oficiais**.
 >
-> ? **Tempo real de verdade:** cada voto, revogação ou "manter" é transmitido aos
+> ? **Tempo real de verdade:** cada voto, revogaï¿½ï¿½o ou "manter" ï¿½ transmitido aos
 > navegadores conectados em milissegundos via **SSE** (`GET /api/stream`), com polling
-> como rede de segurança. A home exibe um painel **"??? Plataforma ao vivo"** com os
-> números reais, atualizando no ar quando alguém vota em outra aba.
+> como rede de seguranï¿½a. A home exibe um painel **"??? Plataforma ao vivo"** com os
+> nï¿½meros reais, atualizando no ar quando alguï¿½m vota em outra aba.
 >
-> ??? **Produção de verdade:** as urnas vivem num **SQLite nativo do Node**
-> (`node:sqlite`, zero dependências de npm), com migração automática de urnas antigas
-> em JSON, persistência que sobrevive a reinícios e atualização automática dos dados
-> públicos a cada 24 h.
+> ??? **Produï¿½ï¿½o de verdade:** as urnas vivem num **SQLite nativo do Node**
+> (`node:sqlite`, zero dependï¿½ncias de npm), com migraï¿½ï¿½o automï¿½tica de urnas antigas
+> em JSON, persistï¿½ncia que sobrevive a reinï¿½cios e atualizaï¿½ï¿½o automï¿½tica dos dados
+> pï¿½blicos a cada 24 h.
 
-## ?? Atualizações — 04/09/2026
+## ?? Atualizaï¿½ï¿½es ï¿½ 04/09/2026
 
-- **??? Como votou (votações nominais) na ficha:** deputados federais via sondagem
-  das votações do Plenário (`/votacoes/{id}/votos`) com cache de sessão compartilhado;
-  senadores via histórico completo do Senado (`/senador/{codigo}/votacoes`) — 8 mais
-  recentes na ficha e histórico inteiro com "Ver todas" e scroll infinito (blocos de 50).
-  Badges: Sim = verde, Não = vermelho, presentes/ausências em cinza.
-- **?? Proxy `/api/camara/*`:** o CORS da Câmara é instável e `/deputados/{id}` nunca
-  envia `Access-Control-Allow-Origin` — com backend ativo, todas as chamadas da Câmara
-  vão same-origin pelo proxy. Em hosts estáticos (GitHub Pages), o frontend usa o
+- **??? Como votou (votaï¿½ï¿½es nominais) na ficha:** deputados federais via sondagem
+  das votaï¿½ï¿½es do Plenï¿½rio (`/votacoes/{id}/votos`) com cache de sessï¿½o compartilhado;
+  senadores via histï¿½rico completo do Senado (`/senador/{codigo}/votacoes`) ï¿½ 8 mais
+  recentes na ficha e histï¿½rico inteiro com "Ver todas" e scroll infinito (blocos de 50).
+  Badges: Sim = verde, Nï¿½o = vermelho, presentes/ausï¿½ncias em cinza.
+- **?? Proxy `/api/camara/*`:** o CORS da Cï¿½mara ï¿½ instï¿½vel e `/deputados/{id}` nunca
+  envia `Access-Control-Allow-Origin` ï¿½ com backend ativo, todas as chamadas da Cï¿½mara
+  vï¿½o same-origin pelo proxy. Em hosts estï¿½ticos (GitHub Pages), o frontend usa o
   Railway como proxy automaticamente.
-- **?? Verificação de políticos ponta a ponta:** `solicitar` envia `politicianId`,
+- **?? Verificaï¿½ï¿½o de polï¿½ticos ponta a ponta:** `solicitar` envia `politicianId`,
   `confirmar` checa `data.ok`, o selo grava no SQLite e passa a aparecer no
-  `/api/candidatos`; o link do e-mail redireciona para a home com toast. Domínios
+  `/api/candidatos`; o link do e-mail redireciona para a home com toast. Domï¿½nios
   autorizados: `@camara.leg.br`, `@senado.leg.br`, `@senador.leg.br`, `@tse.jus.br`.
-- **?? Bateria de testes verde:** `test-engine` 25/25 (migração, carga 10k, SSE,
-  persistência, fallback JSON), `test-thermometer` 21/21 (voto ? código ? revogação),
-  `test-live` 4/4 (SSE entre páginas), `test-render` 6 páginas sem erros.
+- **?? Bateria de testes verde:** `test-engine` 25/25 (migraï¿½ï¿½o, carga 10k, SSE,
+  persistï¿½ncia, fallback JSON), `test-thermometer` 21/21 (voto ? cï¿½digo ? revogaï¿½ï¿½o),
+  `test-live` 4/4 (SSE entre pï¿½ginas), `test-render` 6 pï¿½ginas sem erros.
   Novos: `tests/e2e-votos-ficha.js`, `tests/e2e-pages.js`, `tests/e2e-verificacao.js`.
-- **?? Correções:** ids de senadores sem prefixo duplicado (`senado-senado-*`),
-  `idDeputadoAutor` (parâmetro correto das proposições), métricas sintéticas removidas
-  da ficha (só dados reais), `config.js` em mesma origem quando servido pelo backend,
+- **?? Correï¿½ï¿½es:** ids de senadores sem prefixo duplicado (`senado-senado-*`),
+  `idDeputadoAutor` (parï¿½metro correto das proposiï¿½ï¿½es), mï¿½tricas sintï¿½ticas removidas
+  da ficha (sï¿½ dados reais), `config.js` em mesma origem quando servido pelo backend,
   consent-note/trendChart restabelecidos no meu-voto.html.
 
 ---
 
 ## ?? Como Executar
 
-**Opção 1 — Com dados REAIS (recomendado):**
+**Opï¿½ï¿½o 1 ï¿½ Com dados REAIS (recomendado):**
 ```bash
 node server/index.js
 # ? http://localhost:8080
 ```
-Um único comando sobe o site inteiro **e** a API de dados públicos.
-Requer Node.js 18+ (usa o `fetch` global). **Sem `npm install`** — zero dependências.
+Um ï¿½nico comando sobe o site inteiro **e** a API de dados pï¿½blicos.
+Requer Node.js 18+ (usa o `fetch` global). **Sem `npm install`** ï¿½ zero dependï¿½ncias.
 Com **Node 22.5+** (recomendado), as urnas usam **SQLite nativo** (`node:sqlite`);
-em Node mais antigo o servidor cai sozinho no **arquivo JSON atômico** — mesmo
-comportamento, outro backend (dá para forçar com `MB_STORAGE=json|sqlite`).
+em Node mais antigo o servidor cai sozinho no **arquivo JSON atï¿½mico** ï¿½ mesmo
+comportamento, outro backend (dï¿½ para forï¿½ar com `MB_STORAGE=json|sqlite`).
 
-**Opção 2 — Aberto direto (modo demo):**
+**Opï¿½ï¿½o 2 ï¿½ Aberto direto (modo demo):**
 ```
-Dê um duplo clique em index.html
+Dï¿½ um duplo clique em index.html
 ```
-Sem servidor, a API não responde e o site usa os 6 candidatos sintéticos de exemplo.
+Sem servidor, a API nï¿½o responde e o site usa os 6 candidatos sintï¿½ticos de exemplo.
 
-**Opção 3 — Servidor estático (modo demo):**
+**Opï¿½ï¿½o 3 ï¿½ Servidor estï¿½tico (modo demo):**
 ```bash
 python -m http.server 8000     # ou: npx serve .
 ```
@@ -83,175 +83,175 @@ python -m http.server 8000     # ou: npx serve .
 
 ```
 votaBrasil-redesign/
-+-- index.html                 # Home — hero, painel "Plataforma ao vivo" (dados reais em tempo real), navegação
++-- index.html                 # Home ï¿½ hero, painel "Plataforma ao vivo" (dados reais em tempo real), navegaï¿½ï¿½o
 +-- css/
-¦   +-- design-system.css      # Sistema de design (tokens, componentes, animações)
+ï¿½   +-- design-system.css      # Sistema de design (tokens, componentes, animaï¿½ï¿½es)
 +-- js/
-¦   +-- candidate-data.js      # Dados DEMO sintéticos + helpers (formato, integridade)
-¦   +-- candidates.js          # Página Candidatos (dual-mode: reais via API ? demo)
-¦   +-- thermometer.js         # ??? Termômetro (votar/ver/revogar/manter + índice ao vivo)
-¦   +-- live-stream.js         # ? Cliente SSE (window.MBLive): canal principal + polling de segurança
-¦   +-- shared-ui.js           # UI compartilhada (menu mobile, login, scroll-reveal)
-+-- server/                    # ?? Backend (Node.js puro, sem dependências)
-¦   +-- index.js               # Servidor: estáticos + API /api/* + SSE /api/stream + cron de atualização
-¦   +-- ingest.js              # Ingestão + cache dos dados reais (Câmara)
-¦   +-- votes.js               # ??? Engine de voto (anonimato, decaimento, revogação, hook de mudança)
-¦   +-- db.js                  # ??? Armazenamento das urnas: SQLite nativo (node:sqlite) + fallback JSON
-¦   +-- data/
-¦       +-- deputados.json     # Cache em disco dos 513 deputados reais
-¦       +-- votos.db           # ??? Urnas anônimas em SQLite (hash do código — nunca o código)
-¦       +-- votos.json         # Urnas no fallback JSON / legado (migrado para o .db na 1ª execução)
-¦       +-- .salt              # Sal criptográfico do ambiente (gerado na 1ª execução)
+ï¿½   +-- candidate-data.js      # Dados DEMO sintï¿½ticos + helpers (formato, integridade)
+ï¿½   +-- candidates.js          # Pï¿½gina Candidatos (dual-mode: reais via API ? demo)
+ï¿½   +-- thermometer.js         # ??? Termï¿½metro (votar/ver/revogar/manter + ï¿½ndice ao vivo)
+ï¿½   +-- live-stream.js         # ? Cliente SSE (window.MBLive): canal principal + polling de seguranï¿½a
+ï¿½   +-- shared-ui.js           # UI compartilhada (menu mobile, login, scroll-reveal)
++-- server/                    # ?? Backend (Node.js puro, sem dependï¿½ncias)
+ï¿½   +-- index.js               # Servidor: estï¿½ticos + API /api/* + SSE /api/stream + cron de atualizaï¿½ï¿½o
+ï¿½   +-- ingest.js              # Ingestï¿½o + cache dos dados reais (Cï¿½mara)
+ï¿½   +-- votes.js               # ??? Engine de voto (anonimato, decaimento, revogaï¿½ï¿½o, hook de mudanï¿½a)
+ï¿½   +-- db.js                  # ??? Armazenamento das urnas: SQLite nativo (node:sqlite) + fallback JSON
+ï¿½   +-- data/
+ï¿½       +-- deputados.json     # Cache em disco dos 513 deputados reais
+ï¿½       +-- votos.db           # ??? Urnas anï¿½nimas em SQLite (hash do cï¿½digo ï¿½ nunca o cï¿½digo)
+ï¿½       +-- votos.json         # Urnas no fallback JSON / legado (migrado para o .db na 1ï¿½ execuï¿½ï¿½o)
+ï¿½       +-- .salt              # Sal criptogrï¿½fico do ambiente (gerado na 1ï¿½ execuï¿½ï¿½o)
 +-- pages/
-¦   +-- candidatos.html        # ? Comparação de candidatos (dados reais)
-¦   +-- termometro.html        # ??? Revogação do voto + índice de confiança ao vivo
-¦   +-- proposta.html          # Manifesto editável da proposta
-¦   +-- status.html            # Painel ao vivo: métricas reais do termômetro (SSE + fallback demo)
-¦   +-- revogar.html           # Fluxo de revogação com assinaturas e debate
-¦   +-- comunidade.html        # Contribuidores e estatísticas
+ï¿½   +-- candidatos.html        # ? Comparaï¿½ï¿½o de candidatos (dados reais)
+ï¿½   +-- termometro.html        # ??? Revogaï¿½ï¿½o do voto + ï¿½ndice de confianï¿½a ao vivo
+ï¿½   +-- proposta.html          # Manifesto editï¿½vel da proposta
+ï¿½   +-- status.html            # Painel ao vivo: mï¿½tricas reais do termï¿½metro (SSE + fallback demo)
+ï¿½   +-- revogar.html           # Fluxo de revogaï¿½ï¿½o com assinaturas e debate
+ï¿½   +-- comunidade.html        # Contribuidores e estatï¿½sticas
 +-- tests/                     # Testes automatizados + screenshots
-    +-- test-engine.js         # ?? Motor em Node puro: decaimento, migração JSON?SQLite, carga 10k, SSE, persistência pós-restart, fallback JSON (25 checks)
-    +-- test-live.js           # ?? Playwright: tempo real entre páginas + fallback demo (13 checks)
-    +-- test-thermometer.js    # ?? Playwright: termômetro completo — ciclo votar/ver/revogar (19 checks)
-    +-- test-render.js         # ?? Playwright: renderização das páginas (modo real + demo)
-    +-- screenshots/           # Evidências visuais de cada fase
+    +-- test-engine.js         # ?? Motor em Node puro: decaimento, migraï¿½ï¿½o JSON?SQLite, carga 10k, SSE, persistï¿½ncia pï¿½s-restart, fallback JSON (25 checks)
+    +-- test-live.js           # ?? Playwright: tempo real entre pï¿½ginas + fallback demo (13 checks)
+    +-- test-thermometer.js    # ?? Playwright: termï¿½metro completo ï¿½ ciclo votar/ver/revogar (19 checks)
+    +-- test-render.js         # ?? Playwright: renderizaï¿½ï¿½o das pï¿½ginas (modo real + demo)
+    +-- screenshots/           # Evidï¿½ncias visuais de cada fase
 ```
 
 ---
 
 ## ?? Design System
 
-Todo o visual é controlado por **design tokens** em `css/design-system.css`:
+Todo o visual ï¿½ controlado por **design tokens** em `css/design-system.css`:
 
-- **Paleta cívica tecnológica**: azul-marinho (`#0A2E5D`), azul primário (`#115FCB`) e dourado (`#FFD700`)
-- **Gradientes** em logo, botões, barras e círculo de assinatura
-- **Textura** sutil de grid no fundo (efeito tecnológico)
-- **Animações**: fade-in, scroll-reveal, pulso em ações, shimmer em barras, contadores animados
-- **Responsivo**: sidebar vira menu hambúrguer em telas pequenas
-- **Acessibilidade**: alto contraste, navegação por teclado, foco visível
+- **Paleta cï¿½vica tecnolï¿½gica**: azul-marinho (`#0A2E5D`), azul primï¿½rio (`#115FCB`) e dourado (`#FFD700`)
+- **Gradientes** em logo, botï¿½es, barras e cï¿½rculo de assinatura
+- **Textura** sutil de grid no fundo (efeito tecnolï¿½gico)
+- **Animaï¿½ï¿½es**: fade-in, scroll-reveal, pulso em aï¿½ï¿½es, shimmer em barras, contadores animados
+- **Responsivo**: sidebar vira menu hambï¿½rguer em telas pequenas
+- **Acessibilidade**: alto contraste, navegaï¿½ï¿½o por teclado, foco visï¿½vel
 
 ---
 
-## ??? Módulo de Candidatos (destaque)
+## ??? Mï¿½dulo de Candidatos (destaque)
 
-A página `pages/candidatos.html` é o grande diferencial: **ajuda o eleitor a decidir**
-comparando candidatos com base em **dados públicos oficiais**.
+A pï¿½gina `pages/candidatos.html` ï¿½ o grande diferencial: **ajuda o eleitor a decidir**
+comparando candidatos com base em **dados pï¿½blicos oficiais**.
 
-### Modo duplo (automático)
+### Modo duplo (automï¿½tico)
 
 | | ?? **Modo Real** (com `node server/index.js`) | ?? **Modo Demo** (sem servidor) |
 |---|---|---|
-| **Fonte** | API aberta da Câmara dos Deputados | Dados sintéticos embutidos |
+| **Fonte** | API aberta da Cï¿½mara dos Deputados | Dados sintï¿½ticos embutidos |
 | **Quantidade** | 513 deputados federais atuais | 6 candidatos de exemplo |
 | **Fotos** | Fotos oficiais reais (lazy-load) | Avatares com iniciais |
 | **Dados** | Nome, partido, estado, cargo, e-mail, foto | Perfil completo (exemplo) |
-| **Selo** | "?? Dados reais — Câmara dos Deputados" | "?? Modo demo — dados sintéticos" |
+| **Selo** | "?? Dados reais ï¿½ Cï¿½mara dos Deputados" | "?? Modo demo ï¿½ dados sintï¿½ticos" |
 
 O frontend tenta `fetch('/api/candidatos')`; se responder com dados reais, usa-os;
-caso contrário, mantém o modo demo. **O usuário nunca vê uma página quebrada.**
+caso contrï¿½rio, mantï¿½m o modo demo. **O usuï¿½rio nunca vï¿½ uma pï¿½gina quebrada.**
 
 ### Recursos
 
-| Recurso | Descrição |
+| Recurso | Descriï¿½ï¿½o |
 |---------|-----------|
-| ?? **Busca** | Por nome, partido, estado ou área de atuação |
+| ?? **Busca** | Por nome, partido, estado ou ï¿½rea de atuaï¿½ï¿½o |
 | ??? **Filtros** | Por estado e partido (e cargo, no modo demo) |
-| ?? **Ordenação** | Ajustada ao modo (nome/partido/estado no real; transparência/votos/processos no demo) |
-| ?? **Comparação** | Até 3 candidatos lado a lado, com ? no melhor valor |
+| ?? **Ordenaï¿½ï¿½o** | Ajustada ao modo (nome/partido/estado no real; transparï¿½ncia/votos/processos no demo) |
+| ?? **Comparaï¿½ï¿½o** | Atï¿½ 3 candidatos lado a lado, com ? no melhor valor |
 | ?? **Detalhes** | Perfil com foto e tabela Indicador/Valor/Fonte |
 
-### Índice de Integridade
+### ï¿½ndice de Integridade
 
-Quando os dados completos existem (modo demo / enriquecido em produção), cada candidato
-recebe um **índice de integridade (0–100)**:
+Quando os dados completos existem (modo demo / enriquecido em produï¿½ï¿½o), cada candidato
+recebe um **ï¿½ndice de integridade (0ï¿½100)**:
 
 ```
-score = transparência
-      - (processos judiciais × 4)
-      - (condenações × 10)
-      + ((presença - 80) × 0.5)
+score = transparï¿½ncia
+      - (processos judiciais ï¿½ 4)
+      - (condenaï¿½ï¿½es ï¿½ 10)
+      + ((presenï¿½a - 80) ï¿½ 0.5)
 ```
 
-No modo real básico, o índice aparece apenas quando os dados necessários estão disponíveis.
+No modo real bï¿½sico, o ï¿½ndice aparece apenas quando os dados necessï¿½rios estï¿½o disponï¿½veis.
 
 ---
 
-## ??? Termômetro de Confiança — Revogação do Voto
+## ??? Termï¿½metro de Confianï¿½a ï¿½ Revogaï¿½ï¿½o do Voto
 
-`pages/termometro.html` é o coração da plataforma: o eleitor **coloca** seu apoio a um
-parlamentar, acompanha um **índice de confiança ao vivo** e pode **tirar** (revogar) ou
-**manter** (reafirmar) o voto a qualquer momento. "Seu voto coloca, seu voto tira."
+`pages/termometro.html` ï¿½ o coraï¿½ï¿½o da plataforma: o eleitor **coloca** seu apoio a um
+parlamentar, acompanha um **ï¿½ndice de confianï¿½a ao vivo** e pode **tirar** (revogar) ou
+**manter** (reafirmar) o voto a qualquer momento. "Meu voto coloca, meu voto tira."
 
 ### Como funciona
 
-| Ação | O que acontece |
+| Aï¿½ï¿½o | O que acontece |
 |------|----------------|
-| ??? **Colocar** | Escolhe um parlamentar (busca nos 513 reais) e recebe um **código de voto** (ex.: `A3F9-K2MN-P7Q1-X4TR`) |
-| ?? **Ver** | Digita o código e vê o status do voto — **o nome do candidato aparece mascarado por padrão** (anti-coerção / anti-impressão) |
-| ?? **Manter** | Reafirma o voto e **reinicia o relógio** do decaimento |
-| ? **Tirar (revogar)** | O voto deixa de contar imediatamente — e fica visível no total de revogações (transparência) |
+| ??? **Colocar** | Escolhe um parlamentar (busca nos 513 reais) e recebe um **cï¿½digo de voto** (ex.: `A3F9-K2MN-P7Q1-X4TR`) |
+| ?? **Ver** | Digita o cï¿½digo e vï¿½ o status do voto ï¿½ **o nome do candidato aparece mascarado por padrï¿½o** (anti-coerï¿½ï¿½o / anti-impressï¿½o) |
+| ?? **Manter** | Reafirma o voto e **reinicia o relï¿½gio** do decaimento |
+| ? **Tirar (revogar)** | O voto deixa de contar imediatamente ï¿½ e fica visï¿½vel no total de revogaï¿½ï¿½es (transparï¿½ncia) |
 
-### Anonimato (regra inegociável — LGPD / anti-coerção)
+### Anonimato (regra inegociï¿½vel ï¿½ LGPD / anti-coerï¿½ï¿½o)
 
-- O servidor **nunca armazena o código bruto**: guarda apenas
-  `sha256(código + SALT)` — o código não é recuperável, nem por nós.
-- O voto **não se vincula a conta, IP ou dispositivo**: quem revoga/prova é só quem tem
-  o código; o site não prova que *você* votou em alguém.
-- A agregação (`/api/termometro`) é **irreversível**: não existe rota que mapeie
+- O servidor **nunca armazena o cï¿½digo bruto**: guarda apenas
+  `sha256(cï¿½digo + SALT)` ï¿½ o cï¿½digo nï¿½o ï¿½ recuperï¿½vel, nem por nï¿½s.
+- O voto **nï¿½o se vincula a conta, IP ou dispositivo**: quem revoga/prova ï¿½ sï¿½ quem tem
+  o cï¿½digo; o site nï¿½o prova que *vocï¿½* votou em alguï¿½m.
+- A agregaï¿½ï¿½o (`/api/termometro`) ï¿½ **irreversï¿½vel**: nï¿½o existe rota que mapeie
   eleitor ? candidato.
-- **UI nunca revela o candidato votado por padrão** (nome mascarado com `•`); há um
-  botão "Mostrar" apenas para o próprio portador do código.
-- Sem cadastro, sem e-mail, sem tracking — voto = um código que só o eleitor conhece.
+- **UI nunca revela o candidato votado por padrï¿½o** (nome mascarado com `ï¿½`); hï¿½ um
+  botï¿½o "Mostrar" apenas para o prï¿½prio portador do cï¿½digo.
+- Sem cadastro, sem e-mail, sem tracking ï¿½ voto = um cï¿½digo que sï¿½ o eleitor conhece.
 
-### Decaimento do voto ("voto nunca morre, só esfria")
+### Decaimento do voto ("voto nunca morre, sï¿½ esfria")
 
-O peso de cada voto decai com o tempo para refletir **apoio ativo**, não inércia:
+O peso de cada voto decai com o tempo para refletir **apoio ativo**, nï¿½o inï¿½rcia:
 
 | Idade do voto | Peso |
 |---------------|------|
-| 0–90 dias | **1,0** (peso cheio) |
-| 90–180 dias | decaimento linear (1,0 ? 0,5) |
-| 180+ dias | **0,5** (piso — o voto nunca zera sozinho) |
+| 0ï¿½90 dias | **1,0** (peso cheio) |
+| 90ï¿½180 dias | decaimento linear (1,0 ? 0,5) |
+| 180+ dias | **0,5** (piso ï¿½ o voto nunca zera sozinho) |
 
 "Manter meu voto" reinicia a contagem de 90 dias. A UI avisa quando o voto tem
-mais de 30 dias sem reafirmação.
+mais de 30 dias sem reafirmaï¿½ï¿½o.
 
-### Índice de confiança (ao vivo)
+### ï¿½ndice de confianï¿½a (ao vivo)
 
 ```
 pesoEfetivo(politico) = S peso(voto ativo)          # com decaimento por idade
-indice = 100 × pesoEfetivo / (pesoEfetivo + 100)    # curva de saturação (K = 100)
+indice = 100 ï¿½ pesoEfetivo / (pesoEfetivo + 100)    # curva de saturaï¿½ï¿½o (K = 100)
 ```
 
-A saturação evita que um único político domine a escala por volume puro — o índice
-mede **intensidade de apoio ativo**, e a página mostra sempre os números crus ao lado
-(votos ativos, revogações, peso efetivo) para nada ficar oculto.
+A saturaï¿½ï¿½o evita que um ï¿½nico polï¿½tico domine a escala por volume puro ï¿½ o ï¿½ndice
+mede **intensidade de apoio ativo**, e a pï¿½gina mostra sempre os nï¿½meros crus ao lado
+(votos ativos, revogaï¿½ï¿½es, peso efetivo) para nada ficar oculto.
 
-> **ICM v1.0 (Índice de Confiança VotaBrasil)**: em produção,
-> `ICM = 0.40·resposta + 0.35·cumprimento + 0.25·(1 - devoluções usadas)`.
-> Este protótipo implementa a **componente de confiança** (o índice acima); as demais
-> componentes virão com as fontes de dados de produção (TSE/Transparência/CNJ).
+> **ICM v1.0 (ï¿½ndice de Confianï¿½a VotaBrasil)**: em produï¿½ï¿½o,
+> `ICM = 0.40ï¿½resposta + 0.35ï¿½cumprimento + 0.25ï¿½(1 - devoluï¿½ï¿½es usadas)`.
+> Este protï¿½tipo implementa a **componente de confianï¿½a** (o ï¿½ndice acima); as demais
+> componentes virï¿½o com as fontes de dados de produï¿½ï¿½o (TSE/Transparï¿½ncia/CNJ).
 
-### Proteção, persistência e operação
+### Proteï¿½ï¿½o, persistï¿½ncia e operaï¿½ï¿½o
 
-- **Anti-brigada**: rate-limit por IP (20 ações/min) no motor de voto.
+- **Anti-brigada**: rate-limit por IP (20 aï¿½ï¿½es/min) no motor de voto.
 - **??? Armazenamento** (`server/db.js`): urnas num **SQLite nativo do Node**
-  (`node:sqlite`, Node 22.5+) — um único arquivo `server/data/votos.db`, transações
-  atômicas, índice por parlamentar. Em Node mais antigo, fallback automático para o
-  **arquivo JSON atômico** (tmp + rename); `MB_STORAGE=json|sqlite` força o backend.
-- **Migração automática**: urnas legadas em `votos.json` são importadas para o SQLite
-  na primeira inicialização (o JSON fica como backup histórico).
-- **Durabilidade**: o voto **sobrevive a reinícios do servidor** (coberto por teste).
-- **Atualização automática**: os dados públicos (513 deputados) são rebuscados a cada
-  24 h por um cron no próprio processo (`MB_REFRESH_HOURS` ajusta o intervalo).
-- **Modo demo**: sem servidor, a página exibe 5 linhas sintéticas e desabilita a busca —
+  (`node:sqlite`, Node 22.5+) ï¿½ um ï¿½nico arquivo `server/data/votos.db`, transaï¿½ï¿½es
+  atï¿½micas, ï¿½ndice por parlamentar. Em Node mais antigo, fallback automï¿½tico para o
+  **arquivo JSON atï¿½mico** (tmp + rename); `MB_STORAGE=json|sqlite` forï¿½a o backend.
+- **Migraï¿½ï¿½o automï¿½tica**: urnas legadas em `votos.json` sï¿½o importadas para o SQLite
+  na primeira inicializaï¿½ï¿½o (o JSON fica como backup histï¿½rico).
+- **Durabilidade**: o voto **sobrevive a reinï¿½cios do servidor** (coberto por teste).
+- **Atualizaï¿½ï¿½o automï¿½tica**: os dados pï¿½blicos (513 deputados) sï¿½o rebuscados a cada
+  24 h por um cron no prï¿½prio processo (`MB_REFRESH_HOURS` ajusta o intervalo).
+- **Modo demo**: sem servidor, a pï¿½gina exibe 5 linhas sintï¿½ticas e desabilita a busca ï¿½
   o selo no topo indica sempre a fonte (?? real / ?? demo).
 
 ### Painel ao vivo (`pages/status.html`)
 
-O Status lê `/api/termometro` em tempo real (SSE como canal principal + polling de
-15 s de segurança): votos ativos, revogados, participantes, top do índice, tendência
-de 30 dias e ranking. Sem servidor, cai no modo demo — nunca quebra.
+O Status lï¿½ `/api/termometro` em tempo real (SSE como canal principal + polling de
+15 s de seguranï¿½a): votos ativos, revogados, participantes, top do ï¿½ndice, tendï¿½ncia
+de 30 dias e ranking. Sem servidor, cai no modo demo ï¿½ nunca quebra.
 
 ### ? Tempo real (SSE)
 
@@ -262,106 +262,106 @@ um **Server-Sent Events** na rota `GET /api/stream`:
 retry: 10000
 
 event: welcome
-data: {"ok":true,"ts":"2026-08-19T…","totalVotosAtivos":123,"totalRevogados":4}
+data: {"ok":true,"ts":"2026-08-19Tï¿½","totalVotosAtivos":123,"totalRevogados":4}
 
 event: termometro
-data: {"tipo":"voto","ts":"2026-08-19T…","totalVotosAtivos":124,"totalRevogados":4}
+data: {"tipo":"voto","ts":"2026-08-19Tï¿½","totalVotosAtivos":124,"totalRevogados":4}
 ```
 
-- `tipo` é `voto` | `revogacao` | `manutencao`; o heartbeat `:hb` vai a cada 30 s.
-- **O payload só carrega totais agregados** — nenhum dado individual passa pelo canal
-  (mesma regra de anonimato da API: o evento não revela quem votou em quem).
+- `tipo` ï¿½ `voto` | `revogacao` | `manutencao`; o heartbeat `:hb` vai a cada 30 s.
+- **O payload sï¿½ carrega totais agregados** ï¿½ nenhum dado individual passa pelo canal
+  (mesma regra de anonimato da API: o evento nï¿½o revela quem votou em quem).
 - O cliente (`js/live-stream.js`, exposto como `window.MBLive`) usa o SSE como canal
-  principal e mantém **polling de 15 s como rede de segurança**: ao receber um evento,
-  pausa o polling; após 3 falhas do SSE, encerra a conexão e o polling assume sozinho.
-  Sem servidor (`file://`/demo), o SSE nem chega a iniciar — o fallback é transparente.
-- A home exibe os números reais num painel **"??? Plataforma ao vivo"** (votos ativos,
-  revogados, participações e o 1º lugar do índice), atualizando no ar quando alguém
-  vota em qualquer outra aba do navegador — comprovado em teste E2E (aba da home
-  reage a voto feito na aba do termômetro, sem reload).
+  principal e mantï¿½m **polling de 15 s como rede de seguranï¿½a**: ao receber um evento,
+  pausa o polling; apï¿½s 3 falhas do SSE, encerra a conexï¿½o e o polling assume sozinho.
+  Sem servidor (`file://`/demo), o SSE nem chega a iniciar ï¿½ o fallback ï¿½ transparente.
+- A home exibe os nï¿½meros reais num painel **"??? Plataforma ao vivo"** (votos ativos,
+  revogados, participaï¿½ï¿½es e o 1ï¿½ lugar do ï¿½ndice), atualizando no ar quando alguï¿½m
+  vota em qualquer outra aba do navegador ï¿½ comprovado em teste E2E (aba da home
+  reage a voto feito na aba do termï¿½metro, sem reload).
 
 ---
 
-## ?? Integração com Dados Públicos (backend)
+## ?? Integraï¿½ï¿½o com Dados Pï¿½blicos (backend)
 
-O backend (`server/`) já está **conectado a uma fonte pública real**:
+O backend (`server/`) jï¿½ estï¿½ **conectado a uma fonte pï¿½blica real**:
 
-- **Câmara dos Deputados — Dados Abertos** ? **INTEGRADO**
+- **Cï¿½mara dos Deputados ï¿½ Dados Abertos** ? **INTEGRADO**
   `https://dadosabertos.camara.leg.br/api/v2/deputados`
   ? 513 deputados federais atuais (nome, partido, UF, foto, e-mail), com cache em disco.
-- Enriquecimento sob demanda (`/api/candidatos/:id`) tenta o nº de proposições por autor.
+- Enriquecimento sob demanda (`/api/candidatos/:id`) tenta o nï¿½ de proposiï¿½ï¿½es por autor.
 
-### Fontes de produção (documentadas para a próxima etapa)
+### Fontes de produï¿½ï¿½o (documentadas para a prï¿½xima etapa)
 
 | Fonte | Dados | Endpoint / URL | Status daqui |
 |-------|-------|----------------|--------------|
-| **Câmara dos Deputados** | Deputados, proposituras, presença | `dadosabertos.camara.leg.br` | ? **Integrado** |
-| **TSE — DivulgaDados** | Candidaturas, votos, condenações, histórico | `dadosabertos.tse.jus.br` | ? Produção (HTTP 403 neste ambiente) |
-| **Portal da Transparência** | Rendimentos, patrimônio, gastos | `dadosabertos.portaltransparencia.gov.br` | ? Produção (inacessível neste ambiente) |
-| **Senado Federal** | Senadores, proposituras, votações | `legis.senado.leg.br` | ? Produção |
-| **CNJ** | Processos judiciais, ações | `consultaprocessos.cnj.jus.br` | ? Produção (anti-robô) |
+| **Cï¿½mara dos Deputados** | Deputados, proposituras, presenï¿½a | `dadosabertos.camara.leg.br` | ? **Integrado** |
+| **TSE ï¿½ DivulgaDados** | Candidaturas, votos, condenaï¿½ï¿½es, histï¿½rico | `dadosabertos.tse.jus.br` | ? Produï¿½ï¿½o (HTTP 403 neste ambiente) |
+| **Portal da Transparï¿½ncia** | Rendimentos, patrimï¿½nio, gastos | `dadosabertos.portaltransparencia.gov.br` | ? Produï¿½ï¿½o (inacessï¿½vel neste ambiente) |
+| **Senado Federal** | Senadores, proposituras, votaï¿½ï¿½es | `legis.senado.leg.br` | ? Produï¿½ï¿½o |
+| **CNJ** | Processos judiciais, aï¿½ï¿½es | `consultaprocessos.cnj.jus.br` | ? Produï¿½ï¿½o (anti-robï¿½) |
 
-> Em produção, o `server/ingest.js` ganharia mais fontes (TSE, Transparência, CNJ,
-> Senado) mescladas por parlamentar, completando transparência, patrimônio e histórico
-> judicial. O schema já está pronto para receber esses campos (hoje `null`).
+> Em produï¿½ï¿½o, o `server/ingest.js` ganharia mais fontes (TSE, Transparï¿½ncia, CNJ,
+> Senado) mescladas por parlamentar, completando transparï¿½ncia, patrimï¿½nio e histï¿½rico
+> judicial. O schema jï¿½ estï¿½ pronto para receber esses campos (hoje `null`).
 
 ---
 
 ## ?? API do Backend
 
-| Rota | Descrição |
+| Rota | Descriï¿½ï¿½o |
 |------|-----------|
 | `GET /api/candidatos` | Lista de candidatos reais. Query: `?busca=&uf=&partido=&ordem=nome:asc&refresh=1` |
 | `GET /api/candidatos/:id` | Detalhe de um candidato + enriquecimento sob demanda |
 | `GET /api/status` | Metadados da fonte (origem, aviso) |
-| `GET /api/termometro` | ??? Índice de confiança ao vivo: `topN` (ranking por índice), `tendencia` (30 dias), `porUf`, totais |
+| `GET /api/termometro` | ??? ï¿½ndice de confianï¿½a ao vivo: `topN` (ranking por ï¿½ndice), `tendencia` (30 dias), `porUf`, totais |
 | `POST /api/voto` | ??? Coloca um voto. Body: `{politicianId, uf?}` ? `{ok, code, ballotId}` |
-| `GET /api/voto?code=` | ??? Consulta o status do voto pelo código (nome mascarado, peso atual, dias, `precisaReafirmar`) |
+| `GET /api/voto?code=` | ??? Consulta o status do voto pelo cï¿½digo (nome mascarado, peso atual, dias, `precisaReafirmar`) |
 | `POST /api/voto/revogar` | ??? Tira o voto (revoga). Body: `{code}` |
-| `POST /api/voto/manter` | ??? Mantém o voto (reafirma — reinicia o relógio do decaimento). Body: `{code}` |
-| `GET /api/stream` | ? SSE — eventos em tempo real: `welcome` (totais ao conectar), `termometro` (voto/revogacao/manutencao, só totais), heartbeat `:hb` a cada 30 s |
+| `POST /api/voto/manter` | ??? Mantï¿½m o voto (reafirma ï¿½ reinicia o relï¿½gio do decaimento). Body: `{code}` |
+| `GET /api/stream` | ? SSE ï¿½ eventos em tempo real: `welcome` (totais ao conectar), `termometro` (voto/revogacao/manutencao, sï¿½ totais), heartbeat `:hb` a cada 30 s |
 
 Resposta de `/api/candidatos`:
 ```json
-{ "mode":"real", "source":"Câmara dos Deputados (dados reais)",
+{ "mode":"real", "source":"Cï¿½mara dos Deputados (dados reais)",
   "total":513, "retornados":513, "doCache":true,
   "atualizadoEm":"2026-08-19T00:59:31.383Z",
-  "candidatos":[ { "id":"camara-204379", "name":"Acácio Favacho",
+  "candidatos":[ { "id":"camara-204379", "name":"Acï¿½cio Favacho",
     "party":"MDB", "state":"AP", "position":"Deputado Federal",
     "photo":"https://www.camara.leg.br/...", "email":"dep.acaciofavacho@camara.leg.br" } ] }
 ```
 
 Resposta de `POST /api/voto` (colocar):
 ```json
-{ "ok": true, "code": "A3F9-K2MN-P7Q1-X4TR", "ballotId": "a1b2c3…",
-  "politician": { "id":"camara-204379", "name":"Acácio Favacho" } }
+{ "ok": true, "code": "A3F9-K2MN-P7Q1-X4TR", "ballotId": "a1b2c3ï¿½",
+  "politician": { "id":"camara-204379", "name":"Acï¿½cio Favacho" } }
 ```
 
-Resposta de `GET /api/voto?code=…` (o nome só é retornado já mascarado):
+Resposta de `GET /api/voto?code=ï¿½` (o nome sï¿½ ï¿½ retornado jï¿½ mascarado):
 ```json
 { "ok": true,
   "ballot": { "politicianId":"camara-204379", "uf":"AP",
-    "createdAt":"2026-08-19T…", "reaffirmedAt":"2026-08-19T…",
+    "createdAt":"2026-08-19Tï¿½", "reaffirmedAt":"2026-08-19Tï¿½",
     "revoked": false, "pesoAtual":1.0, "diasDesdeReafirmacao":0,
     "precisaReafirmar": false } }
 ```
 
-Resposta de `GET /api/termometro` (agregado irreversível — nunca revela quem votou em quem):
+Resposta de `GET /api/termometro` (agregado irreversï¿½vel ï¿½ nunca revela quem votou em quem):
 ```json
 { "mode":"real", "ok": true,
-  "metodo":"Índice de Confiança VotaBrasil (ICM) — componente de confiança",
+  "metodo":"ï¿½ndice de Confianï¿½a VotaBrasil (ICM) ï¿½ componente de confianï¿½a",
   "icm": { "versao":"v1.0", "pesos": { "resposta":0.40, "cumprimento":0.35, "devolucao":0.25 } },
   "decadencia": { "cheioDias":90, "pisoDias":180, "piso":0.5 },
   "totalVotosAtivos":123, "totalRevogados":4, "totalRegistros":127,
-  "topN":[ { "politicianId":"camara-204379", "name":"Acácio Favacho", "party":"MDB",
+  "topN":[ { "politicianId":"camara-204379", "name":"Acï¿½cio Favacho", "party":"MDB",
              "state":"AP", "photo":"https://www.camara.leg.br/...",
              "votosAtivos":40, "revogacoes":1, "pesoEfetivo":39.2, "indice":27.3 } ],
-  "porIndice":[ "…ranking completo, do 1º ao último…" ],
+  "porIndice":[ "ï¿½ranking completo, do 1ï¿½ ao ï¿½ltimoï¿½" ],
   "tendencia":[ { "at":"2026-08-19", "ativos":123 } ],
   "porUf": { "AP": 40 } }
 ```
 
-Evento SSE de `GET /api/stream` (após um voto ser colocado):
+Evento SSE de `GET /api/stream` (apï¿½s um voto ser colocado):
 ```
 event: termometro
 data: {"tipo":"voto","ts":"2026-08-19T12:00:00.000Z","totalVotosAtivos":124,"totalRevogados":4}
@@ -373,132 +373,132 @@ data: {"tipo":"voto","ts":"2026-08-19T12:00:00.000Z","totalVotosAtivos":124,"tot
 
 ### Backend (Railway)
 - **Projeto**: VotaBrasil (`198baa4d-6141-418c-96dd-d7826831249f`)
-- **Serviço**: VotaBrasil (`4d5f569d-9c54-45f5-a25a-b474fb218b18`)
-- **Domínio atual**: `https://meu-voto.app`
-- **Região**: Amsterdam (ams)
+- **Serviï¿½o**: VotaBrasil (`4d5f569d-9c54-45f5-a25a-b474fb218b18`)
+- **Domï¿½nio atual**: `https://meu-voto.app`
+- **Regiï¿½o**: Amsterdam (ams)
 - **Builder**: RAILPACK (Node 22)
 - **Storage**: SQLite nativo (`node:sqlite`) em `/app/server/data/votos.db`
 - **Volume**: 500MB persistente
 
 ### Frontend (GitHub Pages)
-- **Repositório**: `xbrancox/votabrasil`
+- **Repositï¿½rio**: `xbrancox/votabrasil`
 - **Branch**: `main`
 - **Workflow**: `.github/workflows/pages.yml`
 - **URL**: `https://meu-voto.app/`
 
-### Plano de Migração de Domínio
-1. **Registrar domínio**: `omeuvoto.app` (pendente)
+### Plano de Migraï¿½ï¿½o de Domï¿½nio
+1. **Registrar domï¿½nio**: `omeuvoto.app` (pendente)
 2. **Configurar DNS**: CNAME apontando para Railway
-3. **Adicionar domínio custom no Railway**: `railway domain omeuvoto.app`
+3. **Adicionar domï¿½nio custom no Railway**: `railway domain omeuvoto.app`
 4. **Atualizar `API_BASE`** em todos os arquivos para `https://api.omeuvoto.app`
-5. **Configurar SSL**: Automático pelo Railway (Let's Encrypt)
+5. **Configurar SSL**: Automï¿½tico pelo Railway (Let's Encrypt)
 
 ---
 
 ## ?? Aviso Legal
 
-- No **modo real**, os nomes, partidos, estados e fotos são **dados reais** de
-  deputados federais, obtidos dos dados abertos públicos da Câmara dos Deputados.
-- No **modo demo**, os candidatos e seus valores (finanças, processos, votos) são
-  **fictícios/sintéticos**, apenas para demonstrar a arquitetura completa.
-- O **Termômetro é um protótipo de pesquisa/opinião** ("IBOPE em tempo real"):
-  **não tem valor legal, não é urna oficial e não vincula a eleições**. Os votos são
-  uma manifestação anônima de opinião que qualquer pessoa pode colocar e revogar.
-- A plataforma **não solicita voto, não promove candidatos e não faz campanha** —
-  monitoramento neutro (regra inegociável). Não constitui recomendação de voto.
-- **Privacidade (LGPD)**: sem cadastro, sem e-mail, sem vinculação de voto à pessoa.
-  O servidor guarda apenas o hash do código; a agregação pública é irreversível.
+- No **modo real**, os nomes, partidos, estados e fotos sï¿½o **dados reais** de
+  deputados federais, obtidos dos dados abertos pï¿½blicos da Cï¿½mara dos Deputados.
+- No **modo demo**, os candidatos e seus valores (finanï¿½as, processos, votos) sï¿½o
+  **fictï¿½cios/sintï¿½ticos**, apenas para demonstrar a arquitetura completa.
+- O **Termï¿½metro ï¿½ um protï¿½tipo de pesquisa/opiniï¿½o** ("IBOPE em tempo real"):
+  **nï¿½o tem valor legal, nï¿½o ï¿½ urna oficial e nï¿½o vincula a eleiï¿½ï¿½es**. Os votos sï¿½o
+  uma manifestaï¿½ï¿½o anï¿½nima de opiniï¿½o que qualquer pessoa pode colocar e revogar.
+- A plataforma **nï¿½o solicita voto, nï¿½o promove candidatos e nï¿½o faz campanha** ï¿½
+  monitoramento neutro (regra inegociï¿½vel). Nï¿½o constitui recomendaï¿½ï¿½o de voto.
+- **Privacidade (LGPD)**: sem cadastro, sem e-mail, sem vinculaï¿½ï¿½o de voto ï¿½ pessoa.
+  O servidor guarda apenas o hash do cï¿½digo; a agregaï¿½ï¿½o pï¿½blica ï¿½ irreversï¿½vel.
 
 ---
 
-## ??? Próximos Passos
+## ??? Prï¿½ximos Passos
 
 1. **ICM completo**: conectar as componentes de **resposta** e **cumprimento**
-   (radar de resposta, histórico de proposições) para compor o
-   `ICM = 0.40·resposta + 0.35·cumprimento + 0.25·(1 - devoluções)`.
-2. **Mais fontes reais** no `ingest.js`: TSE (candidaturas/votos), Portal da Transparência
-   (patrimônio/renda), CNJ (processos), Senado (senadores no termômetro) — mescladas
+   (radar de resposta, histï¿½rico de proposiï¿½ï¿½es) para compor o
+   `ICM = 0.40ï¿½resposta + 0.35ï¿½cumprimento + 0.25ï¿½(1 - devoluï¿½ï¿½es)`.
+2. **Mais fontes reais** no `ingest.js`: TSE (candidaturas/votos), Portal da Transparï¿½ncia
+   (patrimï¿½nio/renda), CNJ (processos), Senado (senadores no termï¿½metro) ï¿½ mescladas
    por parlamentar.
-3. **Autenticação real (opcional)** para funcionalidades de conta — o voto em si
-   permanece anônimo por código, sem conta obrigatória.
+3. **Autenticaï¿½ï¿½o real (opcional)** para funcionalidades de conta ï¿½ o voto em si
+   permanece anï¿½nimo por cï¿½digo, sem conta obrigatï¿½ria.
 
-> ? **Fase 5 — "Produção" (2026-08-19):** urnas em **SQLite nativo** (zero
-> dependências) com migração automática do JSON legado, persistência que sobrevive a
-> reinícios, fallback JSON automático em Node antigo (`MB_STORAGE`) e atualização
-> automática dos dados públicos (cron de 24 h, `MB_REFRESH_HOURS`).
+> ? **Fase 5 ï¿½ "Produï¿½ï¿½o" (2026-08-19):** urnas em **SQLite nativo** (zero
+> dependï¿½ncias) com migraï¿½ï¿½o automï¿½tica do JSON legado, persistï¿½ncia que sobrevive a
+> reinï¿½cios, fallback JSON automï¿½tico em Node antigo (`MB_STORAGE`) e atualizaï¿½ï¿½o
+> automï¿½tica dos dados pï¿½blicos (cron de 24 h, `MB_REFRESH_HOURS`).
 >
-> ? **Fase 4 — "Plataforma Viva" (2026-08-19):** tempo real via SSE
+> ? **Fase 4 ï¿½ "Plataforma Viva" (2026-08-19):** tempo real via SSE
 > (`GET /api/stream`, ~7 ms do voto ao navegador), painel "Plataforma ao vivo" na
-> home com dados reais, e suíte de testes do motor (decaimento exato, carga de 10.000
-> votos, latência SSE).
+> home com dados reais, e suï¿½te de testes do motor (decaimento exato, carga de 10.000
+> votos, latï¿½ncia SSE).
 >
-> ? **Fase 6 — "Conclusão" (2026-08-20):**
-> - **Integração Senado Federal**: nova rota `/api/senadores` + merge na `/api/candidatos`
+> ? **Fase 6 ï¿½ "Conclusï¿½o" (2026-08-20):**
+> - **Integraï¿½ï¿½o Senado Federal**: nova rota `/api/senadores` + merge na `/api/candidatos`
 >   (513 deputados + 81 senadores = 594 candidatos totais). Fonte:
 >   `legis.senado.leg.br/dadosabertos` (JSON/XML com fallback gracioso se WAF bloquear).
-> - **Health check**: `GET /api/health` — uptime, backend de armazenamento (SQLite/JSON),
->   totais de votos ativos/revogados, status do cron de atualização.
+> - **Health check**: `GET /api/health` ï¿½ uptime, backend de armazenamento (SQLite/JSON),
+>   totais de votos ativos/revogados, status do cron de atualizaï¿½ï¿½o.
 > - **Encerramento gracioso**: handlers para `SIGINT`/`SIGTERM` fecham o banco SQLite
 >   ordenadamente antes de sair (nenhuma urna perdida, nenhum arquivo corrompido).
-> - **Headers de privacidade/segurança** em todas as respostas JSON:
+> - **Headers de privacidade/seguranï¿½a** em todas as respostas JSON:
 >   `X-Content-Type-Options: nosniff` + `Referrer-Policy: no-referrer`.
 > - **Testes validados**: 25/25 (engine) + 19/19 (thermometer) + 13/13 (live) + render
->   = **70 checks passando** (Node puro + Playwright E2E + SSE real + persistência pós-restart).
-> - **Repositório**: https://github.com/xbrancox/VotaBrasil
+>   = **70 checks passando** (Node puro + Playwright E2E + SSE real + persistï¿½ncia pï¿½s-restart).
+> - **Repositï¿½rio**: https://github.com/xbrancox/VotaBrasil
 
 ---
 
-Feito com ???? para a transparência cívica brasileira.
+Feito com ???? para a transparï¿½ncia cï¿½vica brasileira.
 
 ---
 
 ## ??? Nova Aba "Parlamentares" (v2.1)
 
-A página **/pages/parlamentares.html** unifica tudo: **Candidatos + Radar Político + Rankings**.
+A pï¿½gina **/pages/parlamentares.html** unifica tudo: **Candidatos + Radar Polï¿½tico + Rankings**.
 
 ### ? Funcionalidades
 - **594 parlamentares** (513 deputados + 81 senadores) com dados reais
-- **?? Busca avançada** com filtros: estado, partido, cargo, verificados
-- **??? Radar Cívico**: feed ao vivo de reclamações, apoios e respostas
+- **?? Busca avanï¿½ada** com filtros: estado, partido, cargo, verificados
+- **??? Radar Cï¿½vico**: feed ao vivo de reclamaï¿½ï¿½es, apoios e respostas
 - **?? Rankings**: mais reclamados, mais apoiados, melhor avaliados, mais respondem
-- **?? Selo de verificação**: somente políticos verificados respondem
-- **?? Login via Google OAuth ou Telefone (SMS OTP)** — sem Gov.br
-- **?? Reclamações + Apoios + Respostas** com moderação IA + humana
-- **Sem limite** de reclamações/apoios por eleitor (identificado por hash)
-- **Sem prazo** para resposta (vai para estatísticas/gráficos)
-- **?? Links oficiais** para Câmara, Senado, TSE, Portal da Transparência
+- **?? Selo de verificaï¿½ï¿½o**: somente polï¿½ticos verificados respondem
+- **?? Login via Google OAuth ou Telefone (SMS OTP)** ï¿½ sem Gov.br
+- **?? Reclamaï¿½ï¿½es + Apoios + Respostas** com moderaï¿½ï¿½o IA + humana
+- **Sem limite** de reclamaï¿½ï¿½es/apoios por eleitor (identificado por hash)
+- **Sem prazo** para resposta (vai para estatï¿½sticas/grï¿½ficos)
+- **?? Links oficiais** para Cï¿½mara, Senado, TSE, Portal da Transparï¿½ncia
 
-### ?? Domínios autorizados para verificação
+### ?? Domï¿½nios autorizados para verificaï¿½ï¿½o
 - `@camara.leg.br` (deputados)
 - `@senado.leg.br` / `@senador.leg.br` (senadores)
 - `@tse.jus.br` (Tribunal Superior Eleitoral)
 
 ### ??? Arquivos novos
-- `server/auth.js` — login Google + telefone (SMS OTP)
-- `server/verificacao.js` — selo via domínio de e-mail
-- `server/reclamacoes.js` — reclamações, apoios, respostas, rankings
-- `pages/parlamentares.html` — aba unificada
-- `js/parlamentares.js` + `js/parlamentar-auth.js` — lógica
-- `css/parlamentares.css` — design com cores, fontes e animações premium
+- `server/auth.js` ï¿½ login Google + telefone (SMS OTP)
+- `server/verificacao.js` ï¿½ selo via domï¿½nio de e-mail
+- `server/reclamacoes.js` ï¿½ reclamaï¿½ï¿½es, apoios, respostas, rankings
+- `pages/parlamentares.html` ï¿½ aba unificada
+- `js/parlamentares.js` + `js/parlamentar-auth.js` ï¿½ lï¿½gica
+- `css/parlamentares.css` ï¿½ design com cores, fontes e animaï¿½ï¿½es premium
 
 ### ?? Endpoints novos
 ```
 POST /api/auth/{google,otp/send,otp/verify}        Login
-GET  /api/auth/me                                  Sessão atual
+GET  /api/auth/me                                  Sessï¿½o atual
 POST /api/auth/logout                              Sair
 
-POST /api/verificacao/iniciar                      Iniciar verificação
+POST /api/verificacao/iniciar                      Iniciar verificaï¿½ï¿½o
 GET  /api/verificacao/confirmar?token=...          Confirmar
-GET  /api/verificacao/dominios                     Domínios autorizados
-GET  /api/verificacao/stats                        Estatísticas
-GET  /api/verificacao/politico/:id                 Status de um político
+GET  /api/verificacao/dominios                     Domï¿½nios autorizados
+GET  /api/verificacao/stats                        Estatï¿½sticas
+GET  /api/verificacao/politico/:id                 Status de um polï¿½tico
 
-POST /api/reclamacoes                              Criar reclamação
+POST /api/reclamacoes                              Criar reclamaï¿½ï¿½o
 GET  /api/reclamacoes?politicianId=...             Listar
 POST /api/apoios                                   Criar apoio
 GET  /api/apoios?politicianId=...                  Listar
-POST /api/respostas                                Resposta (só verificado)
-GET  /api/rankings                                 Rankings públicos
+POST /api/respostas                                Resposta (sï¿½ verificado)
+GET  /api/rankings                                 Rankings pï¿½blicos
 GET  /api/estatisticas/politico/:id                Stats detalhadas
 ```
 
@@ -508,18 +508,18 @@ node server/index.js
 # ? http://localhost:8080/pages/parlamentares.html
 # 1. Login: "google:seu@email.com:Seu Nome"
 # 2. Abrir qualquer parlamentar
-# 3. Reclamar / Apoiar (com sessão ativa)
-# 4. Verificar: e-mail institucional com domínio autorizado
+# 3. Reclamar / Apoiar (com sessï¿½o ativa)
+# 4. Verificar: e-mail institucional com domï¿½nio autorizado
 ```
 
 ### ?? Deploy (setembro/2026)
-- **Front:** GitHub Pages — automático a cada push na `main` (workflow `pages.yml`).
-- **Backend:** Railway — automático a cada push na `main` (Source repo conectado,
+- **Front:** GitHub Pages ï¿½ automï¿½tico a cada push na `main` (workflow `pages.yml`).
+- **Backend:** Railway ï¿½ automï¿½tico a cada push na `main` (Source repo conectado,
   auto-deploy ON). Manual, se um dia precisar: `railway up --service votabrasil-redesign`.
-- **Manutenção automática** (workflow `manutencao.yml`): snapshot de notícias
-  diário (09:15), backup do SQLite diário (09:45, artifact 14 dias), candidaturas
-  TSE diárias (10:05), enriquecimento de produção/presença semanal (seg 10:30).
-  Executar manualmente: aba Actions ? "Manutenção automática" ? Run workflow.
+- **Manutenï¿½ï¿½o automï¿½tica** (workflow `manutencao.yml`): snapshot de notï¿½cias
+  diï¿½rio (09:15), backup do SQLite diï¿½rio (09:45, artifact 14 dias), candidaturas
+  TSE diï¿½rias (10:05), enriquecimento de produï¿½ï¿½o/presenï¿½a semanal (seg 10:30).
+  Executar manualmente: aba Actions ? "Manutenï¿½ï¿½o automï¿½tica" ? Run workflow.
 - **Dados de candidatos 2026:** `node scripts/baixar-candidatos-tse.js`
   (regenera `data/candidatos-2026.json` a partir dos CSVs oficiais do TSE
-  via espelho diário `leofn/tse-candidatos-2026`).
+  via espelho diï¿½rio `leofn/tse-candidatos-2026`).

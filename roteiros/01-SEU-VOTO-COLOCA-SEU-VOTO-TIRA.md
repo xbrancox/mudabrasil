@@ -1,4 +1,4 @@
-# 🎬 ROTEIRO 01 — "Seu voto coloca, seu voto tira"
+# 🎬 ROTEIRO 01 — "Meu voto coloca, meu voto tira"
 ## Vídeo Manifesto · 60 a 90 segundos (Reels / TikTok / Shorts)
 
 **Público-alvo:** Jovens 18-34, cansados da política tradicional
@@ -53,7 +53,7 @@
 **VISUAL:** Animação do Termômetro de Confiança subindo/descendo ao vivo.
 **NARRAÇÃO:**
 > "Quando 70% dos eleitores revogam o voto, o mandato cai.
-> **Seu voto coloca. Seu voto tira.**"
+> **Meu voto coloca. Meu voto tira.**"
 
 ---
 
@@ -73,14 +73,14 @@
 
 ### 🎥 ATO 4 — CTA (75–90s)
 **VISUAL:** QR Code gigante + URL `votabrasil.app`
-**TEXTO NA TELA:** "SEU VOTO COLOCA. SEU VOTO TIRA."
+**TEXTO NA TELA:** "MEU VOTO COLOCA. MEU VOTO TIRA."
 **NARRAÇÃO:**
 > "Entre em **votabrasil.app**.
 > Coloque seu voto. Ganhe um código.
 > Esse código é o seu poder — **só você tem**.
 > Se o político cumprir, você mantém.
 > Se quebrar a promessa, você revoga.
-> **Seu voto coloca. Seu voto tira.**"
+> **Meu voto coloca. Meu voto tira.**"
 
 **LOGO FINAL + MÚSICA SOBE + TELA PRETA**
 
@@ -90,7 +90,7 @@
 ```
 🇧🇷 E se o seu voto não terminasse na urna?
 O VotaBrasil é o IBOPE em tempo real da política.
-Seu voto coloca. Seu voto tira. ⚡
+Meu voto coloca. Meu voto tira. ⚡
 🔗 votabrasil.app
 #VotaBrasil #RevogaOVoto #Política #Democracia #Brasil
 ```

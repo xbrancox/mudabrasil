@@ -19,7 +19,7 @@ console.log('🇧🇷 MeuVoto — smoke test\n');
 
 teste('db.js carrega e expõe operações', () => {
   const db = require('../server/db');
-  ['upsertBallot', 'getBallot', 'verifyVoteCode', 'readAllPls', 'backend'].forEach(k => assert(typeof db[k] === 'function', 'falta db.' + k));
+  ['upsertBallot', 'getBallot', 'verifyVoteCode', 'readAllPls', 'backend', 'createSocietyPl', 'getAllSocietyPls', 'signSocietyPl', 'createSocietyPlInvite', 'acceptSocietyPlInvite', 'getSocietyPlSupportersRanking'].forEach(k => assert(typeof db[k] === 'function', 'falta db.' + k));
 });
 
 teste('votes.js carrega e valida entrada de voto', () => {

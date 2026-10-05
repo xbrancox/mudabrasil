@@ -7,7 +7,7 @@
 
 | Nº | Título | Duração | Público | Tom | Arquivo |
 |----|--------|---------|---------|-----|---------|
-| 01 | **Seu voto coloca, seu voto tira** | 60–90s | Jovens 18-34 | Revolucionário | `01-SEU-VOTO-COLOCA-SEU-VOTO-TIRA.md` |
+| 01 | **Meu voto coloca, seu voto tira** | 60–90s | Jovens 18-34 | Revolucionário | `01-SEU-VOTO-COLOCA-SEU-VOTO-TIRA.md` |
 | 02 | **Como funciona em 2 minutos** | 2min | Adultos 25-55 | Didático | `02-COMO-FUNCIONA-EM-2-MINUTOS.md` |
 | 03 | **Dona Maria e o deputado sumido** | 3–4min | Classe C/D, periferia | Emocional | `03-DONA-MARIA-DEPUTADO-SUMIDO.md` |
 | 04 | **Eu me arrependi do meu voto** | 2–3min | Eleitores arrependidos | Vulnerável | `04-EU-ME-ARREPENDI.md` |
@@ -58,7 +58,7 @@
 
 ### **Semana 1 — Lançamento soft**
 - 📅 **Segunda:** Roteiro 02 — "Como funciona em 2 min" (YouTube)
-- 📅 **Quarta:** Roteiro 01 — "Seu voto coloca" (Reels/TikTok)
+- 📅 **Quarta:** Roteiro 01 — "Meu voto coloca" (Reels/TikTok)
 - 📅 **Sexta:** História 06 — "A programadora que duvidava" (Twitter thread)
 
 ### **Semana 2 — Viralização emocional**
@@ -105,7 +105,7 @@
 > E quando milhões descobrem ao mesmo tempo?
 > **Isso muda um país.**
 >
-> Seu voto coloca. Seu voto tira.
+> Meu voto coloca. Seu voto tira.
 
 ---
 
