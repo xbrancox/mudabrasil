@@ -1,36 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240">
   <defs>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFD700"/>
-      <stop offset="100%" stop-color="#FFA500"/>
-    </linearGradient>
-    <linearGradient id="navyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1a1a2e"/>
-      <stop offset="100%" stop-color="#16213e"/>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#115FCB"/>
+      <stop offset="100%" stop-color="#0E1726"/>
     </linearGradient>
   </defs>
   
-  <!-- Background circle -->
-  <circle cx="512" cy="512" r="480" fill="url(#navyGrad)"/>
+  <!-- Ícone circular -->
+  <circle cx="120" cy="120" r="100" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="96" fill="none" stroke="#FFD700" stroke-width="3" opacity="0.6"/>
+  <text x="120" y="145" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-weight="900" font-size="120" fill="#FFD700">M</text>
+  <path d="M80 165 L105 185 L155 135" stroke="#2ECC71" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
   
-  <!-- Stylized "V" mark - ballot/checkmark concept -->
-  <path d="M 280 360 L 512 720 L 744 360" 
-        stroke="url(#goldGrad)" 
-        stroke-width="72" 
-        stroke-linecap="round" 
-        stroke-linejoin="round" 
-        fill="none"/>
+  <!-- Texto MeuVoto (versão branca para fundos escuros) -->
+  <text x="250" y="140" font-family="Montserrat, Arial, sans-serif" font-weight="900" font-size="80" fill="#FFFFFF" letter-spacing="-2">Meu</text>
+  <text x="250" y="140" font-family="Montserrat, Arial, sans-serif" font-weight="900" font-size="80" fill="#FFD700" letter-spacing="-2" dx="145">Voto</text>
   
-  <!-- Citizen dot (top of V transforms into head) -->
-  <circle cx="512" cy="320" r="64" fill="url(#goldGrad)"/>
-  
-  <!-- Small accent line -->
-  <path d="M 460 320 L 440 280" 
-        stroke="url(#goldGrad)" 
-        stroke-width="24" 
-        stroke-linecap="round"/>
-  <path d="M 564 320 L 584 280" 
-        stroke="url(#goldGrad)" 
-        stroke-width="24" 
-        stroke-linecap="round"/>
+  <!-- Slogan -->
+  <text x="252" y="175" font-family="Manrope, Arial, sans-serif" font-weight="700" font-size="20" fill="#FFD700" font-style="italic" letter-spacing="0.5">Meu voto coloca, meu voto tira.</text>
 </svg>

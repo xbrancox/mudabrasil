@@ -1,33 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 256" width="800" height="256">
-  <!-- Full wordmark logo: icon + "MeuVoto" text -->
-  
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240">
   <defs>
-    <linearGradient id="wordGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFD700"/>
-      <stop offset="100%" stop-color="#FFA500"/>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#115FCB"/>
+      <stop offset="100%" stop-color="#0E1726"/>
     </linearGradient>
   </defs>
   
-  <!-- Icon circle -->
-  <circle cx="128" cy="128" r="120" fill="#1a1a2e"/>
+  <!-- Ícone circular -->
+  <circle cx="120" cy="120" r="100" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="96" fill="none" stroke="#FFD700" stroke-width="3" opacity="0.6"/>
+  <text x="120" y="145" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-weight="900" font-size="120" fill="#FFD700">M</text>
+  <path d="M80 165 L105 185 L155 135" stroke="#2ECC71" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
   
-  <!-- Checkmark/V in icon -->
-  <path d="M 68 90 L 128 180 L 188 90" 
-        stroke="url(#wordGold)" 
-        stroke-width="28" 
-        stroke-linecap="round" 
-        stroke-linejoin="round" 
-        fill="none"/>
+  <!-- Texto MeuVoto -->
+  <text x="250" y="140" font-family="Montserrat, Arial, sans-serif" font-weight="900" font-size="80" fill="#FFFFFF" letter-spacing="-2">Meu</text>
+  <text x="250" y="140" font-family="Montserrat, Arial, sans-serif" font-weight="900" font-size="80" fill="#FFD700" letter-spacing="-2" dx="145">Voto</text>
   
-  <!-- Citizen head in icon -->
-  <circle cx="128" cy="80" r="20" fill="url(#wordGold)"/>
-  
-  <!-- "MeuVoto" text -->
-  <text x="280" y="156" 
-        font-family="Arial, Helvetica, sans-serif" 
-        font-size="96" 
-        font-weight="bold" 
-        fill="#1a1a2e">
-    Meu<tspan fill="url(#wordGold)">Voto</tspan>
-  </text>
+  <!-- Slogan -->
+  <text x="252" y="175" font-family="Manrope, Arial, sans-serif" font-weight="700" font-size="20" fill="#FFD700" font-style="italic" letter-spacing="0.5">Meu voto coloca, meu voto tira.</text>
 </svg>
