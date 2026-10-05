@@ -1510,6 +1510,107 @@ async function handleApi(req, res, url) {
     } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }
   }
 
+  /* ===== INICIATIVA CIDADÃ / PLS DA SOCIEDADE ===== */
+  if (p === '/api/society/pls' && req.method === 'GET') {
+    try {
+      const category = q.category || 'Todos';
+      const search = q.search || '';
+      const limit = parseInt(q.limit || '100', 10);
+      const offset = parseInt(q.offset || '0', 10);
+      const pls = db.getAllSocietyPls({ category, search, limit, offset });
+      return sendJson(res, 200, { ok: true, total: pls.length, pls });
+    } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }
+  }
+
+  if (p === '/api/society/ranking' && req.method === 'GET') {
+    try {
+      const ranking = db.getSocietyPlSupportersRanking();
+      return sendJson(res, 200, { ok: true, ranking });
+    } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }
+  }
+
+  const societyPlMatch = p.match(/^\/api\/society\/pls\/([a-zA-Z0-9_-]+)$/);
+  if (societyPlMatch && req.method === 'GET') {
+    const id = societyPlMatch[1];
+    try {
+      const pl = db.getSocietyPl(id);
+      if (!pl) return sendJson(res, 404, { ok: false, error: 'Projeto não encontrado' });
+      const invites = db.getSocietyPlInvites(id);
+      return sendJson(res, 200, { ok: true, pl, invites });
+    } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }
+  }
+
+  if (p === '/api/society/pls' && req.method === 'POST') {
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    const voter = auth.getVoterFromToken(body.sessionToken || '');
+    if (!voter) return sendJson(res, 401, { ok: false, error: 'Faça login para criar um Projeto da Sociedade' });
+    const { orgName, orgEmail, title, summary, text, category, attachmentUrl } = body || {};
+    if (!orgName || !title || !text) {
+      return sendJson(res, 400, { ok: false, error: 'orgName, title e text são obrigatórios' });
+    }
+    try {
+      const newPl = db.createSocietyPl({
+        orgName,
+        orgEmail: orgEmail || voter.email || '',
+        title,
+        summary: summary || title,
+        text,
+        category: category || 'Geral',
+        authorHash: voter.voterHash,
+        attachmentUrl: attachmentUrl || ''
+      });
+      return sendJson(res, 201, { ok: true, pl: newPl });
+    } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }
+  }
+
+  const signPlMatch = p.match(/^\/api\/society\/pls\/([a-zA-Z0-9_-]+)\/sign$/);
+  if (signPlMatch && req.method === 'POST') {
+    const plId = signPlMatch[1];
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    const voter = auth.getVoterFromToken(body.sessionToken || '');
+    if (!voter) return sendJson(res, 401, { ok: false, error: 'Faça login para assinar o projeto' });
+    if (!db.getSocietyPl(plId)) return sendJson(res, 404, { ok: false, error: 'Projeto não encontrado' });
+    try {
+      const resSig = db.signSocietyPl(plId, voter.voterHash);
+      if (!resSig.ok) return sendJson(res, 400, resSig);
+      const updated = db.getSocietyPl(plId);
+      return sendJson(res, 200, { ok: true, signed: true, signatureCount: updated.signatureCount });
+    } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }
+  }
+
+  const invitePlMatch = p.match(/^\/api\/society\/pls\/([a-zA-Z0-9_-]+)\/invite$/);
+  if (invitePlMatch && req.method === 'POST') {
+    const plId = invitePlMatch[1];
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    const voter = auth.getVoterFromToken(body.sessionToken || '');
+    if (!voter) return sendJson(res, 401, { ok: false, error: 'Faça login para convidar parlamentares' });
+    const pl = db.getSocietyPl(plId);
+    if (!pl) return sendJson(res, 404, { ok: false, error: 'Projeto não encontrado' });
+    const { targetType, targetId, targetName } = body || {};
+    if (!targetType || !targetName) {
+      return sendJson(res, 400, { ok: false, error: 'targetType e targetName são obrigatórios' });
+    }
+    try {
+      const invite = db.createSocietyPlInvite({ plId, targetType, targetId, targetName });
+      const inviteUrl = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host || 'localhost:8080'}/api/society/invite/${invite.token}/accept`;
+      return sendJson(res, 201, { ok: true, invite: { ...invite, inviteUrl } });
+    } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }
+  }
+
+  const acceptInviteMatch = p.match(/^\/api\/society\/invite\/([a-zA-Z0-9]+)\/accept$/);
+  if (acceptInviteMatch && req.method === 'GET') {
+    const token = acceptInviteMatch[1];
+    try {
+      const resAcc = db.acceptSocietyPlInvite(token);
+      if (!resAcc.ok) return sendJson(res, 400, resAcc);
+      res.writeHead(302, { Location: '/pages/iniciativa-cidada.html?accepted=1&pl=' + resAcc.plId });
+      return res.end();
+    } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }
+  }
+
   if (p === '/api/voto/revogados' && req.method === 'GET') {
     try {
       const r = await votes.getRevogados();

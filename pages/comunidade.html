@@ -55,7 +55,7 @@
         <div class="card community-card reveal">
           <div class="card-header">
             <span class="avatar">MS</span>
-            <h3>Mariana Silva</h3>
+            <h2>Mariana Silva</h2>
           </div>
           <p>Fundadora do MeuVoto • @mariana_br</p>
           <button class="btn btn-primary btn-sm">Ver Perfil</button>
@@ -132,9 +132,9 @@
       <h2>Login na Conta MeuVoto</h2>
       <form onsubmit="event.preventDefault(); alert('Login simulado com sucesso!'); this.closest('.modal').style.display='none';">
         <label>Usuário</label>
-        <input type="text" placeholder="Seu usuário" required>
+        <input type="text" placeholder="Seu usuário" required aria-label="Buscar na comunidade">
         <label>Senha</label>
-        <input type="password" placeholder="Senha" required>
+        <input type="password" placeholder="Senha" required aria-label="Filtrar por categoria">
         <button class="btn btn-primary" type="submit">Entrar</button>
       </form>
     </div>
@@ -143,7 +143,7 @@
   <footer>
     <div class="footer-content">
       <div class="footer-section">
-        <h4>Links Rápidos</h4>
+        <h3>Links Rápidos</h3>
         <ul>
           <li><a href="../index.html">Início</a></li>
           <li><a href="candidatos.html">Candidatos</a></li>

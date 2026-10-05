@@ -1,4 +1,4 @@
-﻿/* MeuVoto - Configuracao Global (autonomo). Backend -79eb = seu servidor (nao e marca). */
+/* MeuVoto - Configuracao Global (autonomo). Backend -79eb = seu servidor (nao e marca). */
 (function(){
   var ov=null; try{ ov=window.__MEUVOTO_ENV__&&window.__MEUVOTO_ENV__.API_BASE; }catch(e){}
   var st=null; try{ st=localStorage.getItem('mv_api_base'); }catch(e){}
@@ -10,10 +10,12 @@
   MV.REGRA_REVOGACAO={percentual_cassacao:0.70,abre_apos_posse:true,descricao:'70% dos votos que elegeram o politico = cassacao (validacao server-side)'};
   MV.TERMOMETRO={decaimento_cheio_dias:90,decaimento_piso_dias:180,piso_confianca:0.5};
   MV.MARCA={nome:'MeuVoto',eslogan:'Meu voto coloca, meu voto tira.',logo:'assets/logo-meuvoto.svg'};
+  MV.THEME_COLOR='#061a3a';
+  /* theme-color e color configuration */
+  MV.COLORS={primary:'#061a3a',secondary:'#123059',gold:'#FFD700',green:'#2ECC71'};
   window.VotaBrasil=MV; window.MudaBrasil=MV; /* ALIAS-RETRO: codigo antigo continua vivo */
   try{ Object.keys(localStorage).forEach(function(k){ var n=null;
     if(k.indexOf('mudabrasil')===0) n=k.replace(/^mudabrasil/,'meuvoto');
     else if(k.indexOf('votabrasil')===0) n=k.replace(/^votabrasil/,'meuvoto');
     if(n&&localStorage.getItem(n)===null) localStorage.setItem(n,localStorage.getItem(k)); }); }catch(e){}
 })();
-

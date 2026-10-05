@@ -1,1 +1,0 @@
-@echo offpowershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0IMPLANTAR-FOTOS-WIKIDATA.ps1"pause

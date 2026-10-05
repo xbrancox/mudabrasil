@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iniciativa Cidadã · PLs da Sociedade · VotaBrasil</title>
+<meta name="description" content="A sociedade organizada escreve, assina e convoca parlamentares para aprovar Projetos de Lei populares.">
+<!-- og:meuvoto -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MeuVoto / VotaBrasil">
+<meta property="og:title" content="Iniciativa Cidadã · PLs da Sociedade · VotaBrasil">
+<meta property="og:description" content="A sociedade organizada escreve, assina e convoca parlamentares para aprovar Projetos de Lei populares. Crie, assine e convide parlamentares a apoiar projetos da sociedade.">
+<meta property="og:image" content="https://meu-voto.app/og-image.png">
+<meta property="og:url" content="https://meu-voto.app/pages/iniciativa-cidada.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Iniciativa Cidadã · PLs da Sociedade · VotaBrasil">
+<meta name="twitter:description" content="A sociedade organizada escreve, assina e convoca parlamentares para aprovar Projetos de Lei populares. Crie, assine e convide parlamentares a apoiar projetos da sociedade.">
+<meta name="twitter:image" content="https://meu-voto.app/og-image.png">
+<!-- /og:meuvoto -->
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="../config.local.js?v=2"></script>
+<script src="../js/header.js"></script>
+<style>
+:root{--bg:#061a3a;--c1:#0d2242;--c2:#123059;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C;--grey:#8a97ab;--txt:#eaf1fb;--line:#1d3a66}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 600px at 80% -10%,#0d2b57 0%,var(--bg) 55%) fixed var(--bg);color:var(--txt);font-family:Manrope,system-ui,sans-serif;min-height:100vh}
+h1,h2,h3,h4{font-family:Montserrat,sans-serif}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 100px}
+.hero{text-align:center;padding:40px 16px;background:linear-gradient(180deg,rgba(18,48,89,0.5) 0%,rgba(6,26,58,0) 100%);border-radius:20px;margin-bottom:30px;border:1px solid var(--line)}
+.hero h1{font-size:2.2rem;color:var(--gold);margin-bottom:10px}
+.hero p{color:#b9c7dd;max-width:700px;margin:0 auto;font-size:1.05rem;line-height:1.6}
+.nav-tabs{display:flex;gap:12px;justify-content:center;margin-bottom:30px;flex-wrap:wrap}
+.tab-btn{background:var(--c1);border:1px solid var(--line);color:var(--txt);padding:12px 24px;border-radius:999px;font-weight:700;cursor:pointer;font-size:1rem;transition:all .2s}
+.tab-btn:hover{border-color:var(--gold)}
+.tab-btn.active{background:var(--gold);color:#061a3a;border-color:var(--gold)}
+.section{display:none}
+.section.active{display:block}
+.card{background:var(--c1);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.card-title{font-size:1.3rem;color:var(--gold);font-weight:800}
+.meta{font-size:0.85rem;color:var(--grey);display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.badge{background:rgba(26,115,232,0.2);color:#7bb3f0;border:1px solid #1a73e8;padding:4px 10px;border-radius:999px;font-size:0.75rem;font-weight:700}
+.badge-org{background:rgba(212,175,55,0.15);color:var(--gold);border:1px solid var(--gold);padding:4px 10px;border-radius:999px;font-size:0.75rem;font-weight:700}
+.desc{color:#c6d0dd;line-height:1.6;margin-bottom:16px;font-size:0.95rem}
+.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.btn{background:#1A73E8;color:#fff;border:none;padding:10px 20px;border-radius:999px;font-weight:700;cursor:pointer;font-size:0.9rem;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-gold{background:var(--gold);color:#061a3a}
+.btn-green{background:var(--green);color:#04122b}
+.btn-outline{background:transparent;border:1px solid var(--line);color:var(--txt)}
+.btn-outline:hover{border-color:var(--gold)}
+.supporters-list{margin-top:14px;background:rgba(6,26,58,0.5);border-radius:12px;padding:12px;border:1px solid var(--line)}
+.supporters-list h5{font-size:0.85rem;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.supporter-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(46,204,113,0.15);color:var(--green);border:1px solid var(--green);padding:4px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;margin:4px}
+form{display:grid;gap:16px;max-width:800px;margin:0 auto}
+.form-group{display:grid;gap:6px}
+label{font-weight:700;font-size:0.9rem;color:#d7e3f5}
+input,textarea,select{background:var(--c2);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--txt);font-size:1rem;font-family:inherit}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold)}
+textarea{resize:vertical;min-height:120px}
+.ranking-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.ranking-card{background:var(--c1);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;align-items:center;gap:16px}
+.ranking-pos{font-size:1.5rem;font-weight:900;color:var(--gold);min-width:36px;text-align:center}
+.ranking-info h4{font-size:1rem;margin-bottom:4px}
+.ranking-info p{font-size:0.85rem;color:var(--grey)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.modal-content{background:var(--c1);border:1px solid var(--line);border-radius:20px;padding:30px;max-width:550px;width:100%;box-shadow:0 16px 40px rgba(0,0,0,0.5);position:relative}
+.modal-close{position:absolute;top:16px;right:20px;font-size:1.5rem;cursor:pointer;color:var(--grey)}
+.modal-close:hover{color:#fff}
+.alert{padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:0.9rem;font-weight:600}
+.alert-success{background:rgba(46,204,113,0.2);color:var(--green);border:1px solid var(--green)}
+.alert-error{background:rgba(231,76,60,0.2);color:var(--red);border:1px solid var(--red)}
+</style>
+</head>
+<body>
+<main>
+  <div class="hero">
+    <h1>Iniciativa Cidadã</h1>
+    <p>A sociedade organizada escreve, assina e convoca. Proponha Projetos de Lei (PLs), conquistas de ONGs e movimentos cívicos, colete assinaturas da população e exija o apoio de parlamentares e partidos.</p>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('pls')">📜 PLs da Sociedade</button>
+    <button class="tab-btn" onclick="switchTab('criar')">✍️ Escrever Novo PL</button>
+    <button class="tab-btn" onclick="switchTab('ranking')">⭐ Ranking de Apoiadores</button>
+  </div>
+
+  <!-- SEÇÃO: PLS DA SOCIEDADE -->
+  <div id="tab-pls" class="section active">
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;justify-content:space-between;align-items:center">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="filter-cat" onchange="loadPls()" style="padding:8px 14px;border-radius:999px">
+          <option value="Todos">Todas as Categorias</option>
+          <option value="Meio Ambiente">Meio Ambiente</option>
+          <option value="Combate à Corrupção">Combate à Corrupção</option>
+          <option value="Educação e Cultura">Educação e Cultura</option>
+          <option value="Saúde e Direitos">Saúde e Direitos</option>
+          <option value="Economia e Tributos">Economia e Tributos</option>
+          <option value="Geral">Geral</option>
+        </select>
+        <label for="filter-search" class="sr-only">Filtrar iniciativas</label>
+<input type="text" id="filter-search" placeholder="Buscar por título ou organização..." oninput="loadPls()" style="padding:8px 14px;border-radius:999px;min-width:240px">
+      </div>
+      <button class="btn btn-gold" onclick="switchTab('criar')"><i class="fa fa-plus"></i> Propor PL Popular</button>
+    </div>
+    <div id="pls-container">
+      <div style="text-align:center;padding:40px;color:var(--grey)">Carregando projetos da sociedade...</div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO: CRIAR NOVO PL -->
+  <div id="tab-criar" class="section">
+    <div class="card" style="max-width:800px;margin:0 auto">
+      <h2 style="color:var(--gold);margin-bottom:16px"><i class="fa fa-pen-nib"></i> Submeter Projeto de Lei da Sociedade</h2>
+      <p class="desc">Associações, ONGs, coletivos e cidadãos podem apresentar propostas legislativas fundamentadas. Preencha os campos abaixo para iniciar a coleta de assinaturas populares e convidar parlamentares.</p>
+      
+      <div id="form-alert"></div>
+
+      <form id="create-pl-form" onsubmit="submitPl(event)">
+        <div class="form-group">
+          <label>Nome da Organização ou Coletivo *</label>
+          <label for="orgName" class="sr-only">Nome da organização</label>
+<input type="text" id="orgName" required placeholder="Ex: Observatório Cidadão / Movimento Água Limpa">
+        </div>
+        <div class="form-group">
+          <label>E-mail de Contato *</label>
+          <label for="orgEmail" class="sr-only">Email da organização</label>
+<input type="email" id="orgEmail" required placeholder="contato@organizacao.org.br">
+        </div>
+        <div class="form-group">
+          <label>Título do Projeto de Lei *</label>
+          <label for="title" class="sr-only">Título da iniciativa</label>
+<input type="text" id="title" required placeholder="Ex: PL de Proteção às Nascentes e Rios Urbanos">
+        </div>
+        <div class="form-group">
+          <label>Categoria *</label>
+          <select id="category">
+            <option value="Meio Ambiente">Meio Ambiente</option>
+            <option value="Combate à Corrupção">Combate à Corrupção</option>
+            <option value="Educação e Cultura">Educação e Cultura</option>
+            <option value="Saúde e Direitos">Saúde e Direitos</option>
+            <option value="Economia e Tributos">Economia e Tributos</option>
+            <option value="Geral">Geral</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Resumo / Ementa (Breve descrição) *</label>
+          <textarea id="summary" required style="min-height:80px" placeholder="Estabelece diretrizes obrigatórias para preservação de mananciais..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Link / Anexo do Projeto de Lei Pronto (Opcional - PDF ou Documento na Nuvem)</label>
+          <label for="attachmentUrl" class="sr-only">URL do anexo</label>
+<input type="url" id="attachmentUrl" placeholder="https://exemplo.org/meu-projeto-de-lei.pdf">
+        </div>
+        <div class="form-group">
+          <label>Texto Completo do Projeto de Lei *</label>
+          <textarea id="text" required placeholder="Art. 1º Esta lei dispõe sobre..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold" style="justify-content:center;padding:14px;font-size:1rem"><i class="fa fa-paper-plane"></i> Publicar Projeto para Assinaturas</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SEÇÃO: RANKING DE APOIADORES -->
+  <div id="tab-ranking" class="section">
+    <div style="margin-bottom:20px">
+      <h2 style="color:var(--gold);margin-bottom:6px">Parlamentares e Partidos Apoiadores</h2>
+      <p style="color:#b9c7dd">Deputados, senadores e partidos políticos que abraçaram formalmente os projetos de lei propostos pela sociedade.</p>
+    </div>
+    <div id="ranking-container" class="ranking-grid">
+      <div style="text-align:center;padding:40px;color:var(--grey)">Carregando ranking...</div>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL DE CONVITE -->
+<div id="invite-modal" class="modal" style="display:none" onclick="if(event.target===this)closeInviteModal()">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeInviteModal()">&times;</span>
+    <h3 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-share-nodes"></i> Convidar Parlamentar ou Partido</h3>
+    <p class="desc">Gere um link oficial de convite para que o parlamentar ou partido assine e declare apoio formal a este projeto da sociedade.</p>
+    <div id="invite-modal-alert"></div>
+    <form id="invite-form" onsubmit="submitInvite(event)" style="display:grid;gap:12px">
+      <input type="hidden" id="invite-pl-id">
+      <div class="form-group">
+        <label>Tipo de Convidado *</label>
+        <select id="invite-type">
+          <option value="Parlamentar">Deputado ou Senador</option>
+          <option value="Partido">Partido Político</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nome do Parlamentar ou Partido *</label>
+        <label for="invite-name" class="sr-only">Nome do convidado</label>
+<input type="text" id="invite-name" required placeholder="Ex: Deputado João da Silva / Partido Verde">
+      </div>
+      <div style="display:flex;gap:10px">
+        <button type="submit" class="btn btn-gold" style="flex:1;justify-content:center">Gerar Link Oficial de Apoio</button>
+        <button type="button" class="btn btn-outline" onclick="closeInviteModal()" style="padding:10px 16px">Fechar</button>
+      </div>
+    </form>
+    <div id="invite-result" style="margin-top:16px" hidden></div>
+  </div>
+</div>
+
+<script>
+const API = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string') ? window.MeuVoto.API_BASE : '';
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  if (tabId === 'pls') {
+    document.querySelector('button[onclick="switchTab(\'pls\')"]').classList.add('active');
+    document.getElementById('tab-pls').classList.add('active');
+    loadPls();
+  } else if (tabId === 'criar') {
+    document.querySelector('button[onclick="switchTab(\'criar\')"]').classList.add('active');
+    document.getElementById('tab-criar').classList.add('active');
+  } else if (tabId === 'ranking') {
+    document.querySelector('button[onclick="switchTab(\'ranking\')"]').classList.add('active');
+    document.getElementById('tab-ranking').classList.add('active');
+    loadRanking();
+  }
+}
+
+async function loadPls() {
+  const cat = document.getElementById('filter-cat').value;
+  const search = document.getElementById('filter-search').value;
+  const container = document.getElementById('pls-container');
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey)">Carregando projetos...</div>';
+  try {
+    const res = await fetch(`${API}/api/society/pls?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(search)}`);
+    const data = await res.json();
+    if (!data.ok || !data.pls.length) {
+      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey)">Nenhum projeto da sociedade encontrado. Seja o primeiro a propor um PL!</div>';
+      return;
+    }
+    container.innerHTML = data.pls.map(pl => {
+      const attachmentHTML = pl.attachmentUrl ? `
+        <div style="margin-bottom:12px">
+          <a href="${pl.attachmentUrl}" target="_blank" class="btn btn-outline" style="font-size:0.85rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px">
+            <i class="fa fa-file-pdf" style="color:var(--gold)"></i> Baixar Documento / Anexo Original do PL
+          </a>
+        </div>
+      ` : '';
+      const invitesHTML = pl.invites && pl.invites.length ? `
+        <div class="supporters-list">
+          <h4>Parlamentares e Partidos Apoiadores:</h4>
+          <div>
+            ${pl.invites.map(i => `<span class="supporter-badge"><i class="fa fa-check-circle"></i> ${i.targetName} (${i.targetType}) - ${i.status}</span>`).join('')}
+          </div>
+        </div>
+      ` : '';
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <span class="badge-org">${pl.orgName}</span>
+              <span class="badge" style="margin-left:6px">${pl.category}</span>
+              <h3 class="card-title" style="margin-top:8px">${pl.title}</h3>
+            </div>
+            <div style="text-align:right">
+              <span style="font-size:1.4rem;font-weight:900;color:var(--green)">${pl.signatureCount || 0}</span>
+              <div style="font-size:0.75rem;color:var(--grey)">assinaturas</div>
+            </div>
+          </div>
+          <p class="desc"><b>Resumo:</b> ${pl.summary}</p>
+          ${attachmentHTML}
+          <details style="margin-bottom:12px">
+            <summary style="cursor:pointer;color:var(--gold);font-size:0.9rem;font-weight:700">Ver Texto Completo do Projeto</summary>
+            <p style="margin-top:8px;white-space:pre-wrap;background:rgba(6,26,58,0.4);padding:12px;border-radius:8px;font-size:0.9rem;color:#d7e3f5">${pl.text}</p>
+          </details>
+          ${invitesHTML}
+          <div class="actions">
+            <button class="btn btn-green" onclick="signPl('${pl.id}')"><i class="fa fa-signature"></i> Assinar / Apoiar PL</button>
+            <button class="btn btn-outline" onclick="openInviteModal('${pl.id}')"><i class="fa fa-user-plus"></i> Convidar Parlamentar ou Partido</button>
+            <span style="font-size:0.8rem;color:var(--grey);margin-left:auto">Criado em ${new Date(pl.createdAt).toLocaleDateString('pt-BR')}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red)">Erro ao carregar projetos.</div>';
+  }
+}
+
+async function submitPl(e) {
+  e.preventDefault();
+  const alertBox = document.getElementById('form-alert');
+  const sessionToken = localStorage.getItem('mb_session_token');
+  if (!sessionToken) {
+    alertBox.innerHTML = '<div class="alert alert-error">Você precisa estar logado para publicar um projeto. Clique em "Entrar" no topo.</div>';
+    if (window.mbAbrirModal) window.mbAbrirModal('login');
+    return;
+  }
+  const payload = {
+    sessionToken,
+    orgName: document.getElementById('orgName').value,
+    orgEmail: document.getElementById('orgEmail').value,
+    title: document.getElementById('title').value,
+    category: document.getElementById('category').value,
+    summary: document.getElementById('summary').value,
+    text: document.getElementById('text').value,
+    attachmentUrl: document.getElementById('attachmentUrl').value
+  };
+  try {
+    const res = await fetch(`${API}/api/society/pls`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.ok) {
+      alertBox.innerHTML = '<div class="alert alert-success">Projeto publicado com sucesso! Redirecionando...</div>';
+      document.getElementById('create-pl-form').reset();
+      setTimeout(() => switchTab('pls'), 1500);
+    } else {
+      alertBox.innerHTML = `<div class="alert alert-error">${data.error || 'Erro ao publicar projeto.'}</div>`;
+    }
+  } catch (err) {
+    alertBox.innerHTML = '<div class="alert alert-error">Erro de conexão ao publicar projeto.</div>';
+  }
+}
+
+async function signPl(plId) {
+  const sessionToken = localStorage.getItem('mb_session_token');
+  if (!sessionToken) {
+    alert('Você precisa estar logado para assinar um projeto. Clique em "Entrar" no topo.');
+    if (window.mbAbrirModal) window.mbAbrirModal('login');
+    return;
+  }
+  try {
+    const res = await fetch(`${API}/api/society/pls/${plId}/sign`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionToken })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      alert('Assinatura registrada com sucesso! Obrigado por participar.');
+      loadPls();
+    } else {
+      alert(data.error || 'Erro ao registrar assinatura.');
+    }
+  } catch (e) {
+    alert('Erro de conexão ao assinar projeto.');
+  }
+}
+
+function openInviteModal(plId) {
+  document.getElementById('invite-pl-id').value = plId;
+  document.getElementById('invite-result').hidden = true;
+  document.getElementById('invite-modal-alert').innerHTML = '';
+  document.getElementById('invite-form').reset();
+  document.getElementById('invite-modal').style.display = 'flex';
+}
+
+function closeInviteModal() {
+  document.getElementById('invite-modal').style.display = 'none';
+}
+
+async function submitInvite(e) {
+  e.preventDefault();
+  const plId = document.getElementById('invite-pl-id').value;
+  const sessionToken = localStorage.getItem('mb_session_token');
+  const alertBox = document.getElementById('invite-modal-alert');
+  if (!sessionToken) {
+    alertBox.innerHTML = '<div class="alert alert-error">Faça login para gerar convites.</div>';
+    return;
+  }
+  const payload = {
+    sessionToken,
+    targetType: document.getElementById('invite-type').value,
+    targetName: document.getElementById('invite-name').value
+  };
+  try {
+    const res = await fetch(`${API}/api/society/pls/${plId}/invite`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.ok) {
+      const resDiv = document.getElementById('invite-result');
+      resDiv.hidden = false;
+      resDiv.innerHTML = `
+        <div class="alert alert-success" style="word-break:break-all">
+          Link de convite gerado!<br>
+          <input type="text" readonly value="${data.invite.inviteUrl}" style="width:100%;margin-top:6px;font-size:0.8rem;padding:8px" onclick="this.select()" aria-label="Buscar iniciativas">
+          <div style="font-size:0.75rem;color:#b9c7dd;margin-top:4px">Envie este link para o parlamentar ou partido para que ele confirme o apoio oficial.</div>
+        </div>
+      `;
+    } else {
+      alertBox.innerHTML = `<div class="alert alert-error">${data.error || 'Erro ao gerar convite.'}</div>`;
+    }
+  } catch (err) {
+    alertBox.innerHTML = '<div class="alert alert-error">Erro de conexão.</div>';
+  }
+}
+
+async function loadRanking() {
+  const container = document.getElementById('ranking-container');
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey);grid-column:1/-1">Carregando ranking...</div>';
+  try {
+    const res = await fetch(`${API}/api/society/ranking`);
+    const data = await res.json();
+    if (!data.ok || !data.ranking.length) {
+      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey);grid-column:1/-1">Nenhum parlamentar ou partido com apoio confirmado ainda. Convide autoridades para aparecerem no ranking!</div>';
+      return;
+    }
+    container.innerHTML = data.ranking.map((r, index) => `
+      <div class="ranking-card">
+        <div class="ranking-pos">#${index + 1}</div>
+        <div class="ranking-info">
+          <h4>${r.name}</h4>
+          <p>${r.type}</p>
+          <span style="font-size:0.8rem;color:var(--green);font-weight:700">${r.supportedCount} projeto(s) apoiado(s)</span>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);grid-column:1/-1">Erro ao carregar ranking.</div>';
+  }
+}
+
+// Inicializar carregando os PLs
+document.addEventListener('DOMContentLoaded', () => {
+  loadPls();
+  
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeInviteModal();
+    }
+  });
+
+  // Verificar se veio de aceite de convite
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('accepted') === '1') {
+    alert('🎉 Apoio oficial confirmado com sucesso! O parlamentar / partido agora integra o selo de apoio da iniciativa.');
+  }
+});
+</script>
+</body>
+</html>

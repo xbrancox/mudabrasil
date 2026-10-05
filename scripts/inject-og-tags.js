@@ -112,6 +112,11 @@ const PAGES = {
     title: 'Hub de páginas — MeuVoto',
     description: 'Todas as páginas do projeto em um só lugar: votações, digest, cobranças, metodologia, status e mais.'
   },
+  'pages/iniciativa-cidada.html': {
+    path: 'pages/iniciativa-cidada.html',
+    title: 'Iniciativa Cidadã · PLs da Sociedade — MeuVoto',
+    description: 'A sociedade organizada escreve, assina e convoca parlamentares para aprovar Projetos de Lei populares. Crie, assine e convide parlamentares a apoiar projetos da sociedade.'
+  },
   'pages/comunidade.html': {
     path: 'pages/comunidade.html',
     title: 'Comunidade — MeuVoto',

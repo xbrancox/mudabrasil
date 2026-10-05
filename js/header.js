@@ -86,6 +86,7 @@
   const NAV_LINKS = [
     { href: 'index.html',               label: 'Início' },
     { href: 'pages/parlamentares.html', label: 'Pesquisar Políticos' },
+    { href: 'pages/iniciativa-cidada.html', label: 'Iniciativa Cidadã' },
     { href: 'pages/conferir.html',      label: 'Conferir Voto' },
     { href: 'pages/congresso.html',     label: 'PLs no Congresso' },
     { href: 'pages/revogados.html',     label: 'Políticos Revogados' },

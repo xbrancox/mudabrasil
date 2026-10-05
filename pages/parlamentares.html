@@ -206,7 +206,8 @@ a.badge:hover{filter:brightness(1.25)}
 
 <div class="fbar"><div class="wrap">
   <div class="row1">
-    <input id="q" placeholder="🔎 Buscar por nome, partido, estado…" oninput="renderRad()"/>
+    <label for="q" class="sr-only">Buscar parlamentar</label>
+<input id="q" placeholder="🔎 Buscar por nome, partido, estado…" oninput="renderRad()"/>
     <select id="fUF" onchange="renderRad()"></select>
     <select id="fPartido" onchange="renderRad()"></select>
     <select id="fCargo" onchange="renderRad()">
@@ -230,7 +231,7 @@ a.badge:hover{filter:brightness(1.25)}
 
 <div class="wrap">
   <div class="grid" id="grid"></div>
-  <div class="loadmore"><button class="btn gold" id="more" onclick="mais()" hidden></button></div>
+  <div class="loadmore"><button class="btn gold" id="more" onclick="mais()" hidden>Carregar mais</button></div>
 </div>
 </main>
 
@@ -254,7 +255,7 @@ a.badge:hover{filter:brightness(1.25)}
 <!-- MODAL COMPARAR -->
 <div class="overlay" id="mCmp"><div class="modal">
   <button class="mx" onclick="fechar('mCmp')">✕</button>
-  <h3 style="margin-bottom:12px">🆚 Comparação lado a lado</h3>
+  <h2 style="margin-bottom:12px">🆚 Comparação lado a lado</h2>
   <div id="cmpBody"></div>
   <button class="btn" style="width:100%;margin-top:14px" onclick="fechar('mCmp')">Fechar</button>
 </div></div>
@@ -263,8 +264,10 @@ a.badge:hover{filter:brightness(1.25)}
 <div class="overlay" id="mForm"><div class="modal narrow">
   <button class="mx" onclick="fechar('mForm')">✕</button>
   <h3 id="fTitle" style="margin-bottom:12px">📝 Fazer reclamação</h3>
-  <label class="muted">Político</label><input id="fPol" readonly style="margin:6px 0 10px"/>
-  <label class="muted">Título</label><input id="fTitulo" maxlength="120" placeholder="Resumo breve (máx. 120)" style="margin:6px 0 10px"/>
+  <label class="muted">Político</label><label for="fPol" class="sr-only">Filtrar por partido</label>
+<input id="fPol" readonly style="margin:6px 0 10px"/>
+  <label class="muted">Título</label><label for="fTitulo" class="sr-only">Filtrar por título</label>
+<input id="fTitulo" maxlength="120" placeholder="Resumo breve (máx. 120)" style="margin:6px 0 10px"/>
   <label class="muted">Descrição</label><textarea id="fDesc" style="width:100%;min-height:80px;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px;font:500 14px Manrope;resize:vertical" placeholder="Descreva com fonte/data ou links. Ou mande um elogio/apoio."></textarea>
   <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end"><button class="btn" onclick="fechar('mForm')">Cancelar</button><button class="btn gold" onclick="enviaForm()"><i class="fa-solid fa-paper-plane"></i> Enviar</button></div>
 </div></div>
@@ -276,12 +279,14 @@ a.badge:hover{filter:brightness(1.25)}
   <div id="verifAlvo" class="muted" style="margin-bottom:8px"></div>
   <div id="verifPasso1">
     <label class="muted">E-mail institucional (@camara.leg.br / @senado.leg.br)</label>
-    <input id="vEmail" placeholder="nome@camara.leg.br" style="margin:6px 0 10px"/>
+    <label for="vEmail" class="sr-only">Seu email</label>
+<input id="vEmail" placeholder="nome@camara.leg.br" style="margin:6px 0 10px"/>
     <button class="btn gold" style="width:100%" onclick="solicitarCodigo()"><i class="fa-solid fa-envelope"></i> Enviar link de confirmação</button>
   </div>
   <div id="verifPasso2" style="display:none">
     <label class="muted">Token do link recebido</label>
-    <input id="vCodigo" placeholder="cole o token aqui" style="margin:6px 0 10px;text-align:center"/>
+    <label for="vCodigo" class="sr-only">Código de verificação</label>
+<input id="vCodigo" placeholder="cole o token aqui" style="margin:6px 0 10px;text-align:center"/>
     <div id="verifDev" class="quote ok" style="display:none;margin:8px 0"></div>
     <button class="btn green" style="width:100%" onclick="confirmarCodigo()"><i class="fa-solid fa-circle-check"></i> Confirmar e obter selo</button>
   </div>
@@ -591,7 +596,7 @@ function fichaHTML(id){
   const pend=done=>done?'—':'<span class="skel">carregando</span>';
   const val=v=>(v!=null&&v!=='')?esc(v):pend(d.detDone);
   const row=(l,v)=>`<div class="stat"><small>${l}</small><b style="font-size:13px">${(v==null||v==='')?pend(d.detDone):v}</b></div>`;
-  const grp=(t,inner)=>inner?`<h4 style="color:var(--gold);font-size:12px;margin:14px 0 6px">${t}</h4><div class="fstats" style="grid-template-columns:1fr 1fr">${inner}</div>`:'';
+  const grp=(t,inner)=>inner?`<h3 style="color:var(--gold);font-size:12px;margin:14px 0 6px">${t}</h3><div class="fstats" style="grid-template-columns:1fr 1fr">${inner}</div>`:'';
   const cands=candsDe(p);
   /* link oficial da candidatura quando o SQ já veio de /api/candidatos-tse */
   const tseRes=TSE_CAND_RES[normNome(p.nome)+'|'+String(p.uf||'').toUpperCase()];
@@ -613,7 +618,7 @@ function fichaHTML(id){
   const oc=(d.ocup||[]).slice(0,3).map(o=>`<div class="quote info" style="margin-top:4px">💼 ${esc(o)}</div>`).join('');
   const hi=(d.hist||[]).slice(0,3).map(x=>`<div class="quote info" style="margin-top:4px">${x.d?'<small class="muted">'+esc(x.d)+'</small> — ':''}${esc(x.t)}</div>`).join('');
   const atua=d.semAtiv
-    ?`<h4 style="color:var(--gold);font-size:12px;margin:14px 0 6px">🧩 Atuação institucional</h4><p class="muted" style="margin:2px 0">A API aberta do Senado não publica listas de comissões, frentes ou ocupações por senador — consulte a página oficial do senador.</p>`
+    ?`<h3 style="color:var(--gold);font-size:12px;margin:14px 0 6px">🧩 Atuação institucional</h3><p class="muted" style="margin:2px 0">A API aberta do Senado não publica listas de comissões, frentes ou ocupações por senador — consulte a página oficial do senador.</p>`
     :((d.orgaos==null)?'':
     `<h4 style="color:var(--gold);font-size:12px;margin:14px 0 6px">🧩 Atuação institucional</h4>`
     +(d.orgaos.length?'<b class="muted" style="font-size:11px">🏛️ Órgãos e comissões</b>'+org+((d.orgaos.length>6)?maisAba(d.orgaos.length-6,'🏛️ Atividade'):''):'<p class="muted" style="margin:2px 0">Nenhum registro de órgão/comissão.</p>')
@@ -793,7 +798,7 @@ function votosHTML(id){const d=DET[id]||{},p=POL.find(x=>x.id===id);
 function atividadeHTML(id){const d=DET[id]||{};
   if(d.orgaos==null)return '<p class="muted">⏳ Carregando atividade parlamentar…</p>';
   let h='';
-  h+='<h4 style="margin:10px 0 6px">🏛️ Órgãos e comissões</h4>';
+  h+='<h3 style="margin:10px 0 6px">🏛️ Órgãos e comissões</h3>';
   h+=d.orgaos.length?d.orgaos.map(o=>`<div class="quote info"><b>${esc(o.n)}</b>${o.c?' — '+esc(o.c):''}${o.t?' <small class="muted">desde '+esc(o.t)+'</small>':''}</div>`).join(''):'<p class="muted">Nenhum registro.</p>';
   h+='<h4 style="margin:14px 0 6px">🤝 Frentes parlamentares</h4>';
   h+=d.frentes&&d.frentes.length?d.frentes.map(f=>`<div class="quote ok">${esc(f)}</div>`).join(''):'<p class="muted">Nenhum registro.</p>';
@@ -820,7 +825,8 @@ async function abrirVotacao(vid){
     <p class="muted" style="margin-bottom:8px">Votação <b>${esc(vid)}</b> — Plenário da Câmara</p>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${chips}${outros.map(t=>`<span class="badge">${esc(t)}: ${placar[t]}</span>`).join(' ')}<span class="badge">Registrados: ${votos.length}</span></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-      <input id="vq" placeholder="🔎 buscar nome…" oninput="renderVotosLista()" style="flex:1;min-width:140px"/>
+      <label for="vq" class="sr-only">Buscar no radar</label>
+<input id="vq" placeholder="🔎 buscar nome…" oninput="renderVotosLista()" style="flex:1;min-width:140px"/>
       <select id="vp" onchange="renderVotosLista()" style="min-width:130px"><option value="">Todos os partidos</option>${partidos.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
     </div><div id="vlista"></div>`;
   renderVotosLista();

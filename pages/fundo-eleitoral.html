@@ -82,11 +82,12 @@
     <!-- ABA 1: POR PARTIDO -->
     <div class="mb-tab-panel active" id="tab-partidos" role="tabpanel">
       <div class="fx-panel">
-        <h3>📖 O que é o Fundo Eleitoral?</h3>
+        <h2>📖 O que é o Fundo Eleitoral?</h2>
         <p>O <strong>FEFC</strong> (Fundo Especial de Financiamento de Campanha) é dinheiro do Orçamento da União usado nas eleições. Em <strong id="fx-ano">—</strong>, o TSE distribuiu o total entre os partidos registrados — cabe a cada <strong>direção partidária</strong> repassar o valor às campanhas dos seus candidatos. Este ranking mostra exatamente <strong>quanto cada partido recebeu</strong> e como dividiu entre as cotas.</p>
       </div>
       <div class="mb-search-bar">
-        <input type="search" id="fx-pq" class="mb-input" placeholder="Filtrar por sigla ou nome do partido…" oninput="FX.renderPartidos()">
+        <label for="fx-pq" class="sr-only">Buscar por partido</label>
+<input type="search" id="fx-pq" class="mb-input" placeholder="Filtrar por sigla ou nome do partido…" oninput="FX.renderPartidos()">
       </div>
       <div class="fx-panel" id="fx-lista-p"><p class="mb-muted">Carregando…</p></div>
     </div>
@@ -100,7 +101,8 @@
       </div>
       <div class="fx-panel" id="fx-lista-c"><p class="mb-muted">Carregando…</p></div>
       <div class="mb-search-bar" id="fx-busca-c" hidden>
-        <input type="search" id="fx-q" class="mb-input" placeholder="Buscar nome ou partido…" oninput="FX.renderCandidatos()">
+        <label for="fx-q" class="sr-only">Buscar por emenda ou parlamentar</label>
+<input type="search" id="fx-q" class="mb-input" placeholder="Buscar nome ou partido…" oninput="FX.renderCandidatos()">
       </div>
       <div class="fx-panel" id="fx-detalhe-c" hidden>
         <h3 id="fx-det-titulo">👤 Candidato</h3>

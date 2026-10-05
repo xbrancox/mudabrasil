@@ -85,9 +85,9 @@ O sistema atual permite que políticos sejam eleitos e depois ignorem o eleitora
       <h2>Login na Conta MeuVoto</h2>
       <form onsubmit="event.preventDefault(); alert('Login simulado com sucesso!'); this.closest('.modal').style.display='none';">
         <label>Usuário</label>
-        <input type="text" placeholder="Seu usuário" required>
+        <input type="text" placeholder="Seu usuário" required aria-label="Buscar propostas">
         <label>Senha</label>
-        <input type="password" placeholder="Senha" required>
+        <input type="password" placeholder="Senha" required aria-label="Filtrar propostas">
         <button class="btn btn-primary" type="submit">Entrar</button>
       </form>
     </div>
@@ -96,7 +96,7 @@ O sistema atual permite que políticos sejam eleitos e depois ignorem o eleitora
   <footer>
     <div class="footer-content">
       <div class="footer-section">
-        <h4>Links Rápidos</h4>
+        <h3>Links Rápidos</h3>
         <ul>
           <li><a href="../index.html">Início</a></li>
           <li><a href="candidatos.html">Candidatos</a></li>

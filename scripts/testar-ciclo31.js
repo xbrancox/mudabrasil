@@ -54,7 +54,8 @@ const PAGES_TO_CHECK = [
   'pages/cobrancas-ranking.html',
   'pages/mandato-responsavel.html',
   'pages/api-publica.html',
-  'pages/links.html'
+  'pages/links.html',
+  'pages/iniciativa-cidada.html'
 ];
 let ogOk = 0;
 PAGES_TO_CHECK.forEach(p => {

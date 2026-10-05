@@ -225,12 +225,12 @@
       <!-- TAB 1: EXPRESSAR CONFIANÇA -->
       <div class="tab-panel active" id="panel-expressar">
         <div class="card" style="max-width:720px; margin:0 auto;">
-          <h3>🗳️ Como expressar confiança em um político</h3>
+          <h2>🗳️ Como expressar confiança em um político</h2>
 
           <div class="vote-step">
             <div class="step-number">1</div>
             <div class="step-content">
-              <h4>Escolha o político</h4>
+              <h3>Escolha o político</h3>
               <p>Busque o deputado ou senador em quem você confia. Você pode trocar a qualquer momento.</p>
             </div>
           </div>
@@ -253,7 +253,7 @@
           <div class="vote-step" style="margin-top:var(--space-lg);">
             <div class="step-number">2</div>
             <div class="step-content">
-              <h4>Confirme seu voto</h4>
+              <h3>Confirme seu voto</h3>
               <p>Ao confirmar, você registra um voto de confiança. O código que aparecerá na próxima tela é mostrado <strong>apenas uma vez</strong>. Anote ou copie antes de fechar.</p>
             </div>
           </div>
@@ -296,7 +296,8 @@
           </div>
 
           <div class="code-input-group">
-            <input type="text" id="code-input" class="code-input"
+            <label for="code-input" class="sr-only">Código do voto</label>
+<input type="text" id="code-input" class="code-input"
                    placeholder="Cole seu código (XXXX-XXXX-XXXX-XXXX)" autocomplete="off">
             <button class="btn btn-secondary btn-sm" id="btn-ver" style="white-space:nowrap;">
               👁 Ver meu voto
@@ -418,9 +419,9 @@
       <h2>Login na Conta MeuVoto</h2>
       <form onsubmit="event.preventDefault(); alert('Login simulado!'); this.closest('.modal').style.display='none';">
         <label>Usuário</label>
-        <input type="text" placeholder="Seu usuário" required>
+        <input type="text" placeholder="Seu usuário" required aria-label="Dígito do código de verificação">
         <label>Senha</label>
-        <input type="password" placeholder="Senha" required>
+        <input type="password" placeholder="Senha" required aria-label="Dígito do código de verificação">
         <button class="btn btn-primary" type="submit">Entrar</button>
       </form>
     </div>
@@ -429,7 +430,7 @@
   <footer>
     <div class="footer-content">
       <div class="footer-section">
-        <h4>Links Rápidos</h4>
+        <h3>Links Rápidos</h3>
         <ul>
           <li><a href="../index.html">Início</a></li>
           <li><a href="parlamentares.html">🏛️ Parlamentares</a></li>

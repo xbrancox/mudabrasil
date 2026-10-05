@@ -82,6 +82,7 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 </div>
 <div id="aviso"></div>
 <div class="filtros">
+<label for="q" class="sr-only">Buscar candidatos</label>
 <input id="q" placeholder="🔎 Nome ou número…"/>
 <select id="cargo">
 <option value="6">Deputado Federal</option>
@@ -187,7 +188,7 @@ function card(c,i){
 function abrirIdx(i){abrir(LAST[i])}
 function abrir(c){
  const bens=c.bens||[];
- $('#detBody').innerHTML=`<h3 style="margin-bottom:6px;font-size:18px">${esc(c.nomeUrna||c.nomeCivil||'')}</h3>
+ $('#detBody').innerHTML=`<h2 style="margin-bottom:6px;font-size:18px">${esc(c.nomeUrna||c.nomeCivil||'')}</h2>
  <div class="muted" style="margin-bottom:12px">${esc(c.nomeCivil||'')} · Número: <b>${c.numero||'—'}</b> · Partido: <b>${esc(c.partido||'')}</b> · UF: <b>${c.uf||''}</b> · Cargo: <b>${esc(NOME_CARGO[c.cargo]||c.cargo||'')}</b>${c.idade?' · Idade: '+c.idade+' anos':''}</div>
  <div class="stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px">
  <div class="stat" style="background:var(--card2);padding:10px;border-radius:10px"><small style="color:var(--muted);display:block">Situação TSE ${createTooltip('Status do candidato na Justiça Eleitoral: DEFERIDO (aceito), INDEFERIDO (rejeitado) ou AGUARDANDO JULGAMENTO.')}</small><b style="color:${(c.situacao||'').toUpperCase().includes('DEF')?'var(--green)':'var(--gold)'}">${esc(c.situacao||'—')}</b></div>
@@ -198,7 +199,7 @@ function abrir(c){
  <div class="stat" style="background:var(--card2);padding:10px;border-radius:10px"><small style="color:var(--muted);display:block">Fonte Oficial</small><b>DivulgaCand / TSE</b></div>
  </div>
  <p class="muted" style="font-size:12.5px;margin-bottom:14px;line-height:1.5">📊 <b>Transparência Eleitoral 2026:</b> O Fundo Especial de Financiamento de Campanha (FEFC) é regulamentado pela Justiça Eleitoral. Dados públicos extraídos diretamente dos portais do TSE e integrados unificadamente no MeuVoto.</p>
- <h4 style="font-size:14px;color:var(--gold);margin-bottom:8px">🏛️ Detalhes de Bens Declarados (${bens.length})</h4>
+ <h3 style="font-size:14px;color:var(--gold);margin-bottom:8px">🏛️ Detalhes de Bens Declarados (${bens.length})</h3>
  <div style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
  ${bens.length?bens.map(b=>`<div style="background:var(--card2);padding:8px 12px;border-radius:8px;font-size:12.5px">${esc(b.descricao||b.tipo||'Bem')} — <b style="color:var(--gold)">R$ ${Number(b.valor||0).toLocaleString('pt-BR')}</b></div>`).join(''):renderEmptyState('fa-solid fa-file-invoice-dollar','Nenhum bem declarado à Justiça Eleitoral.')}
  </div>`;

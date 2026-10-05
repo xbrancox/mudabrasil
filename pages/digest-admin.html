@@ -16,6 +16,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Admin Digest · MeuVoto</title>
+  <meta name="description" content="Painel administrativo do resumo semanal do MeuVoto: gerencie edições, métricas e envios do digest para os assinantes.">
+
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
 <script src="../config.js"></script>
 <script src="../js/site-header.js"></script>
@@ -59,7 +61,7 @@ th{color:var(--muted);font-size:11px;text-transform:uppercase}
 
   <div id="adminPanel" class="hidden">
     <div id="opensPanel" class="card">
-      <h3>📈 Taxa de Abertura (ciclo 24)</h3>
+      <h2>📈 Taxa de Abertura (ciclo 24)</h2>
       <p class="muted">Aberturas são contadas quando o pixel 1×1 do e-mail é carregado. Subestima (bloqueadores de imagem e clientes sem imagens automáticas não registram).</p>
       <div id="opens-rows" class="sub" style="margin-top:10px">consultando…</div>
       <div id="opens-chart" style="margin-top:12px;overflow-x:auto"></div>

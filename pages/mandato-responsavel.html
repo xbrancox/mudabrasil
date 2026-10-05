@@ -16,6 +16,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Mandato Responsável · MeuVoto</title>
+  <meta name="description" content="Guia do mandato responsável: saiba como deputados e senadores podem usar a plataforma MeuVoto para prestar contas aos eleitores.">
+
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
 <script src="../config.js"></script>
@@ -56,7 +58,7 @@ code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padd
   </section>
 
   <div class="ecard disclaimer">
-    <h3>⚠️ Aviso importante</h3>
+    <h2>⚠️ Aviso importante</h2>
     <p>O ordenamento jurídico brasileiro <b>não prevê, atualmente, revogação popular direta de mandato</b> de deputado federal, senador ou presidente da República. Esta página tem <b>finalidade educativa</b>: apresenta o conceito de <i>recall</i> tal como existe em outras democracias, mostra os mecanismos que <i>de fato</i> encerram mandatos no Brasil e aponta caminhos legítimos de participação. Nada aqui tem <b>valor legal</b>.</p>
   </div>
 
@@ -88,11 +90,14 @@ code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padd
     <h3>🧮 Simulador conceitual (hipotético)</h3>
     <p class="muted">Cenário didático: <b>se</b> o Brasil tivesse recall para deputado com uma regra popular de 70% dos votos obtidos na eleição como limiar, quantas assinaturas seriam necessárias no cenário atual?</p>
     <label>Votos obtidos pelo parlamentar na eleição</label>
-    <input id="mrVotos" type="number" min="0" value="120000" step="1000"/>
+    <label for="mrVotos" class="sr-only">Número de votos recebidos</label>
+<input id="mrVotos" type="number" min="0" value="120000" step="1000"/>
     <label>% da base que assina o pedido: <span id="mrPctV">35</span>%</label>
-    <input id="mrPct" type="range" min="0" max="100" value="35" oninput="mrCalc()"/>
+    <label for="mrPct" class="sr-only">Percentual de cassação</label>
+<input id="mrPct" type="range" min="0" max="100" value="35" oninput="mrCalc()"/>
     <label>Regra conceitual (% dos votos obtidos): <span id="mrRegraV">70</span>%</label>
-    <input id="mrRegra" type="range" min="50" max="90" value="70" step="5" oninput="mrCalc()"/>
+    <label for="mrRegra" class="sr-only">Regra de revogação</label>
+<input id="mrRegra" type="range" min="50" max="90" value="70" step="5" oninput="mrCalc()"/>
     <div id="mrOut" class="muted" style="margin-top:10px">Ajuste os controles para ver o cálculo conceitual.</div>
   </div>
 

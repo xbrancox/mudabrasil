@@ -88,7 +88,10 @@ const JSON_FILES = {
   pls: path.join(DATA_DIR, 'pls.json'),
   pl_votes: path.join(DATA_DIR, 'pl_votes.json'),
   vote_codes: path.join(DATA_DIR, 'vote_codes.json'),
-  cargo_votes: path.join(DATA_DIR, 'cargo_votes.json')
+  cargo_votes: path.join(DATA_DIR, 'cargo_votes.json'),
+  society_pls: path.join(DATA_DIR, 'society_pls.json'),
+  society_pl_signatures: path.join(DATA_DIR, 'society_pl_signatures.json'),
+  society_pl_invites: path.join(DATA_DIR, 'society_pl_invites.json')
 };
 
 function jsonReadFile(key) {
@@ -251,7 +254,50 @@ function openSqlite() {
       UNIQUE(voter_hash, cargo)
     );
     CREATE INDEX IF NOT EXISTS idx_cargo_votes_codigo ON cargo_votes(codigo);
+
+    CREATE TABLE IF NOT EXISTS society_pls (
+      id              TEXT PRIMARY KEY,
+      org_name        TEXT NOT NULL,
+      org_email       TEXT,
+      title           TEXT NOT NULL,
+      summary         TEXT,
+      text            TEXT NOT NULL,
+      category        TEXT,
+      author_hash     TEXT,
+      attachment_url  TEXT,
+      status          TEXT DEFAULT 'Aberto para Assinaturas',
+      signature_count INTEGER NOT NULL DEFAULT 0,
+      created_at      INTEGER NOT NULL,
+      updated_at      INTEGER
+    );
+    CREATE INDEX IF NOT EXISTS idx_society_pls_category ON society_pls(category);
+
+    CREATE TABLE IF NOT EXISTS society_pl_signatures (
+      id              TEXT PRIMARY KEY,
+      pl_id           TEXT NOT NULL,
+      voter_hash      TEXT NOT NULL,
+      created_at      INTEGER NOT NULL,
+      UNIQUE(pl_id, voter_hash)
+    );
+    CREATE INDEX IF NOT EXISTS idx_society_pl_sig_pl ON society_pl_signatures(pl_id);
+    CREATE INDEX IF NOT EXISTS idx_society_pl_sig_voter ON society_pl_signatures(voter_hash);
+
+    CREATE TABLE IF NOT EXISTS society_pl_invites (
+      id              TEXT PRIMARY KEY,
+      pl_id           TEXT NOT NULL,
+      target_type     TEXT NOT NULL,
+      target_id       TEXT,
+      target_name     TEXT NOT NULL,
+      token           TEXT UNIQUE NOT NULL,
+      status          TEXT DEFAULT 'Pendente',
+      created_at      INTEGER NOT NULL,
+      accepted_at     INTEGER
+    );
+    CREATE INDEX IF NOT EXISTS idx_society_pl_invites_token ON society_pl_invites(token);
+    CREATE INDEX IF NOT EXISTS idx_society_pl_invites_target ON society_pl_invites(target_id);
   `);
+
+  try { db.prepare('ALTER TABLE society_pls ADD COLUMN attachment_url TEXT').run(); } catch (_) {}
 }
 
 const rowToBallot = r => ({
@@ -1080,7 +1126,214 @@ function getPoliticianFullDetails(id) {
 
 /* ===== Backup: dump completo de todas as tabelas ===== */
 const DUMP_TABLES = ['ballots', 'politicians', 'verifications', 'complaints',
-  'supports', 'responses', 'voters', 'pls', 'pl_votes', 'vote_codes', 'cargo_votes'];
+  'supports', 'responses', 'voters', 'pls', 'pl_votes', 'vote_codes', 'cargo_votes',
+  'society_pls', 'society_pl_signatures', 'society_pl_invites'];
+
+/* ===== INICIATIVA CIDADÃ / PLS DA SOCIEDADE ===== */
+const rowToSocietyPl = r => ({
+  id: r.id,
+  orgName: r.org_name,
+  orgEmail: r.org_email,
+  title: r.title,
+  summary: r.summary,
+  text: r.text,
+  category: r.category,
+  authorHash: r.author_hash,
+  attachmentUrl: r.attachment_url || null,
+  status: r.status || 'Aberto para Assinaturas',
+  signatureCount: r.signature_count || 0,
+  createdAt: r.created_at,
+  updatedAt: r.updated_at
+});
+
+function createSocietyPl(p) {
+  const now = Date.now();
+  const id = 'spl-' + Math.random().toString(36).substring(2, 10);
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    db.prepare(`
+      INSERT INTO society_pls (id, org_name, org_email, title, summary, text, category, author_hash, attachment_url, status, signature_count, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
+    `).run(id, p.orgName, p.orgEmail || null, p.title, p.summary || null, p.text, p.category || 'Geral', p.authorHash || null, p.attachmentUrl || null, p.status || 'Aberto para Assinaturas', now, now);
+    return getSocietyPl(id);
+  }
+  const all = jsonReadFile('society_pls');
+  const item = { id, orgName: p.orgName, orgEmail: p.orgEmail || null, title: p.title, summary: p.summary || null, text: p.text, category: p.category || 'Geral', authorHash: p.authorHash || null, attachmentUrl: p.attachmentUrl || null, status: p.status || 'Aberto para Assinaturas', signatureCount: 0, createdAt: now, updatedAt: now };
+  all[id] = item;
+  jsonWriteFile('society_pls', all);
+  return item;
+}
+
+function getSocietyPl(id) {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    const r = db.prepare('SELECT * FROM society_pls WHERE id = ?').get(id);
+    return r ? rowToSocietyPl(r) : null;
+  }
+  return jsonReadFile('society_pls')[id] || null;
+}
+
+function getAllSocietyPls({ category, search, limit = 100, offset = 0 } = {}) {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    let sql = 'SELECT * FROM society_pls WHERE 1=1';
+    const params = [];
+    if (category && category !== 'Todos') {
+      sql += ' AND category = ?';
+      params.push(category);
+    }
+    if (search) {
+      sql += ' AND (title LIKE ? OR summary LIKE ? OR text LIKE ? OR org_name LIKE ?)';
+      const q = '%' + search + '%';
+      params.push(q, q, q, q);
+    }
+    sql += ' ORDER BY signature_count DESC, created_at DESC LIMIT ? OFFSET ?';
+    params.push(limit, offset);
+    return db.prepare(sql).all(...params).map(rowToSocietyPl);
+  }
+  let list = Object.values(jsonReadFile('society_pls'));
+  if (category && category !== 'Todos') {
+    list = list.filter(p => p.category === category);
+  }
+  if (search) {
+    const s = search.toLowerCase();
+    list = list.filter(p => (p.title || '').toLowerCase().includes(s) || (p.summary || '').toLowerCase().includes(s) || (p.text || '').toLowerCase().includes(s) || (p.orgName || '').toLowerCase().includes(s));
+  }
+  list.sort((a, b) => (b.signatureCount || 0) - (a.signatureCount || 0) || b.createdAt - a.createdAt);
+  return list.slice(offset, offset + limit);
+}
+
+function signSocietyPl(plId, voterHash) {
+  const now = Date.now();
+  const sigId = 'sps-' + plId + '-' + voterHash.slice(0, 8);
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    const existing = db.prepare('SELECT * FROM society_pl_signatures WHERE pl_id = ? AND voter_hash = ?').get(plId, voterHash);
+    if (existing) {
+      return { ok: false, error: 'Você já assinou este projeto.' };
+    }
+    db.prepare('INSERT INTO society_pl_signatures (id, pl_id, voter_hash, created_at) VALUES (?, ?, ?, ?)').run(sigId, plId, voterHash, now);
+    db.prepare('UPDATE society_pls SET signature_count = signature_count + 1, updated_at = ? WHERE id = ?').run(now, plId);
+    return { ok: true, signed: true };
+  }
+  const sigs = jsonReadFile('society_pl_signatures');
+  const key = plId + '|' + voterHash;
+  if (sigs[key]) {
+    return { ok: false, error: 'Você já assinou este projeto.' };
+  }
+  sigs[key] = { id: sigId, plId, voterHash, createdAt: now };
+  jsonWriteFile('society_pl_signatures', sigs);
+
+  const pls = jsonReadFile('society_pls');
+  if (pls[plId]) {
+    pls[plId].signatureCount = (pls[plId].signatureCount || 0) + 1;
+    pls[plId].updatedAt = now;
+    jsonWriteFile('society_pls', pls);
+  }
+  return { ok: true, signed: true };
+}
+
+function getSocietyPlSignature(plId, voterHash) {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    const r = db.prepare('SELECT * FROM society_pl_signatures WHERE pl_id = ? AND voter_hash = ?').get(plId, voterHash);
+    return !!r;
+  }
+  const sigs = jsonReadFile('society_pl_signatures');
+  return !!sigs[plId + '|' + voterHash];
+}
+
+function createSocietyPlInvite({ plId, targetType, targetId, targetName }) {
+  const now = Date.now();
+  const id = 'inv-' + Math.random().toString(36).substring(2, 10);
+  const token = crypto.randomBytes(16).toString('hex');
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    db.prepare(`
+      INSERT INTO society_pl_invites (id, pl_id, target_type, target_id, target_name, token, status, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, 'Pendente', ?)
+    `).run(id, plId, targetType, targetId || null, targetName, token, now);
+    return { id, plId, targetType, targetId, targetName, token, status: 'Pendente', createdAt: now };
+  }
+  const all = jsonReadFile('society_pl_invites');
+  const item = { id, plId, targetType, targetId: targetId || null, targetName, token, status: 'Pendente', createdAt: now, acceptedAt: null };
+  all[token] = item;
+  jsonWriteFile('society_pl_invites', all);
+  return item;
+}
+
+function getSocietyPlInviteByToken(token) {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    const r = db.prepare('SELECT * FROM society_pl_invites WHERE token = ?').get(token);
+    if (!r) return null;
+    return { id: r.id, plId: r.pl_id, targetType: r.target_type, targetId: r.target_id, targetName: r.target_name, token: r.token, status: r.status, createdAt: r.created_at, acceptedAt: r.accepted_at };
+  }
+  const all = jsonReadFile('society_pl_invites');
+  return all[token] || null;
+}
+
+function acceptSocietyPlInvite(token) {
+  const now = Date.now();
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    const r = db.prepare('SELECT * FROM society_pl_invites WHERE token = ?').get(token);
+    if (!r) return { ok: false, error: 'Convite não encontrado.' };
+    if (r.status === 'Aceito') return { ok: true, alreadyAccepted: true, plId: r.pl_id };
+    db.prepare('UPDATE society_pl_invites SET status = ?, accepted_at = ? WHERE token = ?').run('Aceito', now, token);
+    return { ok: true, plId: r.pl_id, targetName: r.target_name, targetType: r.target_type, targetId: r.target_id };
+  }
+  const all = jsonReadFile('society_pl_invites');
+  const inv = all[token];
+  if (!inv) return { ok: false, error: 'Convite não encontrado.' };
+  if (inv.status === 'Aceito') return { ok: true, alreadyAccepted: true, plId: inv.plId };
+  inv.status = 'Aceito';
+  inv.acceptedAt = now;
+  jsonWriteFile('society_pl_invites', all);
+  return { ok: true, plId: inv.plId, targetName: inv.targetName, targetType: inv.targetType, targetId: inv.targetId };
+}
+
+function getSocietyPlInvites(plId) {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    return db.prepare('SELECT * FROM society_pl_invites WHERE pl_id = ? ORDER BY created_at DESC').all(plId).map(r => ({
+      id: r.id, plId: r.pl_id, targetType: r.target_type, targetId: r.target_id, targetName: r.target_name, token: r.token, status: r.status, createdAt: r.created_at, acceptedAt: r.accepted_at
+    }));
+  }
+  const all = jsonReadFile('society_pl_invites');
+  return Object.values(all).filter(i => i.plId === plId).sort((a, b) => b.createdAt - a.createdAt);
+}
+
+function getSocietyPlSupportersRanking() {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    const rows = db.prepare(`
+      SELECT target_id, target_name, target_type, COUNT(*) as supported_count
+      FROM society_pl_invites
+      WHERE status = 'Aceito' AND target_id IS NOT NULL
+      GROUP BY target_id, target_name, target_type
+      ORDER BY supported_count DESC
+      LIMIT 50
+    `).all();
+    return rows.map(r => ({
+      targetId: r.target_id,
+      name: r.target_name,
+      type: r.target_type,
+      supportedCount: r.supported_count
+    }));
+  }
+  const all = jsonReadFile('society_pl_invites');
+  const counts = {};
+  for (const inv of Object.values(all)) {
+    if (inv.status === 'Aceito' && inv.targetId) {
+      if (!counts[inv.targetId]) {
+        counts[inv.targetId] = { targetId: inv.targetId, name: inv.targetName, type: inv.targetType, supportedCount: 0 };
+      }
+      counts[inv.targetId].supportedCount++;
+    }
+  }
+  return Object.values(counts).sort((a, b) => b.supportedCount - a.supportedCount).slice(0, 50);
+}
 function dumpAll() {
   const out = {};
   if (BACKEND === 'sqlite') {
@@ -1124,6 +1377,8 @@ module.exports = {
   upsertPl, getPl, readAllPls, getPlsByFilters, castPlVote, getPlVoteForVoter,
   generateVoteCode, getVoteCodesForVoter, verifyVoteCode, markCodeUsed,
   getCargoVotesByCodigo, getCargoVotesByVoter, replaceVoterCargoVotes, deleteCargoVotesByCodigo,
+  createSocietyPl, getSocietyPl, getAllSocietyPls, signSocietyPl, getSocietyPlSignature,
+  createSocietyPlInvite, getSocietyPlInviteByToken, acceptSocietyPlInvite, getSocietyPlInvites, getSocietyPlSupportersRanking,
   getRevokedStats, dumpAll,
   exec, prepare,
   VOTOS_DB, VOTOS_FILE
