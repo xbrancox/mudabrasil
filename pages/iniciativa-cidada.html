@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Iniciativa Cidadã · PLs da Sociedade · VotaBrasil</title>
-<meta name="description" content="A sociedade organizada escreve, assina e convoca parlamentares para aprovar Projetos de Lei populares.">
+<meta name="description" content="A sociedade organizada escreve, assina e convoca parlamentares para aprovar Projetos de Lei populares. Crie, assine e mobilize a população.">
 <!-- og:meuvoto -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MeuVoto / VotaBrasil">
@@ -14,87 +14,229 @@
 <meta property="og:url" content="https://meu-voto.app/pages/iniciativa-cidada.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Iniciativa Cidadã · PLs da Sociedade · VotaBrasil">
-<meta name="twitter:description" content="A sociedade organizada escreve, assina e convoca parlamentares para aprovar Projetos de Lei populares. Crie, assine e convide parlamentares a apoiar projetos da sociedade.">
+<meta name="twitter:description" content="A sociedade organizada escreve, assina e convoca parlamentares para aprovar Projetos de Lei populares.">
 <meta name="twitter:image" content="https://meu-voto.app/og-image.png">
 <!-- /og:meuvoto -->
 <link rel="icon" type="image/svg+xml" href="../icon.svg">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="../config.local.js?v=2"></script>
 <script src="../js/site-header.js"></script>
 <script src="../js/enhancements.js"></script>
 <style>
-:root{--bg:#061a3a;--c1:#0d2242;--c2:#123059;--gold:#FFD700;--green:#2ECC71;--red:#E74C3C;--grey:#8a97ab;--txt:#eaf1fb;--line:#1d3a66}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:radial-gradient(1200px 600px at 80% -10%,#0d2b57 0%,var(--bg) 55%) fixed var(--bg);color:var(--txt);font-family:Manrope,system-ui,sans-serif;min-height:100vh}
-h1,h2,h3,h4{font-family:Montserrat,sans-serif}
-a{color:var(--gold);text-decoration:none}
-a:hover{text-decoration:underline}
-main{max-width:1200px;margin:0 auto;padding:24px 16px 100px}
-.hero{text-align:center;padding:40px 16px;background:linear-gradient(180deg,rgba(18,48,89,0.5) 0%,rgba(6,26,58,0) 100%);border-radius:20px;margin-bottom:30px;border:1px solid var(--line)}
-.hero h1{font-size:2.2rem;color:var(--gold);margin-bottom:10px}
-.hero p{color:#b9c7dd;max-width:700px;margin:0 auto;font-size:1.05rem;line-height:1.6}
-.nav-tabs{display:flex;gap:12px;justify-content:center;margin-bottom:30px;flex-wrap:wrap}
-.tab-btn{background:var(--c1);border:1px solid var(--line);color:var(--txt);padding:12px 24px;border-radius:999px;font-weight:700;cursor:pointer;font-size:1rem;transition:all .2s}
-.tab-btn:hover{border-color:var(--gold)}
-.tab-btn.active{background:var(--gold);color:#061a3a;border-color:var(--gold)}
-.section{display:none}
-.section.active{display:block}
-.card{background:var(--c1);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
-.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:12px}
-.card-title{font-size:1.3rem;color:var(--gold);font-weight:800}
-.meta{font-size:0.85rem;color:var(--grey);display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.badge{background:rgba(26,115,232,0.2);color:#7bb3f0;border:1px solid #1a73e8;padding:4px 10px;border-radius:999px;font-size:0.75rem;font-weight:700}
-.badge-org{background:rgba(212,175,55,0.15);color:var(--gold);border:1px solid var(--gold);padding:4px 10px;border-radius:999px;font-size:0.75rem;font-weight:700}
-.desc{color:#c6d0dd;line-height:1.6;margin-bottom:16px;font-size:0.95rem}
-.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
-.btn{background:#1A73E8;color:#fff;border:none;padding:10px 20px;border-radius:999px;font-weight:700;cursor:pointer;font-size:0.9rem;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
-.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.btn-gold{background:var(--gold);color:#061a3a}
-.btn-green{background:var(--green);color:#04122b}
-.btn-outline{background:transparent;border:1px solid var(--line);color:var(--txt)}
-.btn-outline:hover{border-color:var(--gold)}
-.supporters-list{margin-top:14px;background:rgba(6,26,58,0.5);border-radius:12px;padding:12px;border:1px solid var(--line)}
-.supporters-list h5{font-size:0.85rem;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
-.supporter-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(46,204,113,0.15);color:var(--green);border:1px solid var(--green);padding:4px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;margin:4px}
-form{display:grid;gap:16px;max-width:800px;margin:0 auto}
-.form-group{display:grid;gap:6px}
-label{font-weight:700;font-size:0.9rem;color:#d7e3f5}
-input,textarea,select{background:var(--c2);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--txt);font-size:1rem;font-family:inherit}
-input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold)}
-textarea{resize:vertical;min-height:120px}
-.ranking-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.ranking-card{background:var(--c1);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;align-items:center;gap:16px}
-.ranking-pos{font-size:1.5rem;font-weight:900;color:var(--gold);min-width:36px;text-align:center}
-.ranking-info h4{font-size:1rem;margin-bottom:4px}
-.ranking-info p{font-size:0.85rem;color:var(--grey)}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
-.modal-content{background:var(--c1);border:1px solid var(--line);border-radius:20px;padding:30px;max-width:550px;width:100%;box-shadow:0 16px 40px rgba(0,0,0,0.5);position:relative}
-.modal-close{position:absolute;top:16px;right:20px;font-size:1.5rem;cursor:pointer;color:var(--grey)}
-.modal-close:hover{color:#fff}
-.alert{padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:0.9rem;font-weight:600}
-.alert-success{background:rgba(46,204,113,0.2);color:var(--green);border:1px solid var(--green)}
-.alert-error{background:rgba(231,76,60,0.2);color:var(--red);border:1px solid var(--red)}
+:root {
+  --bg: #061a3a;
+  --c1: #0d2242;
+  --c2: #123059;
+  --gold: #FFD700;
+  --green: #2ECC71;
+  --red: #E74C3C;
+  --grey: #8a97ab;
+  --txt: #eaf1fb;
+  --line: #1d3a66;
+  --card-bg: rgba(13, 34, 66, 0.75);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: radial-gradient(1200px 600px at 80% -10%, #0d2b57 0%, var(--bg) 55%) fixed var(--bg);
+  color: var(--txt);
+  font-family: 'Manrope', system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
+a { color: var(--gold); text-decoration: none; transition: color .2s; }
+a:hover { text-decoration: underline; }
+
+main { max-width: 1200px; margin: 0 auto; padding: 28px 16px 120px; }
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 48px 24px;
+  background: linear-gradient(180deg, rgba(18, 48, 89, 0.6) 0%, rgba(6, 26, 58, 0.1) 100%);
+  border-radius: 24px;
+  margin-bottom: 32px;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero h1 { font-size: 2.5rem; color: var(--gold); margin-bottom: 12px; font-weight: 900; letter-spacing: -0.02em; }
+.hero p { color: #b9c7dd; max-width: 720px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6; }
+
+/* Navigation Tabs */
+.nav-tabs { display: flex; gap: 12px; justify-content: center; margin-bottom: 36px; flex-wrap: wrap; }
+.tab-btn {
+  background: var(--c1);
+  border: 1px solid var(--line);
+  color: var(--txt);
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.tab-btn:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,215,0,0.15); }
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--gold), #ffa500);
+  color: #061a3a;
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(255,215,0,0.3);
+}
+
+.section { display: none; animation: fadeIn .3s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  backdrop-filter: blur(14px);
+  transition: transform .2s ease, border-color .2s ease;
+}
+.card:hover { border-color: rgba(255,215,0,0.4); }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.card-title { font-size: 1.4rem; color: var(--gold); font-weight: 800; line-height: 1.3; }
+.meta { font-size: 0.85rem; color: var(--grey); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+
+/* Badges */
+.badge { background: rgba(26,115,232,0.2); color: #7bb3f0; border: 1px solid #1a73e8; padding: 5px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.3px; }
+.badge-org { background: rgba(212,175,55,0.18); color: var(--gold); border: 1px solid var(--gold); padding: 5px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+.badge-status { background: rgba(46,204,113,0.15); color: var(--green); border: 1px solid var(--green); padding: 5px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+
+.desc { color: #c6d0dd; line-height: 1.7; margin-bottom: 18px; font-size: 0.98rem; }
+
+/* Actions & Buttons */
+.actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.btn {
+  background: #1A73E8; color: #fff; border: none; padding: 11px 22px; border-radius: 999px; font-weight: 700; cursor: pointer; font-size: 0.9rem; transition: all .2s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(26,115,232,0.3);
+}
+.btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(26,115,232,0.4); }
+.btn-gold { background: linear-gradient(135deg, var(--gold), #ffa500); color: #061a3a; box-shadow: 0 4px 14px rgba(255,215,0,0.3); }
+.btn-green { background: linear-gradient(135deg, #7ed957, var(--green)); color: #04122b; box-shadow: 0 4px 14px rgba(46,204,113,0.3); }
+.btn-outline { background: transparent; border: 1px solid var(--line); color: var(--txt); box-shadow: none; }
+.btn-outline:hover { border-color: var(--gold); background: rgba(255,215,0,0.05); }
+
+/* Supporters List */
+.supporters-list { margin-top: 16px; background: rgba(6,26,58,0.6); border-radius: 14px; padding: 14px 16px; border: 1px solid var(--line); }
+.supporters-list h5 { font-size: 0.82rem; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .8px; font-weight: 800; }
+.supporter-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(46,204,113,0.15); color: var(--green); border: 1px solid var(--green); padding: 5px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; margin: 4px; }
+
+/* Rich PL text styling */
+.pl-text-box { margin-top: 12px; background: rgba(6,26,58,0.65); padding: 18px; border-radius: 12px; border: 1px solid var(--line); font-size: 0.92rem; color: #d7e3f5; line-height: 1.7; max-height: 320px; overflow-y: auto; white-space: pre-wrap; font-family: 'Manrope', sans-serif; }
+.pl-article { margin-bottom: 12px; font-weight: 600; }
+.pl-article b { color: var(--gold); }
+
+/* Forms & Controls */
+form { display: grid; gap: 18px; max-width: 840px; margin: 0 auto; }
+.form-group { display: grid; gap: 8px; }
+label { font-weight: 700; font-size: 0.92rem; color: #d7e3f5; display: flex; align-items: center; justify-content: space-between; }
+input, textarea, select {
+  background: var(--c2); border: 1px solid var(--line); border-radius: 12px; padding: 14px; color: var(--txt); font-size: 1rem; font-family: inherit; transition: border-color .2s, box-shadow .2s;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255,215,0,0.15); }
+textarea { resize: vertical; min-height: 140px; }
+
+/* Filters Bar */
+.filter-bar {
+  display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  background: var(--card-bg); padding: 16px 20px; border-radius: 16px; border: 1px solid var(--line); backdrop-filter: blur(10px);
+}
+.filter-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.filter-input { padding: 10px 16px; border-radius: 999px; background: var(--c2); border: 1px solid var(--line); color: var(--txt); font-size: 0.9rem; }
+.filter-input:focus { outline: none; border-color: var(--gold); }
+
+/* Ranking Grid */
+.ranking-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.ranking-card {
+  background: var(--card-bg); border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: flex; align-items: center; gap: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3); transition: transform .2s; backdrop-filter: blur(10px);
+}
+.ranking-card:hover { transform: translateY(-2px); border-color: var(--gold); }
+.ranking-pos { font-size: 1.8rem; font-weight: 900; color: var(--gold); min-width: 44px; text-align: center; }
+.ranking-info h4 { font-size: 1.05rem; margin-bottom: 4px; color: #fff; }
+.ranking-info p { font-size: 0.85rem; color: var(--grey); margin-bottom: 4px; }
+
+/* Modals */
+.modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 16px;
+  animation: fadeInModal .2s ease;
+}
+@keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+.modal-content {
+  background: var(--c1); border: 1px solid var(--line); border-radius: 24px; padding: 32px; max-width: 580px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.6); position: relative; max-height: 90vh; overflow-y: auto;
+}
+.modal-close { position: absolute; top: 18px; right: 24px; font-size: 1.6rem; cursor: pointer; color: var(--grey); transition: color .2s; }
+.modal-close:hover { color: #fff; }
+
+/* Toast Notifications */
+#toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+.toast {
+  background: var(--c1); border: 1px solid var(--gold); color: var(--txt); padding: 14px 20px; border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 12px;
+  pointer-events: auto; animation: slideInToast .3s ease forwards; max-width: 400px;
+}
+.toast.success { border-color: var(--green); }
+.toast.error { border-color: var(--red); }
+@keyframes slideInToast { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.alert { padding: 14px 18px; border-radius: 12px; margin-bottom: 18px; font-size: 0.92rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.alert-success { background: rgba(46,204,113,0.2); color: var(--green); border: 1px solid var(--green); }
+.alert-error { background: rgba(231,76,60,0.2); color: var(--red); border: 1px solid var(--red); }
+
+/* Progress Bar */
+.progress-wrap { margin: 14px 0; }
+.progress-info { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--grey); margin-bottom: 6px; font-weight: 600; }
+.progress-track { background: var(--c2); border-radius: 999px; height: 9px; overflow: hidden; border: 1px solid var(--line); }
+.progress-fill { background: linear-gradient(90deg, #7ed957, var(--green)); height: 100%; transition: width 0.6s ease; }
+
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2rem; }
+  main { padding: 16px 12px 100px; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+}
 </style>
 </head>
 <body>
+
+<div id="toast-container"></div>
+
 <main>
   <div class="hero">
     <h1>Iniciativa Cidadã</h1>
-    <p>A sociedade organizada escreve, assina e convoca. Proponha Projetos de Lei (PLs), conquistas de ONGs e movimentos cívicos, colete assinaturas da população e exija o apoio de parlamentares e partidos.</p>
+    <p>A sociedade organizada escreve, assina e convoca. Proponha Projetos de Lei (PLs), conquistas de ONGs e movimentos cívicos, colete assinaturas populares validadas e exija o apoio de parlamentares e partidos.</p>
   </div>
 
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('pls')">📜 PLs da Sociedade</button>
-    <button class="tab-btn" onclick="switchTab('criar')">✍️ Escrever Novo PL</button>
-    <button class="tab-btn" onclick="switchTab('ranking')">⭐ Ranking de Apoiadores</button>
+    <button class="tab-btn active" onclick="switchTab('pls')"><i class="fa fa-scroll"></i> PLs da Sociedade</button>
+    <button class="tab-btn" onclick="switchTab('criar')"><i class="fa fa-pen-nib"></i> Escrever Novo PL</button>
+    <button class="tab-btn" onclick="switchTab('ranking')"><i class="fa fa-award"></i> Ranking de Apoiadores</button>
   </div>
 
   <!-- SEÇÃO: PLS DA SOCIEDADE -->
   <div id="tab-pls" class="section active">
-    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;justify-content:space-between;align-items:center">
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <select id="filter-cat" onchange="loadPls()" style="padding:8px 14px;border-radius:999px">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <select id="filter-cat" class="filter-input" onchange="loadPls()">
           <option value="Todos">Todas as Categorias</option>
           <option value="Meio Ambiente">Meio Ambiente</option>
           <option value="Combate à Corrupção">Combate à Corrupção</option>
@@ -103,8 +245,19 @@ textarea{resize:vertical;min-height:120px}
           <option value="Economia e Tributos">Economia e Tributos</option>
           <option value="Geral">Geral</option>
         </select>
+        <select id="filter-status" class="filter-input" onchange="loadPls()">
+          <option value="Todos">Todos os Status</option>
+          <option value="coleta">Em Coleta Ativa</option>
+          <option value="meta">Meta Atingida (&gt;1000)</option>
+          <option value="apoiado">Com Apoio Parlamentar</option>
+        </select>
+        <select id="filter-sort" class="filter-input" onchange="loadPls()">
+          <option value="recentes">Mais Recentes</option>
+          <option value="assinaturas">Mais Assinados</option>
+          <option value="alfabetico">Ordem Alfabética</option>
+        </select>
         <label for="filter-search" class="sr-only">Filtrar iniciativas</label>
-<input type="text" id="filter-search" placeholder="Buscar por título ou organização..." oninput="loadPls()" style="padding:8px 14px;border-radius:999px;min-width:240px">
+        <input type="text" id="filter-search" placeholder="Buscar por título ou organização..." oninput="loadPls()" class="filter-input" style="min-width:240px">
       </div>
       <button class="btn btn-gold" onclick="switchTab('criar')"><i class="fa fa-plus"></i> Propor PL Popular</button>
     </div>
@@ -115,30 +268,27 @@ textarea{resize:vertical;min-height:120px}
 
   <!-- SEÇÃO: CRIAR NOVO PL -->
   <div id="tab-criar" class="section">
-    <div class="card" style="max-width:800px;margin:0 auto">
-      <h2 style="color:var(--gold);margin-bottom:16px"><i class="fa fa-pen-nib"></i> Submeter Projeto de Lei da Sociedade</h2>
-      <p class="desc">Associações, ONGs, coletivos e cidadãos podem apresentar propostas legislativas fundamentadas. Preencha os campos abaixo para iniciar a coleta de assinaturas populares e convidar parlamentares.</p>
+    <div class="card" style="max-width:840px;margin:0 auto">
+      <h2 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-pen-nib"></i> Submeter Projeto de Lei da Sociedade</h2>
+      <p class="desc">Associações, ONGs, coletivos e cidadãos podem apresentar propostas legislativas fundamentadas. Preencha os campos abaixo para iniciar a coleta de assinaturas populares verificadas e convidar parlamentares.</p>
       
       <div id="form-alert"></div>
 
       <form id="create-pl-form" onsubmit="submitPl(event)">
         <div class="form-group">
-          <label>Nome da Organização ou Coletivo *</label>
-          <label for="orgName" class="sr-only">Nome da organização</label>
-<input type="text" id="orgName" required placeholder="Ex: Observatório Cidadão / Movimento Água Limpa">
+          <label for="orgName">Nome da Organização ou Coletivo *</label>
+          <input type="text" id="orgName" required placeholder="Ex: Observatório Cidadão / Movimento Água Limpa">
         </div>
         <div class="form-group">
-          <label>E-mail de Contato *</label>
-          <label for="orgEmail" class="sr-only">Email da organização</label>
-<input type="email" id="orgEmail" required placeholder="contato@organizacao.org.br">
+          <label for="orgEmail">E-mail de Contato *</label>
+          <input type="email" id="orgEmail" required placeholder="contato@organizacao.org.br">
         </div>
         <div class="form-group">
-          <label>Título do Projeto de Lei *</label>
-          <label for="title" class="sr-only">Título da iniciativa</label>
-<input type="text" id="title" required placeholder="Ex: PL de Proteção às Nascentes e Rios Urbanos">
+          <label for="title">Título do Projeto de Lei *</label>
+          <input type="text" id="title" required placeholder="Ex: PL de Proteção às Nascentes e Rios Urbanos">
         </div>
         <div class="form-group">
-          <label>Categoria *</label>
+          <label for="category">Categoria *</label>
           <select id="category">
             <option value="Meio Ambiente">Meio Ambiente</option>
             <option value="Combate à Corrupção">Combate à Corrupção</option>
@@ -149,19 +299,26 @@ textarea{resize:vertical;min-height:120px}
           </select>
         </div>
         <div class="form-group">
-          <label>Resumo / Ementa (Breve descrição) *</label>
-          <textarea id="summary" required style="min-height:80px" placeholder="Estabelece diretrizes obrigatórias para preservação de mananciais..."></textarea>
+          <label for="summary">Resumo / Ementa (Breve descrição) *</label>
+          <textarea id="summary" required style="min-height:90px" placeholder="Estabelece diretrizes obrigatórias para preservação de mananciais..."></textarea>
         </div>
         <div class="form-group">
-          <label>Link / Anexo do Projeto de Lei Pronto (Opcional - PDF ou Documento na Nuvem)</label>
-          <label for="attachmentUrl" class="sr-only">URL do anexo</label>
-<input type="url" id="attachmentUrl" placeholder="https://exemplo.org/meu-projeto-de-lei.pdf">
+          <label for="attachmentUrl">Link / Anexo do Projeto de Lei Pronto (Opcional - PDF ou Documento na Nuvem)</label>
+          <input type="url" id="attachmentUrl" placeholder="https://exemplo.org/meu-projeto-de-lei.pdf">
         </div>
         <div class="form-group">
-          <label>Texto Completo do Projeto de Lei *</label>
-          <textarea id="text" required placeholder="Art. 1º Esta lei dispõe sobre..."></textarea>
+          <label for="text">Texto Completo do Projeto de Lei * <span style="font-size:0.8rem;color:var(--grey);font-weight:normal">Use Art. 1º, Art. 2º, etc. para formatação estruturada</span></label>
+          <textarea id="text" required placeholder="Art. 1º Esta lei dispõe sobre...&#10;&#10;Art. 2º São objetivos fundamentais...&#10;&#10;Parágrafo único. O disposto nesta lei aplica-se..."></textarea>
         </div>
-        <button type="submit" class="btn btn-gold" style="justify-content:center;padding:14px;font-size:1rem"><i class="fa fa-paper-plane"></i> Publicar Projeto para Assinaturas</button>
+
+        <div style="background:rgba(6,26,58,0.5);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:8px">
+          <h4 style="color:var(--gold);font-size:0.95rem;margin-bottom:8px"><i class="fa fa-eye"></i> Pré-visualização ao vivo do Articulado</h4>
+          <div id="live-preview" style="font-size:0.9rem;color:#c6d0dd;white-space:pre-wrap;max-height:180px;overflow-y:auto">Digite o texto acima para visualizar...</div>
+        </div>
+
+        <button type="submit" id="submit-pl-btn" class="btn btn-gold" style="justify-content:center;padding:14px;font-size:1rem;margin-top:8px">
+          <i class="fa fa-paper-plane"></i> Publicar Projeto para Assinaturas
+        </button>
       </form>
     </div>
   </div>
@@ -173,62 +330,125 @@ textarea{resize:vertical;min-height:120px}
       <p style="color:#b9c7dd">Deputados, senadores e partidos políticos que abraçaram formalmente os projetos de lei propostos pela sociedade.</p>
     </div>
     <div id="ranking-container" class="ranking-grid">
-      <div style="text-align:center;padding:40px;color:var(--grey)">Carregando ranking...</div>
+      <div style="text-align:center;padding:40px;color:var(--grey);grid-column:1/-1">Carregando ranking...</div>
     </div>
   </div>
 </main>
 
-	<!-- MODAL DE CONVITE -->
-	<div id="invite-modal" class="modal" style="display:none" onclick="if(event.target===this)closeInviteModal()">
-	  <div class="modal-content">
-	    <span class="modal-close" onclick="closeInviteModal()">&times;</span>
-	    <h3 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-share-nodes"></i> Convidar Parlamentar ou Partido</h3>
-	    <p class="desc">Gere um link oficial de convite para que o parlamentar ou partido assine e declare apoio formal a este projeto da sociedade.</p>
-	    <div id="invite-modal-alert"></div>
-	    <form id="invite-form" onsubmit="submitInvite(event)" style="display:grid;gap:12px">
-	      <input type="hidden" id="invite-pl-id">
-	      <div class="form-group">
-	        <label>Tipo de Convidado *</label>
-	        <select id="invite-type">
-	          <option value="Parlamentar">Deputado ou Senador</option>
-	          <option value="Partido">Partido Político</option>
-	        </select>
-	      </div>
-	      <div class="form-group">
-	        <label>Nome do Parlamentar ou Partido *</label>
-	        <label for="invite-name" class="sr-only">Nome do convidado</label>
-	<input type="text" id="invite-name" required placeholder="Ex: Deputado João da Silva / Partido Verde">
-	      </div>
-	      <div style="display:flex;gap:10px">
-	        <button type="submit" class="btn btn-gold" style="flex:1;justify-content:center">Gerar Link Oficial de Apoio</button>
-	        <button type="button" class="btn btn-outline" onclick="closeInviteModal()" style="padding:10px 16px">Fechar</button>
-	      </div>
-	    </form>
-	    <div id="invite-result" style="margin-top:16px" hidden></div>
-	  </div>
-	</div>
+<!-- MODAL DE CONVITE -->
+<div id="invite-modal" class="modal" style="display:none" onclick="if(event.target===this)closeInviteModal()">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeInviteModal()">&times;</span>
+    <h3 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-share-nodes"></i> Convidar Parlamentar ou Partido</h3>
+    <p class="desc">Gere um link oficial de convite para que o parlamentar ou partido assine e declare apoio formal a este projeto da sociedade.</p>
+    <div id="invite-modal-alert"></div>
+    <form id="invite-form" onsubmit="submitInvite(event)" style="display:grid;gap:12px">
+      <input type="hidden" id="invite-pl-id">
+      <div class="form-group">
+        <label for="invite-type">Tipo de Convidado *</label>
+        <select id="invite-type">
+          <option value="Parlamentar">Deputado ou Senador</option>
+          <option value="Partido">Partido Político</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="invite-name">Nome do Parlamentar ou Partido *</label>
+        <input type="text" id="invite-name" required placeholder="Ex: Deputado João da Silva / Partido Verde">
+      </div>
+      <div style="display:flex;gap:10px">
+        <button type="submit" class="btn btn-gold" style="flex:1;justify-content:center">Gerar Link Oficial de Apoio</button>
+        <button type="button" class="btn btn-outline" onclick="closeInviteModal()" style="padding:10px 16px">Fechar</button>
+      </div>
+    </form>
+    <div id="invite-result" style="margin-top:16px" hidden></div>
+  </div>
+</div>
 
-	<!-- MODAL DE KIT DE MOBILIZAÇÃO E QR CODE -->
-	<div id="mobkit-modal" class="modal" style="display:none" onclick="if(event.target===this)closeMobKit()">
-	  <div class="modal-content" style="text-align:center">
-	    <span class="modal-close" onclick="closeMobKit()">&times;</span>
-	    <h3 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-qrcode"></i> Kit de Mobilização & QR Code</h3>
-	    <p class="desc" id="mobkit-title" style="margin-bottom:16px"></p>
-	    <div id="mobkit-qr-container" style="margin:16px 0;background:#fff;padding:16px;border-radius:12px;display:inline-block"></div>
-	    <div class="form-group" style="text-align:left;margin-top:16px">
-	      <label>Link Direto para Coleta de Assinaturas</label>
-	      <input type="text" id="mobkit-link" readonly onclick="this.select()" style="font-size:0.85rem">
-	    </div>
-	    <div class="form-group" style="text-align:left;margin-top:12px">
-	      <label>Mensagem Sugerida para WhatsApp / Redes Sociais</label>
-	      <textarea id="mobkit-msg" readonly style="font-size:0.85rem;min-height:90px" onclick="this.select()"></textarea>
-	    </div>
-	    <button class="btn btn-gold" onclick="copyMobKit()" style="width:100%;justify-content:center;margin-top:12px"><i class="fa fa-copy"></i> Copiar Mensagem e Link</button>
-	  </div>
-	</div>
+<!-- MODAL DE KIT DE MOBILIZAÇÃO E QR CODE -->
+<div id="mobkit-modal" class="modal" style="display:none" onclick="if(event.target===this)closeMobKit()">
+  <div class="modal-content" style="text-align:center">
+    <span class="modal-close" onclick="closeMobKit()">&times;</span>
+    <h3 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-qrcode"></i> Kit de Mobilização & QR Code</h3>
+    <p class="desc" id="mobkit-title" style="margin-bottom:16px"></p>
+    <div id="mobkit-qr-container" style="margin:16px 0;background:#fff;padding:16px;border-radius:14px;display:inline-block;box-shadow:0 8px 24px rgba(0,0,0,0.3)"></div>
+    
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="downloadQrCode()" style="font-size:0.85rem;padding:8px 14px"><i class="fa fa-download"></i> Baixar QR Code (PNG)</button>
+      <button class="btn btn-outline" onclick="openPosterModal()" style="font-size:0.85rem;padding:8px 14px"><i class="fa fa-file-image"></i> Cartaz de Mobilização Imprimível</button>
+    </div>
+
+    <div class="form-group" style="text-align:left;margin-top:12px">
+      <label>Link Direto para Coleta de Assinaturas</label>
+      <input type="text" id="mobkit-link" readonly onclick="this.select()" style="font-size:0.85rem">
+    </div>
+    <div class="form-group" style="text-align:left;margin-top:12px">
+      <label>Mensagem Sugerida para WhatsApp / Redes Sociais</label>
+      <textarea id="mobkit-msg" readonly style="font-size:0.85rem;min-height:90px" onclick="this.select()"></textarea>
+    </div>
+    
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn btn-green" onclick="shareOnWhatsApp()" style="flex:1;justify-content:center"><i class="fa-brands fa-whatsapp"></i> Compartilhar no WhatsApp</button>
+      <button class="btn btn-gold" onclick="copyMobKit()" style="flex:1;justify-content:center"><i class="fa fa-copy"></i> Copiar Mensagem</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE CARTAZ IMPRIMÍVEL -->
+<div id="poster-modal" class="modal" style="display:none" onclick="if(event.target===this)closePosterModal()">
+  <div class="modal-content" style="background:#fff;color:#0b1c33;max-width:650px;text-align:center;padding:40px">
+    <span class="modal-close" onclick="closePosterModal()" style="color:#0b1c33">&times;</span>
+    <div style="border:4px solid #FFD700;padding:30px;border-radius:16px;background:#f8fafc">
+      <div style="font-size:0.85rem;text-transform:uppercase;font-weight:800;color:#115FCB;letter-spacing:1px;margin-bottom:8px">PROJETO DE LEI DA SOCIEDADE · VOTABRASIL</div>
+      <h2 id="poster-title" style="font-size:1.6rem;color:#0b1c33;margin-bottom:14px;font-weight:900"></h2>
+      <p id="poster-summary" style="font-size:1rem;color:#334155;margin-bottom:20px;line-height:1.6"></p>
+      <div id="poster-qr" style="margin:20px auto;display:inline-block"></div>
+      <div style="font-size:1.1rem;font-weight:800;color:#177245;margin:10px 0">APOIE COM SEU VOTO E ASSINATURA</div>
+      <p style="font-size:0.85rem;color:#64748b">Escaneie o QR Code com a câmera do seu celular ou acesse o link para assinar.</p>
+    </div>
+    <div style="margin-top:20px;display:flex;gap:12px;justify-content:center">
+      <button class="btn btn-gold" onclick="window.print()"><i class="fa fa-print"></i> Imprimir Cartaz / Salvar PDF</button>
+      <button class="btn btn-outline" onclick="closePosterModal()" style="color:#0b1c33;border-color:#cbd5e1">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE SUCESSO DE ASSINATURA -->
+<div id="sign-success-modal" class="modal" style="display:none" onclick="if(event.target===this)closeSignModal()">
+  <div class="modal-content" style="text-align:center">
+    <span class="modal-close" onclick="closeSignModal()">&times;</span>
+    <div style="font-size:3.5rem;color:var(--green);margin-bottom:12px"><i class="fa fa-circle-check"></i></div>
+    <h3 style="color:var(--gold);margin-bottom:10px">Assinatura Registrada com Sucesso!</h3>
+    <p class="desc" id="sign-success-text">Sua assinatura popular foi validada e computada no contador oficial do Projeto de Lei.</p>
+    <div style="background:rgba(46,204,113,0.1);border:1px solid var(--green);padding:14px;border-radius:12px;margin:16px 0;font-size:0.9rem;color:var(--green);font-weight:700">
+      <i class="fa fa-shield-halved"></i> Voto Cidadão Verificado via Sessão Segura
+    </div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn btn-gold" onclick="closeSignModal(); switchTab('pls')" style="flex:1;justify-content:center">Ver Outros Projetos</button>
+      <button class="btn btn-outline" onclick="closeSignModal()" style="flex:1;justify-content:center">Fechar</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const API = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string') ? window.MeuVoto.API_BASE : '';
+let globalPlsCache = [];
+let currentMobKitUrl = '';
+let currentMobKitTitle = '';
+
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icon = type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-info');
+  toast.innerHTML = `<i class="fa ${icon}" style="font-size:1.2rem;color:${type === 'success' ? 'var(--green)' : (type === 'error' ? 'var(--red)' : 'var(--gold)')}"></i><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(20px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
 
 function switchTab(tabId) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -247,81 +467,144 @@ function switchTab(tabId) {
   }
 }
 
+// Live preview for creating PL
+document.getElementById('text').addEventListener('input', (e) => {
+  const val = e.target.value.trim();
+  const preview = document.getElementById('live-preview');
+  if (!val) {
+    preview.textContent = 'Digite o texto acima para visualizar...';
+    return;
+  }
+  preview.innerHTML = formatPlTextHtml(val);
+});
+
+function formatPlTextHtml(text) {
+  if (!text) return '';
+  const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Highlight articles and paragraphs
+  return escaped
+    .replace(/(Art\.\s*\d+[ºª]?)/g, '<span style="color:var(--gold);font-weight:800">$1</span>')
+    .replace(/(Parágrafo\s*único\.?|§\s*\d+[ºª]?)/g, '<span style="color:#7bb3f0;font-weight:700">$1</span>');
+}
+
 async function loadPls() {
   const cat = document.getElementById('filter-cat').value;
-  const search = document.getElementById('filter-search').value;
+  const statusFilter = document.getElementById('filter-status').value;
+  const sortOrder = document.getElementById('filter-sort').value;
+  const search = document.getElementById('filter-search').value.toLowerCase();
   const container = document.getElementById('pls-container');
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey)">Carregando projetos...</div>';
+  
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey)"><span class="v-spinner"></span> Carregando projetos da sociedade...</div>';
   try {
-    const res = await fetch(`${API}/api/society/pls?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(search)}`);
+    const res = await fetch(`${API}/api/society/pls?category=${encodeURIComponent(cat === 'Todos' ? '' : cat)}&search=${encodeURIComponent(search)}`);
     const data = await res.json();
-    if (!data.ok || !data.pls.length) {
-      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey)">Nenhum projeto da sociedade encontrado. Seja o primeiro a propor um PL!</div>';
+    if (!data.ok || !data.pls || !data.pls.length) {
+      container.innerHTML = renderEmptyState('fa-solid fa-scroll', 'Nenhum projeto da sociedade encontrado com estes filtros. Seja o primeiro a propor um PL!');
       return;
     }
-    container.innerHTML = data.pls.map(pl => {
+    
+    let list = [...data.pls];
+
+    // Filter by status
+    if (statusFilter === 'coleta') {
+      list = list.filter(p => (p.signatureCount || 0) < 1000);
+    } else if (statusFilter === 'meta') {
+      list = list.filter(p => (p.signatureCount || 0) >= 1000);
+    } else if (statusFilter === 'apoiado') {
+      list = list.filter(p => p.invites && p.invites.some(i => i.status === 'Aceito'));
+    }
+
+    // Sort order
+    if (sortOrder === 'assinaturas') {
+      list.sort((a, b) => (b.signatureCount || 0) - (a.signatureCount || 0));
+    } else if (sortOrder === 'alfabetico') {
+      list.sort((a, b) => a.title.localeCompare(b.title));
+    } else {
+      // recentes
+      list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    }
+
+    if (!list.length) {
+      container.innerHTML = renderEmptyState('fa-solid fa-filter', 'Nenhum projeto corresponde aos critérios de status selecionados.');
+      return;
+    }
+
+    globalPlsCache = list;
+
+    container.innerHTML = list.map(pl => {
+      const sigs = pl.signatureCount || 0;
+      const target = 1000;
+      const pct = Math.min(100, Math.round((sigs / target) * 100));
+      const isMetaReached = sigs >= target;
+
       const attachmentHTML = pl.attachmentUrl ? `
-        <div style="margin-bottom:12px">
-          <a href="${pl.attachmentUrl}" target="_blank" class="btn btn-outline" style="font-size:0.85rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px">
+        <div style="margin-bottom:14px">
+          <a href="${pl.attachmentUrl}" target="_blank" class="btn btn-outline" style="font-size:0.85rem;padding:7px 14px;display:inline-flex;align-items:center;gap:6px">
             <i class="fa fa-file-pdf" style="color:var(--gold)"></i> Baixar Documento / Anexo Original do PL
           </a>
         </div>
       ` : '';
+
       const invitesHTML = pl.invites && pl.invites.length ? `
         <div class="supporters-list">
-          <h4>Parlamentares e Partidos Apoiadores:</h4>
+          <h5><i class="fa fa-award"></i> Parlamentares e Partidos Apoiadores:</h5>
           <div>
-            ${pl.invites.map(i => `<span class="supporter-badge"><i class="fa fa-check-circle"></i> ${i.targetName} (${i.targetType}) - ${i.status}</span>`).join('')}
+            ${pl.invites.map(i => `<span class="supporter-badge"><i class="fa fa-check-circle"></i> ${i.targetName} (${i.targetType}) - <b>${i.status}</b></span>`).join('')}
           </div>
         </div>
       ` : '';
+
       return `
-        <div class="card">
+        <div class="card" id="pl-card-${pl.id}">
           <div class="card-header">
             <div>
-              <span class="badge-org">${pl.orgName}</span>
-              <span class="badge" style="margin-left:6px">${pl.category}</span>
-              <h3 class="card-title" style="margin-top:8px">${pl.title}</h3>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+                <span class="badge-org"><i class="fa fa-building-user"></i> ${pl.orgName}</span>
+                <span class="badge">${pl.category}</span>
+                ${isMetaReached ? '<span class="badge-status"><i class="fa fa-flag-checkered"></i> Meta Atingida (1k+)</span>' : '<span class="badge" style="background:rgba(255,215,0,0.15);color:var(--gold);border-color:var(--gold)">Em Coleta</span>'}
+              </div>
+              <h3 class="card-title" style="margin-top:4px">${pl.title}</h3>
             </div>
             <div style="text-align:right">
-              <span style="font-size:1.4rem;font-weight:900;color:var(--green)">${pl.signatureCount || 0}</span>
-              <div style="font-size:0.75rem;color:var(--grey)">assinaturas</div>
+              <span style="font-size:1.6rem;font-weight:900;color:var(--green);display:block">${sigs}</span>
+              <div style="font-size:0.75rem;color:var(--grey);text-transform:uppercase;letter-spacing:.5px">assinaturas</div>
             </div>
           </div>
-	          <p class="desc"><b>Resumo:</b> ${pl.summary}</p>
-	          ${(function(){
-	            const sigs = pl.signatureCount || 0;
-	            const target = 1000;
-	            const pct = Math.min(100, Math.round((sigs / target) * 100));
-	            return `
-	              <div style="margin:12px 0">
-	                <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--grey);margin-bottom:4px">
-	                  <span>Progresso de Assinaturas (Meta Popular: ${target})</span>
-	                  <span>${sigs} / ${target} (${pct}%)</span>
-	                </div>
-	                <div style="background:var(--c2);border-radius:999px;height:8px;overflow:hidden;border:1px solid var(--line)">
-	                  <div style="background:linear-gradient(90deg,#7ed957,#2ECC71);width:${pct}%;height:100%"></div>
-	                </div>
-	              </div>
-	            `;
-	          })()}
-	          ${attachmentHTML}
-	          <details style="margin-bottom:12px">
-	            <summary style="cursor:pointer;color:var(--gold);font-size:0.9rem;font-weight:700">Ver Texto Completo do Projeto</summary>
-	            <p style="margin-top:8px;white-space:pre-wrap;background:rgba(6,26,58,0.4);padding:12px;border-radius:8px;font-size:0.9rem;color:#d7e3f5">${pl.text}</p>
-	          </details>
-	          ${invitesHTML}
-	          <div class="actions">
-	            <button class="btn btn-green" onclick="signPl('${pl.id}')"><i class="fa fa-signature"></i> Assinar / Apoiar PL</button>
-	            <button class="btn btn-outline" onclick="openInviteModal('${pl.id}')"><i class="fa fa-user-plus"></i> Convidar Parlamentar ou Partido</button>
-	            <button class="btn btn-outline" onclick="openMobKit('${pl.id}', ${JSON.stringify(pl.title)})"><i class="fa fa-qrcode"></i> Kit Mobilização & QR Code</button>
-	            <span style="font-size:0.8rem;color:var(--grey);margin-left:auto">Criado em ${new Date(pl.createdAt).toLocaleDateString('pt-BR')}</span>
-	          </div>
+          
+          <p class="desc"><b>Resumo:</b> ${pl.summary}</p>
+          
+          <div class="progress-wrap">
+            <div class="progress-info">
+              <span>Progresso da Meta Popular (${target} assinaturas)</span>
+              <span>${sigs} / ${target} (${pct}%)</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width:${pct}%"></div>
+            </div>
+          </div>
+
+          ${attachmentHTML}
+
+          <details style="margin:14px 0">
+            <summary style="cursor:pointer;color:var(--gold);font-size:0.92rem;font-weight:700">
+              <i class="fa fa-book-open"></i> Ver Texto Completo e Articulado do Projeto
+            </summary>
+            <div class="pl-text-box">${formatPlTextHtml(pl.text)}</div>
+          </details>
+
+          ${invitesHTML}
+
+          <div class="actions">
+            <button class="btn btn-green" onclick="signPl('${pl.id}')"><i class="fa fa-signature"></i> Assinar / Apoiar PL</button>
+            <button class="btn btn-outline" onclick="openInviteModal('${pl.id}')"><i class="fa fa-user-plus"></i> Convidar Parlamentar</button>
+            <button class="btn btn-outline" onclick="openMobKit('${pl.id}', ${JSON.stringify(pl.title)})"><i class="fa fa-qrcode"></i> Kit Mobilização</button>
+            <span style="font-size:0.8rem;color:var(--grey);margin-left:auto"><i class="fa fa-calendar"></i> ${new Date(pl.createdAt).toLocaleDateString('pt-BR')}</span>
+          </div>
         </div>
       `;
     }).join('');
   } catch (e) {
-    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red)">Erro ao carregar projetos.</div>';
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red)"><i class="fa fa-circle-exclamation"></i> Erro ao carregar projetos da sociedade. Tente novamente mais tarde.</div>';
   }
 }
 
@@ -330,10 +613,13 @@ async function submitPl(e) {
   const alertBox = document.getElementById('form-alert');
   const sessionToken = localStorage.getItem('mb_session_token');
   if (!sessionToken) {
-    alertBox.innerHTML = '<div class="alert alert-error">Você precisa estar logado para publicar um projeto. Clique em "Entrar" no topo.</div>';
+    alertBox.innerHTML = '<div class="alert alert-error"><i class="fa fa-circle-exclamation"></i> Você precisa estar logado para publicar um projeto. Clique em "Entrar" no topo.</div>';
+    showToast('Faça login para publicar um projeto.', 'error');
     if (window.mbAbrirModal) window.mbAbrirModal('login');
     return;
   }
+
+  setButtonLoading('submit-pl-btn', true, 'Publicando PL...');
   const payload = {
     sessionToken,
     orgName: document.getElementById('orgName').value,
@@ -344,6 +630,7 @@ async function submitPl(e) {
     text: document.getElementById('text').value,
     attachmentUrl: document.getElementById('attachmentUrl').value
   };
+
   try {
     const res = await fetch(`${API}/api/society/pls`, {
       method: 'POST',
@@ -351,21 +638,28 @@ async function submitPl(e) {
       body: JSON.stringify(payload)
     });
     const data = await res.json();
+    setButtonLoading('submit-pl-btn', false);
     if (data.ok) {
-      alertBox.innerHTML = '<div class="alert alert-success">Projeto publicado com sucesso! Redirecionando...</div>';
+      alertBox.innerHTML = '<div class="alert alert-success"><i class="fa fa-circle-check"></i> Projeto publicado com sucesso! Redirecionando...</div>';
+      showToast('Projeto de Lei publicado com sucesso!', 'success');
       document.getElementById('create-pl-form').reset();
+      document.getElementById('live-preview').textContent = 'Digite o texto acima para visualizar...';
       setTimeout(() => switchTab('pls'), 1500);
     } else {
-      alertBox.innerHTML = `<div class="alert alert-error">${data.error || 'Erro ao publicar projeto.'}</div>`;
+      alertBox.innerHTML = `<div class="alert alert-error"><i class="fa fa-circle-exclamation"></i> ${data.error || 'Erro ao publicar projeto.'}</div>`;
+      showToast(data.error || 'Erro ao publicar projeto.', 'error');
     }
   } catch (err) {
-    alertBox.innerHTML = '<div class="alert alert-error">Erro de conexão ao publicar projeto.</div>';
+    setButtonLoading('submit-pl-btn', false);
+    alertBox.innerHTML = '<div class="alert alert-error"><i class="fa fa-circle-exclamation"></i> Erro de conexão ao publicar projeto.</div>';
+    showToast('Erro de conexão ao publicar.', 'error');
   }
 }
 
 async function signPl(plId) {
   const sessionToken = localStorage.getItem('mb_session_token');
   if (!sessionToken) {
+    showToast('Você precisa estar logado para assinar um projeto.', 'error');
     alert('Você precisa estar logado para assinar um projeto. Clique em "Entrar" no topo.');
     if (window.mbAbrirModal) window.mbAbrirModal('login');
     return;
@@ -378,14 +672,22 @@ async function signPl(plId) {
     });
     const data = await res.json();
     if (data.ok) {
-      alert('Assinatura registrada com sucesso! Obrigado por participar.');
+      showToast('Assinatura registrada com sucesso!', 'success');
+      document.getElementById('sign-success-text').textContent = `Sua assinatura popular foi validada com sucesso! Total atualizado.`;
+      document.getElementById('sign-success-modal').style.display = 'flex';
       loadPls();
     } else {
+      showToast(data.error || 'Erro ao registrar assinatura.', 'error');
       alert(data.error || 'Erro ao registrar assinatura.');
     }
   } catch (e) {
+    showToast('Erro de conexão ao assinar.', 'error');
     alert('Erro de conexão ao assinar projeto.');
   }
+}
+
+function closeSignModal() {
+  document.getElementById('sign-success-modal').style.display = 'none';
 }
 
 function openInviteModal(plId) {
@@ -406,7 +708,7 @@ async function submitInvite(e) {
   const sessionToken = localStorage.getItem('mb_session_token');
   const alertBox = document.getElementById('invite-modal-alert');
   if (!sessionToken) {
-    alertBox.innerHTML = '<div class="alert alert-error">Faça login para gerar convites.</div>';
+    alertBox.innerHTML = '<div class="alert alert-error"><i class="fa fa-circle-exclamation"></i> Faça login para gerar convites.</div>';
     return;
   }
   const payload = {
@@ -425,28 +727,29 @@ async function submitInvite(e) {
       const resDiv = document.getElementById('invite-result');
       resDiv.hidden = false;
       resDiv.innerHTML = `
-        <div class="alert alert-success" style="word-break:break-all">
-          Link de convite gerado!<br>
-          <input type="text" readonly value="${data.invite.inviteUrl}" style="width:100%;margin-top:6px;font-size:0.8rem;padding:8px" onclick="this.select()" aria-label="Buscar iniciativas">
-          <div style="font-size:0.75rem;color:#b9c7dd;margin-top:4px">Envie este link para o parlamentar ou partido para que ele confirme o apoio oficial.</div>
+        <div class="alert alert-success" style="word-break:break-all;display:block">
+          <b><i class="fa fa-circle-check"></i> Link de convite oficial gerado!</b><br>
+          <input type="text" readonly value="${data.invite.inviteUrl}" style="width:100%;margin-top:8px;font-size:0.82rem;padding:10px" onclick="this.select()">
+          <div style="font-size:0.78rem;color:#b9c7dd;margin-top:6px">Envie este link para o parlamentar ou partido para que ele confirme o apoio oficial ao PL.</div>
         </div>
       `;
+      showToast('Link de convite gerado com sucesso!', 'success');
     } else {
-      alertBox.innerHTML = `<div class="alert alert-error">${data.error || 'Erro ao gerar convite.'}</div>`;
+      alertBox.innerHTML = `<div class="alert alert-error"><i class="fa fa-circle-exclamation"></i> ${data.error || 'Erro ao gerar convite.'}</div>`;
     }
   } catch (err) {
-    alertBox.innerHTML = '<div class="alert alert-error">Erro de conexão.</div>';
+    alertBox.innerHTML = '<div class="alert alert-error"><i class="fa fa-circle-exclamation"></i> Erro de conexão.</div>';
   }
 }
 
 async function loadRanking() {
   const container = document.getElementById('ranking-container');
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey);grid-column:1/-1">Carregando ranking...</div>';
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey);grid-column:1/-1"><span class="v-spinner"></span> Carregando ranking de apoiadores...</div>';
   try {
     const res = await fetch(`${API}/api/society/ranking`);
     const data = await res.json();
-    if (!data.ok || !data.ranking.length) {
-      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--grey);grid-column:1/-1">Nenhum parlamentar ou partido com apoio confirmado ainda. Convide autoridades para aparecerem no ranking!</div>';
+    if (!data.ok || !data.ranking || !data.ranking.length) {
+      container.innerHTML = renderEmptyState('fa-solid fa-award', 'Nenhum parlamentar ou partido com apoio confirmado ainda. Convide autoridades para aparecerem no ranking!');
       return;
     }
     container.innerHTML = data.ranking.map((r, index) => `
@@ -455,22 +758,24 @@ async function loadRanking() {
         <div class="ranking-info">
           <h4>${r.name}</h4>
           <p>${r.type}</p>
-          <span style="font-size:0.8rem;color:var(--green);font-weight:700">${r.supportedCount} projeto(s) apoiado(s)</span>
+          <span style="font-size:0.82rem;color:var(--green);font-weight:700"><i class="fa fa-check-circle"></i> ${r.supportedCount} projeto(s) apoiado(s)</span>
         </div>
       </div>
     `).join('');
   } catch (e) {
-    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);grid-column:1/-1">Erro ao carregar ranking.</div>';
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);grid-column:1/-1"><i class="fa fa-circle-exclamation"></i> Erro ao carregar ranking.</div>';
   }
 }
 
 function openMobKit(plId, plTitle) {
-  const url = window.location.origin + window.location.pathname + '?pl=' + plId;
-  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(url);
+  currentMobKitUrl = window.location.origin + window.location.pathname + '?pl=' + plId;
+  currentMobKitTitle = plTitle;
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(currentMobKitUrl);
+  
   document.getElementById('mobkit-title').textContent = plTitle;
   document.getElementById('mobkit-qr-container').innerHTML = `<img src="${qrUrl}" alt="QR Code" width="160" height="160" style="display:block">`;
-  document.getElementById('mobkit-link').value = url;
-  document.getElementById('mobkit-msg').value = `📢 Apoie este Projeto de Lei da Sociedade: "${plTitle}"!\n\nAcesse pelo link ou escaneie o QR Code para ler a proposta e assinar:\n${url}`;
+  document.getElementById('mobkit-link').value = currentMobKitUrl;
+  document.getElementById('mobkit-msg').value = `📢 Apoie este Projeto de Lei da Sociedade: "${plTitle}"!\n\nAcesse pelo link ou escaneie o QR Code para ler a proposta completa e assinar:\n${currentMobKitUrl}`;
   document.getElementById('mobkit-modal').style.display = 'flex';
 }
 
@@ -482,11 +787,40 @@ function copyMobKit() {
   const msg = document.getElementById('mobkit-msg');
   msg.select();
   navigator.clipboard.writeText(msg.value).then(() => {
-    alert('📋 Kit de mobilização copiado para a área de transferência!');
+    showToast('Kit de mobilização copiado!', 'success');
   });
 }
 
-// Inicializar carregando os PLs
+function shareOnWhatsApp() {
+  const msg = document.getElementById('mobkit-msg').value;
+  const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
+  window.open(waUrl, '_blank');
+}
+
+function downloadQrCode() {
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(currentMobKitUrl);
+  const a = document.createElement('a');
+  a.href = qrUrl;
+  a.download = 'qrcode-mobilizacao.png';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showToast('Download do QR Code iniciado!', 'success');
+}
+
+function openPosterModal() {
+  document.getElementById('poster-title').textContent = currentMobKitTitle;
+  document.getElementById('poster-summary').textContent = 'Projeto de Lei de Iniciativa Cidadã proposto através do VotaBrasil. Contribua com sua assinatura para transformar esta demanda em realidade legislativa.';
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(currentMobKitUrl);
+  document.getElementById('poster-qr').innerHTML = `<img src="${qrUrl}" alt="QR Code" width="180" height="180" style="display:block;border-radius:8px">`;
+  document.getElementById('mobkit-modal').style.display = 'none';
+  document.getElementById('poster-modal').style.display = 'flex';
+}
+
+function closePosterModal() {
+  document.getElementById('poster-modal').style.display = 'none';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadPls();
   
@@ -494,12 +828,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape') {
       closeInviteModal();
       closeMobKit();
+      closePosterModal();
+      closeSignModal();
     }
   });
 
-  // Verificar se veio de aceite de convite
   const params = new URLSearchParams(window.location.search);
   if (params.get('accepted') === '1') {
+    showToast('Apoio oficial confirmado com sucesso!', 'success');
     alert('🎉 Apoio oficial confirmado com sucesso! O parlamentar / partido agora integra o selo de apoio da iniciativa.');
   }
 });
