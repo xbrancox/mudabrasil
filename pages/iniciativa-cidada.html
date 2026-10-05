@@ -178,35 +178,54 @@ textarea{resize:vertical;min-height:120px}
   </div>
 </main>
 
-<!-- MODAL DE CONVITE -->
-<div id="invite-modal" class="modal" style="display:none" onclick="if(event.target===this)closeInviteModal()">
-  <div class="modal-content">
-    <span class="modal-close" onclick="closeInviteModal()">&times;</span>
-    <h3 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-share-nodes"></i> Convidar Parlamentar ou Partido</h3>
-    <p class="desc">Gere um link oficial de convite para que o parlamentar ou partido assine e declare apoio formal a este projeto da sociedade.</p>
-    <div id="invite-modal-alert"></div>
-    <form id="invite-form" onsubmit="submitInvite(event)" style="display:grid;gap:12px">
-      <input type="hidden" id="invite-pl-id">
-      <div class="form-group">
-        <label>Tipo de Convidado *</label>
-        <select id="invite-type">
-          <option value="Parlamentar">Deputado ou Senador</option>
-          <option value="Partido">Partido Político</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Nome do Parlamentar ou Partido *</label>
-        <label for="invite-name" class="sr-only">Nome do convidado</label>
-<input type="text" id="invite-name" required placeholder="Ex: Deputado João da Silva / Partido Verde">
-      </div>
-      <div style="display:flex;gap:10px">
-        <button type="submit" class="btn btn-gold" style="flex:1;justify-content:center">Gerar Link Oficial de Apoio</button>
-        <button type="button" class="btn btn-outline" onclick="closeInviteModal()" style="padding:10px 16px">Fechar</button>
-      </div>
-    </form>
-    <div id="invite-result" style="margin-top:16px" hidden></div>
-  </div>
-</div>
+	<!-- MODAL DE CONVITE -->
+	<div id="invite-modal" class="modal" style="display:none" onclick="if(event.target===this)closeInviteModal()">
+	  <div class="modal-content">
+	    <span class="modal-close" onclick="closeInviteModal()">&times;</span>
+	    <h3 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-share-nodes"></i> Convidar Parlamentar ou Partido</h3>
+	    <p class="desc">Gere um link oficial de convite para que o parlamentar ou partido assine e declare apoio formal a este projeto da sociedade.</p>
+	    <div id="invite-modal-alert"></div>
+	    <form id="invite-form" onsubmit="submitInvite(event)" style="display:grid;gap:12px">
+	      <input type="hidden" id="invite-pl-id">
+	      <div class="form-group">
+	        <label>Tipo de Convidado *</label>
+	        <select id="invite-type">
+	          <option value="Parlamentar">Deputado ou Senador</option>
+	          <option value="Partido">Partido Político</option>
+	        </select>
+	      </div>
+	      <div class="form-group">
+	        <label>Nome do Parlamentar ou Partido *</label>
+	        <label for="invite-name" class="sr-only">Nome do convidado</label>
+	<input type="text" id="invite-name" required placeholder="Ex: Deputado João da Silva / Partido Verde">
+	      </div>
+	      <div style="display:flex;gap:10px">
+	        <button type="submit" class="btn btn-gold" style="flex:1;justify-content:center">Gerar Link Oficial de Apoio</button>
+	        <button type="button" class="btn btn-outline" onclick="closeInviteModal()" style="padding:10px 16px">Fechar</button>
+	      </div>
+	    </form>
+	    <div id="invite-result" style="margin-top:16px" hidden></div>
+	  </div>
+	</div>
+
+	<!-- MODAL DE KIT DE MOBILIZAÇÃO E QR CODE -->
+	<div id="mobkit-modal" class="modal" style="display:none" onclick="if(event.target===this)closeMobKit()">
+	  <div class="modal-content" style="text-align:center">
+	    <span class="modal-close" onclick="closeMobKit()">&times;</span>
+	    <h3 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-qrcode"></i> Kit de Mobilização & QR Code</h3>
+	    <p class="desc" id="mobkit-title" style="margin-bottom:16px"></p>
+	    <div id="mobkit-qr-container" style="margin:16px 0;background:#fff;padding:16px;border-radius:12px;display:inline-block"></div>
+	    <div class="form-group" style="text-align:left;margin-top:16px">
+	      <label>Link Direto para Coleta de Assinaturas</label>
+	      <input type="text" id="mobkit-link" readonly onclick="this.select()" style="font-size:0.85rem">
+	    </div>
+	    <div class="form-group" style="text-align:left;margin-top:12px">
+	      <label>Mensagem Sugerida para WhatsApp / Redes Sociais</label>
+	      <textarea id="mobkit-msg" readonly style="font-size:0.85rem;min-height:90px" onclick="this.select()"></textarea>
+	    </div>
+	    <button class="btn btn-gold" onclick="copyMobKit()" style="width:100%;justify-content:center;margin-top:12px"><i class="fa fa-copy"></i> Copiar Mensagem e Link</button>
+	  </div>
+	</div>
 
 <script>
 const API = (window.MeuVoto && typeof window.MeuVoto.API_BASE === 'string') ? window.MeuVoto.API_BASE : '';
@@ -269,18 +288,35 @@ async function loadPls() {
               <div style="font-size:0.75rem;color:var(--grey)">assinaturas</div>
             </div>
           </div>
-          <p class="desc"><b>Resumo:</b> ${pl.summary}</p>
-          ${attachmentHTML}
-          <details style="margin-bottom:12px">
-            <summary style="cursor:pointer;color:var(--gold);font-size:0.9rem;font-weight:700">Ver Texto Completo do Projeto</summary>
-            <p style="margin-top:8px;white-space:pre-wrap;background:rgba(6,26,58,0.4);padding:12px;border-radius:8px;font-size:0.9rem;color:#d7e3f5">${pl.text}</p>
-          </details>
-          ${invitesHTML}
-          <div class="actions">
-            <button class="btn btn-green" onclick="signPl('${pl.id}')"><i class="fa fa-signature"></i> Assinar / Apoiar PL</button>
-            <button class="btn btn-outline" onclick="openInviteModal('${pl.id}')"><i class="fa fa-user-plus"></i> Convidar Parlamentar ou Partido</button>
-            <span style="font-size:0.8rem;color:var(--grey);margin-left:auto">Criado em ${new Date(pl.createdAt).toLocaleDateString('pt-BR')}</span>
-          </div>
+	          <p class="desc"><b>Resumo:</b> ${pl.summary}</p>
+	          ${(function(){
+	            const sigs = pl.signatureCount || 0;
+	            const target = 1000;
+	            const pct = Math.min(100, Math.round((sigs / target) * 100));
+	            return `
+	              <div style="margin:12px 0">
+	                <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--grey);margin-bottom:4px">
+	                  <span>Progresso de Assinaturas (Meta Popular: ${target})</span>
+	                  <span>${sigs} / ${target} (${pct}%)</span>
+	                </div>
+	                <div style="background:var(--c2);border-radius:999px;height:8px;overflow:hidden;border:1px solid var(--line)">
+	                  <div style="background:linear-gradient(90deg,#7ed957,#2ECC71);width:${pct}%;height:100%"></div>
+	                </div>
+	              </div>
+	            `;
+	          })()}
+	          ${attachmentHTML}
+	          <details style="margin-bottom:12px">
+	            <summary style="cursor:pointer;color:var(--gold);font-size:0.9rem;font-weight:700">Ver Texto Completo do Projeto</summary>
+	            <p style="margin-top:8px;white-space:pre-wrap;background:rgba(6,26,58,0.4);padding:12px;border-radius:8px;font-size:0.9rem;color:#d7e3f5">${pl.text}</p>
+	          </details>
+	          ${invitesHTML}
+	          <div class="actions">
+	            <button class="btn btn-green" onclick="signPl('${pl.id}')"><i class="fa fa-signature"></i> Assinar / Apoiar PL</button>
+	            <button class="btn btn-outline" onclick="openInviteModal('${pl.id}')"><i class="fa fa-user-plus"></i> Convidar Parlamentar ou Partido</button>
+	            <button class="btn btn-outline" onclick="openMobKit('${pl.id}', ${JSON.stringify(pl.title)})"><i class="fa fa-qrcode"></i> Kit Mobilização & QR Code</button>
+	            <span style="font-size:0.8rem;color:var(--grey);margin-left:auto">Criado em ${new Date(pl.createdAt).toLocaleDateString('pt-BR')}</span>
+	          </div>
         </div>
       `;
     }).join('');
@@ -428,6 +464,28 @@ async function loadRanking() {
   }
 }
 
+function openMobKit(plId, plTitle) {
+  const url = window.location.origin + window.location.pathname + '?pl=' + plId;
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(url);
+  document.getElementById('mobkit-title').textContent = plTitle;
+  document.getElementById('mobkit-qr-container').innerHTML = `<img src="${qrUrl}" alt="QR Code" width="160" height="160" style="display:block">`;
+  document.getElementById('mobkit-link').value = url;
+  document.getElementById('mobkit-msg').value = `📢 Apoie este Projeto de Lei da Sociedade: "${plTitle}"!\n\nAcesse pelo link ou escaneie o QR Code para ler a proposta e assinar:\n${url}`;
+  document.getElementById('mobkit-modal').style.display = 'flex';
+}
+
+function closeMobKit() {
+  document.getElementById('mobkit-modal').style.display = 'none';
+}
+
+function copyMobKit() {
+  const msg = document.getElementById('mobkit-msg');
+  msg.select();
+  navigator.clipboard.writeText(msg.value).then(() => {
+    alert('📋 Kit de mobilização copiado para a área de transferência!');
+  });
+}
+
 // Inicializar carregando os PLs
 document.addEventListener('DOMContentLoaded', () => {
   loadPls();
@@ -435,6 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeInviteModal();
+      closeMobKit();
     }
   });
 
