@@ -8,6 +8,7 @@
   <url><loc>https://meu-voto.app/pages/meu-voto.html</loc><changefreq>hourly</changefreq><priority>0.7</priority></url>
   <url><loc>https://meu-voto.app/pages/comunidade.html</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
   <url><loc>https://meu-voto.app/pages/iniciativa-cidada.html</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://meu-voto.app/pages/fundo-eleitoral.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://meu-voto.app/pages/proposta.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://meu-voto.app/pages/revogar.html</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://meu-voto.app/pages/status.html</loc><changefreq>weekly</changefreq><priority>0.3</priority></url>
