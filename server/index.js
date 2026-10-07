@@ -1540,16 +1540,56 @@ async function handleApi(req, res, url) {
     } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }
   }
 
+  const attMatch = p.match(/^\/api\/society\/attachments\/([a-zA-Z0-9._-]+)$/);
+  if (attMatch && req.method === 'GET') {
+    const filename = attMatch[1];
+    const filePath = path.join(__dirname, 'data', 'attachments', filename);
+    if (!fs.existsSync(filePath)) {
+      return sendJson(res, 404, { ok: false, error: 'Anexo não encontrado' });
+    }
+    const ext = path.extname(filename).toLowerCase();
+    const mimeTypes = {
+      '.pdf': 'application/pdf',
+      '.doc': 'application/msword',
+      '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      '.txt': 'text/plain; charset=utf-8',
+      '.rtf': 'application/rtf',
+      '.odt': 'application/vnd.oasis.opendocument.text'
+    };
+    const contentType = mimeTypes[ext] || 'application/octet-stream';
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=86400'
+    });
+    return res.end(fs.readFileSync(filePath));
+  }
+
   if (p === '/api/society/pls' && req.method === 'POST') {
     let body;
     try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
     const voter = auth.getVoterFromToken(body.sessionToken || '');
     if (!voter) return sendJson(res, 401, { ok: false, error: 'Faça login para criar um Projeto da Sociedade' });
-    const { orgName, orgEmail, title, summary, text, category, attachmentUrl } = body || {};
+    const { orgName, orgEmail, title, summary, text, category, attachmentUrl, attachmentBase64, attachmentName } = body || {};
     if (!orgName || !title || !text) {
       return sendJson(res, 400, { ok: false, error: 'orgName, title e text são obrigatórios' });
     }
     try {
+      let finalAttachmentUrl = attachmentUrl || '';
+      if (attachmentBase64) {
+        try {
+          const base64Data = attachmentBase64.replace(/^data:[^;]+;base64,/, '');
+          const buffer = Buffer.from(base64Data, 'base64');
+          const safeName = (attachmentName || 'documento.pdf').replace(/[^a-zA-Z0-9._-]/g, '_');
+          const filename = Date.now() + '-' + Math.random().toString(36).substring(2, 8) + '-' + safeName;
+          const uploadDir = path.join(__dirname, 'data', 'attachments');
+          fs.mkdirSync(uploadDir, { recursive: true });
+          fs.writeFileSync(path.join(uploadDir, filename), buffer);
+          finalAttachmentUrl = '/api/society/attachments/' + filename;
+        } catch (err) {
+          console.error('Falha ao salvar anexo:', err);
+        }
+      }
+
       const newPl = db.createSocietyPl({
         orgName,
         orgEmail: orgEmail || voter.email || '',
@@ -1558,7 +1598,7 @@ async function handleApi(req, res, url) {
         text,
         category: category || 'Geral',
         authorHash: voter.voterHash,
-        attachmentUrl: attachmentUrl || ''
+        attachmentUrl: finalAttachmentUrl
       });
       return sendJson(res, 201, { ok: true, pl: newPl });
     } catch (e) { return sendJson(res, 500, { ok: false, error: e.message }); }

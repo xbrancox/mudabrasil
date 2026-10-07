@@ -223,7 +223,7 @@ textarea { resize: vertical; min-height: 140px; }
 <main>
   <div class="hero">
     <h1>Iniciativa Cidadã</h1>
-    <p>A sociedade organizada escreve, assina e convoca. Proponha Projetos de Lei (PLs), conquistas de ONGs e movimentos cívicos, colete assinaturas populares validadas e exija o apoio de parlamentares e partidos.</p>
+    <p style="color:#ffffff; font-weight:500; font-size:1.15rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">A sociedade organizada escreve, assina e convoca. Proponha Projetos de Lei (PLs), conquistas de ONGs e movimentos cívicos, colete assinaturas populares validadas e exija o apoio de parlamentares e partidos.</p>
   </div>
 
   <div class="nav-tabs">
@@ -272,6 +272,12 @@ textarea { resize: vertical; min-height: 140px; }
       <h2 style="color:var(--gold);margin-bottom:12px"><i class="fa fa-pen-nib"></i> Submeter Projeto de Lei da Sociedade</h2>
       <p class="desc">Associações, ONGs, coletivos e cidadãos podem apresentar propostas legislativas fundamentadas. Preencha os campos abaixo para iniciar a coleta de assinaturas populares verificadas e convidar parlamentares.</p>
       
+      <div style="margin-bottom:20px;text-align:right">
+        <button type="button" class="btn btn-outline" onclick="loadLegislativeTemplate()" style="font-size:0.85rem;border-color:var(--gold);color:var(--gold)">
+          <i class="fa fa-wand-magic-sparkles"></i> Carregar Exemplo / Modelo Legislativo Padrão
+        </button>
+      </div>
+
       <div id="form-alert"></div>
 
       <form id="create-pl-form" onsubmit="submitPl(event)">
@@ -303,7 +309,12 @@ textarea { resize: vertical; min-height: 140px; }
           <textarea id="summary" required style="min-height:90px" placeholder="Estabelece diretrizes obrigatórias para preservação de mananciais..."></textarea>
         </div>
         <div class="form-group">
-          <label for="attachmentUrl">Link / Anexo do Projeto de Lei Pronto (Opcional - PDF ou Documento na Nuvem)</label>
+          <label for="attachmentFile"><i class="fa fa-file-arrow-up"></i> Anexar Documento do Projeto (PDF, DOCX, TXT - Opcional)</label>
+          <input type="file" id="attachmentFile" accept=".pdf,.doc,.docx,.txt,.rtf,.odt" style="padding:10px">
+          <small style="color:var(--grey);font-size:0.8rem">Ou informe o link externo do documento abaixo:</small>
+        </div>
+        <div class="form-group">
+          <label for="attachmentUrl">Link Externo do Projeto (Opcional)</label>
           <input type="url" id="attachmentUrl" placeholder="https://exemplo.org/meu-projeto-de-lei.pdf">
         </div>
         <div class="form-group">
@@ -559,6 +570,7 @@ async function loadPls() {
           <div class="card-header">
             <div>
               <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+                <span class="badge" style="background:rgba(255,215,0,0.2);color:var(--gold);border-color:var(--gold)"><i class="fa fa-barcode"></i> ${pl.number || 'PL-SOC-2026'}</span>
                 <span class="badge-org"><i class="fa fa-building-user"></i> ${pl.orgName}</span>
                 <span class="badge">${pl.category}</span>
                 ${isMetaReached ? '<span class="badge-status"><i class="fa fa-flag-checkered"></i> Meta Atingida (1k+)</span>' : '<span class="badge" style="background:rgba(255,215,0,0.15);color:var(--gold);border-color:var(--gold)">Em Coleta</span>'}
@@ -608,6 +620,37 @@ async function loadPls() {
   }
 }
 
+function loadLegislativeTemplate() {
+  document.getElementById('orgName').value = 'Observatório Cidadão Brasil';
+  document.getElementById('orgEmail').value = 'contato@observatorio.org.br';
+  document.getElementById('title').value = 'PL de Transparência e Participação Popular na Gestão de Verbas Públicas';
+  document.getElementById('category').value = 'Combate à Corrupção';
+  document.getElementById('summary').value = 'EMENTA: Dispõe sobre a transparência ativa em tempo real na execução de emendas orçamentárias e cria diretrizes para a fiscalização cidadã digital.';
+  document.getElementById('text').value = `PROJETO DE LEI DA SOCIEDADE Nº _____ DE 2026
+
+EMENTA: Dispõe sobre a transparência ativa em tempo real na gestão pública e cria diretrizes para a fiscalização cidadã direta.
+
+O POVO BRASILEIRO, por meio de iniciativa cidadã, decreta:
+
+Art. 1º Esta Lei estabelece normas de transparência ativa e fiscalização cidadã sobre a alocação e execução de verbas públicas em âmbito municipal, estadual e federal.
+
+Art. 2º Fica assegurado a todo cidadão o direito de acesso simplificado, em formato aberto e digital, às seguintes informações:
+I - Identificação completa do parlamentar autor de emenda orçamentária;
+II - Valor integral destinado, objeto da obra ou serviço e beneficiário final;
+III - Cronograma de execução física e financeira atualizado em tempo real.
+
+Art. 3º As entidades gestoras deverão disponibilizar canal digital aberto para recebimento de auditoria e manifestação cidadã.
+
+Art. 4º Esta Lei entra em vigor na data de sua publicação.
+
+JUSTIFICATIVA:
+A presente iniciativa visa fortalecer o controle social, coibir desvios e garantir que os recursos públicos sejam geridos com máxima integridade e transparência.`;
+  
+  const textVal = document.getElementById('text').value;
+  document.getElementById('live-preview').innerHTML = formatPlTextHtml(textVal);
+  showToast('Modelo legislativo padrão carregado!', 'success');
+}
+
 async function submitPl(e) {
   e.preventDefault();
   const alertBox = document.getElementById('form-alert');
@@ -620,6 +663,25 @@ async function submitPl(e) {
   }
 
   setButtonLoading('submit-pl-btn', true, 'Publicando PL...');
+  
+  const fileInput = document.getElementById('attachmentFile');
+  let attachmentBase64 = null;
+  let attachmentName = null;
+  if (fileInput && fileInput.files && fileInput.files[0]) {
+    const file = fileInput.files[0];
+    attachmentName = file.name;
+    try {
+      attachmentBase64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    } catch (err) {
+      console.error('Erro ao ler arquivo:', err);
+    }
+  }
+
   const payload = {
     sessionToken,
     orgName: document.getElementById('orgName').value,
@@ -628,7 +690,9 @@ async function submitPl(e) {
     category: document.getElementById('category').value,
     summary: document.getElementById('summary').value,
     text: document.getElementById('text').value,
-    attachmentUrl: document.getElementById('attachmentUrl').value
+    attachmentUrl: document.getElementById('attachmentUrl').value,
+    attachmentBase64,
+    attachmentName
   };
 
   try {
@@ -726,11 +790,16 @@ async function submitInvite(e) {
     if (data.ok) {
       const resDiv = document.getElementById('invite-result');
       resDiv.hidden = false;
+      const inviteText = `Olá, convidamos Vossa Excelência a apoiar oficialmente o Projeto de Lei da Sociedade proposto no VotaBrasil. Acesse o link oficial para confirmar o apoio: ${data.invite.inviteUrl}`;
       resDiv.innerHTML = `
         <div class="alert alert-success" style="word-break:break-all;display:block">
-          <b><i class="fa fa-circle-check"></i> Link de convite oficial gerado!</b><br>
+          <b><i class="fa fa-circle-check"></i> Link de convite oficial gerado com sucesso!</b><br>
           <input type="text" readonly value="${data.invite.inviteUrl}" style="width:100%;margin-top:8px;font-size:0.82rem;padding:10px" onclick="this.select()">
-          <div style="font-size:0.78rem;color:#b9c7dd;margin-top:6px">Envie este link para o parlamentar ou partido para que ele confirme o apoio oficial ao PL.</div>
+          <div style="font-size:0.78rem;color:#b9c7dd;margin-top:6px">Envie diretamente por WhatsApp ou E-mail para registrar o endosso oficial:</div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(inviteText)}" target="_blank" class="btn btn-green" style="font-size:0.85rem;padding:8px 12px;flex:1;justify-content:center"><i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp</a>
+            <a href="mailto:?subject=${encodeURIComponent('Convite Oficial de Apoio - Projeto de Lei da Sociedade')}&body=${encodeURIComponent(inviteText)}" class="btn btn-outline" style="font-size:0.85rem;padding:8px 12px;flex:1;justify-content:center;color:#fff"><i class="fa fa-envelope"></i> Enviar por E-mail</a>
+          </div>
         </div>
       `;
       showToast('Link de convite gerado com sucesso!', 'success');

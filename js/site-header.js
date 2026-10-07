@@ -229,7 +229,7 @@
     'html[data-theme="claro"] svg line{stroke:rgba(11,28,51,.2)}',
     'html[data-theme="claro"] #toast,html[data-theme="claro"] #tip,html[data-theme="claro"] #btip,html[data-theme="claro"] .ac{background:#fff!important;color:var(--ink)!important;border-color:rgba(11,28,51,.25)!important;box-shadow:0 8px 30px rgba(11,28,51,.18)!important}',
     'html[data-theme="claro"] .ac div:hover,html[data-theme="claro"] .ac div.sel{background:rgba(154,107,0,.12)}',
-    'html[data-theme="claro"] .ecard,html[data-theme="claro"] .painel,html[data-theme="claro"] .vcard,html[data-theme="claro"] .card{background:var(--card)!important;border-color:var(--line)!important}',
+    'html[data-theme="claro"] .ecard,html[data-theme="claro"] .painel,html[data-theme="claro"] .vcard,html[data-theme="claro"] .card,html[data-theme="claro"] .hero,html[data-theme="claro"] .ranking-card,html[data-theme="claro"] .supporters-list{background:var(--card)!important;border-color:var(--line)!important}',
     'html[data-theme="claro"] pre{background:#eef3fa!important;color:var(--ink)!important;border-color:rgba(11,28,51,.2)!important}',
     'html[data-theme="claro"] code{background:#e6edf6;color:#8a5f00}',
     'html[data-theme="claro"] .vtable tr:hover td{background:rgba(13,78,168,.06)}',
@@ -333,7 +333,7 @@
 (function () {
   var CSS = [
     'html[data-theme="alto"]{color-scheme:dark;--bg:#000000;--card:#0a0a0a;--card2:#111111;--line:#ffd700;--ink:#ffffff;--muted:#f2f2f2;--gold:#ffd700;--blue:#4da3ff;--blueL:#8ec9ff;--green:#00e676;--red:#ff5252}',
-    'html[data-theme="alto"] body,html[data-theme="alto"] .fbar,html[data-theme="alto"] .cmpbar,html[data-theme="alto"] #mbtopo,html[data-theme="alto"] .ecard,html[data-theme="alto"] .painel,html[data-theme="alto"] .vcard,html[data-theme="alto"] .card,html[data-theme="alto"] .mnav,html[data-theme="alto"] input,html[data-theme="alto"] select,html[data-theme="alto"] textarea,html[data-theme="alto"] .btn,html[data-theme="alto"] .tabs button,html[data-theme="alto"] .tabs button.on{background:#000000!important;color:#ffffff!important;border-color:#ffd700!important}',
+    'html[data-theme="alto"] body,html[data-theme="alto"] .fbar,html[data-theme="alto"] .cmpbar,html[data-theme="alto"] #mbtopo,html[data-theme="alto"] .ecard,html[data-theme="alto"] .painel,html[data-theme="alto"] .vcard,html[data-theme="alto"] .card,html[data-theme="alto"] .hero,html[data-theme="alto"] .ranking-card,html[data-theme="alto"] .supporters-list,html[data-theme="alto"] .mnav,html[data-theme="alto"] input,html[data-theme="alto"] select,html[data-theme="alto"] textarea,html[data-theme="alto"] .btn,html[data-theme="alto"] .tabs button,html[data-theme="alto"] .tabs button.on{background:#000000!important;color:#ffffff!important;border-color:#ffd700!important}',
     'html[data-theme="alto"] a,html[data-theme="alto"] .fonte,html[data-theme="alto"] .lei{color:#ffd700!important;border-color:#ffd700!important}',
     'html[data-theme="alto"] .btn.gold{background:#ffd700!important;color:#000000!important;border:none!important}',
     'html[data-theme="alto"] :focus,html[data-theme="alto"] :focus-visible{outline:3px solid #ffd700!important;outline-offset:2px!important}',
@@ -347,8 +347,8 @@
   (document.head || document.documentElement).appendChild(st);
 
   var MODOS = ['escuro', 'claro', 'alto'];
-  var LABELS = { escuro: '☀️ Claro', claro: '◐ Alto contraste', alto: '🌙 Escuro' };
-  var LBLAR  = { escuro: 'Mudar para claro', claro: 'Mudar para alto contraste', alto: 'Mudar para escuro' };
+  var LABELS = { escuro: '☀️ Mudar para Claro', claro: '◐ Mudar para Alto Contraste', alto: '🌙 Mudar para Escuro' };
+  var LBLAR  = { escuro: 'Mudar para tema claro', claro: 'Mudar para modo alto contraste', alto: 'Mudar para tema escuro' };
 
   function cur() {
     var t = document.documentElement.getAttribute('data-theme');

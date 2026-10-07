@@ -257,6 +257,7 @@ function openSqlite() {
 
     CREATE TABLE IF NOT EXISTS society_pls (
       id              TEXT PRIMARY KEY,
+      number          TEXT,
       org_name        TEXT NOT NULL,
       org_email       TEXT,
       title           TEXT NOT NULL,
@@ -298,6 +299,7 @@ function openSqlite() {
   `);
 
   try { db.prepare('ALTER TABLE society_pls ADD COLUMN attachment_url TEXT').run(); } catch (_) {}
+  try { db.prepare('ALTER TABLE society_pls ADD COLUMN number TEXT').run(); } catch (_) {}
 }
 
 const rowToBallot = r => ({
@@ -1132,6 +1134,7 @@ const DUMP_TABLES = ['ballots', 'politicians', 'verifications', 'complaints',
 /* ===== INICIATIVA CIDADÃ / PLS DA SOCIEDADE ===== */
 const rowToSocietyPl = r => ({
   id: r.id,
+  number: r.number || ('PL-SOC-2026-' + (r.id ? r.id.slice(-4) : '0000')),
   orgName: r.org_name,
   orgEmail: r.org_email,
   title: r.title,
@@ -1149,16 +1152,17 @@ const rowToSocietyPl = r => ({
 function createSocietyPl(p) {
   const now = Date.now();
   const id = 'spl-' + Math.random().toString(36).substring(2, 10);
+  const number = p.number || ('PL-SOC-2026-' + String(Math.floor(1000 + Math.random() * 9000)));
   if (BACKEND === 'sqlite') {
     openSqlite();
     db.prepare(`
-      INSERT INTO society_pls (id, org_name, org_email, title, summary, text, category, author_hash, attachment_url, status, signature_count, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
-    `).run(id, p.orgName, p.orgEmail || null, p.title, p.summary || null, p.text, p.category || 'Geral', p.authorHash || null, p.attachmentUrl || null, p.status || 'Aberto para Assinaturas', now, now);
+      INSERT INTO society_pls (id, number, org_name, org_email, title, summary, text, category, author_hash, attachment_url, status, signature_count, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
+    `).run(id, number, p.orgName, p.orgEmail || null, p.title, p.summary || null, p.text, p.category || 'Geral', p.authorHash || null, p.attachmentUrl || null, p.status || 'Aberto para Assinaturas', now, now);
     return getSocietyPl(id);
   }
   const all = jsonReadFile('society_pls');
-  const item = { id, orgName: p.orgName, orgEmail: p.orgEmail || null, title: p.title, summary: p.summary || null, text: p.text, category: p.category || 'Geral', authorHash: p.authorHash || null, attachmentUrl: p.attachmentUrl || null, status: p.status || 'Aberto para Assinaturas', signatureCount: 0, createdAt: now, updatedAt: now };
+  const item = { id, number, orgName: p.orgName, orgEmail: p.orgEmail || null, title: p.title, summary: p.summary || null, text: p.text, category: p.category || 'Geral', authorHash: p.authorHash || null, attachmentUrl: p.attachmentUrl || null, status: p.status || 'Aberto para Assinaturas', signatureCount: 0, createdAt: now, updatedAt: now };
   all[id] = item;
   jsonWriteFile('society_pls', all);
   return item;

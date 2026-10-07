@@ -1,24 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Icon-only version for favicons and small displays -->
-  
-  <defs>
-    <linearGradient id="iconGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFD700"/>
-      <stop offset="100%" stop-color="#FFA500"/>
-    </linearGradient>
-  </defs>
-  
-  <!-- Circle background -->
-  <circle cx="256" cy="256" r="240" fill="#1a1a2e"/>
-  
-  <!-- Checkmark/V -->
-  <path d="M 140 180 L 256 360 L 372 180" 
-        stroke="url(#iconGold)" 
-        stroke-width="48" 
-        stroke-linecap="round" 
-        stroke-linejoin="round" 
-        fill="none"/>
-  
-  <!-- Citizen head -->
-  <circle cx="256" cy="160" r="36" fill="url(#iconGold)"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- MeuVoto Icon (square) - wraps master high-res SVG -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+  <title>MeuVoto - Icon</title>
+  <image xlink:href="logo-master.svg" width="512" height="512" preserveAspectRatio="xMidYMid meet"/>
 </svg>

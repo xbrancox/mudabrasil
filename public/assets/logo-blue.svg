@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-labelledby="t d">
-<title id="t">MeuVoto</title>
-<desc id="d">Smartphone com avatar de faixa presidencial e check verde formando o V de Voto; wordmark 100% em paths (sem dependencia de fonte).</desc>
+<title id="t">MeuVoto (avatar azul)</title>
+<desc id="d">Variante com boneco azul em vez de cinza; wordmark 100% em paths.</desc>
 <defs>
 <linearGradient id="gPhone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15507a"/><stop offset="1" stop-color="#0b2f49"/></linearGradient>
-<linearGradient id="gGray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c6ccd4"/><stop offset="1" stop-color="#98a2ad"/></linearGradient>
+<linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5aa0e0"/><stop offset="1" stop-color="#2563a8"/></linearGradient>
 <linearGradient id="gCheck" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#a3e635"/><stop offset="1" stop-color="#16a34a"/></linearGradient>
 <clipPath id="cTela"><rect x="322" y="132" width="360" height="620" rx="18"/></clipPath>
 <clipPath id="cTronco"><path d="M355 522 L355 468 C355 424 386 399 432 391 L470 385 L505 401 L540 385 L578 391 C624 399 655 424 655 468 L655 522 Z"/></clipPath>
@@ -23,15 +23,17 @@
 <rect x="466" y="86" width="96" height="18" rx="9" fill="#37474f"/>
 <circle cx="502" cy="812" r="27" fill="#f6f9fb"/>
 <g clip-path="url(#cTela)">
-<circle cx="448" cy="300" r="14" fill="url(#gGray)"/>
-<circle cx="556" cy="300" r="14" fill="url(#gGray)"/>
-<rect x="478" y="330" width="48" height="66" rx="14" fill="url(#gGray)"/>
-<ellipse cx="502" cy="286" rx="60" ry="72" fill="url(#gGray)"/>
-<path d="M355 522 L355 468 C355 424 386 399 432 391 L470 385 L505 401 L540 385 L578 391 C624 399 655 424 655 468 L655 522 Z" fill="url(#gGray)"/>
+<circle cx="448" cy="300" r="14" fill="url(#gBlue)"/>
+<circle cx="556" cy="300" r="14" fill="url(#gBlue)"/>
+<rect x="478" y="330" width="48" height="66" rx="14" fill="url(#gBlue)"/>
+<ellipse cx="502" cy="286" rx="60" ry="72" fill="url(#gBlue)"/>
+<ellipse cx="482" cy="252" rx="30" ry="20" fill="#ffffff" opacity="0.12"/>
+<path d="M355 522 L355 468 C355 424 386 399 432 391 L470 385 L505 401 L540 385 L578 391 C624 399 655 424 655 468 L655 522 Z" fill="url(#gBlue)"/>
 <g clip-path="url(#cTronco)" fill="none">
 <path d="M386 392 L560 512" stroke="#2f9e44" stroke-width="26"/>
 <path d="M398 410 L572 530" stroke="#f7d21e" stroke-width="26"/>
 <path d="M410 428 L584 548" stroke="#2f9e44" stroke-width="26"/>
+<path d="M360 402 L566 545" stroke="#ffffff" stroke-width="6" opacity="0.25"/>
 </g>
 </g>
 <use href="#wm" stroke="#0d3a50" stroke-width="80" transform="translate(0 12)"/>

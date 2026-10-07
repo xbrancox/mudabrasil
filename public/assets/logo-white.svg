@@ -1,24 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <!-- White version for dark backgrounds -->
-  
-  <!-- Stylized "V" mark -->
-  <path d="M 280 360 L 512 720 L 744 360" 
-        stroke="#FFFFFF" 
-        stroke-width="72" 
-        stroke-linecap="round" 
-        stroke-linejoin="round" 
-        fill="none"/>
-  
-  <!-- Citizen dot -->
-  <circle cx="512" cy="320" r="64" fill="#FFFFFF"/>
-  
-  <!-- Accent lines -->
-  <path d="M 460 320 L 440 280" 
-        stroke="#FFFFFF" 
-        stroke-width="24" 
-        stroke-linecap="round"/>
-  <path d="M 564 320 L 584 280" 
-        stroke="#FFFFFF" 
-        stroke-width="24" 
-        stroke-linecap="round"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- MeuVoto White variant - for dark backgrounds -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+  <title>MeuVoto - White variant</title>
+  <defs>
+    <filter id="toWhite">
+      <feColorMatrix type="matrix"
+        values="0 0 0 0 1
+                0 0 0 0 1
+                0 0 0 0 1
+                0 0 0 1 0"/>
+    </filter>
+  </defs>
+  <image xlink:href="logo-master.svg" width="512" height="512"
+         preserveAspectRatio="xMidYMid meet" filter="url(#toWhite)"/>
 </svg>
