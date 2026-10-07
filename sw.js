@@ -1,5 +1,5 @@
 /* MeuVoto SW - shell offline + runtime cache + Web Push */
-var SHELL = 'meuvoto-shell-v6';
+var SHELL = 'meuvoto-shell-v7';
 var PRE = [
   './', './index.html', './config.local.js', 
   './js/cache.js', './js/offline.js', './js/push-notifications.js',
