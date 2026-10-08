@@ -1084,6 +1084,20 @@ async function handleApi(req, res, url) {
   /* ===== FIM COBRANCAS ===== */
 
   if (p === '/api/admin/backup' && req.method === 'GET') {
+    // Rate limiting específico para backup (máx 5 tentativas por hora por IP)
+    const backupIp = clientIp(req);
+    const now = Date.now();
+    const backupRecord = rateLimitMap.get(backupIp + ':backup') || { count: 0, resetAt: now + 3600000 };
+    if (now > backupRecord.resetAt) {
+      backupRecord.count = 0;
+      backupRecord.resetAt = now + 3600000;
+    }
+    backupRecord.count++;
+    rateLimitMap.set(backupIp + ':backup', backupRecord);
+    if (backupRecord.count > 5) {
+      return sendJson(res, 429, { ok: false, error: 'Muitas tentativas de backup. Tente novamente em 1 hora.' });
+    }
+
     const tok = process.env.BACKUP_TOKEN || '';
     const given = String(req.headers['x-backup-token'] || q.t || '');
     const sameLen = given.length === tok.length;
@@ -1911,20 +1925,23 @@ function serveStatic(res, url) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost:' + PORT);
   try {
-    if (req.method === 'OPTIONS') {
-      res.writeHead(204, {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type'
-      });
-      return res.end();
-    }
-    if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url);
-    // Rota direta para cédula de votação
-    if (url.pathname === '/cedula-votabrasil.html') {
-      return serveStatic(res, new URL('/pages/cedula-votabrasil.html', 'http://localhost:' + PORT));
-    }
-    return serveStatic(res, url);
+    // Aplica rate limiting em todas as requisições
+    rateLimit(req, res, async () => {
+      if (req.method === 'OPTIONS') {
+        res.writeHead(204, {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        });
+        return res.end();
+      }
+      if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url);
+      // Rota direta para cédula de votação
+      if (url.pathname === '/cedula-votabrasil.html') {
+        return serveStatic(res, new URL('/pages/cedula-votabrasil.html', 'http://localhost:' + PORT));
+      }
+      return serveStatic(res, url);
+    });
   } catch (e) {
     return sendJson(res, 500, { error: 'Erro interno: ' + e.message });
   }

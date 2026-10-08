@@ -10,8 +10,8 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const DATA_DIR = path.join(__dirname, 'data');
-const VOTOS_DB = path.join(DATA_DIR, 'votos.db');
+const DATA_DIR = process.env.DB_PATH ? path.dirname(process.env.DB_PATH) : path.join(__dirname, 'data');
+const VOTOS_DB = process.env.DB_PATH || path.join(DATA_DIR, 'votos.db');
 const VOTOS_FILE = path.join(DATA_DIR, 'votos.json');
 
 const FORCED = process.env.MB_STORAGE;
