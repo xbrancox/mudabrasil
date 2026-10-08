@@ -14,11 +14,11 @@
 <meta name="twitter:image" content="https://meu-voto.app/og-image.png">
 <!-- /og:meuvoto -->
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>MeuVoto · Cobre, Revogue, Vote</title>
-<meta name="description" content="Plataforma cívica de revogação do voto: confie em deputados e senadores, revogue quando descumprirem, opine nos PLs e acompanhe as Eleições 2026 com dados reais.">
+<title>MeuVoto · 2º Turno 2026 — Escolha Presidente</title>
+<meta name="description" content="2º turno das Eleições 2026: compare os presidenciáveis com dados oficiais do TSE, confira seu voto, cobre promessas e revogue a confiança de quem descumprir.">
 <link rel="canonical" href="https://meu-voto.app/">
-<meta property="og:title" content="MeuVoto · Cobre, Revogue, Vote">
-<meta property="og:description" content="Plataforma cívica de revogação do voto: confie em deputados e senadores, revogue quando descumprirem, opine nos PLs e acompanhe as Eleições 2026 com dados reais.">
+<meta property="og:title" content="MeuVoto · 2º Turno 2026 — Escolha Presidente">
+<meta property="og:description" content="2º turno das Eleições 2026: compare os presidenciáveis com dados oficiais do TSE, confira seu voto, cobre promessas e revogue a confiança de quem descumprir.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://meu-voto.app/">
 <meta property="og:image" content="https://meu-voto.app/og-image.png">
@@ -37,32 +37,78 @@ body{background:radial-gradient(ellipse at top right,rgba(17,95,203,.14),transpa
 h1,h2,h3,h4{font-family:Montserrat,sans-serif;font-weight:800;line-height:1.15}
 a{color:var(--gold);text-decoration:none}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:11px 18px;cursor:pointer;transition:.15s}
-.btn:hover{filter:brightness(1.1)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font:700 14px Manrope;padding:11px 18px;min-height:44px;cursor:pointer;transition:transform .12s ease,filter .15s ease,box-shadow .15s ease}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn:active{transform:scale(0.98)}
+.btn:focus-visible{outline:3px solid rgba(255,215,0,.6);outline-offset:3px}
 .btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#1a1400}
 .btn.green{background:var(--green);border:none;color:#fff}
 .btn.red{background:transparent;border-color:var(--red);color:var(--red)}
 .btn.blue{background:var(--blue);border:none;color:#fff}
-.btn.sm{padding:7px 12px;font-size:12px}
+.btn.sm{padding:7px 14px;min-height:36px;font-size:12px}
+/* Skeleton Loader Shimmer */
+.skeleton{background:linear-gradient(90deg,var(--card2),rgba(127,176,245,.15),var(--card2));background-size:200% 100%;animation:shimmer 1.2s linear infinite;border-radius:8px}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
 /* Cabeçalho uniforme injetado por site-header.js — regras locais removidas */
 .sec{display:none;padding:40px 0 70px}.sec.on{display:block}
 .kick{color:var(--gold);font:800 11px Manrope;letter-spacing:.2em;text-transform:uppercase}
-.hero{text-align:center;padding:46px 20px 16px}
-.hero h1{font-size:clamp(34px,6vw,56px);font-weight:900}
+.hero{text-align:center;padding:52px 20px 16px;position:relative}
+.hero h1{font-size:clamp(34px,6vw,58px);font-weight:900;letter-spacing:-.02em}
 .hero .l2{font-size:clamp(18px,3vw,24px);font-weight:800;margin-top:20px}
 .hero .l2 .g{color:var(--green)}.hero .l2 .y{color:var(--gold)}
 .hero .l3{font-size:clamp(16px,2.4vw,20px);font-weight:800;margin-top:12px}
 .hero .l3 .g{color:var(--green)}.hero .l3 .r{color:var(--red)}
-.hero p{color:var(--muted);max-width:640px;margin:20px auto}
+.hero p{color:var(--muted);max-width:660px;margin:20px auto;font-size:15.5px}
 .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
 .tag{display:inline-block;background:var(--green);color:#fff;font:800 10px Manrope;letter-spacing:.12em;padding:6px 14px;border-radius:999px;text-transform:uppercase}
+/* ===== HERO 2º TURNO ===== */
+.hero2{padding:34px 20px 8px;text-align:center}
+.hero2 .turno{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(255,215,0,.16),rgba(255,165,0,.08));border:1px solid rgba(255,215,0,.5);color:var(--gold);font:800 11px Manrope;letter-spacing:.16em;text-transform:uppercase;padding:8px 18px;border-radius:999px;box-shadow:0 4px 18px rgba(255,215,0,.12)}
+.hero2 .turno .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(46,204,113,.6);animation:pulseDot 2s infinite}
+@keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(46,204,113,.55)}70%{box-shadow:0 0 0 8px rgba(46,204,113,0)}100%{box-shadow:0 0 0 0 rgba(46,204,113,0)}}
+.hero2 h1{font-size:clamp(32px,5.6vw,54px);font-weight:900;letter-spacing:-.02em;margin-top:20px;line-height:1.08}
+.hero2 h1 .hl{background:linear-gradient(135deg,#FFD700,#FFA500);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero2 .sub{font-size:clamp(16px,2.3vw,20px);font-weight:700;color:#dbe6f5;margin-top:16px;max-width:720px;margin-left:auto;margin-right:auto}
+.hero2 .sub b{color:var(--gold)}
+.hero2 .lead{color:var(--muted);max-width:680px;margin:18px auto 0;font-size:15.5px}
+.hero2 .cta{margin-top:26px}
+.hero2 .cta .btn{padding:14px 26px;font-size:15px}
+.hero2 .cta .btn.gold{box-shadow:0 8px 26px rgba(255,215,0,.28)}
+.hero2 .cta .btn.gold:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,215,0,.4)}
+.hero2 .cta .btn:hover{transform:translateY(-2px)}
+.trust{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.trust .badge{background:rgba(13,34,66,.6);backdrop-filter:blur(6px)}
+/* ===== SPOTLIGHT 2º TURNO (presidenciáveis) ===== */
+.spot{max-width:1180px;margin:44px auto 0;padding:0 20px}
+.spot-head{text-align:center;margin-bottom:22px}
+.spot-head h2{font-size:clamp(22px,3.4vw,32px);font-weight:900}
+.spot-head p{color:var(--muted);margin-top:10px;font-size:14px}
+.spot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.pcard{background:linear-gradient(180deg,var(--card),rgba(13,34,66,.6));border:1px solid var(--line);border-radius:18px;padding:20px;text-align:center;position:relative;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+.pcard::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green),var(--gold))}
+.pcard:hover{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 16px 40px rgba(0,0,0,.42)}
+.pcard .pav{width:88px;height:88px;border-radius:50%;object-fit:cover;object-position:top center;background:var(--card2);margin:0 auto 14px;display:grid;place-items:center;font:900 30px Montserrat;color:#1a1400;border:3px solid rgba(255,215,0,.35)}
+.pcard h3{font-size:17px;font-weight:800;line-height:1.25}
+.pcard .pmeta{color:var(--muted);font-size:12.5px;margin-top:6px}
+.pcard .pnum{display:inline-block;margin-top:12px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:6px 14px;font:900 18px Montserrat;color:var(--gold);letter-spacing:.04em}
+.pcard .pcta{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.spot-note{text-align:center;color:var(--muted);font-size:11.5px;margin-top:18px;line-height:1.6}
+.spot-note a{font-weight:800}
+/* ===== SEÇÃO GENÉRICA ===== */
+.sec-head{text-align:center;margin-bottom:6px}
+.sec-head h2{font-size:clamp(22px,3.4vw,32px);font-weight:900}
+.sec-head p{color:var(--muted);margin-top:10px;font-size:14px;max-width:640px;margin-left:auto;margin-right:auto}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
-.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;text-align:center}
-.step .n{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;margin:0 auto 14px;font-weight:800;color:#fff}
-.explore{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:22px}
-.exp{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
-.exp .ic{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-size:17px;margin-bottom:14px}
-.exp h3{font-size:15px;margin-bottom:8px}.exp p{color:var(--muted);font-size:12.5px}.exp a{font-size:12.5px;font-weight:800;cursor:pointer}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px 22px;text-align:center;transition:transform .2s,border-color .2s,box-shadow .2s}
+.step:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.step .n{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;margin:0 auto 16px;font:900 20px Montserrat;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.step h3{font-size:16px;margin-bottom:8px}
+.step p{font-size:13px;line-height:1.55}
+.explore{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.exp{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;transition:transform .2s,border-color .2s,box-shadow .2s;display:flex;flex-direction:column}
+.exp:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.exp .ic{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;font-size:19px;margin-bottom:16px}
+.exp h3{font-size:16px;margin-bottom:8px}.exp p{color:var(--muted);font-size:13px;line-height:1.55;flex:1}.exp a{font-size:13px;font-weight:800;cursor:pointer;margin-top:12px;display:inline-block}
 .donuts{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px}
 .don{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;position:relative}
 .don h4{font-size:14px;padding-right:70px}
@@ -178,6 +224,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 .modal{background:var(--bg);border:1px solid var(--line);border-radius:20px;max-width:760px;width:100%;max-height:90vh;overflow:auto;padding:24px}
 #toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);color:var(--ink);padding:12px 18px;border-radius:12px;z-index:300;display:none;max-width:90%}
 @media(max-width:960px){#radList{grid-template-columns:1fr}.explore{grid-template-columns:repeat(2,1fr)}.donuts{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}.filtros{grid-template-columns:1fr 1fr}.ft{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}nav{display:none}.ham{display:inline-flex}}
+@media(max-width:600px){.explore{grid-template-columns:1fr}.hero2 .cta .btn{width:100%}.spot-grid{grid-template-columns:1fr}}
 </style>
   <script src="js/site-header.js?v=3"></script>
 <link rel="icon" type="image/svg+xml" href="/assets/icon.svg">
@@ -216,22 +263,39 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <nav id="mbtopo-nav" aria-label="Menu principal do MeuVoto"></nav>
 
 <main>
-<section class="sec on" id="sec-inicio"><div class="hero">
-<h1>O poder emana do povo</h1>
-<div class="l2"><span class="g">não acaba</span> no <span class="y">dia da eleição.</span></div>
-<div class="l3">Meu voto <span class="g">coloca</span>. Meu voto <span class="r">tira</span>.</div>
-<p>Acompanhe a opinião do Brasil, cobre promessas no Radar Político, <b style="color:var(--ink)">participe dos Projetos de Leis no Congresso</b>, confira seu voto com segurança. Analise o currículo dos candidatos. Tenha a oportunidade de tirar o mal político revogando seu voto.</p>
-<div class="cta"><a class="btn gold" href="app/" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px"><i class="fa-solid fa-mobile-screen-button"></i> Abrir o App <small>Cédula no celular</small></a><button class="btn" onclick="go('conferir')">Conferir Voto</button><button class="btn" onclick="go('revogar')">Revogar Voto</button></div>
-<div class="cta" style="margin-top:12px"><span class="badge" id="bVotos">6 votos simulados</span><span class="badge blue" id="bReais">carregando…</span><span class="badge" id="bPls">6 PLs em análise</span></div>
+<section class="sec on" id="sec-inicio">
+<div class="hero2">
+<span class="turno"><span class="dot"></span> 2º Turno · Eleições 2026</span>
+<h1>O 1º turno acabou.<br>Agora é <span class="hl">Presidente</span>.</h1>
+<div class="sub">Só resta <b>uma escolha</b> — e ela decide os próximos 4 anos do Brasil.</div>
+<p class="lead">Compare os presidenciáveis com <b style="color:var(--ink)">dados oficiais do TSE</b>, veja o histórico de cada um, confira seu voto e cobre quem for eleito. O poder emana do povo — e não acaba no dia da eleição.</p>
+<div class="cta">
+<a class="btn gold" href="pages/eleicoes-2026.html" style="text-decoration:none"><i class="fa-solid fa-check-to-slot"></i> Ver os presidenciáveis</a>
+<a class="btn" href="app/" style="text-decoration:none"><i class="fa-solid fa-mobile-screen-button"></i> Abrir o App</a>
+<button class="btn" onclick="go('conferir')"><i class="fa-solid fa-magnifying-glass"></i> Conferir Voto</button>
 </div>
+<div class="trust"><span class="badge" id="bVotos">6 votos simulados</span><span class="badge blue" id="bReais">carregando…</span><span class="badge" id="bPls">6 PLs em análise</span></div>
+</div>
+
+<!-- ===== SPOTLIGHT 2º TURNO — PRESIDENCIÁVEIS (dados reais TSE) ===== -->
+<div class="spot" id="spot-presidente">
+  <div class="spot-head">
+    <span class="tag">DECISÃO DO 2º TURNO</span>
+    <h2 style="margin-top:14px">Quem disputa a Presidência</h2>
+    <p>Candidaturas registradas no TSE para as Eleições 2026. Clique para ver a ficha completa, o histórico e como cada um votou.</p>
+  </div>
+  <div class="spot-grid" id="spotGrid"></div>
+  <p class="spot-note">📊 Dados públicos do TSE (DivulgaCand) · <a href="pages/eleicoes-2026.html">ver todos os candidatos e filtros →</a><br>O MeuVoto é um protótipo cívico independente, sem vínculo com TSE, partidos ou candidatos.</p>
+</div>
+
 <div class="wrap">
-<div style="text-align:center"><span class="tag">COMO FUNCIONA</span><h2 style="margin-top:14px">Três passos, zero burocracia</h2></div>
+<div class="sec-head" style="margin-top:56px"><span class="tag">COMO FUNCIONA</span><h2 style="margin-top:14px">Três passos, zero burocracia</h2></div>
 <div class="steps">
 <div class="step"><div class="n" style="background:var(--green)">1</div><h3>Escolha no app</h3><p class="muted">Escolha seus candidatos, vote com total segurança.</p></div>
 <div class="step"><div class="n" style="background:var(--blue)">2</div><h3>Guarde o código</h3><p class="muted">Cada voto gera um código de 20 dígitos. É o seu comprovante.</p></div>
 <div class="step"><div class="n" style="background:var(--gold);color:#1a1400">3</div><h3>Confira aqui</h3><p class="muted">No site, você cola o código e confere em quem votou.</p></div>
 </div>
-<div style="text-align:center;margin-top:50px"><h2>Explore o MeuVoto</h2><p class="muted">Tudo o que você precisa para uma participação cívica informada e ativa.</p></div>
+<div class="sec-head" style="margin-top:56px"><h2>Explore o MeuVoto</h2><p>Tudo o que você precisa para uma participação cívica informada e ativa.</p></div>
 <div class="explore">
 <div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-regular fa-clock"></i></div><h3>Radar Político</h3><p>Ficha completa com dados reais, reclamações e comparação lado a lado.</p><a onclick="go('radar')">Acessar →</a></div>
 <div class="exp"><div class="ic" style="background:rgba(59,130,246,.15);color:var(--blueL)"><i class="fa-regular fa-file-lines"></i></div><h3>PLs no Congresso</h3><p>Opine sobre leis em tramitação no congresso nacional.</p><a href="pages/congresso.html">Ir ao Congresso →</a></div>
@@ -246,7 +310,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
     <div>
       <h2 style="margin:6px 0 4px">Acompanhe quem está <span style="color:var(--blueL)">na frente</span></h2>
       <p style="margin:10px 0 0;padding:10px 14px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.35);border-radius:10px;font-size:12.5px;line-height:1.55">⚠️ <b>Resultados do aplicativo:</b> os números abaixo são <b>votos colocados dentro do MeuVoto</b> (protótipo cívico de opinião) — <b>não são o resultado oficial da eleição real</b> (TSE).</p>
-      <p class="muted">Preferência do eleitorado por cargo (recorte UF / Cidade).</p>
+      <p class="muted">Preferência do eleitorado por cargo (recorte UF / Cidade). No 2º turno, a disputa é pela <b style="color:var(--gold)">Presidência</b>.</p>
     </div>
     <div class="dk-toggle" role="group" aria-label="Recorte UF ou Cidade">
       <button class="dk-tb on" id="dk-uf-btn" onclick="dkSetModo('uf')">UF</button>
@@ -412,6 +476,50 @@ try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?ite
 try{const r=await fetch('https://legis.senado.leg.br/dadosabertos/senador/lista/legislatura/57?formato=json');const j=await r.json();const L=(j.lista&&j.lista.senador)||[];L.forEach(s=>{const p=s.IdentificacaoParlamentar||{};POL.push({nome:p.NomeParlamentar||'',partido:p.SiglaPartido||'',uf:p.Uf||'',cargo:'Senador',foto:p.UrlFotoParlamentar||'',num:p.CodigoParlamentar||'',real:1,rec:0,selo:false});});}catch(e){}}
 ready=true;const el=document.getElementById('bReais');if(el)el.textContent=POL.length+' políticos reais'+(BACKEND_OK?' (backend)':'');
 popula();renderRad();carregaRemoteRec()}
+/* ============================================================
+   SPOTLIGHT 2º TURNO — presidenciáveis (dados reais do TSE)
+   Fonte: data/candidatos-2026.json (cargo 1 = Presidente).
+   Fallback: backend /api/candidatos filtrando cargo Presidente.
+   ============================================================ */
+const SPOT_CORES=['#2ECC71','#FFD700','#4a90f0','#E74C3C','#A855F7','#f39c12','#1abc9c','#e67e22'];
+function spotIniciais(nome){return (nome||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()}
+function spotCard(c,i){
+  const cor=SPOT_CORES[i%SPOT_CORES.length];
+  const av=c.foto?`<img class="pav" src="${c.foto}" alt="${c.nome}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'pav',textContent:'${spotIniciais(c.nome)}',style:'background:${cor}'}))">`:`<div class="pav" style="background:${cor}">${spotIniciais(c.nome)}</div>`;
+  const sit=(c.situacao||'').toUpperCase();
+  const sitCls=/DEFERID/.test(sit)?'ok':/INDEFERID|CASSAD/.test(sit)?'red':'amb';
+  const sitTxt=sit?sit.charAt(0)+sit.slice(1).toLowerCase():'Registrado';
+  return `<article class="pcard">
+    ${av}
+    <h3>${c.nome}</h3>
+    <div class="pmeta">${c.partido||'—'}${c.uf&&c.uf!=='BR'?' · '+c.uf:''}</div>
+    <div class="pnum">${c.numero||'—'}</div>
+    <div style="margin-top:10px"><span class="badge ${sitCls}">${sitTxt}</span></div>
+    <div class="pcta">
+      <a class="btn sm gold" href="pages/eleicoes-2026.html" style="text-decoration:none">Ver ficha</a>
+      <button class="btn sm" onclick="go('radar')">Radar</button>
+    </div>
+  </article>`;
+}
+async function carregaSpotlight(){
+  const grid=document.getElementById('spotGrid');if(!grid)return;
+  let pres=[];
+  try{
+    const r=await fetch('data/candidatos-2026.json');
+    const d=await r.json();
+    const arr=Array.isArray(d)?d:(d.candidatos||d.dados||[]);
+    pres=arr.filter(x=>String(x.cargo)==='1').map(x=>({nome:x.nomeUrna||x.nomeCivil||'',partido:x.partido||'',uf:x.uf||'BR',numero:x.numero||'',situacao:x.situacao||'',foto:x.foto||''}));
+  }catch(e){}
+  if(!pres.length&&POL.length){
+    pres=POL.filter(p=>/presidente/i.test(p.cargo||'')).map(p=>({nome:p.nome,partido:p.partido,uf:p.uf,numero:p.num,situacao:'',foto:p.foto}));
+  }
+  if(!pres.length){
+    grid.innerHTML='<p class="muted" style="grid-column:1/-1;text-align:center;padding:24px">Não foi possível carregar as candidaturas agora. <a href="pages/eleicoes-2026.html">Ver no TSE →</a></p>';
+    return;
+  }
+  pres.sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+  grid.innerHTML=pres.map(spotCard).join('');
+}
 async function carregaStats(){
   try{const r=await fetch(API_BASE+'/api/termometro');const j=await r.json();
     try{const jr=await fetch(API_BASE+'/api/termometro?top=600');const jj=await jr.json();TERM_RANK={};(jj.topN||[]).slice().sort((a,b)=>b.indice-a.indice).forEach((rr,idx)=>{TERM_RANK[rr.politicianId]=idx+1;});}catch(e){}
@@ -867,7 +975,7 @@ function nufSet(v){NUF_FILTRO=v;const sel=document.getElementById('nf-uf'),g=doc
 function ncarScroll(dir){const c=document.getElementById('homeNews');if(c)c.scrollBy({left:dir*360,behavior:'smooth'})}
 async function newsOLD(){try{const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml'));const j=await r.json();const it=(j.items||[]).slice(0,2);
 $('#homeNews').innerHTML=it.map(n=>`<div class="ncard"><div class="th"><span class="cat">${(n.category||'Política').toString().slice(0,14)}</span><i class="fa-solid fa-layer-group"></i></div><div class="bd"><h4>${n.title}</h4><p>${(n.description||'').replace(/<[^>]+>/g,'').slice(0,140)}</p><div style="display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted)"><span class="seal">Fonte verificada</span><span>Agência Brasil</span><a href="${n.link}" target="_blank">Ler →</a></div></div></div>`).join('')}catch(e){$('#homeNews').innerHTML='<div class="ncard"><div class="th"><span class="cat">Política</span><i class="fa-solid fa-layer-group"></i></div><div class="bd"><h4>Brasil promete restaurar 163 mil km² de terras degradadas até 2030</h4><p>O Brasil apresentou as primeiras metas de Neutralidade da Degradação da Terra em evento internacional.</p><div style="display:flex;gap:10px;align-items:center;font-size:11px;color:var(--muted)"><span class="seal">Fonte verificada</span><span>Agência Brasil</span><a>Ler →</a></div></div></div>'}}
-try{carregaPol()}catch(e){console.error('carregaPol',e)}try{news()}catch(e){console.error('news',e)}try{carregaStats()}catch(e){console.error('carregaStats',e)}
+try{carregaPol()}catch(e){console.error('carregaPol',e)}try{news()}catch(e){console.error('news',e)}try{carregaStats()}catch(e){console.error('carregaStats',e)}try{carregaSpotlight()}catch(e){console.error('carregaSpotlight',e)}
 /* Fase 3 — SSE: inicia conexão após carregamento inicial */
 setTimeout(initSSE, 2000);
 </script>
