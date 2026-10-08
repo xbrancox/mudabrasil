@@ -77,9 +77,10 @@ async function sendVerificationEmail(email, token, politicianName, baseUrl) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: linear-gradient(135deg, #061a3a 0%, #115FCB 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-        <h1 style="color: #FFD700; margin: 0; font-size: 28px;">🇧🇷 MeuVoto</h1>
-        <p style="color: #fff; margin: 10px 0 0; opacity: 0.9;">Verificação de Identidade Política</p>
+      <div style="background: linear-gradient(135deg, #061a3a 0%, #115FCB 100%); padding: 32px 20px; border-radius: 12px 12px 0 0; text-align: center;">
+        <img src="${baseUrl}/logo-hd.png" alt="MeuVoto" width="64" height="64" style="border-radius: 14px; object-fit: cover; display: inline-block; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        <h1 style="color: #FFD700; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">MeuVoto</h1>
+        <p style="color: #ffffff; margin: 6px 0 0; opacity: 0.95; font-size: 14px; font-weight: 600;">Verificação de Identidade Política</p>
       </div>
       <div style="background: #fff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 12px 12px;">
         <h2 style="color: #061a3a; margin-top: 0;">Olá, ${politicianName}</h2>

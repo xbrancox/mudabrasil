@@ -1,11 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="145 60 820 820" width="512" height="512" role="img" aria-labelledby="t">
-<title id="t">MeuVoto icone</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-labelledby="t d">
+<title id="t">MeuVoto</title>
+<desc id="d">Smartphone com avatar de faixa presidencial e check verde formando o V de Voto; wordmark 100% em paths (sem dependencia de fonte).</desc>
 <defs>
 <linearGradient id="gPhone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15507a"/><stop offset="1" stop-color="#0b2f49"/></linearGradient>
 <linearGradient id="gGray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c6ccd4"/><stop offset="1" stop-color="#98a2ad"/></linearGradient>
 <linearGradient id="gCheck" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#a3e635"/><stop offset="1" stop-color="#16a34a"/></linearGradient>
 <clipPath id="cTela"><rect x="322" y="132" width="360" height="620" rx="18"/></clipPath>
 <clipPath id="cTronco"><path d="M355 522 L355 468 C355 424 386 399 432 391 L470 385 L505 401 L540 385 L578 391 C624 399 655 424 655 468 L655 522 Z"/></clipPath>
+<g id="wm" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(97 0) skewX(-8)">
+<path d="M70 690 L70 470 L160 640 L250 470 L250 690"/>
+<path d="M367 595 L277 595 C277 540 297 505 324 505 C352 505 368 540 368 595 C368 650 347 690 317 690 C298 690 285 679 278 663"/>
+<path d="M392 505 L392 630 C392 670 415 690 441 690 C469 690 482 668 482 630 L482 505"/>
+<path d="M690 505 C660 505 642 545 642 597 C642 650 660 690 690 690 C720 690 738 650 738 597 C738 545 720 505 690 505 Z"/>
+<path d="M780 470 L780 640 C780 675 796 690 816 690 C831 690 841 682 846 672"/>
+<path d="M755 540 L812 540"/>
+<path d="M900 505 C870 505 852 545 852 597 C852 650 870 690 900 690 C930 690 948 650 948 597 C948 545 930 505 900 505 Z"/>
+</g>
 </defs>
 <rect x="296" y="58" width="412" height="812" rx="76" fill="url(#gPhone)"/>
 <rect x="322" y="132" width="360" height="620" rx="18" fill="#f6f9fb"/>
@@ -24,6 +34,9 @@
 <path d="M410 428 L584 548" stroke="#2f9e44" stroke-width="26"/>
 </g>
 </g>
+<use href="#wm" stroke="#0d3a50" stroke-width="80" transform="translate(0 12)"/>
+<use href="#wm" stroke="#0d3a50" stroke-width="80"/>
+<use href="#wm" stroke="#f6f9fb" stroke-width="46"/>
 <g fill="none" stroke-linecap="round" stroke-linejoin="round">
 <path d="M478 566 L596 706 L806 402" stroke="#0d3a50" stroke-width="104"/>
 <path d="M478 566 L596 706 L806 402" stroke="url(#gCheck)" stroke-width="74"/>
