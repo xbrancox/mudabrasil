@@ -222,8 +222,36 @@ textarea { resize: vertical; min-height: 140px; }
 
 <main>
   <div class="hero">
-    <h1>Iniciativa Cidadã</h1>
-    <p style="color:#ffffff; font-weight:500; font-size:1.15rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">A sociedade organizada escreve, assina e convoca. Proponha Projetos de Lei (PLs), conquistas de ONGs e movimentos cívicos, colete assinaturas populares validadas e exija o apoio de parlamentares e partidos.</p>
+    <div style="display:inline-block;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);color:var(--gold);padding:6px 16px;border-radius:999px;font:800 11px Manrope;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">
+      <i class="fa fa-bullhorn"></i> Plataforma Oficial de Mobilização Cidadã
+    </div>
+    <h1>Transforme uma demanda da sociedade em Projeto de Lei</h1>
+    <p style="color:#e2e8f0; font-weight:500; font-size:1.12rem; max-width:760px; margin:0 auto 20px; line-height:1.6;">
+      Seja você um cidadão, ONG, coletivo ou movimento, crie sua iniciativa popular, colete assinaturas verificadas, utilize nosso kit de mobilização e convide parlamentares a apoiar a causa.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+      <button class="btn btn-gold" onclick="switchTab('criar')"><i class="fa fa-pen-nib"></i> Crie sua Iniciativa Popular</button>
+      <button class="btn btn-outline" onclick="switchTab('pls')"><i class="fa fa-scroll"></i> Ver Projetos em Andamento</button>
+    </div>
+  </div>
+
+  <!-- GUIA RÁPIDO EM 3 PASSOS -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px">
+    <div class="card" style="margin-bottom:0;padding:20px;background:rgba(13,34,66,0.5)">
+      <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,215,0,0.2);color:var(--gold);display:grid;place-items:center;font-weight:900;margin-bottom:12px">1</div>
+      <h3 style="font-size:1.05rem;color:var(--gold);margin-bottom:6px">Escreva a Proposta</h3>
+      <p style="font-size:0.9rem;color:#b9c7dd;line-height:1.5">Defina o título, resumo e o articulado (Art. 1º, Art. 2º) de forma simples e direta.</p>
+    </div>
+    <div class="card" style="margin-bottom:0;padding:20px;background:rgba(13,34,66,0.5)">
+      <div style="width:40px;height:40px;border-radius:50%;background:rgba(46,204,113,0.2);color:var(--green);display:grid;place-items:center;font-weight:900;margin-bottom:12px">2</div>
+      <h3 style="font-size:1.05rem;color:var(--green);margin-bottom:6px">Mobilize a Comunidade</h3>
+      <p style="font-size:0.9rem;color:#b9c7dd;line-height:1.5">Compartilhe o link e o QR code via WhatsApp, e-mail e redes sociais para coletar assinaturas.</p>
+    </div>
+    <div class="card" style="margin-bottom:0;padding:20px;background:rgba(13,34,66,0.5)">
+      <div style="width:40px;height:40px;border-radius:50%;background:rgba(74,144,240,0.2);color:var(--blueL);display:grid;place-items:center;font-weight:900;margin-bottom:12px">3</div>
+      <h3 style="font-size:1.05rem;color:var(--blueL);margin-bottom:6px">Convide Parlamentares</h3>
+      <p style="font-size:0.9rem;color:#b9c7dd;line-height:1.5">Gere convites formais para deputados, senadores e partidos apoiarem a iniciativa popular.</p>
+    </div>
   </div>
 
   <div class="nav-tabs">
