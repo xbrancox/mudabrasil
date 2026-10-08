@@ -426,6 +426,21 @@ textarea { resize: vertical; min-height: 140px; }
   </div>
 </main>
 
+<!-- MODAL DE ONBOARDING GUIADO -->
+<div id="onboarding-modal" class="modal" style="display:none" onclick="if(event.target===this)closeOnboarding()">
+  <div class="modal-content" style="max-width:520px;text-align:center">
+    <span class="modal-close" onclick="closeOnboarding()">&times;</span>
+    <div style="font-size:2.5rem;color:var(--gold);margin-bottom:12px"><i class="fa fa-rocket"></i></div>
+    <h3 id="onb-title" style="color:var(--gold);margin-bottom:10px;font-size:1.4rem">Como criar sua Iniciativa Popular</h3>
+    <p id="onb-desc" style="color:#b9c7dd;font-size:0.95rem;margin-bottom:18px;line-height:1.6"></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px">
+      <button class="btn btn-gold" id="onb-prev" style="display:none;padding:10px 18px">Voltar</button>
+      <button class="btn btn-gold" id="onb-next" style="padding:10px 18px">Próximo</button>
+      <button class="btn btn-green" id="onb-final" style="display:none;padding:10px 18px"><i class="fa fa-check-circle"></i> Começar Agora</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL DE CONVITE -->
 <div id="invite-modal" class="modal" style="display:none" onclick="if(event.target===this)closeInviteModal()">
   <div class="modal-content">
@@ -972,21 +987,88 @@ function closePosterModal() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadPls();
-  
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeInviteModal();
-      closeMobKit();
-      closePosterModal();
-      closeSignModal();
-    }
-  });
+
+  // Inicia tour de onboarding guiado ao visitar pela primeira vez
+  const hasSeenTour = localStorage.getItem('mb_onboarding_done');
+  if (!hasSeenTour) {
+    setTimeout(() => startOnboarding(), 800);
+  }
 
   const params = new URLSearchParams(window.location.search);
   if (params.get('accepted') === '1') {
     showToast('Apoio oficial confirmado com sucesso!', 'success');
     alert('🎉 Apoio oficial confirmado com sucesso! O parlamentar / partido agora integra o selo de apoio da iniciativa.');
   }
+});
+
+/* Onboarding Guiado (Tour de 3 passos) */
+let onboardingStep = 0;
+const onboardingSteps = [
+  {
+    title: 'Bem-vindo ao VotaBrasil!',
+    desc: 'Aqui você pode propor projetos de lei, mobilizar a comunidade e convidar parlamentares a apoiar sua causa. Vamos ver como funciona em 3 passos?'
+  },
+  {
+    title: 'Escreva sua proposta',
+    desc: 'No separador "Escrever Novo PL", preencha os dados, utilize nosso modelo legislativo padrão (1 clique) e visualize o articulado em tempo real.'
+  },
+  {
+    title: 'Mobilize e convide',
+    desc: 'Ao publicar, use o "Kit de Mobilização" para gerar QR Codes, cartazes e mensagens prontas para WhatsApp e e-mail. Convidar parlamentares também é simples!'
+  }
+];
+
+function startOnboarding() {
+  onboardingStep = 0;
+  renderOnboardingStep();
+  document.getElementById('onboarding-modal').style.display = 'flex';
+}
+
+function renderOnboardingStep() {
+  const step = onboardingSteps[onboardingStep];
+  document.getElementById('onb-title').textContent = step.title;
+  document.getElementById('onb-desc').textContent = step.desc;
+
+  const prevBtn = document.getElementById('onb-prev');
+  const nextBtn = document.getElementById('onb-next');
+  const finalBtn = document.getElementById('onb-final');
+
+  prevBtn.style.display = onboardingStep === 0 ? 'none' : 'inline-flex';
+  nextBtn.style.display = onboardingStep === onboardingSteps.length - 1 ? 'none' : 'inline-flex';
+  finalBtn.style.display = onboardingStep === onboardingSteps.length - 1 ? 'inline-flex' : 'none';
+}
+
+function nextOnboardingStep() {
+  if (onboardingStep < onboardingSteps.length - 1) {
+    onboardingStep++;
+    renderOnboardingStep();
+  }
+}
+
+function prevOnboardingStep() {
+  if (onboardingStep > 0) {
+    onboardingStep--;
+    renderOnboardingStep();
+  }
+}
+
+function closeOnboarding() {
+  document.getElementById('onboarding-modal').style.display = 'none';
+  localStorage.setItem('mb_onboarding_done', 'true');
+}
+
+// Inicializa event listeners do onboarding
+document.addEventListener('DOMContentLoaded', () => {
+  const prevBtn = document.getElementById('onb-prev');
+  const nextBtn = document.getElementById('onb-next');
+  const finalBtn = document.getElementById('onb-final');
+
+  if (prevBtn) prevBtn.addEventListener('click', prevOnboardingStep);
+  if (nextBtn) nextBtn.addEventListener('click', nextOnboardingStep);
+  if (finalBtn) finalBtn.addEventListener('click', () => {
+    closeOnboarding();
+    switchTab('criar');
+  });
 });
 </script>
 </body>
