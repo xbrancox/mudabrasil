@@ -76,8 +76,49 @@ const MIME = {
 
 const SEC_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
-  'Referrer-Policy': 'no-referrer'
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Referrer-Policy': 'no-referrer',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' https://dadosabertos.camara.leg.br https://legis.senado.leg.br;"
 };
+
+/* Rate Limiting simples por IP (memória) */
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minuto
+const RATE_LIMIT_MAX = 60; // máx 60 requests por minuto por IP
+
+function rateLimit(req, res, next) {
+  const ip = clientIp(req);
+  const now = Date.now();
+  const record = rateLimitMap.get(ip) || { count: 0, resetAt: now + RATE_LIMIT_WINDOW };
+
+  if (now > record.resetAt) {
+    record.count = 0;
+    record.resetAt = now + RATE_LIMIT_WINDOW;
+  }
+
+  record.count++;
+  rateLimitMap.set(ip, record);
+
+  if (record.count > RATE_LIMIT_MAX) {
+    res.writeHead(429, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Retry-After': Math.ceil((record.resetAt - now) / 1000)
+    });
+    return res.end(JSON.stringify({ ok: false, error: 'Muitas requisições. Tente novamente em instantes.' }));
+  }
+  next();
+}
+
+/* Limpeza periódica do cache de rate limit (evita memory leak) */
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, record] of rateLimitMap) {
+    if (now > record.resetAt + 60000) rateLimitMap.delete(ip);
+  }
+}, 5 * 60 * 1000).unref();
 
 function sendJson(res, status, obj, methods = 'GET, POST, OPTIONS') {
   res.writeHead(status, {
