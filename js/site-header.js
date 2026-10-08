@@ -19,7 +19,7 @@
     '#mbtopo header{display:flex!important;gap:10px!important;align-items:center!important;padding:0!important;margin:0!important;background:none!important;border:none!important;box-shadow:none!important;backdrop-filter:none!important;flex-wrap:nowrap!important;width:100%;position:static!important;top:auto!important}',
     '#mbtopo .lg{display:flex;gap:12px;align-items:center;text-decoration:none;transition:transform 0.2s ease}',
     '#mbtopo .lg:hover{transform:translateY(-1px)}',
-    '#mbtopo .lg .ic{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#7ed957,#2ECC71);display:flex;align-items:center;justify-content:center;color:#061a3a;font-size:22px;flex:none;box-shadow:0 3px 14px rgba(46,204,113,0.35)}',
+    '#mbtopo .lg .ic{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#7ed957,#2ECC71);display:flex;align-items:center;justify-content:center;color:#061a3a;font-size:24px;flex:none;box-shadow:0 4px 16px rgba(46,204,113,0.4)}',
     '#mbtopo .lg b{font-family:Montserrat,sans-serif;font-size:20px;font-weight:900;color:#fff;display:block;white-space:nowrap;letter-spacing:-0.02em}',
     '#mbtopo .lg .mv-slogan{display:block;color:#FFD700;font-size:10.5px;font-weight:700;white-space:nowrap;font-style:italic;letter-spacing:0.01em}',
     '#mbtopo nav{display:flex;gap:4px;flex-wrap:nowrap;margin-left:auto;min-width:0}',
@@ -101,7 +101,7 @@
     topo.id = 'mbtopo';
     topo.innerHTML =
       '<header>' +
-      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'logo-hd.png" alt="MeuVoto" width="48" height="48" style="border-radius:12px;object-fit:cover;display:block"></span><span><b>MeuVoto</b><span class="mv-slogan">Meu voto coloca, meu voto tira.</span></span></a>' +
+      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'logo-hd.png" alt="MeuVoto" width="56" height="56" style="border-radius:16px;object-fit:cover;display:block"></span><span><b>MeuVoto</b><span class="mv-slogan">Meu voto coloca, meu voto tira.</span></span></a>' +
       ' <button class="ham" aria-label="Menu" onclick="document.getElementById(\'mbtopo-mnav\').classList.toggle(\'open\')"><i class="fa-solid fa-bars"></i></button>' +
       ' <nav>' + nav + '</nav>' +
       ' <div class="hact"><span class="hbadge" id="mbtopo-badge" hidden>conectando\u2026</span>' +
