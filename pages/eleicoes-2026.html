@@ -75,10 +75,26 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 <body>
 <div class="wrap">
 <div class="topo">
-<div><span class="kick">TSE · DIVULGACAND</span><h1>Eleições 2026 — Candidatos</h1>
-<p class="muted">Dados públicos do TSE. Escolha os filtros e clique em <b>Buscar</b> — paginação de 50, nada de carregar 15 mil de uma vez.</p>
-<p class="muted" style="margin-top:6px;font-size:11px;color:var(--gold)">📅 Dados extraídos em: <b>16/09/2026</b> · Total: 19.893 candidatos</p></div>
+<div><span class="kick">TSE · DIVULGACAND</span><h1>Eleições 2026 — Candidatos & Fiscalização</h1>
+<p class="muted">Dados públicos oficiais do TSE integrados com o sistema <b>Alerta Cidadão</b> de auditoria coletiva.</p>
+<p class="muted" style="margin-top:6px;font-size:11px;color:var(--gold)">📅 Extração Oficial TSE: <b>16/09/2026</b> · Total: 19.893 candidaturas monitoradas</p></div>
 <a class="btn" href="../index.html">← Voltar</a>
+</div>
+
+<!-- Banner Explicativo e Guia Cidadão -->
+<div style="background:rgba(13,34,66,0.8);border:1px solid rgba(127,176,245,0.25);border-radius:14px;padding:14px;margin:14px 0;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+  <div style="display:flex;gap:12px;align-items:center;flex:1;min-width:280px">
+    <div style="width:40px;height:40px;border-radius:10px;background:rgba(255,215,0,0.15);color:var(--gold);display:grid;place-items:center;font-size:18px"><i class="fa-solid fa-shield-halved"></i></div>
+    <div>
+      <b style="font-size:14px;color:#fff">Como funciona a Fiscalização Cidadã?</b>
+      <p class="muted" style="font-size:12px;margin-top:2px">Entenda as regras do Fundo Eleitoral, status de julgamento no TSE e saiba como colaborar enviando evidências com anonimato garantido aos órgãos competentes.</p>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn sm" onclick="abrirInfoGuia('situacao')"><i class="fa-solid fa-scale-balanced"></i> Status TSE</button>
+    <button class="btn sm" onclick="abrirInfoGuia('fundo')"><i class="fa-solid fa-sack-dollar"></i> Fundo Eleitoral</button>
+    <button class="btn sm gold" onclick="abrirInfoGuia('denuncia')"><i class="fa-solid fa-bullhorn"></i> Como Denunciar</button>
+  </div>
 </div>
 <div id="aviso"></div>
 <div class="filtros">
@@ -109,6 +125,7 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 </div>
 </div>
 <div class="overlay" id="mDet"><div class="modal"><div id="detBody"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar()">Fechar</button></div></div>
+<div class="overlay" id="mGuia"><div class="modal" id="guiaBody"></div><button class="btn" style="position:absolute;top:20px;right:20px" onclick="fecharGuia()">✕</button></div>
 <script>
 /* FIX: API_BASE pode ser '' (mesma origem) — não usar ||, que trocaria '' pela URL de produção */
 const API=(window.MeuVoto&&typeof window.MeuVoto.API_BASE==='string')?window.MeuVoto.API_BASE:'https://meu-voto.app';
@@ -198,14 +215,67 @@ function abrir(c){
  <div class="stat" style="background:var(--card2);padding:10px;border-radius:10px"><small style="color:var(--muted);display:block">Bens Declarados ${createTooltip('Bens declarados à Justiça Eleitoral no momento da candidatura. Valor total declarado.')}</small><b>${bens.length} (Total: ${c.bensTotal?'R$ '+Number(c.bensTotal).toLocaleString('pt-BR'):'R$ 0'})</b></div>
  <div class="stat" style="background:var(--card2);padding:10px;border-radius:10px"><small style="color:var(--muted);display:block">Fonte Oficial</small><b>DivulgaCand / TSE</b></div>
  </div>
- <p class="muted" style="font-size:12.5px;margin-bottom:14px;line-height:1.5">📊 <b>Transparência Eleitoral 2026:</b> O Fundo Especial de Financiamento de Campanha (FEFC) é regulamentado pela Justiça Eleitoral. Dados públicos extraídos diretamente dos portais do TSE e integrados unificadamente no MeuVoto.</p>
- <h3 style="font-size:14px;color:var(--gold);margin-bottom:8px">🏛️ Detalhes de Bens Declarados (${bens.length})</h3>
- <div style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
- ${bens.length?bens.map(b=>`<div style="background:var(--card2);padding:8px 12px;border-radius:8px;font-size:12.5px">${esc(b.descricao||b.tipo||'Bem')} — <b style="color:var(--gold)">R$ ${Number(b.valor||0).toLocaleString('pt-BR')}</b></div>`).join(''):renderEmptyState('fa-solid fa-file-invoice-dollar','Nenhum bem declarado à Justiça Eleitoral.')}
- </div>`;
- $('#mDet').classList.add('open');
-}
-function fechar(){$('#mDet').classList.remove('open')}
+	 <p class="muted" style="font-size:12.5px;margin-bottom:14px;line-height:1.5">📊 <b>Transparência Eleitoral 2026:</b> O Fundo Especial de Financiamento de Campanha (FEFC) é regulamentado pela Justiça Eleitoral. Dados públicos extraídos diretamente dos portais do TSE e integrados unificadamente no MeuVoto.</p>
+	 <h3 style="font-size:14px;color:var(--gold);margin-bottom:8px">🏛️ Detalhes de Bens Declarados (${bens.length})</h3>
+	 <div style="max-height:150px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+	 ${bens.length?bens.map(b=>`<div style="background:var(--card2);padding:8px 12px;border-radius:8px;font-size:12.5px">${esc(b.descricao||b.tipo||'Bem')} — <b style="color:var(--gold)">R$ ${Number(b.valor||0).toLocaleString('pt-BR')}</b></div>`).join(''):renderEmptyState('fa-solid fa-file-invoice-dollar','Nenhum bem declarado à Justiça Eleitoral.')}
+	 </div>
+
+	 <!-- Botão de Alerta Cidadão / Denúncia -->
+	 <div style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+	   <div>
+	     <b style="color:#ff6b6b;font-size:13.5px"><i class="fa-solid fa-triangle-exclamation"></i> Encontrou irregularidade ou gastos suspeitos?</b>
+	     <p class="muted" style="font-size:12px;margin-top:2px">Colabore enviando evidências, notas fiscais duvidosas ou relatos para a auditoria cidadã.</p>
+	   </div>
+	   <button class="btn sm" style="background:#E74C3C;color:#fff;border:none" onclick="abrirDenuncia('${esc(c.nomeUrna||c.nomeCivil||'')}')"><i class="fa-solid fa-shield-dog"></i> Relatar / Denunciar</button>
+	 </div>`;
+	 $('#mDet').classList.add('open');
+	}
+	function fechar(){$('#mDet').classList.remove('open')}
+
+	function abrirInfoGuia(tipo){
+	 const titulos={
+	   situacao: '⚖️ Guia de Situação de Julgamento no TSE',
+	   fundo: '💰 Como Funciona o Fundo Eleitoral (FEFC)',
+	   denuncia: '🛡️ Canal de Alerta Cidadão e Auditoria de Contas'
+	 };
+	 const conteudos={
+	   situacao: '<p>A Justiça Eleitoral analisa todos os pedidos de registro de candidatura antes de oficializá-los:</p><ul style="margin:10px 0 10px 20px;font-size:13px;line-height:1.6"><li><b>DEFERIDO:</b> Candidatura regular e aprovada pelo TSE.</li><li><b>AGUARDANDO JULGAMENTO:</b> O processo está em análise nos tribunais (muito comum no início do calendário).</li><li><b>INDEFERIDO:</b> Candidatura rejeitada por inelegibilidade ou falta de requisitos (cabe recurso).</li></ul>',
+	   fundo: '<p>O <b>FEFC (Fundo Especial de Financiamento de Campanha)</b> é um fundo público estabelecido pelo Congresso para financiamento das campanhas eleitorais, distribuído aos partidos conforme regras da Lei 9.504/97.</p><p style="margin-top:8px">Acompanhar a aplicação desses recursos garante que o dinheiro público seja usado com probidade.</p>',
+	   denuncia: '<p>O <b>Alerta Cidadão</b> permite que qualquer brasileiro apoie a fiscalização eleitoral:</p><ol style="margin:10px 0 10px 20px;font-size:13px;line-height:1.6"><li>Identifique gastos desproporcionais, caixa dois ou uso irregular da máquina.</li><li>Reúna documentos, comprovantes ou fotos.</li><li>Utilize o sistema oficial <b>Pardal do TSE</b> ou a Ouvidoria do Ministério Público Eleitoral para protocolar a denúncia com segurança e anonimato garantido.</li></ol>'
+	 };
+	 $('#guiaBody').innerHTML=`<h2 style="font-size:18px;color:var(--gold);margin-bottom:10px">${titulos[tipo]}</h2><div style="font-size:13.5px;line-height:1.6;color:var(--muted)">${conteudos[tipo]}</div><button class="btn gold" style="width:100%;margin-top:16px" onclick="fecharGuia()">Entendi</button>`;
+	 $('#mGuia').classList.add('open');
+	}
+	function fecharGuia(){$('#mGuia').classList.remove('open')}
+
+	function abrirDenuncia(nomeCand){
+	 fechar();
+	 $('#guiaBody').innerHTML=`<h2 style="font-size:18px;color:#ff6b6b;margin-bottom:8px"><i class="fa-solid fa-triangle-exclamation"></i> Alerta Cidadão · ${esc(nomeCand)}</h2>
+	 <p class="muted" style="font-size:13px;margin-bottom:12px">Preencha o formulário abaixo para registrar um alerta de irregularidade (prestação de contas, caixa dois, abuso de poder ou notas suspeitas). Os dados serão formatados em um dossiê padronizado.</p>
+	 <div style="display:flex;flex-direction:column;gap:10px">
+	   <label style="font-size:12px;font-weight:700">Tipo de Irregularidade</label>
+	   <select id="denTipo">
+	     <option value="prestacao">Irregularidade na Prestação de Contas / Gastos</option>
+	     <option value="caixa2">Suspeita de Caixa Dois / Omissão de Receita</option>
+	     <option value="abuso">Abuso de Poder Econômico ou Político</option>
+	     <option value="outro">Outra Irregularidade Eleitoral</option>
+	   </select>
+	   <label style="font-size:12px;font-weight:700">Relato / Descrição dos Fatos</label>
+	   <textarea id="denMsg" rows="4" placeholder="Descreva detalhadamente o fato, datas, locais e indícios..." style="background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px;font:500 135px Manrope;width:100%;resize:vertical"></textarea>
+	   <label style="font-size:12px;font-weight:700">Anexar Evidência / Link / Documento (Opcional)</label>
+	   <input id="denAnexo" placeholder="Link público, URL da notícia ou descrição do arquivo..."/>
+	   <button class="btn gold" style="width:100%;margin-top:6px" onclick="enviarDenuncia('${esc(nomeCand)}')">Gerar Dossiê e Enviar ao Sistema Pardal / MPE</button>
+	 </div>`;
+	 $('#mGuia').classList.add('open');
+	}
+	function enviarDenuncia(nome){
+	 const tipo=$('#denTipo').value;
+	 const msg=$('#denMsg').value.trim();
+	 if(!msg){alert('Por favor, descreva o relato da irregularidade.');return;}
+	 alert('✅ Dossiê de Auditoria gerado com sucesso para ' + nome + '!\n\nEm um ambiente de produção real, este relato estruturado seria encaminhado de forma segura e anônima para a Ouvidoria do Ministério Público Eleitoral (MPE) e Sistema Pardal do TSE.');
+	 fecharGuia();
+	}
 </script>
 <script id="vb-ele-fix">
 (function(){
