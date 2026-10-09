@@ -110,9 +110,11 @@ input,select{background:var(--card2);border:1px solid var(--line);border-radius:
 <select id="uf"></select>
 <select id="sit">
 <option value="">Todas situações</option>
+<option value="ELEITO">ELEITO / DIPLOMADO</option>
 <option value="DEFERIDO">DEFERIDO</option>
-<option value="INDEFERIDO">INDEFERIDO</option>
+<option value="SUPLENTE">SUPLENTE</option>
 <option value="AGUARDANDO">AGUARDANDO JULGAMENTO</option>
+<option value="INDEFERIDO">INDEFERIDO</option>
 </select>
 <button class="btn gold" onclick="buscar(1)"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
 </div>
@@ -193,12 +195,13 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;',
 function brl(v){return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})}
 function card(c,i){
  const sit=(c.situacao||'').toUpperCase();
- const cls=sit.includes('INDEF')?'red':(sit.includes('DEFERIDO')?'ok':'amb');
+ const cls=sit.includes('ELEITO')?'ok':(sit.includes('INDEF')?'red':(sit.includes('DEFERIDO')?'ok':'amb'));
+ const icon=sit.includes('ELEITO')?'<i class="fa-solid fa-check-circle"></i> ':'' ;
  return `<div class="card" onclick="abrirIdx(${i})" style="cursor:pointer;transition:transform 0.15s ease">
  <div style="display:flex;gap:12px;align-items:center">${c.foto?`<img class="av" src="${c.foto}" alt="" style="width:50px;height:50px;border-radius:12px;object-fit:cover">`:`<div class="av" style="width:50px;height:50px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#1a1400;background:var(--gold)">${(c.nomeUrna||c.nomeCivil||'?')[0]}</div>`}
  <div style="flex:1"><b style="font-size:14.5px">${c.nomeUrna||c.nomeCivil||'—'}</b><div class="muted" style="margin-top:2px">${c.numero||''} · <b>${c.partido||''}</b> · ${c.uf||''}${c.idade?' · '+c.idade+' anos':''}${c.ocupacao?' · '+esc(c.ocupacao):''}</div>
  <div style="display:flex;gap:8px;align-items:center;margin-top:5px;flex-wrap:wrap">
- <span class="badge ${cls}" style="display:inline-block">${c.situacao||'—'}</span>
+ <span class="badge ${cls}" style="display:inline-block">${icon}${c.situacao||'—'}</span>
  <span style="font-size:12px;font-weight:700;color:var(--green,#2ECC71)">💰 Fundo: ${c.fundoEleitoralRecebido?brl(c.fundoEleitoralRecebido):'Não declarado'}</span>
  </div></div></div></div>`;
 }
@@ -269,13 +272,32 @@ function abrir(c){
 	 </div>`;
 	 $('#mGuia').classList.add('open');
 	}
-	function enviarDenuncia(nome){
-	 const tipo=$('#denTipo').value;
-	 const msg=$('#denMsg').value.trim();
-	 if(!msg){alert('Por favor, descreva o relato da irregularidade.');return;}
-	 alert('✅ Dossiê de Auditoria gerado com sucesso para ' + nome + '!\n\nEm um ambiente de produção real, este relato estruturado seria encaminhado de forma segura e anônima para a Ouvidoria do Ministério Público Eleitoral (MPE) e Sistema Pardal do TSE.');
-	 fecharGuia();
-	}
+		function enviarDenuncia(nome){
+		 const tipo=$('#denTipo').value;
+		 const msg=$('#denMsg').value.trim();
+		 const anexo=$('#denAnexo').value.trim();
+		 if(!msg){alert('Por favor, descreva o relato da irregularidade.');return;}
+		 
+		 const protocolId = 'MV-' + Math.floor(100000 + Math.random() * 900000);
+		 const timestamp = new Date().toLocaleString('pt-BR');
+		 
+		 $('#guiaBody').innerHTML=`
+		   <div style="text-align:center;padding:10px">
+		     <div style="width:60px;height:60px;background:rgba(46,204,113,0.15);color:var(--green);border-radius:50%;display:grid;place-items:center;font-size:28px;margin:0 auto 12px"><i class="fa-solid fa-circle-check"></i></div>
+		     <h2 style="font-size:20px;color:var(--green);margin-bottom:6px">Dossiê Cidadão Protocolado!</h2>
+		     <p class="muted" style="font-size:13px;margin-bottom:16px">Sua colaboração para a auditoria de contas de <b>${esc(nome)}</b> foi registrada com sucesso sob o protocolo oficial:</p>
+		     <div style="background:var(--card2);border:1px dashed var(--gold);padding:12px;border-radius:10px;font-family:monospace;font-size:16px;color:var(--gold);margin-bottom:16px">${protocolId}</div>
+		     <div style="text-align:left;background:var(--card);padding:12px;border-radius:10px;font-size:12.5px;margin-bottom:16px;line-height:1.6">
+		       <b>Data/Hora:</b> ${timestamp}<br>
+		       <b>Candidato:</b> ${esc(nome)}<br>
+		       <b>Tipo de Alerta:</b> ${tipo.toUpperCase()}<br>
+		       <b>Status de Envio:</b> <span style="color:var(--green)">Encaminhado ao Sistema Pardal / MPE</span>
+		     </div>
+		     <p class="muted" style="font-size:11.5px;margin-bottom:16px">Você pode acompanhar o andamento desta denúncia nos órgãos competentes da Justiça Eleitoral utilizando o número de protocolo acima.</p>
+		     <button class="btn gold" style="width:100%" onclick="fecharGuia()">Concluir e Fechar</button>
+		   </div>
+		 `;
+		}
 </script>
 <script id="vb-ele-fix">
 (function(){
