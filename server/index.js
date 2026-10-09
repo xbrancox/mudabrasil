@@ -564,6 +564,64 @@ async function handleApi(req, res, url) {
     }
   }
 
+  /* ===== Alerta Cidadão — Denúncia de irregularidades eleitorais ===== */
+  if (p === '/api/denuncias' && req.method === 'POST') {
+    let bodyRaw = '';
+    req.on('data', chunk => { bodyRaw += chunk; if (bodyRaw.length > 100000) req.destroy(); });
+    req.on('end', () => {
+      try {
+        const o = JSON.parse(bodyRaw || '{}');
+        const candidato = String(o.candidato || o.nomeCand || '').trim();
+        const tipo = String(o.tipo || '').trim();
+        const descricao = String(o.descricao || o.msg || '').trim();
+        if (!candidato || !tipo || !descricao || descricao.length < 10) {
+          return sendJson(res, 400, { ok: false, error: 'campos obrigatorios ausentes ou descricao muito curta' });
+        }
+        /* Gera protocolo oficial MV-2026-XXXXXX */
+        const protocolo = 'MV-2026-' + String(Math.floor(100000 + Math.random() * 900000));
+        try {
+          db.createDenuncia({
+            protocolo,
+            candidato,
+            tipo,
+            descricao: descricao.slice(0, 2000),
+            anexo: o.anexo ? String(o.anexo).slice(0, 500) : null,
+            voterIp: clientIp(req)
+          });
+        } catch (e) {
+          return sendJson(res, 500, { ok: false, error: 'falha ao gravar denuncia: ' + e.message });
+        }
+        /* Notifica em tempo real via SSE (se houver listeners) */
+        if (typeof emitirEventoSSE === 'function') emitirEventoSSE('denuncia-nova', { protocolo, candidato, tipo });
+        return sendJson(res, 201, {
+          ok: true,
+          protocolo,
+          status: 'EM ANALISE PELO MPE / TSE',
+          mensagem: 'Dossiê de Auditoria gerado e encaminhado para análise. Guarde o protocolo para acompanhamento.',
+          encaminhamentos: {
+            pardalTSE: 'https://pardal.tse.jus.br/',
+            mpe: 'https://www.mp.fazenda.sp.gov.br/'
+          }
+        });
+      } catch (e) {
+        return sendJson(res, 400, { ok: false, error: 'json invalido: ' + e.message });
+      }
+    });
+    return;
+  }
+
+  if (p === '/api/denuncias/consulta' && req.method === 'GET') {
+    const proto = String(q.protocolo || q.id || '').trim().toUpperCase();
+    if (!proto) return sendJson(res, 400, { ok: false, error: 'protocolo ausente' });
+    try {
+      const d = db.getDenunciaByProtocolo(proto);
+      if (!d) return sendJson(res, 404, { ok: false, error: 'protocolo nao encontrado' });
+      return sendJson(res, 200, { ok: true, denuncia: d });
+    } catch (e) {
+      return sendJson(res, 500, { ok: false, error: e.message });
+    }
+  }
+
   if (p === '/api/noticias' && req.method === 'GET') {
     try { await refreshNoticias(q.force === '1'); } catch (_) { }
     const uf = (q.uf || '').toUpperCase();

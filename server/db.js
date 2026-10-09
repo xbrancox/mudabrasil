@@ -91,7 +91,8 @@ const JSON_FILES = {
   cargo_votes: path.join(DATA_DIR, 'cargo_votes.json'),
   society_pls: path.join(DATA_DIR, 'society_pls.json'),
   society_pl_signatures: path.join(DATA_DIR, 'society_pl_signatures.json'),
-  society_pl_invites: path.join(DATA_DIR, 'society_pl_invites.json')
+  society_pl_invites: path.join(DATA_DIR, 'society_pl_invites.json'),
+  denuncias: path.join(DATA_DIR, 'denuncias.json')
 };
 
 function jsonReadFile(key) {
@@ -164,6 +165,17 @@ function openSqlite() {
     );
     CREATE INDEX IF NOT EXISTS idx_complaints_politician ON complaints(politician_id);
     CREATE INDEX IF NOT EXISTS idx_complaints_voter ON complaints(voter_hash);
+
+    CREATE TABLE IF NOT EXISTS denuncias (
+      protocolo       TEXT PRIMARY KEY,
+      candidato       TEXT NOT NULL,
+      tipo            TEXT NOT NULL,
+      descricao       TEXT NOT NULL,
+      anexo           TEXT,
+      status          TEXT NOT NULL DEFAULT 'EM ANÁLISE PELO MPE / TSE',
+      voter_ip        TEXT,
+      created_at      INTEGER NOT NULL
+    );
 
     CREATE TABLE IF NOT EXISTS supports (
       id              TEXT PRIMARY KEY,
@@ -723,6 +735,51 @@ function getResponsesByPolitician(politicianId, { limit = 50, offset = 0 } = {})
   return list.slice(offset, offset + limit);
 }
 
+/* ===== Alerta Cidadão / Denúncia de Prestação de Contas (Eleições 2026) ===== */
+function createDenuncia(d) {
+  const now = Date.now();
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    db.prepare(`
+      INSERT INTO denuncias (protocolo, candidato, tipo, descricao, anexo, status, voter_ip, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(d.protocolo, d.candidato, d.tipo, d.descricao, d.anexo || null, d.status || 'EM ANALISE PELO MPE / TSE', d.voterIp || null, now);
+    return;
+  }
+  const all = jsonReadFile('denuncias');
+  all[d.protocolo] = { ...d, createdAt: now };
+  jsonWriteFile('denuncias', all);
+}
+
+function getDenunciaByProtocolo(protocolo) {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    const r = db.prepare('SELECT * FROM denuncias WHERE protocolo = ?').get(protocolo);
+    if (!r) return null;
+    return { protocolo: r.protocolo, candidato: r.candidato, tipo: r.tipo, descricao: r.descricao, anexo: r.anexo, status: r.status, voterIp: r.voter_ip, createdAt: r.created_at };
+  }
+  return jsonReadFile('denuncias')[protocolo] || null;
+}
+
+function countDenuncias() {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    return db.prepare('SELECT COUNT(*) AS n FROM denuncias').get().n;
+  }
+  return Object.keys(jsonReadFile('denuncias')).length;
+}
+
+function listDenuncias({ limit = 50, offset = 0 } = {}) {
+  if (BACKEND === 'sqlite') {
+    openSqlite();
+    return db.prepare('SELECT * FROM denuncias ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset)
+      .map(r => ({ protocolo: r.protocolo, candidato: r.candidato, tipo: r.tipo, descricao: r.descricao, anexo: r.anexo, status: r.status, createdAt: r.created_at }));
+  }
+  return Object.values(jsonReadFile('denuncias'))
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .slice(offset, offset + limit);
+}
+
 function hashVoter(method, identifier) {
   return require('crypto').createHash('sha256').update(method + ':' + identifier + ':MeuVoto_VOTER_SALT_2026').digest('hex');
 }
@@ -1129,7 +1186,7 @@ function getPoliticianFullDetails(id) {
 /* ===== Backup: dump completo de todas as tabelas ===== */
 const DUMP_TABLES = ['ballots', 'politicians', 'verifications', 'complaints',
   'supports', 'responses', 'voters', 'pls', 'pl_votes', 'vote_codes', 'cargo_votes',
-  'society_pls', 'society_pl_signatures', 'society_pl_invites'];
+  'society_pls', 'society_pl_signatures', 'society_pl_invites', 'denuncias'];
 
 /* ===== INICIATIVA CIDADÃ / PLS DA SOCIEDADE ===== */
 const rowToSocietyPl = r => ({
@@ -1383,6 +1440,7 @@ module.exports = {
   getCargoVotesByCodigo, getCargoVotesByVoter, replaceVoterCargoVotes, deleteCargoVotesByCodigo,
   createSocietyPl, getSocietyPl, getAllSocietyPls, signSocietyPl, getSocietyPlSignature,
   createSocietyPlInvite, getSocietyPlInviteByToken, acceptSocietyPlInvite, getSocietyPlInvites, getSocietyPlSupportersRanking,
+  createDenuncia, getDenunciaByProtocolo, countDenuncias, listDenuncias,
   getRevokedStats, dumpAll,
   exec, prepare,
   VOTOS_DB, VOTOS_FILE

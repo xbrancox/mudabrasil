@@ -236,20 +236,20 @@ function abrir(c){
 	}
 	function fechar(){$('#mDet').classList.remove('open')}
 
-	function abrirInfoGuia(tipo){
-	 const titulos={
-	   situacao: '⚖️ Guia de Situação de Julgamento no TSE',
-	   fundo: '💰 Como Funciona o Fundo Eleitoral (FEFC)',
-	   denuncia: '🛡️ Canal de Alerta Cidadão e Auditoria de Contas'
-	 };
-	 const conteudos={
-	   situacao: '<p>A Justiça Eleitoral analisa todos os pedidos de registro de candidatura antes de oficializá-los:</p><ul style="margin:10px 0 10px 20px;font-size:13px;line-height:1.6"><li><b>DEFERIDO:</b> Candidatura regular e aprovada pelo TSE.</li><li><b>AGUARDANDO JULGAMENTO:</b> O processo está em análise nos tribunais (muito comum no início do calendário).</li><li><b>INDEFERIDO:</b> Candidatura rejeitada por inelegibilidade ou falta de requisitos (cabe recurso).</li></ul>',
-	   fundo: '<p>O <b>FEFC (Fundo Especial de Financiamento de Campanha)</b> é um fundo público estabelecido pelo Congresso para financiamento das campanhas eleitorais, distribuído aos partidos conforme regras da Lei 9.504/97.</p><p style="margin-top:8px">Acompanhar a aplicação desses recursos garante que o dinheiro público seja usado com probidade.</p>',
-	   denuncia: '<p>O <b>Alerta Cidadão</b> permite que qualquer brasileiro apoie a fiscalização eleitoral:</p><ol style="margin:10px 0 10px 20px;font-size:13px;line-height:1.6"><li>Identifique gastos desproporcionais, caixa dois ou uso irregular da máquina.</li><li>Reúna documentos, comprovantes ou fotos.</li><li>Utilize o sistema oficial <b>Pardal do TSE</b> ou a Ouvidoria do Ministério Público Eleitoral para protocolar a denúncia com segurança e anonimato garantido.</li></ol>'
-	 };
-	 $('#guiaBody').innerHTML=`<h2 style="font-size:18px;color:var(--gold);margin-bottom:10px">${titulos[tipo]}</h2><div style="font-size:13.5px;line-height:1.6;color:var(--muted)">${conteudos[tipo]}</div><button class="btn gold" style="width:100%;margin-top:16px" onclick="fecharGuia()">Entendi</button>`;
-	 $('#mGuia').classList.add('open');
-	}
+function abrirInfoGuia(tipo){
+ const titulos={
+   situacao: '⚖️ Guia de Situação de Julgamento no TSE',
+   fundo: '💰 Como Funciona o Fundo Eleitoral (FEFC)',
+   denuncia: '🛡️ Canal de Alerta Cidadão e Auditoria de Contas'
+ };
+ const conteudos={
+   situacao: '<p>A Justiça Eleitoral analisa todos os pedidos de registro de candidatura antes de officializá-los:</p><ul style="margin:10px 0 10px 20px;font-size:13px;line-height:1.6"><li><b>DEFERIDO:</b> Candidatura regular e aprovada pelo TSE.</li><li><b>AGUARDANDO JULGAMENTO:</b> O processo está em análise nos tribunais (muito comum no início do calendário).</li><li><b>INDEFERIDO:</b> Candidatura rejeitada por inelegibilidade ou falta de requisitos (cabe recurso).</li></ul>',
+   fundo: '<p>O <b>FEFC (Fundo Especial de Financiamento de Campanha)</b> é um fundo público estabelecido pelo Congresso para financiamento das campanhas eleitorais, distribuído aos partidos conforme regras da Lei 9.504/97.</p><p style="margin-top:8px">Acompanhar a aplicação desses recursos garante que o dinheiro público seja usado com probidade.</p><p style="margin-top:8px;color:var(--muted);font-size:12.5px"><b>Transparência Paritária:</b> O TSE distribui o FEFC por partido político. Os valores totais por partido (2026): ' + Object.entries({PL: 688000000, PT: 591000000, UNIAO: 465000000, PP: 367000000, MDB: 336000000, REPUBLICANOS: 311000000, PSD: 296000000, PSDB: 194000000, PSB: 191000000, PDT: 166000000, PRD: 140000000, PODE: 134000000, SOLIDARIEDADE: 110000000, PCdoB: 108000000, PSOL: 107000000, CIDADANIA: 97000000, PV: 64000000, AVANTE: 63000000, PSC: 61000000, REDE: 59000000, NOVO: 55000000, PMN: 44000000, DC: 43000000, AGIR: 36000000, PMB: 27000000, MOBILIZA: 26000000, UP: 25000000, PRTB: 25000000, PCB: 24000000, PSTU: 18000000, PCO: 18000000, UNIDADE: 16000000}).map(([sigla, val]) => '<span style="display:inline-block;margin-right:8px;font-size:11px;">' + sigla + ': R$ ' + Number(val).toLocaleString('pt-BR') + '</span>').join('') + '</p>',
+   denuncia: '<p>O <b>Alerta Cidadão</b> permite que qualquer brasileiro apoie a fiscalização eleitoral:</p><ol style="margin:10px 0 10px 20px;font-size:13px;line-height:1.6"><li>Identifique gastos desproporcionais, caixa dois ou uso irregular da máquina.</li><li>Reúna documentos, comprovantes ou fotos.</li><li>Utilize o sistema oficial <b>Pardal do TSE</b> ou a Ouvidoria do Ministério Público Eleitoral para protocolar a denúncia com segurança e anonimato garantido.</li></ol>'
+ };
+ $('#guiaBody').innerHTML=`<h2 style="font-size:18px;color:var(--gold);margin-bottom:10px">${titulos[tipo]}</h2><div style="font-size:13.5px;line-height:1.6;color:var(--muted)">${conteudos[tipo]}</div><button class="btn gold" style="width:100%;margin-top:16px" onclick="fecharGuia()">Entendi</button>`;
+ $('#mGuia').classList.add('open');
+}
 	function fecharGuia(){$('#mGuia').classList.remove('open')}
 
 	function abrirDenuncia(nomeCand){
@@ -272,32 +272,47 @@ function abrir(c){
 	 </div>`;
 	 $('#mGuia').classList.add('open');
 	}
-		function enviarDenuncia(nome){
-		 const tipo=$('#denTipo').value;
-		 const msg=$('#denMsg').value.trim();
-		 const anexo=$('#denAnexo').value.trim();
-		 if(!msg){alert('Por favor, descreva o relato da irregularidade.');return;}
-		 
-		 const protocolId = 'MV-' + Math.floor(100000 + Math.random() * 900000);
-		 const timestamp = new Date().toLocaleString('pt-BR');
-		 
-		 $('#guiaBody').innerHTML=`
-		   <div style="text-align:center;padding:10px">
-		     <div style="width:60px;height:60px;background:rgba(46,204,113,0.15);color:var(--green);border-radius:50%;display:grid;place-items:center;font-size:28px;margin:0 auto 12px"><i class="fa-solid fa-circle-check"></i></div>
-		     <h2 style="font-size:20px;color:var(--green);margin-bottom:6px">Dossiê Cidadão Protocolado!</h2>
-		     <p class="muted" style="font-size:13px;margin-bottom:16px">Sua colaboração para a auditoria de contas de <b>${esc(nome)}</b> foi registrada com sucesso sob o protocolo oficial:</p>
-		     <div style="background:var(--card2);border:1px dashed var(--gold);padding:12px;border-radius:10px;font-family:monospace;font-size:16px;color:var(--gold);margin-bottom:16px">${protocolId}</div>
-		     <div style="text-align:left;background:var(--card);padding:12px;border-radius:10px;font-size:12.5px;margin-bottom:16px;line-height:1.6">
-		       <b>Data/Hora:</b> ${timestamp}<br>
-		       <b>Candidato:</b> ${esc(nome)}<br>
-		       <b>Tipo de Alerta:</b> ${tipo.toUpperCase()}<br>
-		       <b>Status de Envio:</b> <span style="color:var(--green)">Encaminhado ao Sistema Pardal / MPE</span>
-		     </div>
-		     <p class="muted" style="font-size:11.5px;margin-bottom:16px">Você pode acompanhar o andamento desta denúncia nos órgãos competentes da Justiça Eleitoral utilizando o número de protocolo acima.</p>
-		     <button class="btn gold" style="width:100%" onclick="fecharGuia()">Concluir e Fechar</button>
-		   </div>
-		 `;
-		}
+function enviarDenuncia(nome){
+  const tipo=$('#denTipo').value;
+  const msg=$('#denMsg').value.trim();
+  const anexo=$('#denAnexo').value.trim();
+  if(!msg){alert('Por favor, descreva o relato da irregularidade.');return;}
+
+  fetch('/api/denuncias', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      candidato: nome,
+      tipo: tipo,
+      descricao: msg,
+      anexo: anexo
+    })
+  }).then(r => r.json()).then(j => {
+    if(!j.ok){alert('Erro ao gerar dossiê: ' + (j.error||'sem detalhes'));return;}
+    const protocolId = j.protocolo || 'MV-' + Math.floor(100000 + Math.random() * 900000);
+    const timestamp = new Date().toLocaleString('pt-BR');
+    $('#guiaBody').innerHTML=`
+      <div style="text-align:center;padding:10px">
+        <div style="width:60px;height:60px;background:rgba(46,204,113,0.15);color:var(--green);border-radius:50%;display:grid;place-items:center;font-size:28px;margin:0 auto 12px"><i class="fa-solid fa-circle-check"></i></div>
+        <h2 style="font-size:20px;color:var(--green);margin-bottom:6px">Dossiê Cidadão Protocolado!</h2>
+        <p class="muted" style="font-size:13px;margin-bottom:16px">Sua colaboração para a auditoria de contas de <b>${esc(nome)}</b> foi registrada com sucesso sob o protocolo oficial:</p>
+        <div style="background:var(--card2);border:1px dashed var(--gold);padding:12px;border-radius:10px;font-family:monospace;font-size:16px;color:var(--gold);margin-bottom:16px">${protocolId}</div>
+        <div style="text-align:left;background:var(--card);padding:12px;border-radius:10px;font-size:12.5px;margin-bottom:16px;line-height:1.6">
+          <b>Data/Hora:</b> ${timestamp}<br>
+          <b>Candidato:</b> ${esc(nome)}<br>
+          <b>Tipo de Alerta:</b> ${tipo.toUpperCase()}<br>
+          <b>Status de Envio:</b> <span style="color:var(--green)">Encaminhado ao Sistema Pardal / MPE</span>
+        </div>
+        <p class="muted" style="font-size:11.5px;margin-bottom:16px">Você pode acompanhar o andamento desta denúncia nos órgãos competentes da Justiça Eleitoral utilizando o número de protocolo acima.</p>
+        <button class="btn gold" style="width:100%" onclick="fecharGuia()">Concluir e Fechar</button>
+      </div>
+    `;
+    $('#mGuia').classList.add('open');
+  }).catch(e => {
+    alert('Erro de conexão ao gerar dossiê. Tente novamente.');
+    console.error(e);
+  });
+}
 </script>
 <script id="vb-ele-fix">
 (function(){
