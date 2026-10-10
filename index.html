@@ -243,7 +243,9 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 .modal{background:var(--bg);border:1px solid var(--line);border-radius:20px;max-width:760px;width:100%;max-height:90vh;overflow:auto;padding:24px}
 #toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);color:var(--ink);padding:12px 18px;border-radius:12px;z-index:300;display:none;max-width:90%}
 @media(max-width:960px){#radList{grid-template-columns:1fr}.explore{grid-template-columns:repeat(2,1fr)}.donuts{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}.filtros{grid-template-columns:1fr 1fr}.ft{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}nav{display:none}.ham{display:inline-flex}}
-@media(max-width:600px){.explore{grid-template-columns:1fr}.hero2 .cta .btn{width:100%}.spot-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.explore{grid-template-columns:1fr}.hero2 .cta .btn{width:100%}.spot-grid{grid-template-columns:1fr}.ttip{position:absolute;z-index:9999;background:#000;color:#fff;font:600 11px Manrope;padding:6px 10px;border-radius:8px;white-space:normal;max-width:220px;pointer-events:none;opacity:0;transition:opacity .15s;margin-top:8px}}
+/* Onboarding overlay */
+#mOnboard{display:none}.overlay.mOnboard{display:flex}
 </style>
   <script src="js/site-header.js?v=3"></script>
 <link rel="icon" type="image/svg+xml" href="/assets/icon.svg">
@@ -280,6 +282,44 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <!-- Landmarks semânticos: o conteúdo é injetado por js/site-header.js -->
 <header id="mbtopo-header" aria-label="Cabeçalho do site MeuVoto"></header>
 <nav id="mbtopo-nav" aria-label="Menu principal do MeuVoto"></nav>
+
+<!-- ===== MODAL DE ONBOARDING (primeira visitação) ===== -->
+<div class="overlay" id="mOnboard" style="display:none">
+  <div class="modal" style="max-width:520px">
+    <div style="text-align:center;padding:8px 0 16px">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#FFA500);display:grid;place-items:center;font-size:32px;margin:0 auto 16px"><i class="fa-solid fa-shield-halved"></i></div>
+      <h2 style="font-size:22px;color:var(--gold);margin-bottom:6px">Bem-vindo ao MeuVoto</h2>
+      <p class="muted" style="font-size:13px">Em 2 minutos você vai entender como funciona</p>
+    </div>
+    <div id="onboardSteps" style="display:flex;flex-direction:column;gap:14px">
+      <div style="background:var(--card2);padding:14px;border-radius:12px;display:flex;gap:12px;align-items:flex-start">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--green),#009739);color:#fff;display:grid;place-items:center;font-weight:800;flex:none">1</div>
+        <div>
+          <b style="font-size:14px">O que é o MeuVoto?</b>
+          <p class="muted" style="font-size:12.5px;margin-top:2px">Plataforma cívica independente que rastreia votações nominais, cobre promessas de políticos e permite revogar a confiança de quem descumprir. Dados oficiais do TSE, Câmara e Senado.</p>
+        </div>
+      </div>
+      <div style="background:var(--card2);padding:14px;border-radius:12px;display:flex;gap:12px;align-items:flex-start">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#1A73E8);color:#fff;display:grid;place-items:center;font-weight:800;flex:none">2</div>
+        <div>
+          <b style="font-size:14px">Como votar</b>
+          <p class="muted" style="font-size:12.5px;margin-top:2px">Use o <b>App</b> para escolher seus candidatos. Cada voto gera um código único de 20 dígitos — é o seu comprovante.</p>
+        </div>
+      </div>
+      <div style="background:var(--card2);padding:14px;border-radius:12px;display:flex;gap:12px;align-items:flex-start">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red),#E74C3C);color:#fff;display:grid;place-items:center;font-weight:800;flex:none">3</div>
+        <div>
+          <b style="font-size:14px">Revogar a confiança</b>
+          <p class="muted" style="font-size:12.5px;margin-top:2px">Se um político não cumprir suas promessas, você pode revogar o voto após a posse. O poder emana do povo — e não acaba no dia da eleição.</p>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="btn" style="flex:1" onclick="document.getElementById('mOnboard').style.display='none'">Agora não</button>
+      <button class="btn gold" style="flex:1" onclick="go('conferir');document.getElementById('mOnboard').style.display='none'"><i class="fa-solid fa-magnifying-glass"></i> Conferir Voto</button>
+    </div>
+  </div>
+</div>
 
 <main>
 <section class="sec on" id="sec-inicio">
@@ -1456,6 +1496,88 @@ window.addEventListener('load',function(){setTimeout(work,250);});
 </section>
 <script defer src="js/offline.js"></script>
 <script defer src="js/analytics.js"></script>
-<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+
+<!-- ===== ONBOARDING + LOADING STATES SCRIPT ===== -->
+<script>
+(function(){
+  'use strict';
+
+  /* ---- Onboarding: mostra modal na primeira visitação ---- */
+  function initOnboarding(){
+    try{
+      if(!localStorage.getItem('meuvoto-onboarded')){
+        setTimeout(function(){
+          var m=document.getElementById('mOnboard');
+          if(m) m.style.display='flex';
+        }, 800);
+        localStorage.setItem('meuvoto-onboarded','1');
+      }
+    }catch(e){}
+  }
+
+  /* ---- Loading States: aplica overlay de loading em botões com data-loading ---- */
+  function initLoadingStates(){
+    document.addEventListener('click', function(e){
+      var btn=e.target.closest('[data-loading]');
+      if(!btn) return;
+      var original=btn.innerHTML;
+      var text=btn.getAttribute('data-loading')||'Carregando…';
+      btn.disabled=true;
+      btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> '+text;
+      setTimeout(function(){
+        btn.disabled=false;
+        btn.innerHTML=original;
+      }, 3000);
+    });
+  }
+
+  /* ---- Tooltips: inicializa tooltips[data-tip] ---- */
+  function initTooltips(){
+    var tips=document.querySelectorAll('[data-tip]');
+    tips.forEach(function(el){
+      el.addEventListener('mouseenter', function(){
+        var t=el.getAttribute('data-tip');
+        if(!t) return;
+        var tt=document.createElement('div');
+        tt.className='ttip';
+        tt.textContent=t;
+        tt.style.cssText='position:absolute;z-index:9999;background:#000;color:#fff;font:600 11px Manrope;padding:6px 10px;border-radius:8px;white-space:normal;max-width:220px;pointer-events:none;opacity:0;transition:opacity .15s';
+        document.body.appendChild(tt);
+        var rect=el.getBoundingClientRect();
+        tt.style.top=(rect.bottom+8)+'px';
+        tt.style.left=(rect.left+rect.width/2)+'px';
+        tt.style.transform='translateX(-50%)';
+        requestAnimationFrame(function(){ tt.style.opacity='1'; });
+        el._tt=tt;
+      });
+      el.addEventListener('mouseleave', function(){
+        if(el._tt){ el._tt.remove(); el._tt=null; }
+      });
+    });
+  }
+
+  /* ---- Empty States: quando não há dados ---- */
+  function showEmptyState(container, icon, title, message){
+    if(!container) return;
+    container.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--muted)"><i class="fa-solid '+icon+'" style="font-size:40px;margin-bottom:12px;opacity:.4"></i><div style="font-weight:700;font-size:14px;color:var(--ink)">'+title+'</div><div style="font-size:12.5px;margin-top:6px">'+message+'</div></div>';
+  }
+
+  /* ---- Inicialização ---- */
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', function(){
+      initOnboarding();
+      initLoadingStates();
+      initTooltips();
+    });
+  }else{
+    initOnboarding();
+    initLoadingStates();
+    initTooltips();
+  }
+
+  /* Expor funções globais */
+  window.MeuVotoOnboarding={showEmptyState:showEmptyState};
+})();
+</script>
 </body>
 </html>
