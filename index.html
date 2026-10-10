@@ -284,12 +284,12 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <main>
 <section class="sec on" id="sec-inicio">
 <div class="hero2">
-<span class="turno"><span class="dot"></span> 2º Turno · Eleições 2026</span>
+<span class="turno"><span class="dot"></span> 2º Turno · Dia 25</span>
 <h1>O 1º turno acabou.<br>Agora é <span class="hl">Presidente</span>.</h1>
-<div class="sub">Só resta <b>uma escolha</b> — e ela decide os próximos 4 anos do Brasil.</div>
-<p class="lead">Compare os presidenciáveis com <b style="color:var(--ink)">dados oficiais do TSE</b>, veja o histórico de cada um, confira seu voto e cobre quem for eleito. O poder emana do povo — e não acaba no dia da eleição.</p>
+<div class="sub">Disputam a presidência: <b>LULA (PT)</b> e <b>FLAVIO BOLSONARO (PL)</b> — e ela decide os próximos 4 anos do Brasil.</div>
+<p class="lead">Compare os candidatos com <b style="color:var(--ink)">dados oficiais do TSE</b>, veja o histórico de cada um, confira seu voto e cobre quem for eleito. O poder emana do povo — e não acaba no dia da eleição.</p>
 <div class="cta">
-<a class="btn gold" href="pages/eleicoes-2026.html" style="text-decoration:none"><i class="fa-solid fa-check-to-slot"></i> Ver os presidenciáveis</a>
+<a class="btn gold" href="pages/eleicoes-2026.html" style="text-decoration:none"><i class="fa-solid fa-check-to-slot"></i> Ver os candidatos</a>
 <a class="btn" href="app/" style="text-decoration:none"><i class="fa-solid fa-mobile-screen-button"></i> Abrir o App</a>
 <button class="btn" onclick="go('conferir')"><i class="fa-solid fa-magnifying-glass"></i> Conferir Voto</button>
 </div>
@@ -309,7 +309,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
   <div class="spot-head">
     <span class="tag">DECISÃO DO 2º TURNO</span>
     <h2 style="margin-top:14px">Quem disputa a Presidência</h2>
-    <p>Candidaturas registradas no TSE para as Eleições 2026. Clique para ver a ficha completa, o histórico e como cada um votou.</p>
+    <p>Candidatos confirmados para o 2º turno (dia 25): LULA (PT) e FLAVIO BOLSONARO (PL). Clique para ver a ficha completa, o histórico e como cada um votou.</p>
   </div>
   <div class="spot-grid" id="spotGrid"></div>
   <p class="spot-note">📊 Dados públicos do TSE (DivulgaCand) · <a href="pages/eleicoes-2026.html">ver todos os candidatos e filtros →</a><br>O MeuVoto é um protótipo cívico independente, sem vínculo com TSE, partidos ou candidatos.</p>
@@ -543,7 +543,28 @@ async function carregaSpotlight(){
     const r=await fetch('data/candidatos-2026.json');
     const d=await r.json();
     const arr=Array.isArray(d)?d:(d.candidatos||d.dados||[]);
-    pres=arr.filter(x=>String(x.cargo)==='1').map(x=>({nome:x.nomeUrna||x.nomeCivil||'',partido:x.partido||'',uf:x.uf||'BR',numero:x.numero||'',situacao:x.situacao||'',foto:x.foto||''}));
+    // Filtra candidatos a presidente (cargo 1)
+    const candidatosPres = arr.filter(x=>String(x.cargo)==='1');
+    // LULA e FLAVIO BOLSONARO sao os candidatos do 2º turno (dia 25)
+    const lula = candidatosPres.find(x=>x.nomeUrna||x.nomeCivil||'').toString().toUpperCase().includes('LULA');
+    const bolsonaro = candidatosPres.find(x=>x.nomeUrna||x.nomeCivil||'').toString().toUpperCase().includes('FLAVIO BOLSONARO');
+    // Se tiver Lula e Bolsonaro, exibe estes como os 2 do 2º turno
+    if(lula && bolsonaro){
+      pres = [
+        {nome: 'LULA', partido: 'PT', uf: 'BR', numero: '13', situacao: 'AGUARDANDO JULGAMENTO', foto: ''},
+        {nome: 'FLAVIO BOLSONARO', partido: 'PL', uf: 'BR', numero: '22', situacao: 'DEFERIDO', foto: ''}
+      ];
+    }else{
+      // Lógica original: prioriza ELEITO/DEFERIDO, limitando a 2
+      const prioritarios = candidatosPres.filter(x=>
+        ['ELEITO','DEFERIDO'].includes((x.situacao||'').toUpperCase())
+      );
+      if(prioritarios.length > 0){
+        pres = prioritarios.slice(0, 2).map(x=>({nome:x.nomeUrna||x.nomeCivil||'',partido:x.partido||'',uf:x.uf||'BR',numero:x.numero||'',situacao:x.situacao||'',foto:x.foto||''}));
+      }else if(candidatosPres.length > 0){
+        pres = candidatosPres.slice(0, 2).map(x=>({nome:x.nomeUrna||x.nomeCivil||'',partido:x.partido||'',uf:x.uf||'BR',numero:x.numero||'',situacao:x.situacao||'',foto:x.foto||''}));
+      }
+    }
   }catch(e){}
   if(!pres.length&&POL.length){
     pres=POL.filter(p=>/presidente/i.test(p.cargo||'')).map(p=>({nome:p.nome,partido:p.partido,uf:p.uf,numero:p.num,situacao:'',foto:p.foto}));
