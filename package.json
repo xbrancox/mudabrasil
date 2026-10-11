@@ -6,7 +6,13 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js",
-    "test": "node tests/smoke.js"
+    "test": "node tests/smoke.js",
+    "test:unit": "node --test tests/unit/*.test.js",
+    "test:integration": "node --test tests/integration/*.test.js",
+    "test:e2e": "playwright test tests/e2e/",
+    "test:all": "npm test && npm run test:unit",
+    "test:security": "echo '⚠️ Security scan — run: docker run --rm -t owasp/zap2docker-stable zap-baseline.py -t http://localhost:8080'",
+    "health:check": "node scripts/health_check.js"
   },
   "engines": {
     "node": ">=22.0.0"

@@ -586,13 +586,13 @@ async function carregaSpotlight(){
     // Filtra candidatos a presidente (cargo 1)
     const candidatosPres = arr.filter(x=>String(x.cargo)==='1');
     // LULA e FLAVIO BOLSONARO sao os candidatos do 2º turno (dia 25)
-    const lula = candidatosPres.find(x=>x.nomeUrna||x.nomeCivil||'').toString().toUpperCase().includes('LULA');
-    const bolsonaro = candidatosPres.find(x=>x.nomeUrna||x.nomeCivil||'').toString().toUpperCase().includes('FLAVIO BOLSONARO');
+    const lula = candidatosPres.find(x=>(x.nomeUrna||x.nomeCivil||'').toUpperCase().includes('LULA'));
+    const bolsonaro = candidatosPres.find(x=>(x.nomeUrna||x.nomeCivil||'').toUpperCase().includes('FLAVIO BOLSONARO'));
     // Se tiver Lula e Bolsonaro, exibe estes como os 2 do 2º turno
     if(lula && bolsonaro){
       pres = [
-        {nome: 'LULA', partido: 'PT', uf: 'BR', numero: '13', situacao: 'AGUARDANDO JULGAMENTO', foto: ''},
-        {nome: 'FLAVIO BOLSONARO', partido: 'PL', uf: 'BR', numero: '22', situacao: 'DEFERIDO', foto: ''}
+        {nome: lula.nomeUrna||lula.nomeCivil||'LULA', partido: lula.partido||'PT', uf: lula.uf||'BR', numero: lula.numero||'13', situacao: lula.situacao||'', foto: lula.foto||''},
+        {nome: bolsonaro.nomeUrna||bolsonaro.nomeCivil||'FLAVIO BOLSONARO', partido: bolsonaro.partido||'PL', uf: bolsonaro.uf||'BR', numero: bolsonaro.numero||'22', situacao: bolsonaro.situacao||'', foto: bolsonaro.foto||''}
       ];
     }else{
       // Lógica original: prioriza ELEITO/DEFERIDO, limitando a 2

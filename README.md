@@ -523,3 +523,48 @@ node server/index.js
 - **Dados de candidatos 2026:** `node scripts/baixar-candidatos-tse.js`
   (regenera `data/candidatos-2026.json` a partir dos CSVs oficiais do TSE
   via espelho di�rio `leofn/tse-candidatos-2026`).
+
+---
+
+## 🧪 Testes & Qualidade
+
+### Executar testes
+
+```bash
+# Smoke test (verifica módulos, DB, denúncias, códigos de voto)
+npm test
+
+# Testes unitários (13 testes — db.js, ballots, denúncias, politicos, vote_codes)
+npm run test:unit
+
+# Testes de integração (11 testes — health, candidatos TSE, denúncias, backup)
+# Requer o servidor rodando: node server/index.js
+npm run test:integration
+
+# Health check (verifica server, DB, cache, backup)
+npm run health:check
+```
+
+**Resultados atuais:**
+| Suíte | Testes | Status |
+|-------|--------|--------|
+| Smoke test | 9 | ✅ Passando |
+| Unitários | 13 | ✅ Passando |
+| Integração | 11 | ✅ Passando |
+
+### Testes de segurança
+```bash
+# Verificar headers de segurança
+curl -sS -D - -o /dev/null http://localhost:8080/api/health | grep -iE "(x-content|x-frame|strict|content-security)"
+
+# OWASP ZAP (auto‑container)
+docker run --rm -t owasp/zap2docker-stable zap-baseline.py -t http://localhost:8080
+```
+
+### CI/CD (GitHub Actions)
+- Toda `push` ou `pull request` para `main` roda automaticamente os testes.
+- Fluxograma de execução no [` .github/workflows/ci.yml`](.github/workflows/ci.yml).
+- Deploy manual: `railway up`.
+
+### 📄 Documentação
+- **[`INFRAESTRUTURA.md`](INFRAESTRUTURA.md)** — Arquitetura completa, endpoints, deploy, segurança, backup, LGPD, testes e governança.

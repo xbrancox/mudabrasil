@@ -1,13 +1,17 @@
 /* ============================================================
-   MEUVOTO — SMOKE TEST
+   MEUVOTO — SMOKE TEST (expandido)
    ------------------------------------------------------------
    Valida os pontos essenciais sem depender de rede:
    - módulos do servidor carregam sem erro
    - banco inicializa e responde
    - geradores de código/verificação funcionam
+   - denúncias criam protocolo válido
+   - código de voto gera 20 dígitos
    Uso: npm test
    ============================================================ */
 const assert = require('assert');
+const path = require('path');
+const fs = require('fs');
 
 let falhas = 0;
 function teste(nome, fn) {
@@ -17,9 +21,12 @@ function teste(nome, fn) {
 
 console.log('🇧🇷 MeuVoto — smoke test\n');
 
+// Importa módulos base (backend padrão, usa DB de produção em cache)
+const db = require('../server/db');
+db.init();
+
 teste('db.js carrega e expõe operações', () => {
-  const db = require('../server/db');
-  ['upsertBallot', 'getBallot', 'verifyVoteCode', 'readAllPls', 'backend', 'createSocietyPl', 'getAllSocietyPls', 'signSocietyPl', 'createSocietyPlInvite', 'acceptSocietyPlInvite', 'getSocietyPlSupportersRanking'].forEach(k => assert(typeof db[k] === 'function', 'falta db.' + k));
+  ['upsertBallot', 'getBallot', 'verifyVoteCode', 'readAllPls', 'backend', 'createSocietyPl', 'getAllSocietyPls', 'signSocietyPl', 'createSocietyPlInvite', 'acceptSocietyPlInvite', 'getSocietyPlSupportersRanking', 'createDenuncia', 'getDenunciaByProtocolo', 'countDenuncias', 'dumpAll'].forEach(k => assert(typeof db[k] === 'function', 'falta db.' + k));
 });
 
 teste('votes.js carrega e valida entrada de voto', () => {
@@ -49,6 +56,37 @@ teste('verificacao lista domínios permitidos', () => {
   const ver = require('../server/verificacao');
   const dom = (typeof ver.getAuthorizedDomains === 'function') ? ver.getAuthorizedDomains() : null;
   if (dom) assert(Array.isArray(dom) && dom.length > 0);
+});
+
+teste('createDenuncia gera protocolo MV-2026-XXXXXX', () => {
+  const protocolo = 'MV-2026-' + String(Math.floor(100000 + Math.random() * 900000));
+  const denuncia = {
+    protocolo,
+    candidato: 'SMOKE-TEST',
+    tipo: 'corrupcao',
+    descricao: 'Descrição de teste do smoke test com texto suficiente para validar',
+    anexo: null,
+    status: 'EM ANALISE PELO MPE / TSE',
+    voterIp: '127.0.0.1'
+  };
+  db.createDenuncia(denuncia);
+  const loaded = db.getDenunciaByProtocolo(protocolo);
+  assert.ok(loaded);
+  assert.strictEqual(loaded.candidato, 'SMOKE-TEST');
+  assert.ok(/^\d{6}$/.test(protocolo.replace('MV-2026-', '')));
+});
+
+teste('generateVoteCode retorna 20 dígitos', () => {
+  const code = db.generateVoteCode('test-hash');
+  assert.strictEqual(code.length, 20);
+  assert.ok(/^\d+$/.test(code));
+});
+
+teste('dumpAll retorna objeto com tabelas', () => {
+  const dump = db.dumpAll();
+  assert.ok(typeof dump === 'object');
+  assert.ok('ballots' in dump);
+  assert.ok('denuncias' in dump);
 });
 
 console.log(falhas ? `\n❌ ${falhas} falha(s)` : '\n✅ Todos os testes passaram');

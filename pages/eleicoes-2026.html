@@ -142,7 +142,9 @@ async function buscarEstatico(){
  const q=$('#q').value.trim().toLowerCase(),cargo=$('#cargo').value,uf=$('#uf').value,sit=$('#sit').value;
  let lista=SNAP.candidatos||[];
  if(cargo)lista=lista.filter(c=>String(c.cargo)===String(cargo));
- if(uf)lista=lista.filter(c=>c.uf===uf);
+ /* Presidente/Vice-Presidente têm uf=BR no TSE */
+ const ufBusca=(cargo==='1'||cargo==='9')?'BR':uf;
+ if(ufBusca)lista=lista.filter(c=>c.uf===ufBusca);
  if(sit){const S=sit.toUpperCase();lista=lista.filter(c=>{const v=String(c.situacao||'').toUpperCase();
   if(S==='DEFERIDO')return /DEFERIDO|APTO/.test(v);
   if(S==='AGUARDANDO')return /AGUARDANDO|PENDENTE/.test(v);
@@ -164,7 +166,9 @@ async function buscar(p){
  page=Math.max(1,p);
  const q=$('#q').value.trim(),cargo=$('#cargo').value,uf=$('#uf').value,sit=$('#sit').value;
  $('#info').textContent='Carregando…';$('#lista').innerHTML='';
- const url=`${API}/api/candidatos-tse?cargo=${cargo}&uf=${uf}&page=${page}&pageSize=${PS}`+(sit?`&situacao=${encodeURIComponent(sit)}`:'')+(q?`&q=${encodeURIComponent(q)}`:'');
+ /* Presidente/Vice-Presidente têm uf=BR no TSE — a busca por UF estadual os oculta */
+ const ufBusca=(cargo==='1'||cargo==='9')?'BR':uf;
+ const url=`${API}/api/candidatos-tse?cargo=${cargo}&uf=${ufBusca}&page=${page}&pageSize=${PS}`+(sit?`&situacao=${encodeURIComponent(sit)}`:'')+(q?`&q=${encodeURIComponent(q)}`:'');
  try{
   const r=await fetch(url);
   if(!r.ok)throw new Error('HTTP '+r.status);

@@ -47,6 +47,10 @@ jobs:
         run: node scripts/testar-pwa.js
       - name: Testes de performance (testar-performance.js)
         run: node scripts/testar-performance.js
+      - name: Smoke test (npm test)
+        run: npm test
+      - name: Testes unitarios (db, votos, denuncias)
+        run: npm run test:unit
       - name: Sintaxe do servidor
         run: node --check server/index.js
       - name: Sintaxe do worker digest
