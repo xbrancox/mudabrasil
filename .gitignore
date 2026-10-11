@@ -64,3 +64,7 @@ server/data/vote_codes.json
 /PUBLICAR.*
 /backup-*/
 /backup-*
+
+# VAPID keys (gerado localmente, não commitar)
+server/data/vapid-keys.generated.json
+server/data/vapid-keys.json

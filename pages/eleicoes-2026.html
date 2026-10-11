@@ -283,7 +283,7 @@ function abrirInfoGuia(tipo){
 	   <label style="font-size:12px;font-weight:700">Relato / Descrição dos Fatos</label>
 	   <textarea id="denMsg" rows="4" placeholder="Descreva detalhadamente o fato, datas, locais e indícios..." style="background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px;font:500 135px Manrope;width:100%;resize:vertical"></textarea>
 	   <label style="font-size:12px;font-weight:700">Anexar Evidência / Link / Documento (Opcional)</label>
-	   <input id="denAnexo" placeholder="Link público, URL da notícia ou descrição do arquivo..."/>
+	   <input id="denAnexo" placeholder="Link público, URL da notícia ou descrição do arquivo..." aria-label="Anexo da denúncia (link público ou descrição)"/>
 	   <button class="btn gold" style="width:100%;margin-top:6px" onclick="enviarDenuncia('${esc(nomeCand)}')">Gerar Dossiê e Enviar ao Sistema Pardal / MPE</button>
 	 </div>`;
 	 $('#mGuia').classList.add('open');

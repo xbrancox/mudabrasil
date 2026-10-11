@@ -35,7 +35,7 @@ jobs:
         run: node scripts/testar-links.js
       - name: Testes ciclo 33 - push, changelog, performance, ciclo14 (testar-ciclo33.js)
         run: node scripts/testar-ciclo33.js
-      - name: Testes ciclo 34 - VAPID dinâmico + jsPDF (testar-ciclo34.js)
+      - name: Testes ciclo 34 - VAPID dinamico + jsPDF (testar-ciclo34.js)
         run: node scripts/testar-ciclo34.js
       - name: Testes ciclo 35 - web-push + fichaPdf jsPDF (testar-ciclo35.js)
         run: node scripts/testar-ciclo35.js
@@ -51,6 +51,8 @@ jobs:
         run: npm test
       - name: Testes unitarios (db, votos, denuncias)
         run: npm run test:unit
+      - name: Validacao de fotos dos candidatos (strict)
+        run: npm run test:photos:strict
       - name: Sintaxe do servidor
         run: node --check server/index.js
       - name: Sintaxe do worker digest

@@ -1,0 +1,82 @@
+name: Uptime Monitor
+
+# Monitoramento contínuo do health endpoint do MeuVoto
+# Roda a cada 15 minutos para detectar downtime rapidamente
+# Se falhar 3 vezes seguidas, o workflow marca como erro (visível no dashboard)
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # a cada 15 minutos
+  workflow_dispatch:
+
+concurrency:
+  group: uptime
+  cancel-in-progress: true
+
+jobs:
+  uptime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check health endpoint
+        id: health
+        run: |
+          set -e
+          STATUS=$(curl -sS -o /tmp/health.json -w "%{http_code}" \
+            --max-time 20 --retry 3 --retry-delay 10 \
+            -H "User-Agent: MeuVoto-UptimeMonitor/1.0" \
+            https://meu-voto.app/api/health)
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ HTTP $STATUS"
+            cat /tmp/health.json 2>/dev/null || true
+            exit 1
+          fi
+          # Valida campos críticos do health
+          OK=$(node -e 'const b=require("/tmp/health.json"); console.log(b.ok === true ? "true" : "false")')
+          STORAGE=$(node -e 'const b=require("/tmp/health.json"); console.log(b.storage || "?")')
+          UPTIME=$(node -e 'const b=require("/tmp/health.json"); console.log(Math.round((b.uptimeSec||0)/3600) + "h")')
+          REG=$(node -e 'const b=require("/tmp/health.json"); console.log(b.totalRegistros || 0)')
+          echo "ok=$OK" >> "$GITHUB_OUTPUT"
+          echo "storage=$STORAGE" >> "$GITHUB_OUTPUT"
+          echo "uptime=$UPTIME" >> "$GITHUB_OUTPUT"
+          echo "registros=$REG" >> "$GITHUB_OUTPUT"
+          if [ "$OK" != "true" ]; then
+            echo "❌ ok != true"
+            cat /tmp/health.json
+            exit 1
+          fi
+          echo "✅ HTTP $STATUS · storage=$STORAGE · uptime=$UPTIME · registros=$REG"
+
+      - name: Check homepage loads
+        run: |
+          set -e
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            --max-time 30 --retry 2 \
+            https://meu-voto.app/)
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Homepage HTTP $STATUS"
+            exit 1
+          fi
+          echo "✅ Homepage OK (HTTP $STATUS)"
+
+      - name: Check candidatos snapshot
+        run: |
+          set -e
+          STATUS=$(curl -sS -o /tmp/cand.json -w "%{http_code}" \
+            --max-time 30 --retry 2 \
+            https://meu-voto.app/data/candidatos-2026.json)
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ candidatos-2026.json HTTP $STATUS"
+            exit 1
+          fi
+          # Valida que tem Lula e Bolsonaro (2º turno)
+          LULA=$(node -e 'const b=require("/tmp/cand.json"); const list=Array.isArray(b)?b:(b.candidatos||[]); const lula=list.find(c=>(c.nomeUrna||c.nome||"").toUpperCase()==="LULA" && (c.cargo||"").toUpperCase().includes("PRESIDENTE")); console.log(lula?"1":"0")')
+          BOLSO=$(node -e 'const b=require("/tmp/cand.json"); const list=Array.isArray(b)?b:(b.candidatos||[]); const b=list.find(c=>(c.nomeUrna||c.nome||"").toUpperCase().includes("FLAVIO BOLSONARO") && (c.cargo||"").toUpperCase().includes("PRESIDENTE")); console.log(b?"1":"0")')
+          TOTAL=$(node -e 'const b=require("/tmp/cand.json"); const list=Array.isArray(b)?b:(b.candidatos||[]); console.log(list.length)')
+          echo "📊 Total candidatos: $TOTAL · Lula: $LULA · Bolsonaro: $BOLSO"
+          if [ "$LULA" != "1" ] || [ "$BOLSO" != "1" ]; then
+            echo "❌ Candidatos do 2º turno ausentes!"
+            exit 1
+          fi
+          echo "✅ 2º turno presente no snapshot"

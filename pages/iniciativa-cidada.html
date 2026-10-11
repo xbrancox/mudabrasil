@@ -485,7 +485,7 @@ textarea { resize: vertical; min-height: 140px; }
 
     <div class="form-group" style="text-align:left;margin-top:12px">
       <label>Link Direto para Coleta de Assinaturas</label>
-      <input type="text" id="mobkit-link" readonly onclick="this.select()" style="font-size:0.85rem">
+      <input type="text" id="mobkit-link" readonly onclick="this.select()" aria-label="Link de mobilização (somente leitura)" style="font-size:0.85rem">
     </div>
     <div class="form-group" style="text-align:left;margin-top:12px">
       <label>Mensagem Sugerida para WhatsApp / Redes Sociais</label>
@@ -889,7 +889,7 @@ async function submitInvite(e) {
       resDiv.innerHTML = `
         <div class="alert alert-success" style="word-break:break-all;display:block">
           <b><i class="fa fa-circle-check"></i> Link de convite oficial gerado com sucesso!</b><br>
-          <input type="text" readonly value="${data.invite.inviteUrl}" style="width:100%;margin-top:8px;font-size:0.82rem;padding:10px" onclick="this.select()">
+          <input type="text" readonly value="${data.invite.inviteUrl}" aria-label="Link oficial do convite" style="width:100%;margin-top:8px;font-size:0.82rem;padding:10px" onclick="this.select()">
           <div style="font-size:0.78rem;color:#b9c7dd;margin-top:6px">Envie diretamente por WhatsApp ou E-mail para registrar o endosso oficial:</div>
           <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
             <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(inviteText)}" target="_blank" class="btn btn-green" style="font-size:0.85rem;padding:8px 12px;flex:1;justify-content:center"><i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp</a>
