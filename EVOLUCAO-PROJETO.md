@@ -314,6 +314,18 @@ LGPD: nenhum dado pessoal é publicado. Termômetro é irreversível. Cobranças
 - Mensagem no padrão Conventional Commits (`feat(scope)`, `fix(scope)`, `docs(scope)`).
 - Nenhum merge em `main` sem gate verde.
 
+### 8.4 Monitoramento e backup de fotos dos candidatos
+
+As fotos vêm de três fontes externas (repo GitHub `Marinasantosrocha/fotos-candidatos2026`, Wikimedia Commons e placeholders em `ui-avatars.com`). Para evitar que fotos desapareçam silenciosamente e para garantir que o GitHub Pages continue servindo o site mesmo se uma fonte externa cair, foram adicionados dois scripts:
+
+- **`scripts/validar-fotos.js`** (`npm run test:photos`): faz HEAD request em todas as URLs reais (não-placeholder) de `data/candidatos-2026.json`, com retry, timeout e detecção de magic bytes. Saída JSON opcional (`--json`) e modo CI (`--strict` → exit 1 se houver URL quebrada). Detecta categorização: GitHub / Wikimedia / local / outras.
+- **`scripts/backup-fotos.js`** (`npm run backup:photos`): baixa todas as fotos externas para `data/fotos/<sq>.<ext>`, valida magic bytes (JPEG/PNG/WebP/GIF) antes de salvar, faz backup do JSON em `.bak` e reescreve o campo `foto` de cada candidato para apontar para a cópia local. Flags: `--dry-run` (relata sem baixar), `--force` (re-baixa mesmo se já existir), `--preserve` (baixa sem alterar o JSON).
+
+**Regras operacionais:**
+- `data/fotos/` está no `.gitignore` — é cache regenerável, não deve ser versionado.
+- O script de validação deve rodar em CI/CD antes de cada deploy, e manualmente antes de cada atualização do TSE.
+- Em caso de foto quebrada: executar `npm run backup:photos` (se a URL ainda responde) ou corrigir manualmente a URL em `candidatos-2026.json` para um mirror Wikimedia/Commons.
+
 ---
 
 ## 9. Roadmap
@@ -387,6 +399,7 @@ LGPD: nenhum dado pessoal é publicado. Termômetro é irreversível. Cobranças
 |---|---|---|
 | v1.0 | 2026-09 | Primeira versão. Conceitos iniciais de delta, taxa de resposta, mandato revogável. |
 | v2.0 | 2026-09-30 | Reescrita completa. Separação de eixos (A/B/C). Quadrante de representação. Protocolo verificável de cobrança. Tratamento educativo de mandato revogável. Arquitetura de 5 abas. Template de `ⓘ`. Metodologia pública. Lições aprendidas documentadas. Roadmap priorizado. |
+| v2.1 | 2026-10-11 | **Consolidação pré-2º turno (Eleições 2026).** Spotlight hard-coded LULA (PT) × FLAVIO BOLSONARO (PL) com dados reais do TSE (13 presidenciáveis carregados). **Monitoramento de fotos**: adicionados `scripts/validar-fotos.js` e `scripts/backup-fotos.js` (seção 8.4). Fallback de `onerror` já existente em `index.html` substitui imagem quebrada por bloco com iniciais. **Descontinuação**: o repositório `MudaBrasil` passa a ser legado/backup; a fonte da verdade é `votabrasil`. Testes automatizados (smoke + unit) em 100% de aprovação, cobrindo DB, votos, denúncias, políticos, códigos de voto e dump. |
 
 ---
 

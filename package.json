@@ -12,7 +12,11 @@
     "test:e2e": "playwright test tests/e2e/",
     "test:all": "npm test && npm run test:unit",
     "test:security": "echo '⚠️ Security scan — run: docker run --rm -t owasp/zap2docker-stable zap-baseline.py -t http://localhost:8080'",
-    "health:check": "node scripts/health_check.js"
+    "health:check": "node scripts/health_check.js",
+    "test:photos": "node scripts/validar-fotos.js",
+    "test:photos:strict": "node scripts/validar-fotos.js --strict",
+    "backup:photos": "node scripts/backup-fotos.js",
+    "backup:photos:dry": "node scripts/backup-fotos.js --dry-run"
   },
   "engines": {
     "node": ">=22.0.0"
