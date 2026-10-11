@@ -85,30 +85,32 @@ function keyPol(nome, partido) {
   return norm(nome) + '|' + norm(partido);
 }
 
-function getPartidos() {
-  const d = carregarSnapshot();
-  return { ano: d.ano, fonte: d.fonte, urlFonte: d.urlFonte, atualizadoEm: d.atualizadoEm, partidos: d.porPartido };
-}
-
-function getCandidatos() {
-  const d = carregarSnapshot();
-  return {
-    ano: d.ano,
-    fonte: d.fonte,
-    urlFonte: d.urlFonte,
-    atualizadoEm: d.atualizadoEm,
-    aviso: d.avisoPorPolitico,
-    candidatos: (d.porPolitico || []).map(c => ({ ...c, cargoNome: nomeCargo(c.cargo) }))
-  };
-}
-
 /* Código de cargo TSE → nome legível (mesma tabela usada no cadastro
    de candidaturas; DF usa 8 = Deputado Distrital). */
 const CARGO_NAMES = { 1: 'Presidente', 3: 'Governador', 5: 'Senador', 6: 'Deputado Federal', 7: 'Deputado Estadual', 8: 'Deputado Distrital', 9: 'Vice' };
 function nomeCargo(c) { return CARGO_NAMES[c] || ''; }
 
+function getPartidos() {
+  const d = carregarSnapshot();
+  const partidos = Array.isArray(d.partidos) ? d.partidos : (Array.isArray(d.porPartido) ? d.porPartido : []);
+  return { ano: d.ano || 2026, fonte: d.fonte, urlFonte: d.urlFonte, atualizadoEm: d.atualizadoEm || d.extraidoEm, partidos: partidos };
+}
+
+function getCandidatos() {
+  const d = carregarSnapshot();
+  return {
+    ano: d.ano || 2026,
+    fonte: d.fonte,
+    urlFonte: d.urlFonte,
+    atualizadoEm: d.atualizadoEm || d.extraidoEm,
+    aviso: d.avisoPorPolitico || '',
+    candidatos: (d.porPolitico || []).map(c => ({ ...c, cargoNome: nomeCargo(c.cargo) }))
+  };
+}
+
 function getResumo() {
   const d = carregarSnapshot();
+  const partidos = Array.isArray(d.partidos) ? d.partidos : (Array.isArray(d.porPartido) ? d.porPartido : []);
   /* Índice por nome|partido (heurística) E por SQ_CANDIDATO (join
      exato oficial). Os dois coexistem: o app usa o que tiver. */
   const map = {};
@@ -119,14 +121,14 @@ function getResumo() {
   }
   return {
     ok: true,
-    totalDistribuido: d.totalDistribuido,
-    ano: d.ano,
-    partidosComRecursos: (d.porPartido || []).length,
+    totalDistribuido: d.totalDistribuido || d.totalGeral || 0,
+    ano: d.ano || 2026,
+    partidosComRecursos: partidos.length,
     candidatosBeneficiados: (d.porPolitico || []).length,
-    atualizadoEm: d.atualizadoEm,
+    atualizadoEm: d.atualizadoEm || d.extraidoEm,
     fonte: d.fonte,
     urlFonte: d.urlFonte,
-    aviso: d.avisoPorPolitico,
+    aviso: d.avisoPorPolitico || '',
     fontePorPolitico: d.fontePorPolitico || null,
     urlFontePorPolitico: d.urlFontePorPolitico || null,
     map,

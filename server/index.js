@@ -508,9 +508,12 @@ async function handleApi(req, res, url) {
       const candidatos = lista.slice(inicio, inicio + porPagina);
       
       // Tentar adicionar fotos dos incumbentes (deputados + senadores)
+      // E fundo eleitoral real do snapshot
       const incumbentes = tse.getIncumbents();
+      const fundoSnapshot = fundoEleitoral.getResumo(); // { map, mapSq, totalDistribuido, ... }
+      
       const candidatosComFotos = candidatos.map(c => {
-        // Tentar encontrar um incumbente correspondente
+        // Tentar encontrar um incumbente correspondente para foto
         const incumbenteCorrespondente = incumbentes.find(i => {
           // Corresponder por cargo, estado e partido/nome
           const cargoCorrespondente = 
@@ -540,6 +543,19 @@ async function handleApi(req, res, url) {
             const seed = encodeURIComponent(name.split(' ')[0]);
             c.foto = `https://ui-avatars.com/api/?name=${seed}&background=061a3a&color=fff&size=128`;
           }
+        }
+        
+        // Adicionar fundo eleitoral real se disponível
+        const sq = String(c.sq || '');
+        if (sq && fundoSnapshot.mapSq[sq]) {
+          const fundoData = fundoSnapshot.mapSq[sq];
+          c.prestacaoContas = {
+            recebidoTotal: fundoData.valor || 0,
+            gastoDeclarado: 0, // Será preenchido quando disponível
+            statusPrestacao: 'EM ANÁLISE',
+            fonte: 'TSE - Prestação de Contas 2026',
+            atualizadoEm: fundoSnapshot.atualizadoEm
+          };
         }
         
         return c;
