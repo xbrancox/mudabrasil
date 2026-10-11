@@ -232,6 +232,24 @@ TTL: Automático
 | `server/data/senadores.json` | Cache senadores | Automática (24h) |
 | `server/data/votos.db` | SQLite com votos, denúncias, usuários | Persistente (volume) |
 
+### ⚠️ Risco de Latência em Dados Oficiais
+
+O TSE **não oferece webhooks ou APIs de push**. A única fonte oficial é `divulgacandcontas.tse.jus.br`, um endpoint de dados estáticos (JSON/CSV) sem notificações de atualização.
+
+**Estratégia adotada:**
+- **Polling a cada 24h** (`MB_REFRESH_HOURS=24`) para dados do TSE, Câmara e Senado.
+- **SSE (`GET /api/stream`)** é usado apenas para eventos internos da plataforma (votos, reclamações), não para dados eleitorais oficiais.
+- **Refresh manual** disponível via endpoint administrativo para correções pontuais.
+
+**Risco documentado:** Dados eleitorais oficiais têm latência intrínseca de até 24h. A plataforma **nunca deve se apresentar como "tempo real"** para dados do TSE — apenas para interações entre usuários. Esta limitação deve constar nos Termos de Uso e na descrição das páginas de dados.
+
+| Tipo de Dado | Fonte | Latência Máxima | Atualização |
+|-------------|-------|----------------|-------------|
+| Candidaturas | TSE DivulgaCand | 24h | Polling automático |
+| Situações de julgamento | TSE DivulgaCand | 24h | Polling automático |
+| Votos registrados | Plataforma interna | ~1s | SSE (tempo real) |
+| Reclamações | Plataforma interna | ~1s | SSE (tempo real) |
+
 ## 🔐 Segurança
 
 ### Headers de Segurança (server/index.js)
@@ -256,9 +274,85 @@ TTL: Automático
 
 ### Backup
 
-- **Endpoint:** `GET /api/admin/backup`
-- **Proteção:** `BACKUP_TOKEN` (env var)
-- **Formato:** JSON dump de todas as tabelas
+**Endpoint:** `GET /api/admin/backup`
+**Proteção:** `BACKUP_TOKEN` (env var) — token de acesso, obrigatório no header `Authorization: Bearer <token>`
+**Formato:** JSON dump de todas as tabelas, opcionalmente criptografado com AES-256-GCM quando `BACKUP_ENCRYPTION_KEY` está definido.
+
+#### Plano de Backup
+
+| Camada | Frequência | Retenção | Destino | Criptografia |
+|--------|-----------|----------|---------|-------------|
+| Snapshot SQLite | Diário (03h BR) | 30 dias | Railway volume `/data/backups/` | Não |
+| Dump JSON (API) | Semanal (segunda, 04h BR) | 90 dias | Cloudflare R2 / S3 compatível | AES-256-GCM |
+| Export manual | Sob demanda | Indefinido | Download do administrador | Opcional |
+
+#### Restauração
+
+```bash
+# Restaurar snapshot SQLite
+curl -X POST http://localhost:8080/api/admin/restore \
+  -H "Authorization: Bearer $BACKUP_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d @backup.json
+
+# Restaurar do Railway volume
+cp /data/backups/votos_$(date +%Y%m%d).db server/data/votos.db
+```
+
+#### Variáveis de Ambiente
+
+| Variável | Descrição | Obrigatório |
+|----------|-----------|-------------|
+| `BACKUP_TOKEN` | Token para autenticar endpoints de backup | ✅ Produção |
+| `BACKUP_ENCRYPTION_KEY` | Chave AES-256 (32 bytes, base64) para criptografar dumps | Recomendado |
+| `BACKUP_RETENTION_DAYS` | Dias de retenção de backups locais (padrão: 30) | Não |
+| `BACKUP_REMOTE` | URL do storage remoto (R2/S3) para backups semanais | Não |
+
+#### Auditoria de Backup
+
+- Cada backup registra: timestamp, tamanho, hash SHA-256, tables afetadas.
+- Logs armazenados em `server/data/backup.log`.
+- Alerta automático se o último backup tiver mais de 25h.
+
+## 🔒 Privacidade e Analytics
+
+### LGPD (Lei Geral de Proteção de Dados)
+
+A plataforma trata dados sensíveis (votos, denúncias) sob as bases legais:
+
+| Base Legal | Art. LGPD | Aplicação |
+|-----------|-----------|-----------|
+| Consentimento | Art. 11, I | Newsletter (digest) |
+| Interesse legítimo | Art. 11, II | Proteção contra fraudes |
+| Cumprimento legal | Art. 11, IV | Encaminhamento de denúncias ao TSE/MPE |
+| Anonimato | Art. 5, III | Denúncias sem identificação do denunciante |
+
+**Política de retenção:** Dados de voto são mantidos por **5 anos** (prazo eleitoral). Denúncias: 5 anos a contar do encerramento do processo. Dados de analytics: 6 meses.
+
+### Analytics — Recomendações
+
+**Não usar Google Analytics.** Dados de voto são sensíveis; GA coleta IPs, User-Agent e comportamento de navegação sem anonimato total, criando risco de não conformidade com LGPD.
+
+| Ferramenta | Tipo | Custo | LGPD | Observação |
+|------------|------|-------|------|------------|
+| **Plausible** | SaaS | €9/mês | ✅ | Anonimiza IPs (máscara /24), não rastreia cruzado |
+| **Fathom** | SaaS | $14/mês | ✅ | Similar ao Plausible, configuração simples |
+| **Matomo (auto-hosted)** | Self-hosted | Servidor + DB | ✅ | Controle total dos dados, pode rodar no próprio Railway |
+| **Umami** | Self-hosted | Baixo custo | ✅ | Open source, leve, compatível com Vercel/Railway |
+
+**Configuração recomendada (Matomo no Railway):**
+
+```toml
+[env]
+MATOMO_URL = "https://analytics.meu-voto.app"
+MATOMO_SITE_ID = "1"
+ANONIMIZAR_IP = "true"  # Mascara os últimos 2 octetos do IP
+```
+
+**Obrigatório em produção:**
+- Página de privacidade (`pages/privacidade.html`) descrevendo quais dados são coletados.
+- Banner de cookies com opção de recusa (opt-out).
+- Nenhum dado de voto associado a identidade — o protocolo é anônimo por design.
 
 ## 📱 PWA (Progressive Web App)
 
@@ -338,6 +432,100 @@ git status --short
 # Ver commits recentes
 git log --oneline -5
 ```
+
+## 🧪 Testes & Qualidade
+
+### Testes Automatizados
+
+| Tipo | Ferramenta | O que cobre | Critério de aprovação |
+|------|-----------|-------------|----------------------|
+| **Unit** | Node:test | db.js, auth.js, utils | ≥ 90% de cobertura |
+| **Integration** | Supertest | Rotas `/api/voto`, `/api/denuncias`, `/api/health` | 100% das rotas |
+| **E2E** | Playwright | Fluxo: voto → conferir → revogar | Sem falhas em 3 runs |
+| **Carga** | k6 / Artillery | 100 req/s por 5 min | p95 < 2s |
+| **Segurança** | OWASP ZAP | Headers, rate limit, injeção | 0 críticas, 0 altas |
+
+### Critérios de Aceitação
+
+- [ ] Criar voto → consultar por código → revogar → verificar status alterado
+- [ ] Criar denúncia → gerar protocolo MV-2026-XXXXXX → consultar → verificar hash
+- [ ] Duplo voto simultâneo para mesmo candidato → apenas 1 persiste (transação)
+- [ ] Rate limit (60 req/min) → retorna 429 após limite
+- [ ] Backup → restaurar → integridade dos records verificada (hash SHA-256)
+- [ ] Headers de segurança (HSTS, CSP, nosniff) → validados via ZAP
+- [ ] Dados de voto anônimos → nenhum IP/log associado ao código do voto
+
+### Configuração (package.json)
+
+```json
+{
+  "scripts": {
+    "test": "node --test server/test/**/*.test.js",
+    "test:e2e": "playwright test tests/e2e/",
+    "test:load": "k6 run tests/load/vote-load-test.js",
+    "test:security": "docker run --rm -t owasp/zap2docker-stable zap-baseline.py -t http://localhost:8080"
+  }
+}
+```
+
+### Pipeline de CI/CD (GitHub Actions)
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:e2e
+      - run: npm run test:security
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - run: railway up
+      - run: curl -sS https://meu-voto.app/api/health | grep '"ok":true'
+      - if: failure() → railway rollback
+```
+
+## 🏛️ Governança e Comunicação
+
+### Stakeholders
+
+| Grupo | Interesse | Comunicação | Responsável |
+|-------|----------|-------------|-------------|
+| **Usuários** | Transparência de votos, revogação | Blog, notificações push | Comunicação |
+| **Candidatos** | Status de denúncias, respostas | Dashboard + email | Relacionamento |
+| **Órgãos (MPE/TSE)** | Dossiês de auditoria | API + email formal | Diretoria |
+| **Comunidade técnica** | Bugs, contribuições | GitHub Issues + Discord | Tech Lead |
+| **Imprensa** | Reportagens, dados abertos | Press kit + API pública | Diretoria |
+
+### Processo de Release
+
+| Etapa | Responsável | Timing | Critério |
+|-------|------------|--------|----------|
+| 1. PR review | Tech Lead + 1 revisor | 2h | 2 aprovações + testes passando |
+| 2. Staging deploy | CI/CD | Automático | 90s de health check OK |
+| 3. Produção deploy | CI/CD | Após staging (1h de observação) | 90s de health check OK |
+| 4. Comunicação | Comunicação | Pós-deploy | Banner no site + newsletter |
+
+**Janelas de manutenção:** Semana 2 e 4, 02h–04h (horário de Brasília). Anúncio 48h antes por email + banner no site.
+
+**Rollback automático:** Se `GET /api/health` falhar por 2x consecutivas em 5 minutos após deploy, o Railway faz rollback automático para o commit anterior.
+
+### Decisões de Arquitetura (ADR)
+
+| ADR | Decisão | Status |
+|-----|--------|--------|
+| ADR-001 | Persistência SQLite nativo (`node:sqlite`) vs Postgres | ✅ Aceito (SQLite) |
+| ADR-002 | SSE para eventos internos vs WebSockets | ✅ Aceito (SSE) |
+| ADR-003 | API pública sem autenticação | ⚠️ Em discussão |
+| ADR-004 | Código de voto anônimo por design | ✅ Aceito |
 
 ## 📞 Contato e Suporte
 
