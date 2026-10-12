@@ -330,7 +330,17 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <body>
 
 <!-- Landmarks semânticos: o conteúdo é injetado por js/site-header.js -->
-<header id="mbtopo-header" aria-label="Cabeçalho do site MeuVoto"></header>
+<header id="mbtopo-header" aria-label="Cabeçalho do site MeuVoto" style="background:var(--ink);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)">
+<div style="display:flex;align-items:center;gap:10px">
+<img src="logo-hd.png" alt="MeuVoto" style="width:36px;height:36px;border-radius:8px">
+<b style="color:var(--gold);font-size:18px">MeuVoto</b>
+</div>
+<div style="display:flex;align-items:center;gap:12px">
+<span id="userInfo" style="color:var(--gold);font-size:13px;display:none"></span>
+<button id="btnHeaderLogin" class="btn sm" style="display:inline-block" onclick="abrirLogin()"><i class="fa-solid fa-right-to-bracket"></i> Entrar</button>
+<button id="btnHeaderLogout" class="btn sm" style="display:none;background:#c0392b;color:#fff" onclick="fazerLogout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+</div>
+</header>
 <nav id="mbtopo-nav" aria-label="Menu principal do MeuVoto"></nav>
 
 <!-- ===== MODAL DE ONBOARDING (primeira visitação) ===== -->
@@ -594,7 +604,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <p style="color:var(--gold);font-weight:800;font-size:13px">"Meu voto coloca, meu voto tira."</p></div>
 <div><h5>Navegar</h5><a onclick="go('radar')">Radar Político</a><a href="pages/fundo-eleitoral.html">Fundo Eleitoral</a><a href="pages/congresso.html">PLs no Congresso</a><a onclick="go('conferir')">Conferir Voto</a><a onclick="go('revogados')">Revogados</a></div>
 <div><h5>Participar</h5><a onclick="go('conferir')">Meus Votos</a><a onclick="go('radar')">Reclame Aqui</a><a onclick="abrirForm(-1,'rec')">📝 Reclamar ou 👍 Apoiar</a><a onclick="abrirLogin()">Sou Político/Candidato</a></div>
-<div><h5>Institucional</h5><a href="app/">📱 App de Votação</a><a onclick="go('quem')">Sobre Nós</a><a href="termos.html">Termos de Uso</a><a href="privacidade.html">Política de Privacidade</a><a>Contato</a></div>
+<div><h5>Institucional</h5><a href="app/">📱 App de Votação</a><a onclick="go('quem')">Sobre Nós</a><a href="termos.html">Termos de Uso</a><a href="privacidade.html">Política de Privacidade</a><a onclick="abrirContato()">Contato</a></div>
 </div><div class="fbot"><span>© 2026 MeuVoto. Protótipo demonstrativo.</span><span>meu-voto.app</span></div></div></footer>
 <div class="cmpbar" id="cmpbar"><span id="cmpcount" class="muted">0 fixados</span><div style="display:flex;gap:8px"><button class="btn sm" onclick="limparPin()">Limpar</button><button class="btn gold sm" onclick="abrirCmp()">Comparar lado a lado</button></div></div>
 <div class="overlay" id="mCmp"><div class="modal"><h3 style="margin-bottom:12px">🆚 Comparação lado a lado</h3><div id="cmpBody" class="cmpgrid"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mCmp')">Fechar</button></div></div>
@@ -607,10 +617,27 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end"><button class="btn" onclick="fechar('mForm')">Cancelar</button><button class="btn gold" onclick="enviaForm()"><i class="fa-solid fa-paper-plane"></i> Enviar</button></div></div></div>
 <div class="overlay" id="mDados"><div class="modal"><div id="dadosBody"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mDados')">Fechar</button></div></div>
 <div class="overlay" id="mLogin"><div class="modal"><h3 style="margin-bottom:10px">Entrar</h3>
-<button class="btn blue" style="width:100%;margin-bottom:10px" onclick="entrarCidadao()"><i class="fa-solid fa-user"></i> Sou cidadão (simulado)</button>
+<div id="loginInicial">
+<button class="btn blue" style="width:100%;margin-bottom:10px" onclick="entrarCidadao()"><i class="fa-solid fa-envelope"></i> Entrar com e-mail</button>
 <button class="btn gold" style="width:100%" onclick="souPolitico()"><i class="fa-solid fa-landmark"></i> Sou político ou candidato</button>
 <p class="muted" style="margin-top:10px">Político/Candidato = verificação REAL via backend (e-mail institucional ou TSE).</p>
-<button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mLogin')">Fechar</button></div></div>
+<button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mLogin')">Fechar</button>
+</div>
+<div id="loginPasso1" style="display:none">
+<label class="muted" style="display:block;margin-bottom:4px">Seu e-mail</label>
+<input id="loginEmail" type="email" placeholder="seu@email.com" style="width:100%;padding:10px;margin-bottom:12px;border:1px solid var(--line);border-radius:8px"/>
+<button class="btn blue" style="width:100%" onclick="enviarCodigoLogin()"><i class="fa-solid fa-paper-plane"></i> Enviar código</button>
+<button class="btn" style="width:100%;margin-top:8px" onclick="voltarLoginInicio()">Voltar</button>
+</div>
+<div id="loginPasso2" style="display:none">
+<p class="muted" style="margin-bottom:8px">Enviamos um código de 6 dígitos para seu e-mail.</p>
+<label class="muted" style="display:block;margin-bottom:4px">Código de verificação</label>
+<input id="loginCode" type="text" placeholder="000000" maxlength="6" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;font-size:20px;letter-spacing:8px;text-align:center"/>
+<div id="loginDevCode" style="display:none;background:var(--gold);color:#000;padding:8px;border-radius:6px;margin-bottom:8px;font-size:13px;text-align:center"></div>
+<button class="btn gold" style="width:100%" onclick="verificarCodigoLogin()"><i class="fa-solid fa-check"></i> Verificar e entrar</button>
+<button class="btn" style="width:100%;margin-top:8px" onclick="voltarLoginPasso1()">Voltar</button>
+</div>
+</div></div>
 <div class="overlay" id="mVerif"><div class="modal"><h3 style="margin-bottom:10px">🔐 Verificação de identidade</h3>
 <div id="verifAlvo" class="muted" style="margin-bottom:8px"></div>
 <div id="verifPasso1">
@@ -665,6 +692,22 @@ const M={'conferir-voto':'conferir','revogar-voto':'revogar','revogados':'revoga
 if(h==='congresso'||h==='radar'){location.replace('pages/parlamentares.html');return}
 if(M[h]){go(M[h]);history.replaceState({},'',location.pathname)}})();
 function fechar(id){document.getElementById(id).classList.remove('open')}
+function atualizarUI(){
+  const hdr=document.getElementById('mbtopo-header');
+  if(!hdr)return;
+  const btnLogin=document.getElementById('btnHeaderLogin');
+  const btnLogout=document.getElementById('btnHeaderLogout');
+  const userInfo=document.getElementById('userInfo');
+  if(SESS&&SESS.email){
+    if(btnLogin)btnLogin.style.display='none';
+    if(btnLogout)btnLogout.style.display='inline-block';
+    if(userInfo){userInfo.style.display='inline-block';userInfo.textContent='Olá, '+(SESS.nome||SESS.email).split('@')[0]+'!';}
+  } else {
+    if(btnLogin)btnLogin.style.display='inline-block';
+    if(btnLogout)btnLogout.style.display='none';
+    if(userInfo)userInfo.style.display='none';
+  }
+}
 function toggleMenu(){document.getElementById('mnav').classList.toggle('open')}
 function go(p){if(p==='radar'){window.location.href='pages/parlamentares.html';return}$$('.sec').forEach(s=>s.classList.remove('on'));$('#sec-'+p).classList.add('on');$$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===p));window.scrollTo(0,0)}
 $$('#nav a').forEach(a=>a.onclick=()=>go(a.dataset.p));
@@ -691,7 +734,7 @@ if(!POL.length){
 try{const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?itens=513&ordem=ASC&ordenarPor=nome');const j=await r.json();(j.dados||[]).forEach(d=>POL.push({nome:d.nome,partido:d.siglaPartido||'',uf:d.siglaUf||'',cargo:'Deputado Federal',foto:d.urlFoto||'',num:d.id,real:1,rec:0,selo:false}));}catch(e){}
 try{const r=await fetch('https://legis.senado.leg.br/dadosabertos/senador/lista/legislatura/57?formato=json');const j=await r.json();const L=(j.lista&&j.lista.senador)||[];L.forEach(s=>{const p=s.IdentificacaoParlamentar||{};POL.push({nome:p.NomeParlamentar||'',partido:p.SiglaPartido||'',uf:p.Uf||'',cargo:'Senador',foto:p.UrlFotoParlamentar||'',num:p.CodigoParlamentar||'',real:1,rec:0,selo:false});});}catch(e){}}
 ready=true;const el=document.getElementById('bReais');if(el)el.textContent=POL.length+' políticos reais'+(BACKEND_OK?' (backend)':'');
-popula();renderRad();carregaRemoteRec()}
+popula();renderRad();carregaRemoteRec();atualizarUI()}
 /* ============================================================
    SPOTLIGHT 2º TURNO — presidenciáveis (dados reais do TSE)
    Fonte: data/candidatos-2026.json (cargo 1 = Presidente).
@@ -1094,7 +1137,82 @@ if(FORM_T=='rec'){const m=LS.get('mb_rec_txt',{});(m[idx]=m[idx]||[]).unshift(tx
 else{const m=LS.get('mb_elog_txt',{});(m[idx]=m[idx]||[]).unshift(txt);LS.set('mb_elog_txt',m);if(!toast._silent)toast('Apoio registrado localmente. 👍')}
 fechar('mForm');renderRad()}
 function abrirLogin(){document.getElementById('mLogin').classList.add('open')}
-function entrarCidadao(){SESS={nome:'Cidadão BR'};LS.set('mb_sess',SESS);fechar('mLogin');toast('Bem-vindo, cidadão! (simulado)')}
+function entrarCidadao(){
+  document.getElementById('loginInicial').style.display='none';
+  document.getElementById('loginPasso1').style.display='block';
+  document.getElementById('loginPasso2').style.display='none';
+  document.getElementById('loginEmail').value='';
+  document.getElementById('loginCode').value='';
+  document.getElementById('loginDevCode').style.display='none';
+}
+function voltarLoginPasso1(){
+  document.getElementById('loginPasso1').style.display='block';
+  document.getElementById('loginPasso2').style.display='none';
+}
+function voltarLoginInicio(){
+  document.getElementById('loginInicial').style.display='block';
+  document.getElementById('loginPasso1').style.display='none';
+  document.getElementById('loginPasso2').style.display='none';
+}
+async function enviarCodigoLogin(){
+  const email=(document.getElementById('loginEmail').value||'').trim().toLowerCase();
+  if(!email||!email.includes('@'))return toast('Informe um e-mail válido.');
+  try{
+    const r=await fetch(API_BASE+'/api/auth/email/send',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email})
+    });
+    const data=await r.json().catch(()=>({}));
+    if(r.ok&&data.ok){
+      document.getElementById('loginPasso1').style.display='none';
+      document.getElementById('loginPasso2').style.display='block';
+      if(data.devCode){
+        const dv=document.getElementById('loginDevCode');
+        dv.style.display='block';
+        dv.innerHTML='MODO DEV — código: <b>'+data.devCode+'</b>';
+      }
+      toast('Código enviado para '+email+'!');
+    } else {
+      toast(data.error||'Falha ao enviar código.');
+    }
+  }catch(e){
+    toast('Backend indisponível. Tente novamente.');
+  }
+}
+async function verificarCodigoLogin(){
+  const email=(document.getElementById('loginEmail').value||'').trim().toLowerCase();
+  const code=(document.getElementById('loginCode').value||'').trim();
+  if(!code||code.length<6)return toast('Informe o código de 6 dígitos.');
+  try{
+    const r=await fetch(API_BASE+'/api/auth/email/verify',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,code})
+    });
+    const data=await r.json().catch(()=>({}));
+    if(r.ok&&data.ok){
+      SESS={nome:data.voter.email||'Cidadão',email:data.voter.email,voterHash:data.voter.voterHash,method:'email',sessionToken:data.sessionToken};
+      LS.set('mb_sess',SESS);
+      fechar('mLogin');
+      toast('Bem-vindo! Login realizado com sucesso.');
+      atualizarUI();
+    } else {
+      toast(data.error||'Código inválido ou expirado.');
+    }
+  }catch(e){
+    toast('Backend indisponível. Tente novamente.');
+  }
+}
+function fazerLogout(){
+  if(SESS&&SESS.sessionToken){
+    fetch(API_BASE+'/api/auth/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionToken:SESS.sessionToken})}).catch(()=>{});
+  }
+  SESS=null;
+  LS.set('mb_sess',null);
+  toast('Você saiu da sua conta.');
+  atualizarUI();
+}
 let VERIF_PID='',VERIF_NOME='';
 function souPolitico(i){fechar('mLogin');
  if(i!=null&&POL[i]){const p=POL[i];VERIF_PID=(p.cargo==='Deputado Federal'?'camara-':'senado-')+p.num;VERIF_NOME=p.nome;}
@@ -1763,6 +1881,61 @@ function toggleMobileMenu() {
     nav.classList.toggle('mobile-open');
   }
 }
-</script></script>
+</script>
+function abrirContato(){
+  document.getElementById('contatoForm').style.display='block';
+  document.getElementById('contatoOk').style.display='none';
+  document.getElementById('ctNome').value=SESS&&SESS.nome?SESS.nome:'';
+  document.getElementById('ctEmail').value=SESS&&SESS.email?SESS.email:'';
+  document.getElementById('ctAssunto').value='';
+  document.getElementById('ctMensagem').value='';
+  document.getElementById('mContato').classList.add('open');
+}
+async function enviarContato(){
+  const nome=(document.getElementById('ctNome').value||'').trim();
+  const email=(document.getElementById('ctEmail').value||'').trim();
+  const assunto=(document.getElementById('ctAssunto').value||'').trim();
+  const mensagem=(document.getElementById('ctMensagem').value||'').trim();
+  if(!nome||nome.length<2)return toast('Nome é obrigatório.');
+  if(!email||!email.includes('@'))return toast('E-mail inválido.');
+  if(!assunto||assunto.length<3)return toast('Assunto é obrigatório.');
+  if(!mensagem||mensagem.length<10)return toast('Mensagem muito curta (mínimo 10 caracteres).');
+  try{
+    const r=await fetch(API_BASE+'/api/contato',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,email,assunto,mensagem})});
+    const data=await r.json().catch(()=>({}));
+    if(r.ok&&data.ok){
+      document.getElementById('ctProtocolo').textContent=data.protocolo;
+      document.getElementById('contatoForm').style.display='none';
+      document.getElementById('contatoOk').style.display='block';
+    } else {
+      toast(data.error||'Falha ao enviar mensagem.');
+    }
+  }catch(e){
+    toast('Backend indisponível. Tente novamente.');
+  }
+}
+</script>
+
+<div class="overlay" id="mContato"><div class="modal" style="max-width:500px">
+<h3 style="margin-bottom:12px">📧 Fale Conosco</h3>
+<div id="contatoForm">
+<label class="muted" style="display:block;margin-bottom:4px">Nome *</label>
+<input id="ctNome" type="text" placeholder="Seu nome" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--line);border-radius:8px"/>
+<label class="muted" style="display:block;margin-bottom:4px">E-mail *</label>
+<input id="ctEmail" type="email" placeholder="seu@email.com" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--line);border-radius:8px"/>
+<label class="muted" style="display:block;margin-bottom:4px">Assunto *</label>
+<input id="ctAssunto" type="text" placeholder="Assunto da mensagem" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid var(--line);border-radius:8px"/>
+<label class="muted" style="display:block;margin-bottom:4px">Mensagem *</label>
+<textarea id="ctMensagem" placeholder="Escreva sua mensagem (mínimo 10 caracteres)" style="width:100%;padding:10px;margin-bottom:12px;border:1px solid var(--line);border-radius:8px;min-height:100px;resize:vertical"></textarea>
+<button class="btn gold" style="width:100%" onclick="enviarContato()"><i class="fa-solid fa-paper-plane"></i> Enviar Mensagem</button>
+</div>
+<div id="contatoOk" style="display:none;text-align:center;padding:20px 0">
+<div style="font-size:48px;margin-bottom:12px">✅</div>
+<h4 style="color:var(--gold)">Mensagem Enviada!</h4>
+<p class="muted" style="margin:8px 0">Protocolo: <b id="ctProtocolo"></b></p>
+<p class="muted">Você receberá uma confirmação por e-mail.</p>
+</div>
+<button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mContato')">Fechar</button>
+</div></div>
 </body>
 </html>

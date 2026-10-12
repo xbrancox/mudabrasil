@@ -308,6 +308,31 @@ function openSqlite() {
     );
     CREATE INDEX IF NOT EXISTS idx_society_pl_invites_token ON society_pl_invites(token);
     CREATE INDEX IF NOT EXISTS idx_society_pl_invites_target ON society_pl_invites(target_id);
+
+    /* ===== AUTENTICAÇÃO: Sessões e OTP (Email/SMS) ===== */
+    CREATE TABLE IF NOT EXISTS auth_sessions (
+      token           TEXT PRIMARY KEY,
+      voter_id        TEXT NOT NULL,
+      expires_at      INTEGER NOT NULL,
+      created_at      INTEGER NOT NULL,
+      user_agent      TEXT,
+      ip_address      TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_auth_sessions_voter ON auth_sessions(voter_id);
+    CREATE INDEX IF NOT EXISTS idx_auth_sessions_expires ON auth_sessions(expires_at);
+
+    CREATE TABLE IF NOT EXISTS auth_otp (
+      id              TEXT PRIMARY KEY,
+      type            TEXT NOT NULL,
+      target          TEXT NOT NULL,
+      code            TEXT NOT NULL,
+      expires_at      INTEGER NOT NULL,
+      attempts        INTEGER NOT NULL DEFAULT 0,
+      used            INTEGER NOT NULL DEFAULT 0,
+      created_at      INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_auth_otp_target ON auth_otp(target, type);
+    CREATE INDEX IF NOT EXISTS idx_auth_otp_expires ON auth_otp(expires_at);
   `);
 
   try { db.prepare('ALTER TABLE society_pls ADD COLUMN attachment_url TEXT').run(); } catch (_) {}
