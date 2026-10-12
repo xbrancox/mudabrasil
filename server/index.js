@@ -41,6 +41,7 @@ const reclamacoes = require('./reclamacoes');
 const fundoEleitoral = require('./fundo-eleitoral');
 const seedPls = require('./seed_pls');
 const tse = require('./tse');
+const contato = require('./contato');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = process.env.PORT || 8080;
@@ -1446,6 +1447,43 @@ async function handleApi(req, res, url) {
       return sendJson(res, 200, r);
     } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
   }
+
+  /* ===== CONTATO ===== */
+  if (p === '/api/contato' && req.method === 'POST') {
+    let body;
+    try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+    try {
+      const r = await contato.createContato({
+        nome: body.nome || '',
+        email: body.email || '',
+        assunto: body.assunto || '',
+        mensagem: body.mensagem || '',
+        ip: clientIp(req),
+        userAgent: req.headers['user-agent'] || ''
+      });
+      return sendJson(res, 200, r);
+    } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+  }
+
+  if (p === '/api/contato/stats' && req.method === 'GET') {
+    const secret = String(q.secret || '');
+    if (!process.env.DIGEST_SECRET || secret !== process.env.DIGEST_SECRET) {
+      return sendJson(res, 403, { ok: false, error: 'sem permissao' });
+    }
+    return sendJson(res, 200, { ok: true, ...contato.getStats() });
+  }
+
+  if (p === '/api/contato/list' && req.method === 'GET') {
+    const secret = String(q.secret || '');
+    if (!process.env.DIGEST_SECRET || secret !== process.env.DIGEST_SECRET) {
+      return sendJson(res, 403, { ok: false, error: 'sem permissao' });
+    }
+    const limit = parseInt(q.limit || '50', 10);
+    const offset = parseInt(q.offset || '0', 10);
+    const onlyUnread = q.unread === '1';
+    return sendJson(res, 200, { ok: true, mensagens: contato.listContatos({ limit, offset, onlyUnread }) });
+  }
+
 
   if (p === '/api/verificacao/iniciar' && req.method === 'POST') {
     let body;
