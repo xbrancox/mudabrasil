@@ -15,6 +15,11 @@ server/data/enrich/
 # Cache local de fotos de candidatos (regenerado via `npm run backup:photos`)
 data/fotos/
 
+# Arquivos de ambiente e segredos locais
+.env
+.env.smtp
+.env.*
+
 # Dependências Node.js
 node_modules/
 
