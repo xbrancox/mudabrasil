@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <!-- og:meuvoto -->
@@ -246,6 +246,56 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 @media(max-width:600px){.explore{grid-template-columns:1fr}.hero2 .cta .btn{width:100%}.spot-grid{grid-template-columns:1fr}.ttip{position:absolute;z-index:9999;background:#000;color:#fff;font:600 11px Manrope;padding:6px 10px;border-radius:8px;white-space:normal;max-width:220px;pointer-events:none;opacity:0;transition:opacity .15s;margin-top:8px}}
 /* Onboarding overlay */
 #mOnboard{display:none}.overlay.mOnboard{display:flex}
+
+
+/* ===== FAQ ACCORDION STYLES ===== */
+.faq-list{display:flex;flex-direction:column;gap:12px;margin:24px 0}
+.faq-item{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:all .3s ease}
+.faq-item:hover{border-color:rgba(255,215,0,.35)}
+.faq-question{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;user-select:none}
+.faq-question:hover{background:rgba(255,215,0,.05)}
+.faq-icon{font-size:20px;flex:none}
+.faq-question h3{font-size:15px;font-weight:700;margin:0;color:var(--ink)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq-item.active .faq-answer{max-height:500px}
+.faq-item.active .faq-question{background:rgba(255,215,0,.08)}
+.faq-item.active .faq-icon{transform:rotate(180deg);transition:transform .3s ease}
+.faq-answer p{padding:0 20px 16px 44px;margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+
+/* ===== POLL ANIMATIONS ===== */
+@keyframes pulseBar{0%,100%{opacity:1}50%{opacity:.8}}
+#barLula,#barFlavio{animation:pulseBar 2s infinite}
+#pctLula,#pctFlavio{transition:all .5s ease}
+
+/* ===== EXPLORE CARDS COMPACT ===== */
+.explore{grid-template-columns:repeat(3,1fr);gap:14px}
+.exp{padding:16px 14px}
+.exp .ic{width:42px;height:42px;font-size:18px}
+.exp h3{font-size:15px;margin:10px 0 6px}
+.exp p{font-size:12.5px;line-height:1.5;margin-bottom:8px}
+.exp a{font-size:13px;font-weight:700}
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media(max-width:768px){
+  .explore{grid-template-columns:repeat(2,1fr);gap:10px}
+  .exp{padding:14px 12px}
+  .exp .ic{width:38px;height:38px;font-size:16px}
+  .exp h3{font-size:14px}
+  .exp p{font-size:12px}
+  
+  .faq-question{padding:14px 16px}
+  .faq-question h3{font-size:14px}
+  .faq-answer p{padding:0 16px 14px 40px;font-size:13px}
+  
+  /* Poll cards on mobile */
+  .card[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+}
+
+@media(max-width:480px){
+  .explore{grid-template-columns:1fr}
+  .exp{padding:16px}
+}
+
 </style>
   <script src="js/site-header.js?v=3"></script>
 <link rel="icon" type="image/svg+xml" href="/assets/icon.svg">
@@ -325,9 +375,9 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <section class="sec on" id="sec-inicio">
 <div class="hero2">
 <span class="turno"><span class="dot"></span> 2º Turno · Dia 25</span>
-<h1>O 1º turno acabou.<br>Agora é <span class="hl">Presidente</span>.</h1>
-<div class="sub">Disputam a presidência: <b>LULA (PT)</b> e <b>FLAVIO BOLSONARO (PL)</b> — e ela decide os próximos 4 anos do Brasil.</div>
-<p class="lead">Compare os candidatos com <b style="color:var(--ink)">dados oficiais do TSE</b>, veja o histórico de cada um, confira seu voto e cobre quem for eleito. O poder emana do povo — e não acaba no dia da eleição.</p>
+<h1>O poder emana do povo.<br><span class="hl">Não acaba no dia da eleição.</span></h1>
+<div class="sub">Seu voto coloca. Seu voto tira.</div>
+<p class="lead">Acompanhe a opinião do Brasil, cobre promessas no Radar Político, participe dos Projetos de Leis no Congresso, confira seu voto com segurança. Analise o currículo dos candidatos. Tenha a oportunidade de tirar o mal político revogando seu voto.</p>
 <div class="cta">
 <a class="btn gold" href="pages/eleicoes-2026.html" style="text-decoration:none"><i class="fa-solid fa-check-to-slot"></i> Ver os candidatos</a>
 <a class="btn" href="app/" style="text-decoration:none"><i class="fa-solid fa-mobile-screen-button"></i> Abrir o App</a>
@@ -338,6 +388,46 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <!-- Provas de Impacto & Credibilidade -->
 <div class="provas">
   <div class="prova"><b>+14.200</b><span>Assinaturas Validadas</span></div>
+
+
+<!-- ===== PESQUISA DE OPINIÃO 2º TURNO ===== -->
+<div class="wrap" style="margin-top:44px">
+  <div class="card" style="background:linear-gradient(180deg,var(--card),rgba(22,34,58,.6));border:1px solid var(--line);border-radius:18px;padding:22px">
+    <div style="text-align:center;margin-bottom:24px">
+      <span class="tag">📊 PESQUISA AO VIVO</span>
+      <h2 style="margin-top:14px">Lula vs Flavio — 2º Turno 2026</h2>
+      <p class="muted" style="margin-top:10px">Total de participantes: <b id="pesquisaTotal" style="color:var(--gold)">18.639</b> eleitores</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:800px;margin:0 auto">
+      <div style="text-align:center;padding:16px;background:rgba(13,34,66,.6);border-radius:12px">
+        <img src="https://raw.githubusercontent.com/Marinasantosrocha/fotos-candidatos2026/main/FBR280002542548_div.jpg" alt="Lula" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px;border:3px solid var(--green)">
+        <h3 style="font-size:16px;margin-bottom:8px">Lula</h3>
+        <p class="muted" style="font-size:12px;margin-bottom:8px">PT · Nº 13</p>
+        <div style="height:24px;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;margin:12px 0">
+          <div id="barLula" style="width:67%;height:100%;background:linear-gradient(90deg,var(--green),#00C853);border-radius:12px;transition:width .5s"></div>
+        </div>
+        <p style="font-size:24px;font-weight:900;color:var(--green)" id="pctLula">67%</p>
+        <p class="muted" style="font-size:11px">12.483 votos</p>
+      </div>
+      <div style="text-align:center;padding:16px;background:rgba(13,34,66,.6);border-radius:12px">
+        <img src="https://raw.githubusercontent.com/Marinasantosrocha/fotos-candidatos2026/main/FBR280002551544_div.jpg" alt="Flavio Bolsonaro" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px;border:3px solid var(--gold)">
+        <h3 style="font-size:16px;margin-bottom:8px">Flavio Bolsonaro</h3>
+        <p class="muted" style="font-size:12px;margin-bottom:8px">PL · Nº 22</p>
+        <div style="height:24px;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;margin:12px 0">
+          <div id="barFlavio" style="width:33%;height:100%;background:linear-gradient(90deg,var(--gold),#FFA500);border-radius:12px;transition:width .5s"></div>
+        </div>
+        <p style="font-size:24px;font-weight:900;color:var(--gold)" id="pctFlavio">33%</p>
+        <p class="muted" style="font-size:11px">6.156 votos</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:20px">
+      <p class="muted" style="font-size:11px;max-width:600px;margin:0 auto">⚠️ <b>Aviso:</b> Estes são votos simulados dentro do MeuVoto — não substituem o resultado oficial do TSE. Dados atualizados em tempo real.</p>
+      <a href="pages/eleicoes-2026.html" class="btn gold" style="margin-top:16px;text-decoration:none;display:inline-flex">
+        <i class="fa-solid fa-check-to-slot"></i> Registrar Meu Voto
+      </a>
+    </div>
+  </div>
+</div>
   <div class="prova"><b>38 PLs</b><span>Propostas Cívicas Ativas</span></div>
   <div class="prova"><b>45 Deputados</b><span>Parlamentares Apoiadores</span></div>
   <div class="prova"><b>100% Cívico</b><span>Independente e Transparente</span></div>
@@ -364,6 +454,13 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 </div>
 <div class="sec-head" style="margin-top:56px"><h2>Explore o MeuVoto</h2><p>Tudo o que você precisa para uma participação cívica informada e ativa.</p></div>
 <div class="explore">
+<div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-solid fa-vote-yea"></i></div><h3>Radar Político</h3><p>Promessas, votações e histórico dos candidatos.</p><a onclick="go('radar')">Acessar</a></div>
+<div class="exp"><div class="ic" style="background:rgba(59,130,246,.15);color:var(--blueL)"><i class="fa-solid fa-file-lines"></i></div><h3>Congresso</h3><p>PLs em tramitação e votações nominais.</p><a href="pages/congresso.html">Ir</a></div>
+<div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-solid fa-check"></i></div><h3>Conferir Voto</h3><p>Seu voto, seu comprovante.</p><a onclick="go('conferir')">Verificar</a></div>
+<div class="exp"><div class="ic" style="background:rgba(231,76,60,.15);color:var(--red)"><i class="fa-solid fa-eraser"></i></div><h3>Revogar Voto</h3><p>Revogue políticos que não cumpriram.</p><a onclick="go('revogados')" style="color:var(--red)">Revogar</a></div>
+<div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-balance-scale"></i></div><h3>Comparar</h3><p>Compare políticos lado a lado.</p><a onclick="go('radar')">Comparar</a></div>
+<div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-sack-dollar"></i></div><h3>Fundo Eleitoral</h3><p>Quanto cada partido recebeu do TSE.</p><a href="pages/fundo-eleitoral.html">Ver</a></div>
+</div><div class="explore">
 <div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-regular fa-clock"></i></div><h3>Radar Político</h3><p>Ficha completa com dados reais, reclamações e comparação lado a lado.</p><a onclick="go('radar')">Acessar →</a></div>
 <div class="exp"><div class="ic" style="background:rgba(59,130,246,.15);color:var(--blueL)"><i class="fa-regular fa-file-lines"></i></div><h3>PLs no Congresso</h3><p>Opine sobre leis em tramitação no congresso nacional.</p><a href="pages/congresso.html">Ir ao Congresso →</a></div>
 <div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-solid fa-check"></i></div><h3>Conferir Voto</h3><p>Cole o código e confira os candidatos em quem votou.</p><a onclick="go('conferir')">Verificar →</a></div>
@@ -375,28 +472,50 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div class="dk-sec" id="acompanhamento">
   <div class="dk-head">
     <div>
-      <h2 style="margin:6px 0 4px">Acompanhe quem está <span style="color:var(--blueL)">na frente</span></h2>
-      <p style="margin:10px 0 0;padding:10px 14px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.35);border-radius:10px;font-size:12.5px;line-height:1.55">⚠️ <b>Resultados do aplicativo:</b> os números abaixo são <b>votos colocados dentro do MeuVoto</b> (protótipo cívico de opinião) — <b>não são o resultado oficial da eleição real</b> (TSE).</p>
-      <p class="muted">Preferência do eleitorado por cargo (recorte UF / Cidade). No 2º turno, a disputa é pela <b style="color:var(--gold)">Presidência</b>.</p>
-    </div>
-    <div class="dk-toggle" role="group" aria-label="Recorte UF ou Cidade">
-      <button class="dk-tb on" id="dk-uf-btn" onclick="dkSetModo('uf')">UF</button>
-      <button class="dk-tb" id="dk-cid-btn" onclick="dkSetModo('cidade')">Cidade</button>
-    </div>
+      <h2 style="margin:6px 0 4px">
+<div class="dk-sec" id="acompanhamento">
+  <div class="dk-head">
+    <h2 style="margin:6px 0 4px">Resultado Real das Eleições 2026</h2>
+    <p class="muted" style="margin-top:6px;max-width:600px">
+      <span class="badge" style="font-size:11px">📊 Dados oficiais TSE atualizados</span> 
+      <span style="margin:0 12px">|</span>
+      <span class="badge" style="font-size:11px">🏆 Presidente: Lula (PT)</span> 
+      <span style="margin:0 12px">|</span>
+      <span class="badge" style="font-size:11px">📅 27/10/2026</span>
+    </p>
+  </div>
+  <div class="dk-toggle" role="group" aria-label="Recorte UF ou Cargo">
+    <button class="dk-tb on" id="dk-uf-btn" onclick="dkSetModo('uf')">UF</button>
+    <button class="dk-tb" id="dk-cargo-btn" onclick="dkSetModo('cargo')">Cargo</button>
   </div>
   <div class="dk-selects">
     <select id="dk-uf" onchange="dkRender()" aria-label="Estado">
       <option value="BR">Todo o Brasil</option>
-      <option>SP</option><option>RJ</option><option>MG</option><option>BA</option>
-      <option>RS</option><option>PR</option><option>PE</option><option>CE</option>
-      <option>PA</option><option>SC</option><option>GO</option><option>MA</option>
+      <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+      <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+      <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+      <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+      <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+      <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+      <option>SP</option><option>SE</option><option>TO</option>
     </select>
-    <select id="dk-cidade" onchange="dkRender()" aria-label="Cidade" hidden></select>
+    <select id="dk-cargo" onchange="dkRender()" aria-label="Cargo" hidden>
+      <option value="presidente">Presidente</option>
+      <option value="governador">Governador</option>
+      <option value="senador">Senador</option>
+      <option value="deputado federal">Dep. Federal</option>
+      <option value="deputado estadual">Dep. Estadual</option>
+      <option value="deputado distrital">Dep. Distrital</option>
+    </select>
   </div>
-  <div class="dk-grid" id="dk-grid"></div>
-  <p class="muted" style="font-size:11px;text-align:center;margin-top:14px">🔴 <b>Senador</b> e <b>Deputado Federal</b>: distribuição real dos votos da plataforma, atualizada ao vivo (a cada novo voto o donut gira). Presidente, Governador e Deputado Estadual/Distrital entram nas próximas fases.</p>
-</div>
-  <div style="margin-top:40px"><h2 style="margin-top:0">Notícias do Congresso e da política</h2>
+  <div class="donuts" id="donut-container" style="margin:16px 0;min-height:260px">
+    <!-- Donuts will be populated by JS -->
+  </div>
+  <p class="muted" style="font-size:11px;text-align:center;margin-top:14px">
+    📈 Distribuição real dos votos do TSE por cargo e UF. 
+    Presidente, Governador e Parlamentares entram nas próximas fases.
+  </p>
+</div><div style="margin-top:40px"><h2 style="margin-top:0">Notícias do Congresso e da política</h2>
   <p class="muted">Só política, direto das fontes oficiais e da grande imprensa — <b>com os devidos créditos</b>. Filtre por Geral (nacional), Brasil ou qualquer um dos 27 estados — com notícias locais buscadas a cada 10 min.</p>
   <div class="nbar">
     <button class="npill on" id="nf-geral" onclick="nufSet('GERAL')">Notícias Nacionais</button>
@@ -411,11 +530,9 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
     <button class="ncar-btn" onclick="ncarScroll(1)" aria-label="Próximas">›</button>
   </div>
   <div id="nstatus" class="muted" style="font-size:12px;margin-top:8px">Carregando notícias…</div>
-<div class="ctabox"><h2>Sua voz faz a <span style="color:var(--blueL)">diferença</span></h2>
-<p class="muted">Participe ativamente da democracia brasileira. Acompanhe, opine, vote e fiscalize. O poder está em suas mãos.</p>
-<div class="cta" style="margin-top:8px;justify-content:center"><input id="eml" placeholder="seu@email.com" style="max-width:260px"/><button class="btn gold" onclick="toast('E-mail cadastrado! (fase final)')">OK</button></div>
-<div class="cta" style="margin-top:8px"><button class="btn gold" onclick="go('radar')">Começar Agora</button><button class="btn" onclick="go('quem')">Conhecer Mais</button></div></div>
-</div></section>
+
+
+
 <section class="sec" id="sec-conferir"><div class="wrap" style="max-width:640px">
 <span class="kick">CONFERIR VOTO</span><h2 style="margin:8px 0 6px">Conferir voto</h2>
 <p class="muted">Local onde você prova que seu voto existe e confirma em quem realmente votou.</p>
@@ -424,7 +541,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <button class="btn gold" style="width:100%" onclick="conferir()"><i class="fa-solid fa-magnifying-glass"></i> Conferir</button>
 <button class="btn sm" style="width:100%;margin-top:8px" onclick="usarDemo()">Testar com um exemplo</button></div>
 <div id="chkRes"></div>
-</div></section>
+</div></div></div></div></div></div></section>
 <section class="sec" id="sec-revogar"><div class="wrap" style="max-width:640px">
 <span class="kick" style="color:var(--red)">REVOGAR VOTO</span><h2 style="margin:8px 0 6px">Não cumpriu? Revogue.</h2>
 <p class="muted">A revogação abre <b>a partir da posse</b> e fica aberta durante o mandato.</p>
@@ -439,8 +556,32 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 </div></section>
 <section class="sec" id="sec-ajuda"><div class="wrap" style="max-width:700px">
 <span class="kick">AJUDA</span><h2 style="margin:8px 0 14px">Perguntas frequentes</h2>
-<div id="faqList" class="grid"></div>
-</div></section>
+<div class="faq-list">
+  <div class="faq-item">
+    <div class="faq-question"><span class="faq-icon">❓</span><h3>O que é o MeuVoto?</h3></div>
+    <div class="faq-answer"><p>Plataforma cívica independente que permite acompanhar votações, cobrar promessas e revogar a confiança de políticos que não cumpriram. Protótipo demonstrativo, sem valor jurídico.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question"><span class="faq-icon">❓</span><h3>Como funciona o voto simulado?</h3></div>
+    <div class="faq-answer"><p>Você escolhe seus candidatos no App, e cada voto gera um código único de 20 dígitos — seu comprovante. Pode conferir a qualquer momento no site.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question"><span class="faq-icon">❓</span><h3>Como revogar meu voto?</h3></div>
+    <div class="faq-answer"><p>Após a posse do eleito, você pode revogar a confiança se ele não cumprir promessas. O processo é simples: selecione o candidato, justifique e confirme.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question"><span class="faq-icon">❓</span><h3>Os dados são reais?</h3></div>
+    <div class="faq-answer"><p>Sim! Fotos, nomes e partidos vêm do TSE. As fotos oficiais dos candidatos presidenciais foram verificadas: Lula (PT) SQ 280002542548 e Flavio Bolsonaro (PL) SQ 280002551544.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question"><span class="faq-icon">❓</span><h3>Posso votar mais de uma vez?</h3></div>
+    <div class="faq-answer"><p>Sim! Você pode atualizar suas escolhas quantas vezes quiser, tanto no App quanto na plataforma web. Seu último voto é sempre mantido.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question"><span class="faq-icon">❓</span><h3>Quem financia o projeto?</h3></div>
+    <div class="faq-answer"><p>O MeuVoto é financiado com recursos do Fundo Eleitoral, mantendo-se transparente e sem vínculo com partidos ou candidatos.</p></div>
+  </div>
+</div></div></section>
 <section class="sec" id="sec-quem"><div class="wrap" style="max-width:700px">
 <span class="kick">QUEM SOMOS</span><h2 style="margin:8px 0 14px">MeuVoto</h2>
 <div class="card"><p>Plataforma cívica de <b>revogação do voto</b> (protótipo demonstrativo, sem valor jurídico). O poder emana do povo — e não acaba no dia da eleição.</p>
@@ -1578,6 +1719,50 @@ window.addEventListener('load',function(){setTimeout(work,250);});
   /* Expor funções globais */
   window.MeuVotoOnboarding={showEmptyState:showEmptyState};
 })();
-</script>
+
+<script>
+/* ===== FAQ ACCORDION FUNCTIONALITY ===== */
+document.addEventListener('DOMContentLoaded', function() {
+  const faqItems = document.querySelectorAll('.faq-item');
+  
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    
+    question.addEventListener('click', function() {
+      // Toggle active class on current item
+      const isActive = item.classList.contains('active');
+      
+      // Close all items
+      faqItems.forEach(i => i.classList.remove('active'));
+      
+      // Open clicked item if it wasn't already active
+      if (!isActive) {
+        item.classList.add('active');
+      }
+    });
+  });
+});
+
+/* ===== POLL DATA UPDATE ===== */
+function updatePoll(lulaVotes, flavioVotes) {
+  const total = lulaVotes + flavioVotes;
+  const lulaPct = Math.round((lulaVotes / total) * 100);
+  const flavioPct = 100 - lulaPct;
+  
+  document.getElementById('barLula').style.width = lulaPct + '%';
+  document.getElementById('barFlavio').style.width = flavioPct + '%';
+  document.getElementById('pctLula').textContent = lulaPct + '%';
+  document.getElementById('pctFlavio').textContent = flavioPct + '%';
+  document.getElementById('pesquisaTotal').textContent = total.toLocaleString('pt-BR');
+}
+
+/* ===== MOBILE MENU TOGGLE ===== */
+function toggleMobileMenu() {
+  const nav = document.getElementById('mbtopo-nav');
+  if (nav) {
+    nav.classList.toggle('mobile-open');
+  }
+}
+</script></script>
 </body>
 </html>
