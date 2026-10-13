@@ -93,10 +93,11 @@ async function createContato(data) {
   data2.mensagens.push(msg);
   writeMessages(data2);
 
-  // Enviar email para contato@meu-voto.app (se SMTP configurado)
+  // Enviar email para o e-mail de contato configurado
+  const CONTATO_EMAIL = process.env.CONTATO_EMAIL || 'euler.branco@gmail.com';
   try {
     await mailer.sendEmail({
-      to: 'contato@meu-voto.app',
+      to: CONTATO_EMAIL,
       subject: '[MeuVoto Contato] ' + assunto,
       html: `
         <h2>Nova mensagem de contato</h2>
@@ -115,7 +116,7 @@ async function createContato(data) {
       `,
       text: `Nova mensagem de contato\n\nProtocolo: ${protocolo}\nNome: ${nome}\nE-mail: ${email}\nAssunto: ${assunto}\n\nMensagem:\n${mensagem}`
     });
-    console.log('[contato] E-mail enviado para contato@meu-voto.app');
+    console.log('[contato] E-mail enviado para', CONTATO_EMAIL);
   } catch (e) {
     console.log('[contato] Falha ao enviar e-mail (SMTP não configurado):', e.message);
   }
