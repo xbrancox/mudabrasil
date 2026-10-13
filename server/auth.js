@@ -146,20 +146,24 @@ async function sendEmailOtp(email, userAgent, ipAddress) {
   }
   const code = String(Math.floor(100000 + Math.random() * 900000));
   const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutos
-  
+
   // Persistir OTP no banco
   const otpRecord = dbAuth.createOtp('email', emailStr, code, expiresAt);
-  
+
   // Enviar email real via nodemailer (fire-and-forget para não bloquear HTTP)
-  mailer.sendOtpEmail(emailStr, code, 10)
-    .then(() => console.log('[auth] E-mail OTP enviado para ' + emailStr))
-    .catch(e => {
-      console.error('[auth] Falha ao enviar e-mail OTP:', e.message);
+  (async () => {
+    try {
+      await mailer.sendOtpEmail(emailStr, code, 10);
+      console.log('[auth] E-mail OTP enviado para ' + emailStr);
+    } catch (e) {
+      console.error('[auth] Falha ao enviar e-mail OTP para ' + emailStr + ': ' + e.message);
+      console.error('[auth] Stack:', e.stack);
       if (AUTH_MODE === 'dev') {
         console.log('[auth] MODO DEV - E-mail OTP não enviado (SMTP não configurado): ' + code);
       }
-    });
-  
+    }
+  })();
+
   return {
     ok: true,
     email: emailStr,
