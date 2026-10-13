@@ -54,35 +54,49 @@ function getTransporter() {
 }
 
 async function sendEmail({ to, subject, html, text }) {
-  const transport = getTransporter();
+  let lastError = null;
+  const maxRetries = 3;
+  const baseDelay = 1000;
 
-  if (!transport) {
-    // MODO DEV: simular envio
-    console.log('[mailer] === SIMULAÇÃO DE E-MAIL ===');
-    console.log('[mailer] Para: ' + to);
-    console.log('[mailer] Assunto: ' + subject);
-    console.log('[mailer] Conteúdo:');
-    console.log(text || html);
-    console.log('[mailer] =============================');
-    return { ok: true, simulated: true, message: 'E-mail simulado (modo dev)' };
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const transport = getTransporter();
+
+    if (!transport) {
+      // MODO DEV: simular envio
+      console.log('[mailer] === SIMULAÇÃO DE E-MAIL ===');
+      console.log('[mailer] Para: ' + to);
+      console.log('[mailer] Assunto: ' + subject);
+      console.log('[mailer] Conteúdo:');
+      console.log(text || html);
+      console.log('[mailer] =============================');
+      return { ok: true, simulated: true, message: 'E-mail simulado (modo dev)' };
+    }
+
+    try {
+      const info = await transport.sendMail({
+        from: SMTP_FROM,
+        to: to,
+        subject: subject,
+        text: text || '',
+        html: html || ''
+      });
+
+      console.log('[mailer] E-mail enviado: ' + info.messageId + (attempt > 1 ? ' (tentativa ' + attempt + ')' : ''));
+      return { ok: true, messageId: info.messageId };
+    } catch (err) {
+      lastError = err;
+      console.error('[mailer] Tentativa ' + attempt + '/' + maxRetries + ' falhou: ' + err.message);
+      // Recreate transporter on failure to get a fresh connection
+      transporter = null;
+      if (attempt < maxRetries) {
+        const delay = baseDelay * Math.pow(2, attempt - 1);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
   }
 
-  try {
-    const info = await transport.sendMail({
-      from: SMTP_FROM,
-      to: to,
-      subject: subject,
-      text: text || '',
-      html: html || ''
-    });
-
-    console.log('[mailer] E-mail enviado: ' + info.messageId);
-    return { ok: true, messageId: info.messageId };
-  } catch (err) {
-    const errDetails = { message: err.message, code: err.code, command: err.command, response: err.response, syscall: err.syscall };
-    console.error('[mailer] Falha ao enviar e-mail:', JSON.stringify(errDetails));
-    throw new Error('Falha ao enviar e-mail. Tente novamente.');
-  }
+  console.error('[mailer] Todas as tentativas falharam: ' + (lastError ? lastError.message : 'unknown'));
+  throw new Error('Falha ao enviar e-mail após ' + maxRetries + ' tentativas.');
 }
 
 function sendOtpEmail(to, code, expiresInMinutes = 10) {
