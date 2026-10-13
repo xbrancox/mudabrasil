@@ -5,6 +5,7 @@
    Modo dev: simula envio (log no console).
    Modo prod: usa SMTP configurado via env vars.
    ============================================================ */
+// Deploy trigger: 2026-10-13 01:50 UTC – fix mailer for Zoho STARTTLS
 
 const nodemailer = require('nodemailer');
 
