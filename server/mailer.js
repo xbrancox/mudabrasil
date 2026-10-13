@@ -29,10 +29,9 @@ function getTransporter() {
 
   console.log('[mailer] Iniciando transporte SMTP:', SMTP_HOST, 'porta', SMTP_PORT);
 
-  transporter = nodemailer.createTransport({
+  const transportOptions = {
     host: SMTP_HOST,
     port: SMTP_PORT,
-    secure: SMTP_PORT === 465,
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS
@@ -40,7 +39,15 @@ function getTransporter() {
     connectionTimeout: SMTP_TIMEOUT,
     greetingTimeout: SMTP_TIMEOUT,
     socketTimeout: SMTP_TIMEOUT
-  });
+  };
+  // Use STARTTLS on port 587, TLS on 465
+  if (SMTP_PORT === 587) {
+    transportOptions.secure = false; // upgrade via STARTTLS
+    transportOptions.requireTLS = true;
+  } else {
+    transportOptions.secure = true; // direct TLS
+  }
+  transporter = nodemailer.createTransport(transportOptions);
 
   return transporter;
 }
