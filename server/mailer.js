@@ -55,7 +55,7 @@ function getTransporter() {
 
 async function sendEmail({ to, subject, html, text }) {
   const transport = getTransporter();
-  
+
   if (!transport) {
     // MODO DEV: simular envio
     console.log('[mailer] === SIMULAÇÃO DE E-MAIL ===');
@@ -66,7 +66,7 @@ async function sendEmail({ to, subject, html, text }) {
     console.log('[mailer] =============================');
     return { ok: true, simulated: true, message: 'E-mail simulado (modo dev)' };
   }
-  
+
   try {
     const info = await transport.sendMail({
       from: SMTP_FROM,
@@ -75,11 +75,12 @@ async function sendEmail({ to, subject, html, text }) {
       text: text || '',
       html: html || ''
     });
-    
+
     console.log('[mailer] E-mail enviado: ' + info.messageId);
     return { ok: true, messageId: info.messageId };
   } catch (err) {
-    console.error('[mailer] Falha ao enviar e-mail:', err.message);
+    const errDetails = { message: err.message, code: err.code, command: err.command, response: err.response, syscall: err.syscall };
+    console.error('[mailer] Falha ao enviar e-mail:', JSON.stringify(errDetails));
     throw new Error('Falha ao enviar e-mail. Tente novamente.');
   }
 }
