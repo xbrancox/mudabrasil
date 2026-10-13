@@ -72,7 +72,7 @@ async function tryResend({ to, subject, html, text }) {
         Authorization: 'Bearer ' + RESEND_API_KEY
       },
       body: JSON.stringify({
-        from: SMTP_FROM || RESEND_FROM,
+        from: RESEND_FROM || 'MeuVoto <onboarding@resend.dev>',
         to, subject, text: text || '', html: html || ''
       }),
       signal: AbortSignal.timeout(10000)
