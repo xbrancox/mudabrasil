@@ -1284,16 +1284,13 @@ window._NEWS=window._NEWS||[];
 async function news(){
  /* 1) Snapshot embutido: renderiza na hora — o espaço nunca fica em branco */
  try{
-  /* Snapshot local só sob http(s): Chromium bloqueia fetch() de file://. */
-  if(location.protocol!=='file:'){
-   const rs=await fetch('data/noticias.json');
-   if(rs.ok){
-    const d=await rs.json();
-    if(d.noticias&&d.noticias.length&&!window._NEWS.length){
-     window._NEWS=d.noticias;
-     nufContador();renderNews();
-     $('#nstatus').textContent='Última atualização: '+new Date(d.geradoEm).toLocaleString('pt-BR')+' — buscando ao vivo…';
-    }
+  const rs=await fetch('data/noticias.json');
+  if(rs.ok){
+   const d=await rs.json();
+   if(d.noticias&&d.noticias.length){
+    window._NEWS=d.noticias;
+    nufContador();renderNews();
+    $('#nstatus').textContent='Última atualização: '+new Date(d.geradoEm).toLocaleString('pt-BR')+' — buscando ao vivo…';
    }
   }
  }catch(e){}
