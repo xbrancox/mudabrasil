@@ -13,6 +13,7 @@ const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587', 10);
 const SMTP_USER = process.env.SMTP_USER || '';
 const SMTP_PASS = process.env.SMTP_PASS || '';
 const SMTP_FROM = process.env.SMTP_FROM || 'nao-responda@meu-voto.app';
+const SMTP_TIMEOUT = parseInt(process.env.SMTP_TIMEOUT || '15000', 10);
 
 const IS_DEV = !SMTP_HOST || !SMTP_USER || !SMTP_PASS;
 
@@ -20,22 +21,37 @@ let transporter = null;
 
 function getTransporter() {
   if (transporter) return transporter;
-  
+
   if (IS_DEV) {
     console.log('[mailer] MODO DEV: SMTP não configurado, emails serão simulados');
     return null;
   }
-  
+
+  console.log('[mailer] Iniciando transporte SMTP:', SMTP_HOST, 'porta', SMTP_PORT);
+
   transporter = nodemailer.createTransport({
+    pool: true,
+    maxConnections: 3,
+    maxMessages: 100,
+    rateLimit: 5,
     host: SMTP_HOST,
     port: SMTP_PORT,
-    secure: SMTP_PORT === 465, // true para 465, false para 587
+    secure: SMTP_PORT === 465,
+    connectionTimeout: SMTP_TIMEOUT,
+    greetingTimeout: SMTP_TIMEOUT,
+    socketTimeout: SMTP_TIMEOUT,
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS
     }
   });
-  
+
+  // Verificar conexão no startup para falhar rápido
+  transporter.verify().catch(err => {
+    console.error('[mailer] Falha na verificação SMTP:', err.message);
+    transporter = null; // permitir retry
+  });
+
   return transporter;
 }
 
