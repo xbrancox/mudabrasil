@@ -1,11 +1,9 @@
 /* ============================================================
-   MEUVOTO — SERVIÇO DE E-MAIL (Nodemailer)
+   MEUVOTO — SERVIÇO DE E-MAIL
    ------------------------------------------------------------
-   Envia emails OTP e de verificação via SMTP.
-   Modo dev: simula envio (log no console).
-   Modo prod: usa SMTP configurado via env vars.
+   Tenta SMTP primeiro, depois Resend se configurado,
+   por último modo dev.
    ============================================================ */
-// Deploy trigger: 2026-10-13 01:50 UTC – fix mailer for Zoho STARTTLS
 
 const nodemailer = require('nodemailer');
 
@@ -15,93 +13,122 @@ const SMTP_USER = process.env.SMTP_USER || '';
 const SMTP_PASS = process.env.SMTP_PASS || '';
 const SMTP_FROM = process.env.SMTP_FROM || 'nao-responda@meu-voto.app';
 const SMTP_TIMEOUT = parseInt(process.env.SMTP_TIMEOUT || '15000', 10);
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const RESEND_FROM = process.env.RESEND_FROM || 'MeuVoto <onboarding@resend.dev>';
 
-const IS_DEV = !SMTP_HOST || !SMTP_USER || !SMTP_PASS;
+const HAS_SMTP = !!(SMTP_HOST && SMTP_USER && SMTP_PASS);
+const HAS_RESEND = !!RESEND_API_KEY;
 
-let transporter = null;
+let smtpTransporter = null;
 
-function getTransporter() {
-  if (transporter) return transporter;
+function getSmtpTransporter() {
+  if (smtpTransporter) return smtpTransporter;
+  if (!HAS_SMTP) return null;
 
-  if (IS_DEV) {
-    console.log('[mailer] MODO DEV: SMTP não configurado, emails serão simulados');
-    return null;
-  }
-
-  console.log('[mailer] Iniciando transporte SMTP:', SMTP_HOST, 'porta', SMTP_PORT);
-
-  const transportOptions = {
+  const opts = {
     host: SMTP_HOST,
     port: SMTP_PORT,
-    auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS
-    },
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
     connectionTimeout: SMTP_TIMEOUT,
     greetingTimeout: SMTP_TIMEOUT,
     socketTimeout: SMTP_TIMEOUT
   };
-  // Use STARTTLS on port 587, TLS on 465
   if (SMTP_PORT === 587) {
-    transportOptions.secure = false; // upgrade via STARTTLS
-    transportOptions.requireTLS = true;
+    opts.secure = false;
+    opts.requireTLS = true;
   } else {
-    transportOptions.secure = true; // direct TLS
+    opts.secure = true;
   }
-  transporter = nodemailer.createTransport(transportOptions);
+  smtpTransporter = nodemailer.createTransport(opts);
+  return smtpTransporter;
+}
 
-  return transporter;
+async function trySmtp({ to, subject, html, text }) {
+  const transport = getSmtpTransporter();
+  if (!transport) return null; // signal: no SMTP configured
+
+  try {
+    const info = await transport.sendMail({
+      from: SMTP_FROM,
+      to, subject, text: text || '', html: html || ''
+    });
+    smtpTransporter = null; // reset for next time
+    console.log('[mailer] E-mail enviado via SMTP: ' + info.messageId);
+    return { ok: true, messageId: info.messageId, provider: 'smtp' };
+  } catch (err) {
+    smtpTransporter = null; // reset
+    return { error: err.message }; // signal: SMTP failed
+  }
+}
+
+async function tryResend({ to, subject, html, text }) {
+  if (!HAS_RESEND) return null; // signal: no Resend configured
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + RESEND_API_KEY
+      },
+      body: JSON.stringify({
+        from: SMTP_FROM || RESEND_FROM,
+        to, subject, text: text || '', html: html || ''
+      }),
+      signal: AbortSignal.timeout(10000)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { error: data.message || data.error || 'Resend API error' };
+    }
+    console.log('[mailer] E-mail enviado via Resend: ' + data.id);
+    return { ok: true, messageId: data.id, provider: 'resend' };
+  } catch (err) {
+    return { error: err.message };
+  }
+}
+
+function devLog({ to, subject, text, html }) {
+  console.log('[mailer] === SIMULAÇÃO DE E-MAIL ===');
+  console.log('[mailer] Para: ' + to);
+  console.log('[mailer] Assunto: ' + subject);
+  console.log('[mailer] Conteúdo:');
+  console.log(text || html);
+  console.log('[mailer] =============================');
+  return { ok: true, simulated: true, message: 'E-mail simulado (modo dev)' };
 }
 
 async function sendEmail({ to, subject, html, text }) {
-  let lastError = null;
-  const maxRetries = 3;
-  const baseDelay = 1000;
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const transport = getTransporter();
-
-    if (!transport) {
-      // MODO DEV: simular envio
-      console.log('[mailer] === SIMULAÇÃO DE E-MAIL ===');
-      console.log('[mailer] Para: ' + to);
-      console.log('[mailer] Assunto: ' + subject);
-      console.log('[mailer] Conteúdo:');
-      console.log(text || html);
-      console.log('[mailer] =============================');
-      return { ok: true, simulated: true, message: 'E-mail simulado (modo dev)' };
-    }
-
-    try {
-      const info = await transport.sendMail({
-        from: SMTP_FROM,
-        to: to,
-        subject: subject,
-        text: text || '',
-        html: html || ''
-      });
-
-      console.log('[mailer] E-mail enviado: ' + info.messageId + (attempt > 1 ? ' (tentativa ' + attempt + ')' : ''));
-      return { ok: true, messageId: info.messageId };
-    } catch (err) {
-      lastError = err;
-      console.error('[mailer] Tentativa ' + attempt + '/' + maxRetries + ' falhou: ' + err.message);
-      // Recreate transporter on failure to get a fresh connection
-      transporter = null;
-      if (attempt < maxRetries) {
-        const delay = baseDelay * Math.pow(2, attempt - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
+  // 1. Try SMTP
+  if (HAS_SMTP) {
+    const result = await trySmtp({ to, subject, html, text });
+    if (result && result.ok) return result;
+    if (result && result.error) {
+      console.log('[mailer] SMTP falhou: ' + result.error);
     }
   }
 
-  console.error('[mailer] Todas as tentativas falharam: ' + (lastError ? lastError.message : 'unknown'));
-  throw new Error('Falha ao enviar e-mail após ' + maxRetries + ' tentativas.');
+  // 2. Try Resend as fallback
+  if (HAS_RESEND) {
+    const result = await tryResend({ to, subject, html, text });
+    if (result && result.ok) return result;
+    if (result && result.error) {
+      console.log('[mailer] Resend falhou: ' + result.error);
+    }
+  }
+
+  // 3. Dev mode fallback
+  if (!HAS_SMTP && !HAS_RESEND) {
+    console.log('[mailer] MODO DEV: SMTP e Resend não configurados');
+    return devLog({ to, subject, text, html });
+  }
+
+  throw new Error('Falha ao enviar e-mail (SMTP e Resend indisponíveis)');
 }
 
-function sendOtpEmail(to, code, expiresInMinutes = 10) {
+function sendOtpEmail(to, code, expiresInMinutes) {
   const subject = 'Seu código MeuVoto: ' + code;
-  
+
   const html = `
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -118,20 +145,20 @@ function sendOtpEmail(to, code, expiresInMinutes = 10) {
         <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #1a1a2e;">MeuVoto</h1>
         <p style="margin: 8px 0 0 0; font-size: 14px; color: #666;">Plataforma Cívica de Transparência</p>
       </div>
-      
+
       <div style="background: #f8f9fa; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
         <p style="margin: 0 0 16px 0; font-size: 16px; color: #333;">Olá,</p>
         <p style="margin: 0 0 24px 0; font-size: 16px; color: #333;">Use o código abaixo para fazer login:</p>
-        
+
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 36px; font-weight: 700; letter-spacing: 8px; text-align: center; padding: 20px; border-radius: 8px; margin: 24px 0;">
           ${code}
         </div>
-        
+
         <p style="margin: 24px 0 0 0; font-size: 14px; color: #666; text-align: center;">
           ⏰ Este código expira em <strong>${expiresInMinutes} minutos</strong>
         </p>
       </div>
-      
+
       <div style="border-top: 1px solid #e0e0e0; padding-top: 24px; text-align: center;">
         <p style="margin: 0 0 8px 0; font-size: 12px; color: #999;">
           Se você não solicitou este código, ignore este e-mail.
@@ -145,7 +172,7 @@ function sendOtpEmail(to, code, expiresInMinutes = 10) {
 </body>
 </html>
   `;
-  
+
   const text = `
 MeuVoto - Seu código de acesso
 
@@ -159,13 +186,13 @@ Se você não solicitou este código, ignore este e-mail.
 
 Este e-mail foi enviado por https://meu-voto.app
   `;
-  
+
   return sendEmail({ to, subject, html, text });
 }
 
 function sendVerificationEmail(to, politicianName, verificationUrl) {
   const subject = 'Confirme seu e-mail - MeuVoto';
-  
+
   const html = `
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -182,25 +209,25 @@ function sendVerificationEmail(to, politicianName, verificationUrl) {
         <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #1a1a2e;">MeuVoto</h1>
         <p style="margin: 8px 0 0 0; font-size: 14px; color: #666;">Verificação de E-mail Institucional</p>
       </div>
-      
+
       <div style="background: #f8f9fa; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
         <p style="margin: 0 0 16px 0; font-size: 16px; color: #333;">Olá, ${politicianName},</p>
         <p style="margin: 0 0 24px 0; font-size: 16px; color: #333;">
           Para completar sua verificação no MeuVoto, clique no botão abaixo:
         </p>
-        
+
         <div style="text-align: center; margin: 32px 0;">
           <a href="${verificationUrl}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 16px 48px; border-radius: 8px; font-weight: 600; font-size: 16px;">
             Confirmar E-mail
           </a>
         </div>
-        
+
         <p style="margin: 24px 0 0 0; font-size: 14px; color: #666; text-align: center;">
           Ou copie e cole este link no seu navegador:<br>
           <a href="${verificationUrl}" style="color: #667eea; word-break: break-all;">${verificationUrl}</a>
         </p>
       </div>
-      
+
       <div style="border-top: 1px solid #e0e0e0; padding-top: 24px; text-align: center;">
         <p style="margin: 0 0 8px 0; font-size: 12px; color: #999;">
           Se você não solicitou esta verificação, ignore este e-mail.
@@ -214,7 +241,7 @@ function sendVerificationEmail(to, politicianName, verificationUrl) {
 </body>
 </html>
   `;
-  
+
   const text = `
 MeuVoto - Confirmação de E-mail
 
@@ -228,7 +255,7 @@ Se você não solicitou esta verificação, ignore este e-mail.
 
 Este e-mail foi enviado por https://meu-voto.app
   `;
-  
+
   return sendEmail({ to, subject, html, text });
 }
 
@@ -236,5 +263,5 @@ module.exports = {
   sendEmail,
   sendOtpEmail,
   sendVerificationEmail,
-  IS_DEV
+  IS_DEV: !HAS_SMTP && !HAS_RESEND
 };
