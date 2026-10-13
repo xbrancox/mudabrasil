@@ -35,3 +35,4 @@ EXPOSE 8080
 
 # Inicia o servidor
 CMD ["node", "server/index.js"]
+# Build trigger 2026-10-13T01:55Z - SMTP config fix
