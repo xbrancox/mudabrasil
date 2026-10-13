@@ -605,7 +605,16 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div><h5>Navegar</h5><a onclick="go('radar')">Radar Político</a><a href="pages/fundo-eleitoral.html">Fundo Eleitoral</a><a href="pages/congresso.html">PLs no Congresso</a><a onclick="go('conferir')">Conferir Voto</a><a onclick="go('revogados')">Revogados</a></div>
 <div><h5>Participar</h5><a onclick="go('conferir')">Meus Votos</a><a onclick="go('radar')">Reclame Aqui</a><a onclick="abrirForm(-1,'rec')">📝 Reclamar ou 👍 Apoiar</a><a onclick="abrirLogin()">Sou Político/Candidato</a></div>
 <div><h5>Institucional</h5><a href="app/">📱 App de Votação</a><a onclick="go('quem')">Sobre Nós</a><a href="termos.html">Termos de Uso</a><a href="privacidade.html">Política de Privacidade</a><a onclick="abrirContato()">Contato</a></div>
-</div><div class="fbot"><span>© 2026 MeuVoto. Protótipo demonstrativo.</span><span>meu-voto.app</span></div></div></footer>
+</div><div class="fbot" style="flex-direction: column; gap: 16px; text-align: center;">
+  <div style="display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; font-size: 14px;">
+    <span><i class="fa-solid fa-envelope" style="color: var(--gold); margin-right: 6px;"></i> <a href="mailto:contato@meu-voto.app" style="color: var(--ink); text-decoration: none; font-weight: 600;">contato@meu-voto.app</a></span>
+    <span><i class="fa-solid fa-headset" style="color: var(--gold); margin-right: 6px;"></i> <a href="mailto:suporte@meu-voto.app" style="color: var(--ink); text-decoration: none; font-weight: 600;">suporte@meu-voto.app</a></span>
+  </div>
+  <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; width: 100%; max-width: 600px; margin: 0 auto; font-size: 12px;">
+    <span>© 2026 MeuVoto. Protótipo demonstrativo.</span>
+    <span>meu-voto.app</span>
+  </div>
+</div></footer>
 <div class="cmpbar" id="cmpbar"><span id="cmpcount" class="muted">0 fixados</span><div style="display:flex;gap:8px"><button class="btn sm" onclick="limparPin()">Limpar</button><button class="btn gold sm" onclick="abrirCmp()">Comparar lado a lado</button></div></div>
 <div class="overlay" id="mCmp"><div class="modal"><h3 style="margin-bottom:12px">🆚 Comparação lado a lado</h3><div id="cmpBody" class="cmpgrid"></div><button class="btn" style="width:100%;margin-top:12px" onclick="fechar('mCmp')">Fechar</button></div></div>
 <div class="overlay" id="mForm"><div class="modal"><h3 id="fTitle" style="margin-bottom:12px">📝 Fazer reclamação</h3>
