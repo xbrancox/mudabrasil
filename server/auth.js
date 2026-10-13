@@ -150,18 +150,15 @@ async function sendEmailOtp(email, userAgent, ipAddress) {
   // Persistir OTP no banco
   const otpRecord = dbAuth.createOtp('email', emailStr, code, expiresAt);
   
-  // Enviar email real via nodemailer
-  try {
-    await mailer.sendOtpEmail(emailStr, code, 10);
-    console.log('[auth] E-mail OTP enviado para ' + emailStr);
-  } catch (e) {
-    // Em caso de falha, ainda retorna o código em modo dev para debugging
-    if (AUTH_MODE === 'dev') {
-      console.log('[auth] MODO DEV - E-mail OTP não enviado (SMTP não configurado): ' + code);
-    } else {
-      throw new Error('Falha ao enviar e-mail. Tente novamente.');
-    }
-  }
+  // Enviar email real via nodemailer (fire-and-forget para não bloquear HTTP)
+  mailer.sendOtpEmail(emailStr, code, 10)
+    .then(() => console.log('[auth] E-mail OTP enviado para ' + emailStr))
+    .catch(e => {
+      console.error('[auth] Falha ao enviar e-mail OTP:', e.message);
+      if (AUTH_MODE === 'dev') {
+        console.log('[auth] MODO DEV - E-mail OTP não enviado (SMTP não configurado): ' + code);
+      }
+    });
   
   return {
     ok: true,
