@@ -30,26 +30,16 @@ function getTransporter() {
   console.log('[mailer] Iniciando transporte SMTP:', SMTP_HOST, 'porta', SMTP_PORT);
 
   transporter = nodemailer.createTransport({
-    pool: true,
-    maxConnections: 3,
-    maxMessages: 100,
-    rateLimit: 5,
     host: SMTP_HOST,
     port: SMTP_PORT,
     secure: SMTP_PORT === 465,
-    connectionTimeout: SMTP_TIMEOUT,
-    greetingTimeout: SMTP_TIMEOUT,
-    socketTimeout: SMTP_TIMEOUT,
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS
-    }
-  });
-
-  // Verificar conexão no startup para falhar rápido
-  transporter.verify().catch(err => {
-    console.error('[mailer] Falha na verificação SMTP:', err.message);
-    transporter = null; // permitir retry
+    },
+    connectionTimeout: SMTP_TIMEOUT,
+    greetingTimeout: SMTP_TIMEOUT,
+    socketTimeout: SMTP_TIMEOUT
   });
 
   return transporter;
