@@ -1439,6 +1439,26 @@ async function handleApi(req, res, url) {
     } catch (e) { return sendJson(res, 401, { ok: false, error: e.message }); }
   }
 
+  // DEBUG: Check OTP status (development only)
+  if (p === '/api/debug/otp' && req.method === 'GET') {
+    const email = q.email || '';
+    const dbAuth = require('./db_auth');
+    const entry = dbAuth.getOtp('email', email);
+    if (!entry) return sendJson(res, 200, { ok: true, found: false, message: 'No OTP found for this email' });
+    const now = Date.now();
+    const expired = now > entry.expiresAt;
+    return sendJson(res, 200, {
+      ok: true,
+      found: true,
+      email: entry.typeData,
+      code: entry.code,
+      expiresAt: entry.expiresAt,
+      expired: expired,
+      attempts: entry.attempts,
+      createdAt: entry.createdAt
+    });
+  }
+
   if (p === '/api/auth/register' && req.method === 'POST') {
     let body;
     try { body = await readBody(req); } catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
