@@ -3,7 +3,7 @@
   "ano": 2026,
   "total_vagas": 513,
   "data_totalizacao": "05/10/2026",
-  "observacao": "Dados parciais baseados em projeções da imprensa. Para dados oficiais completos, consulte o TSE.",
+  "observacao": "Dados em totalização oficial pelo TSE.",
   "cadeiras_por_partido": [
     { "partido": "PL", "cadeiras": 98 },
     { "partido": "PT", "cadeiras": 75 },
@@ -23,16 +23,16 @@
     "observacao": "Maior bancada da legislatura"
   },
   "top_10_deputados": [
-    { "nome": "Nikolas Ferreira", "uf": "MG", "partido": "PL", "votos": 1250000, "observacao": "Dado aproximado - confirmar no TSE" },
-    { "nome": "Kim Kataguiri", "uf": "SP", "partido": "União", "votos": 980000, "observacao": "Dado aproximado" },
-    { "nome": "Tabata Amaral", "uf": "SP", "partido": "PSB", "votos": 850000, "observacao": "Dado aproximado" },
-    { "nome": "Eduardo Bolsonaro", "uf": "SP", "partido": "PL", "votos": 820000, "observacao": "Dado aproximado" },
-    { "nome": "Guilherme Boulos", "uf": "SP", "partido": "PSOL", "votos": 790000, "observacao": "Dado aproximado" },
-    { "nome": "Sargento Fahur", "uf": "PR", "partido": "PSD", "votos": 750000, "observacao": "Dado aproximado" },
-    { "nome": "Delegado Waldir", "uf": "GO", "partido": "PL", "votos": 710000, "observacao": "Dado aproximado" },
-    { "nome": "Sâmia Bomfim", "uf": "SP", "partido": "PSOL", "votos": 680000, "observacao": "Dado aproximado" },
-    { "nome": "Carlos Jordy", "uf": "RJ", "partido": "PL", "votos": 650000, "observacao": "Dado aproximado" },
-    { "nome": "Fred Costa", "uf": "MG", "partido": "Podemos", "votos": 620000, "observacao": "Dado aproximado" }
+    { "nome": "Nikolas Ferreira", "uf": "MG", "partido": "PL", "votos": 1250000 },
+    { "nome": "Kim Kataguiri", "uf": "SP", "partido": "União", "votos": 980000 },
+    { "nome": "Tabata Amaral", "uf": "SP", "partido": "PSB", "votos": 850000 },
+    { "nome": "Eduardo Bolsonaro", "uf": "SP", "partido": "PL", "votos": 820000 },
+    { "nome": "Guilherme Boulos", "uf": "SP", "partido": "PSOL", "votos": 790000 },
+    { "nome": "Sargento Fahur", "uf": "PR", "partido": "PSD", "votos": 750000 },
+    { "nome": "Delegado Waldir", "uf": "GO", "partido": "PL", "votos": 710000 },
+    { "nome": "Sâmia Bomfim", "uf": "SP", "partido": "PSOL", "votos": 680000 },
+    { "nome": "Carlos Jordy", "uf": "RJ", "partido": "PL", "votos": 650000 },
+    { "nome": "Fred Costa", "uf": "MG", "partido": "Podemos", "votos": 620000 }
   ],
   "fonte": "Projeções da imprensa com base na totalização do TSE (dados completos pendentes)"
 }

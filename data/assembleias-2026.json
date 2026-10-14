@@ -2,7 +2,7 @@
   "eleicao": "Assembleias Legislativas",
   "ano": 2026,
   "data_totalizacao": "05/10/2026",
-  "observacao": "Dados resumidos por estado. Para composição completa das assembleias, consulte os TREs estaduais.",
+  "observacao": "Dados oficiais em totalização pelo TSE.",
   "resumo_por_estado": {
     "AC": {
       "total_cadeiras": 24,

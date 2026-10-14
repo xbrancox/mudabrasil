@@ -87,8 +87,8 @@ code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padd
   </div>
 
   <div class="ecard">
-    <h3>🧮 Simulador conceitual (hipotético)</h3>
-    <p class="muted">Cenário didático: <b>se</b> o Brasil tivesse recall para deputado com uma regra popular de 70% dos votos obtidos na eleição como limiar, quantas assinaturas seriam necessárias no cenário atual?</p>
+    <h3>🧮 Simulador de engajamento cívico (didático)</h3>
+    <p class="muted">Cenário educativo: <b>se</b> o Brasil tivesse recall para deputado com uma regra popular de 70% dos votos obtidos na eleição como limiar, quantas assinaturas seriam necessárias no cenário atual?</p>
     <label>Votos obtidos pelo parlamentar na eleição</label>
     <label for="mrVotos" class="sr-only">Número de votos recebidos</label>
 <input id="mrVotos" type="number" min="0" value="120000" step="1000"/>
@@ -135,9 +135,9 @@ function mrCalc(){
   var have=Math.max(0,Math.floor(v*p/100));
   var pc=need?Math.min(100,Math.round(100*have/need)):0;
   var bar=pc>=100?'var(--red)':'var(--gold)';
-  var verdict=pc>=100?'Cenário hipotético: limiar atingido.':'Cenário hipotético: limiar NÃO atingido ('+pc+'% do necessário).';
+  var verdict=pc>=100?'Cenário educativo: limiar atingido.':'Cenário educativo: limiar NÃO atingido ('+pc+'% do necessário).';
   document.getElementById('mrOut').innerHTML=
-    '<p style="margin-top:4px">Assinaturas necessárias (hipotéticas): <b>'+need.toLocaleString('pt-BR')+'</b> ('+r+'% dos votos obtidos)</p>'+
+    '<p style="margin-top:4px">Assinaturas necessárias (estimativa): <b>'+need.toLocaleString('pt-BR')+'</b> ('+r+'% dos votos obtidos)</p>'+
     '<p>Assinaturas no cenário: <b>'+have.toLocaleString('pt-BR')+'</b> ('+p+'% da base)</p>'+
     '<div style="height:14px;border-radius:8px;background:var(--card2);overflow:hidden;margin-top:8px"><div style="height:100%;width:'+pc+'%;background:'+bar+'"></div></div>'+
     '<p style="margin-top:10px"><b style="color:'+(pc>=100?'var(--red)':'var(--gold)')+'">'+verdict+'</b></p>'+
