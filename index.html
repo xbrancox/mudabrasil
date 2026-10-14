@@ -473,8 +473,63 @@
   </div>
 </footer>
 
+<!-- ===== WIDGET DE PRIVACIDADE FLUTUANTE ===== -->
+<div id="privacy-widget" class="privacy-widget">
+  <button id="privacy-toggle" class="privacy-toggle" aria-label="Política de Privacidade">
+    <i class="fa-solid fa-shield-halved"></i>
+  </button>
+  
+  <div id="privacy-panel" class="privacy-panel">
+    <div class="privacy-header">
+      <h3><i class="fa-solid fa-shield-halved"></i> Privacidade</h3>
+      <button id="privacy-close" class="privacy-close" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="privacy-content">
+      <p><strong>Seus dados estão seguros.</strong></p>
+      <p>O <strong>MeuVoto</strong> é um projeto cívico independente. Não coletamos dados pessoais sensíveis, não rastreamos sua navegação para fins comerciais e não vendemos informações a terceiros.</p>
+      <ul>
+        <li><i class="fa-solid fa-check"></i> <strong>Transparência:</strong> Código aberto e auditável.</li>
+        <li><i class="fa-solid fa-check"></i> <strong>Sem rastreamento:</strong> Sem cookies de terceiros para publicidade.</li>
+        <li><i class="fa-solid fa-check"></i> <strong>Dados oficiais:</strong> Apenas dados públicos do TSE.</li>
+      </ul>
+      <div class="privacy-cta">
+        <a href="privacidade.html" class="btn btn-primary btn-sm">Ler Política Completa</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===== JAVASCRIPT ===== -->
 <script src="js/home-2026.js?v=4"></script>
+<script>
+// Widget de Privacidade Flutuante
+document.addEventListener('DOMContentLoaded', function() {
+  const toggle = document.getElementById('privacy-toggle');
+  const panel = document.getElementById('privacy-panel');
+  const closeBtn = document.getElementById('privacy-close');
+
+  if (toggle && panel) {
+    toggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      panel.classList.toggle('active');
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        panel.classList.remove('active');
+      });
+    }
+
+    // Fechar ao clicar fora
+    document.addEventListener('click', function(e) {
+      if (panel.classList.contains('active') && !panel.contains(e.target) && !toggle.contains(e.target)) {
+        panel.classList.remove('active');
+      }
+    });
+  }
+});
+</script>
 <script>
 // ===== FUNÇÕES DA HOME =====
 
