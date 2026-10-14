@@ -293,8 +293,8 @@
     <div class="container">
       <div class="secao-cabecalho">
         <span class="secao-tag">GOVERNADORES</span>
-        <h2 class="secao-titulo">Quem governa seu estado?</h2>
-        <p class="secao-subtitulo">Selecione seu estado para ver quem foi eleito ou quem disputa o 2º turno</p>
+        <h2 class="secao-titulo">Governadores que vão para o 2º turno</h2>
+        <p class="secao-subtitulo">Selecione seu estado para ver quem foi eleito no 1º turno ou quem disputa o 2º turno</p>
       </div>
 
       <div class="pesquisa-seletor">
@@ -435,63 +435,6 @@
     </div>
   </section>
 
-  <!-- ===== 10. CONFERIR VOTO ===== -->
-  <section id="conferir-voto" class="secao secao-compacta">
-    <div class="container container-compacto">
-      <div class="secao-cabecalho">
-        <span class="secao-tag">CONFERIR VOTO</span>
-        <h2 class="secao-titulo">Conferir voto</h2>
-        <p class="secao-subtitulo">Local onde você prova que seu voto existe e confirma em quem realmente votou</p>
-      </div>
-
-      <div class="card-voto">
-        <label class="voto-label">Cole seu código de verificação</label>
-        <input id="chk" class="voto-input" placeholder="0000 0000 0000 0000 0000">
-        <button class="btn btn-primary btn-block" onclick="conferir()">
-          <i class="fa-solid fa-magnifying-glass"></i> Conferir
-        </button>
-        <button class="btn btn-secondary btn-block" onclick="usarDemo()">Testar com um exemplo</button>
-      </div>
-      <div id="chkRes"></div>
-    </div>
-  </section>
-
-  <!-- ===== 11. REVOGAR VOTO ===== -->
-  <section id="revogar-voto" class="secao secao-compacta">
-    <div class="container container-compacto">
-      <div class="secao-cabecalho">
-        <span class="secao-tag secao-tag-vermelho">REVOGAR VOTO</span>
-        <h2 class="secao-titulo">Não cumpriu? Revogue.</h2>
-        <p class="secao-subtitulo">A revogação abre a partir da posse e fica aberta durante o mandato</p>
-      </div>
-
-      <div class="card-voto card-voto-aviso">
-        <p>
-          <i class="fa-solid fa-lock"></i>
-          Janela travada até a posse. Cole seu código no <strong>Conferir Voto</strong>.
-        </p>
-        <button class="btn btn-danger btn-block" onclick="document.getElementById('conferir-voto').scrollIntoView({behavior:'smooth'})">
-          Ir para Conferir Voto
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 12. QUEM SOMOS ===== -->
-  <section id="quem-somos" class="secao secao-compacta">
-    <div class="container container-compacto">
-      <div class="secao-cabecalho">
-        <span class="secao-tag">QUEM SOMOS</span>
-        <h2 class="secao-titulo">MeuVoto</h2>
-      </div>
-
-      <div class="card-quem-somos">
-        <p>Plataforma cívica de <strong>revogação do voto</strong> (protótipo demonstrativo, sem valor jurídico). O poder emana do povo — e não acaba no dia da eleição.</p>
-        <p class="destaque-dourado">"Meu voto coloca, meu voto tira."</p>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <!-- ===== FOOTER ===== -->
@@ -523,13 +466,11 @@
         <a href="pages/parlamentares.html">Radar Político</a>
         <a href="pages/fundo-eleitoral.html">Fundo Eleitoral</a>
         <a href="pages/congresso.html">PLs no Congresso</a>
-        <a href="#conferir-voto">Conferir Voto</a>
       </div>
 
       <div class="footer-coluna">
         <h5>Institucional</h5>
         <a href="app/">📱 App de Votação</a>
-        <a href="#quem-somos">Quem Somos</a>
         <a href="termos.html">Termos de Uso</a>
         <a href="privacidade.html">Política de Privacidade</a>
       </div>
@@ -554,22 +495,6 @@
 <script>
 // ===== FUNÇÕES DA HOME =====
 
-// Conferir Voto (demo)
-function conferir() {
-  const codigo = document.getElementById('chk').value.trim();
-  const res = document.getElementById('chkRes');
-  if (!codigo) {
-    res.innerHTML = '<div class="card-voto card-voto-erro"><p><i class="fa-solid fa-circle-exclamation"></i> Cole um código de verificação.</p></div>';
-    return;
-  }
-  res.innerHTML = '<div class="card-voto card-voto-sucesso"><p><i class="fa-solid fa-check-circle"></i> Código válido! (demonstração)</p><p class="muted">Em produção, aqui apareceria o candidato em quem você votou.</p></div>';
-}
-
-function usarDemo() {
-  document.getElementById('chk').value = '1234 5678 9012 3456 7890';
-  conferir();
-}
-
 // Notícias
 async function nufSet(uf) {
   const container = document.getElementById('homeNews');
@@ -579,6 +504,7 @@ async function nufSet(uf) {
   
   try {
     const resp = await fetch('data/noticias.json');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
     let noticias = Array.isArray(data) ? data : (data.noticias || []);
     
@@ -624,6 +550,7 @@ async function nufSet(uf) {
       `;
     }).join('');
   } catch (err) {
+    console.error('[noticias] Erro:', err);
     status.textContent = 'Erro ao carregar notícias.';
     container.innerHTML = '<div class="noticias-vazio noticias-erro"><i class="fa-solid fa-circle-exclamation"></i> Erro ao carregar notícias.</div>';
   }
@@ -634,19 +561,23 @@ function ncarScroll(dir) {
   if (ncar) ncar.scrollBy({ left: dir * 360, behavior: 'smooth' });
 }
 
-// Popular select de estados para notícias
-(function() {
+// Popular select de estados para notícias e carregar notícias quando DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
   const sel = document.getElementById('nf-uf');
-  if (!sel) return;
-  const ufs = ['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
-  ufs.forEach(uf => {
-    const opt = document.createElement('option');
-    opt.value = uf;
-    opt.textContent = uf;
-    sel.appendChild(opt);
-  });
-  if (typeof nufSet === 'function') nufSet('GERAL');
-})();
+  if (sel) {
+    const ufs = ['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
+    ufs.forEach(uf => {
+      const opt = document.createElement('option');
+      opt.value = uf;
+      opt.textContent = uf;
+      sel.appendChild(opt);
+    });
+  }
+  // Carregar notícias nacionais por padrão
+  if (typeof nufSet === 'function') {
+    nufSet('GERAL');
+  }
+});
 </script>
 
 </body>

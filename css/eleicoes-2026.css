@@ -4,6 +4,21 @@
    Design system coeso, responsivo, acessível
    ============================================================ */
 
+/* ===== MAPEAMENTO DE VARIÁVEIS (compatibilidade com design-system) ===== */
+:root {
+  --card: var(--bg-card, #16223A);
+  --card2: var(--bg-card-hover, #1D2D4A);
+  --line: rgba(90, 110, 142, 0.2);
+  --ink: var(--text-primary, #FFFFFF);
+  --muted: var(--text-muted, #5A6E8E);
+  --red: var(--danger, #E74C3C);
+  --green: var(--success, #2ECC71);
+  --blue: var(--primary, #1A73E8);
+  --blueL: var(--primary-light, #3399ff);
+  --gold: #D4AF37;
+  --r: 12px;
+}
+
 /* ===== CONTAINERS ===== */
 .container {
   max-width: 1200px;
@@ -1312,4 +1327,86 @@
 .muted {
   color: var(--muted);
   font-size: 12.5px;
+}
+
+/* ===== FIX: Garantir visibilidade dos cards ===== */
+.step-card h3,
+.explore-card h3 {
+  color: var(--ink, #FFFFFF);
+}
+.step-card p,
+.explore-card p {
+  color: var(--muted, #5A6E8E);
+}
+.candidato-card .candidato-nome {
+  color: var(--ink, #FFFFFF);
+}
+.candidato-card .candidato-partido,
+.candidato-card .candidato-cargo {
+  color: var(--muted, #5A6E8E);
+}
+.pesquisa-card {
+  background: var(--card, #16223A);
+  border: 1px solid var(--line, rgba(90, 110, 142, 0.2));
+  border-radius: 18px;
+  padding: 28px;
+  margin-top: 24px;
+}
+.estado-card {
+  background: var(--card, #16223A);
+  border: 1px solid var(--line, rgba(90, 110, 142, 0.2));
+  border-radius: 18px;
+  padding: 28px;
+  margin-top: 24px;
+  min-height: 200px;
+}
+.estado-placeholder {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted, #5A6E8E);
+}
+.estado-placeholder i {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+  color: var(--gold, #D4AF37);
+}
+.pesquisa-seletor {
+  margin-top: 20px;
+}
+.pesquisa-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink, #FFFFFF);
+  margin-bottom: 8px;
+}
+.pesquisa-select {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 16px;
+  background: var(--card, #16223A);
+  border: 1px solid var(--line, rgba(90, 110, 142, 0.2));
+  border-radius: 12px;
+  color: var(--ink, #FFFFFF);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.pesquisa-select:hover,
+.pesquisa-select:focus {
+  border-color: var(--gold, #D4AF37);
+}
+.pesquisa-vazio {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted, #5A6E8E);
+}
+.pesquisa-vazio i {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+  color: var(--gold, #D4AF37);
 }
