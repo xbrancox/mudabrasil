@@ -19,7 +19,7 @@
   --r: 12px;
 }
 
-/* ===== FALLBACK DE CORES (garantia de visibilidade) ===== */
+/* ===== FALLBACK DE CORES (garantia absoluta de visibilidade) ===== */
 .step-card,
 .explore-card,
 .prova-card,
@@ -27,7 +27,21 @@
 .estado-card,
 .candidato-card {
   background-color: #16223A !important;
-  background-color: var(--card, #16223A) !important;
+  background: #16223A !important;
+  border: 1px solid rgba(212, 175, 55, 0.15) !important;
+  border-radius: 12px !important;
+}
+
+/* Garantir que o texto seja visível */
+.step-card h3, .step-card p,
+.explore-card h3, .explore-card p,
+.prova-card .prova-valor, .prova-card .prova-label,
+.pesquisa-card, .estado-card, .candidato-card {
+  color: #FFFFFF !important;
+}
+
+.step-card p, .explore-card p, .prova-label, .pesquisa-meta, .estado-eleito-partido, .candidato-partido {
+  color: #C8D5E7 !important;
 }
 
 .step-card h3,
