@@ -19,6 +19,37 @@
   --r: 12px;
 }
 
+/* ===== FALLBACK DE CORES (garantia de visibilidade) ===== */
+.step-card,
+.explore-card,
+.prova-card,
+.pesquisa-card,
+.estado-card,
+.candidato-card {
+  background-color: #16223A !important;
+  background-color: var(--card, #16223A) !important;
+}
+
+.step-card h3,
+.explore-card h3,
+.prova-valor,
+.pesquisa-instituto,
+.estado-nome,
+.candidato-nome {
+  color: #FFFFFF !important;
+  color: var(--ink, #FFFFFF) !important;
+}
+
+.step-card p,
+.explore-card p,
+.prova-label,
+.pesquisa-meta,
+.estado-eleito-partido,
+.candidato-partido {
+  color: #5A6E8E !important;
+  color: var(--muted, #5A6E8E) !important;
+}
+
 /* ===== CONTAINERS ===== */
 .container {
   max-width: 1200px;
@@ -519,15 +550,19 @@
   display: block;
   font: 700 13px Manrope;
   margin-bottom: 8px;
-  color: var(--muted);
+  color: #FFFFFF !important;
+  color: var(--ink, #FFFFFF) !important;
 }
 .pesquisa-select {
   width: 100%;
   padding: 12px 40px 12px 16px;
-  background: var(--card);
-  border: 1px solid var(--line);
+  background: #16223A !important;
+  background: var(--card, #16223A) !important;
+  border: 2px solid rgba(90, 110, 142, 0.3) !important;
+  border: 2px solid var(--line, rgba(90, 110, 142, 0.3)) !important;
   border-radius: 12px;
-  color: var(--ink);
+  color: #FFFFFF !important;
+  color: var(--ink, #FFFFFF) !important;
   font: 600 14px Manrope;
   cursor: pointer;
   appearance: none;
@@ -544,12 +579,15 @@
 }
 
 .pesquisa-card {
-  background: var(--card);
-  border: 1px solid var(--line);
+  background: #16223A !important;
+  background: var(--card, #16223A) !important;
+  border: 2px solid rgba(90, 110, 142, 0.3) !important;
+  border: 2px solid var(--line, rgba(90, 110, 142, 0.3)) !important;
   border-radius: 18px;
   padding: 24px;
   max-width: 800px;
   margin: 0 auto;
+  min-height: 150px;
 }
 .pesquisa-header {
   text-align: center;
@@ -657,12 +695,15 @@
 
 /* ===== ESTADO CARD ===== */
 .estado-card {
-  background: var(--card);
-  border: 1px solid var(--line);
+  background: #16223A !important;
+  background: var(--card, #16223A) !important;
+  border: 2px solid rgba(90, 110, 142, 0.3) !important;
+  border: 2px solid var(--line, rgba(90, 110, 142, 0.3)) !important;
   border-radius: 18px;
   padding: 24px;
   max-width: 800px;
   margin: 0 auto;
+  min-height: 200px;
 }
 .estado-placeholder {
   text-align: center;
@@ -796,8 +837,10 @@
   }
 }
 .step-card {
-  background: var(--card);
-  border: 1px solid var(--line);
+  background: #16223A !important;
+  background: var(--card, #16223A) !important;
+  border: 2px solid rgba(90, 110, 142, 0.3) !important;
+  border: 2px solid var(--line, rgba(90, 110, 142, 0.3)) !important;
   border-radius: var(--r);
   padding: 26px 22px;
   text-align: center;
@@ -857,8 +900,10 @@
   }
 }
 .explore-card {
-  background: var(--card);
-  border: 1px solid var(--line);
+  background: #16223A !important;
+  background: var(--card, #16223A) !important;
+  border: 2px solid rgba(90, 110, 142, 0.3) !important;
+  border: 2px solid var(--line, rgba(90, 110, 142, 0.3)) !important;
   border-radius: var(--r);
   padding: 22px;
   transition: all 0.2s ease;

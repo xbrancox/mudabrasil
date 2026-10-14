@@ -480,24 +480,41 @@
 
 // Notícias
 async function nufSet(uf) {
+  console.log('[noticias] nufSet chamado com UF:', uf);
+  
   const container = document.getElementById('homeNews');
   const status = document.getElementById('nstatus');
   const count = document.getElementById('nf-count');
-  if (!container) return;
+  
+  if (!container) {
+    console.error('[noticias] ERRO: Container #homeNews não encontrado');
+    return;
+  }
+  
+  console.log('[noticias] Container encontrado, buscando dados...');
   
   try {
     const resp = await fetch('data/noticias.json');
+    console.log('[noticias] Fetch response:', resp.status, resp.ok);
+    
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    
     const data = await resp.json();
+    console.log('[noticias] Dados carregados, estrutura:', typeof data, Array.isArray(data) ? 'array' : 'objeto');
+    
     let noticias = Array.isArray(data) ? data : (data.noticias || []);
+    console.log('[noticias] Total de notícias:', noticias.length);
     
     if (uf && uf !== 'GERAL') {
       noticias = noticias.filter(n => (n.uf || '').toUpperCase() === uf || (n.source || '').toUpperCase().includes(uf));
+      console.log('[noticias] Após filtro por', uf, ':', noticias.length, 'notícias');
     }
     
     const recentes = noticias.slice(0, 20);
-    count.textContent = recentes.length + ' notícias';
-    status.textContent = '';
+    console.log('[noticias] Exibindo', recentes.length, 'notícias recentes');
+    
+    if (count) count.textContent = recentes.length + ' notícias';
+    if (status) status.textContent = '';
     
     if (recentes.length === 0) {
       container.innerHTML = '<div class="noticias-vazio"><i class="fa-solid fa-newspaper"></i> Nenhuma notícia encontrada.</div>';
@@ -532,10 +549,13 @@ async function nufSet(uf) {
         </article>
       `;
     }).join('');
+    
+    console.log('[noticias] Renderização concluída');
+    
   } catch (err) {
-    console.error('[noticias] Erro:', err);
-    status.textContent = 'Erro ao carregar notícias.';
-    container.innerHTML = '<div class="noticias-vazio noticias-erro"><i class="fa-solid fa-circle-exclamation"></i> Erro ao carregar notícias.</div>';
+    console.error('[noticias] ERRO ao carregar:', err);
+    if (status) status.textContent = 'Erro ao carregar notícias: ' + err.message;
+    container.innerHTML = '<div class="noticias-vazio noticias-erro"><i class="fa-solid fa-circle-exclamation"></i> Erro ao carregar notícias: ' + err.message + '</div>';
   }
 }
 
@@ -546,8 +566,11 @@ function ncarScroll(dir) {
 
 // Popular select de estados para notícias e carregar notícias quando DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('[home] DOMContentLoaded disparado');
+  
   const sel = document.getElementById('nf-uf');
   if (sel) {
+    console.log('[home] Populando select de estados para notícias');
     const ufs = ['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
     ufs.forEach(uf => {
       const opt = document.createElement('option');
@@ -555,10 +578,16 @@ document.addEventListener('DOMContentLoaded', function() {
       opt.textContent = uf;
       sel.appendChild(opt);
     });
+  } else {
+    console.warn('[home] Select #nf-uf não encontrado');
   }
+  
   // Carregar notícias nacionais por padrão
   if (typeof nufSet === 'function') {
+    console.log('[home] Chamando nufSet(GERAL)');
     nufSet('GERAL');
+  } else {
+    console.error('[home] ERRO: Função nufSet não definida');
   }
 });
 </script>
