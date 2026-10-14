@@ -386,45 +386,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
   <div class="prova"><b>+14.200</b><span>Assinaturas Validadas</span></div>
 
 
-<!-- ===== PESQUISA DE OPINIÃO 2º TURNO ===== -->
-<div class="wrap" style="margin-top:44px">
-  <div class="card" style="background:linear-gradient(180deg,var(--card),rgba(22,34,58,.6));border:1px solid var(--line);border-radius:18px;padding:22px">
-    <div style="text-align:center;margin-bottom:24px">
-      <span class="tag">📊 PESQUISA AO VIVO</span>
-      <h2 style="margin-top:14px">Lula vs Flavio — 2º Turno 2026</h2>
-      <p class="muted" style="margin-top:10px">Total de participantes: <b id="pesquisaTotal" style="color:var(--gold)">18.639</b> eleitores</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:800px;margin:0 auto">
-      <div style="text-align:center;padding:16px;background:rgba(13,34,66,.6);border-radius:12px">
-        <img src="https://raw.githubusercontent.com/Marinasantosrocha/fotos-candidatos2026/main/FBR280002542548_div.jpg" alt="Lula" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px;border:3px solid var(--green)">
-        <h3 style="font-size:16px;margin-bottom:8px">Lula</h3>
-        <p class="muted" style="font-size:12px;margin-bottom:8px">PT · Nº 13</p>
-        <div style="height:24px;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;margin:12px 0">
-          <div id="barLula" style="width:67%;height:100%;background:linear-gradient(90deg,var(--green),#00C853);border-radius:12px;transition:width .5s"></div>
-        </div>
-        <p style="font-size:24px;font-weight:900;color:var(--green)" id="pctLula">67%</p>
-        <p class="muted" style="font-size:11px">12.483 votos</p>
-      </div>
-      <div style="text-align:center;padding:16px;background:rgba(13,34,66,.6);border-radius:12px">
-        <img src="https://raw.githubusercontent.com/Marinasantosrocha/fotos-candidatos2026/main/FBR280002551544_div.jpg" alt="Flavio Bolsonaro" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px;border:3px solid var(--gold)">
-        <h3 style="font-size:16px;margin-bottom:8px">Flavio Bolsonaro</h3>
-        <p class="muted" style="font-size:12px;margin-bottom:8px">PL · Nº 22</p>
-        <div style="height:24px;background:rgba(0,0,0,.3);border-radius:12px;overflow:hidden;margin:12px 0">
-          <div id="barFlavio" style="width:33%;height:100%;background:linear-gradient(90deg,var(--gold),#FFA500);border-radius:12px;transition:width .5s"></div>
-        </div>
-        <p style="font-size:24px;font-weight:900;color:var(--gold)" id="pctFlavio">33%</p>
-        <p class="muted" style="font-size:11px">6.156 votos</p>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:20px">
-      <p class="muted" style="font-size:11px;max-width:600px;margin:0 auto">⚠️ <b>Aviso:</b> Estes são votos simulados dentro do MeuVoto — não substituem o resultado oficial do TSE. Dados atualizados em tempo real.</p>
-      <a href="pages/eleicoes-2026.html" class="btn gold" style="margin-top:16px;text-decoration:none;display:inline-flex">
-        <i class="fa-solid fa-check-to-slot"></i> Registrar Meu Voto
-      </a>
-    </div>
-  </div>
-</div>
-  <div class="prova"><b>38 PLs</b><span>Propostas Cívicas Ativas</span></div>
+<div class="prova"><b>38 PLs</b><span>Propostas Cívicas Ativas</span></div>
   <div class="prova"><b>45 Deputados</b><span>Parlamentares Apoiadores</span></div>
   <div class="prova"><b>100% Cívico</b><span>Independente e Transparente</span></div>
 </div>
@@ -439,6 +401,90 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
   </div>
   <div class="spot-grid" id="spotGrid"></div>
   <p class="spot-note">📊 Dados públicos do TSE (DivulgaCand) · <a href="pages/eleicoes-2026.html">ver todos os candidatos e filtros →</a><br>O MeuVoto é um protótipo cívico independente, sem vínculo com TSE, partidos ou candidatos.</p>
+</div>
+
+
+<!-- ===== PESQUISAS DE OPINIÃO 2º TURNO ===== -->
+<div class="wrap" style="margin-top:44px">
+  <div class="sec-head">
+    <span class="tag">PESQUISAS DE OPINIÃO</span>
+    <h2 style="margin-top:14px">Intenção de voto para o 2º turno</h2>
+  </div>
+  
+  <div class="disclaimer-pesquisa" style="background:rgba(255,215,0,0.1);border:1px solid var(--gold);border-radius:12px;padding:16px;margin-bottom:24px;text-align:center">
+    <i class="fa-solid fa-triangle-exclamation" style="color:var(--gold);font-size:20px;margin-bottom:8px;display:block"></i>
+    <strong style="color:var(--gold);display:block;margin-bottom:4px">ATENÇÃO: PESQUISA DE OPINIÃO</strong>
+    <p style="margin:0;font-size:13px;color:var(--text-muted)">Estes números NÃO representam votos reais, apenas intenções de voto apuradas por amostragem de institutos independentes.</p>
+  </div>
+
+  <div style="max-width:400px;margin:0 auto 24px">
+    <label for="seletor-pesquisa" style="display:block;margin-bottom:8px;font-weight:600">🔽 Selecione o instituto:</label>
+    <select id="seletor-pesquisa" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text-primary);font-size:14px">
+      <option value="datafolha">Datafolha (08/10/2026)</option>
+      <option value="quaest">Quaest (em breve)</option>
+      <option value="futura">Futura (13/10/2026)</option>
+      <option value="ipec">Ipec (em breve)</option>
+      <option value="gerp">Gerp (em breve)</option>
+      <option value="indexa">Indexa (em breve)</option>
+    </select>
+  </div>
+
+  <div id="pesquisa-card" style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;max-width:800px;margin:0 auto">
+    <div class="pesquisa-vazio">
+      <i class="fa-solid fa-chart-bar" style="font-size:32px;color:var(--gold);margin-bottom:12px;display:block"></i>
+      <p>Selecione um instituto acima para visualizar os dados da pesquisa.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GOVERNADORES 2º TURNO ===== -->
+<div class="wrap" style="margin-top:56px">
+  <div class="sec-head">
+    <span class="tag">ELEIÇÕES ESTADUAIS</span>
+    <h2 style="margin-top:14px">Governadores que vão para o 2º turno</h2>
+    <p style="margin-top:8px;color:var(--text-muted)">Selecione seu estado para ver os candidatos que disputam o 2º turno ou o governador eleito no 1º turno.</p>
+  </div>
+
+  <div style="max-width:400px;margin:0 auto 24px">
+    <label for="seletor-estado" style="display:block;margin-bottom:8px;font-weight:600">🔽 Selecione seu estado:</label>
+    <select id="seletor-estado" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text-primary);font-size:14px">
+      <option value="">-- Escolha um estado --</option>
+      <option value="AC">Acre (AC)</option>
+      <option value="AL">Alagoas (AL)</option>
+      <option value="AP">Amapá (AP)</option>
+      <option value="AM">Amazonas (AM)</option>
+      <option value="BA">Bahia (BA)</option>
+      <option value="CE">Ceará (CE)</option>
+      <option value="DF">Distrito Federal (DF)</option>
+      <option value="ES">Espírito Santo (ES)</option>
+      <option value="GO">Goiás (GO)</option>
+      <option value="MA">Maranhão (MA)</option>
+      <option value="MT">Mato Grosso (MT)</option>
+      <option value="MS">Mato Grosso do Sul (MS)</option>
+      <option value="MG">Minas Gerais (MG)</option>
+      <option value="PA">Pará (PA)</option>
+      <option value="PB">Paraíba (PB)</option>
+      <option value="PR">Paraná (PR)</option>
+      <option value="PE">Pernambuco (PE)</option>
+      <option value="PI">Piauí (PI)</option>
+      <option value="RJ">Rio de Janeiro (RJ)</option>
+      <option value="RN">Rio Grande do Norte (RN)</option>
+      <option value="RS">Rio Grande do Sul (RS)</option>
+      <option value="RO">Rondônia (RO)</option>
+      <option value="RR">Roraima (RR)</option>
+      <option value="SC">Santa Catarina (SC)</option>
+      <option value="SP">São Paulo (SP)</option>
+      <option value="SE">Sergipe (SE)</option>
+      <option value="TO">Tocantins (TO)</option>
+    </select>
+  </div>
+
+  <div id="estado-card" style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;max-width:800px;margin:0 auto">
+    <div class="pesquisa-vazio">
+      <i class="fa-solid fa-map-location-dot" style="font-size:32px;color:var(--gold);margin-bottom:12px;display:block"></i>
+      <p>Selecione um estado acima para visualizar os dados do governador.</p>
+    </div>
+  </div>
 </div>
 
 <div class="wrap">
@@ -1854,5 +1900,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+  <script src="js/home-2026.js?v=2" defer></script>
 </body>
 </html>
