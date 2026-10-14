@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <!-- og:meuvoto -->
@@ -250,19 +250,7 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 #mOnboard{display:none}.overlay.mOnboard{display:flex}
 
 
-/* ===== FAQ ACCORDION STYLES ===== */
-.faq-list{display:flex;flex-direction:column;gap:12px;margin:24px 0}
-.faq-item{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:all .3s ease}
-.faq-item:hover{border-color:rgba(255,215,0,.35)}
-.faq-question{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;user-select:none}
-.faq-question:hover{background:rgba(255,215,0,.05)}
-.faq-icon{font-size:20px;flex:none}
-.faq-question h3{font-size:15px;font-weight:700;margin:0;color:var(--ink)}
-.faq-answer{max-height:0;overflow:hidden;transition:max-height .3s ease}
-.faq-item.active .faq-answer{max-height:500px}
-.faq-item.active .faq-question{background:rgba(255,215,0,.08)}
-.faq-item.active .faq-icon{transform:rotate(180deg);transition:transform .3s ease}
-.faq-answer p{padding:0 20px 16px 44px;margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+
 
 /* ===== POLL ANIMATIONS ===== */
 @keyframes pulseBar{0%,100%{opacity:1}50%{opacity:.8}}
@@ -284,10 +272,6 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
   .exp .ic{width:38px;height:38px;font-size:16px}
   .exp h3{font-size:14px}
   .exp p{font-size:12px}
-  
-  .faq-question{padding:14px 16px}
-  .faq-question h3{font-size:14px}
-  .faq-answer p{padding:0 16px 14px 40px;font-size:13px}
   
   /* Poll cards on mobile */
   .card[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
@@ -566,34 +550,6 @@ footer{background:#08142e;border-top:1px solid var(--line);padding:44px 0 20px;m
 <div class="filtros" style="grid-template-columns:1fr"><input id="revBusca" placeholder="nome, numero, partido, estado…" oninput="renderRevogados()"/></div>
 <div id="revList" class="grid g2"></div>
 </div></section>
-<section class="sec" id="sec-ajuda"><div class="wrap" style="max-width:700px">
-<span class="kick">AJUDA</span><h2 style="margin:8px 0 14px">Perguntas frequentes</h2>
-<div class="faq-list">
-  <div class="faq-item">
-    <div class="faq-question"><span class="faq-icon">❓</span><h3>O que é o MeuVoto?</h3></div>
-    <div class="faq-answer"><p>Plataforma cívica independente que permite acompanhar votações, cobrar promessas e revogar a confiança de políticos que não cumpriram. Protótipo demonstrativo, sem valor jurídico.</p></div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-question"><span class="faq-icon">❓</span><h3>Como funciona o voto simulado?</h3></div>
-    <div class="faq-answer"><p>Você escolhe seus candidatos no App, e cada voto gera um código único de 20 dígitos — seu comprovante. Pode conferir a qualquer momento no site.</p></div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-question"><span class="faq-icon">❓</span><h3>Como revogar meu voto?</h3></div>
-    <div class="faq-answer"><p>Após a posse do eleito, você pode revogar a confiança se ele não cumprir promessas. O processo é simples: selecione o candidato, justifique e confirme.</p></div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-question"><span class="faq-icon">❓</span><h3>Os dados são reais?</h3></div>
-    <div class="faq-answer"><p>Sim! Fotos, nomes e partidos vêm do TSE. As fotos oficiais dos candidatos presidenciais foram verificadas: Lula (PT) SQ 280002542548 e Flavio Bolsonaro (PL) SQ 280002551544.</p></div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-question"><span class="faq-icon">❓</span><h3>Posso votar mais de uma vez?</h3></div>
-    <div class="faq-answer"><p>Sim! Você pode atualizar suas escolhas quantas vezes quiser, tanto no App quanto na plataforma web. Seu último voto é sempre mantido.</p></div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-question"><span class="faq-icon">❓</span><h3>Quem financia o projeto?</h3></div>
-    <div class="faq-answer"><p>O MeuVoto é financiado com recursos do Fundo Eleitoral, mantendo-se transparente e sem vínculo com partidos ou candidatos.</p></div>
-  </div>
-</div></div></section>
 <section class="sec" id="sec-quem"><div class="wrap" style="max-width:700px">
 <span class="kick">QUEM SOMOS</span><h2 style="margin:8px 0 14px">MeuVoto</h2>
 <div class="card"><p>Plataforma cívica de <b>revogação do voto</b> (protótipo demonstrativo, sem valor jurídico). O poder emana do povo — e não acaba no dia da eleição.</p>
@@ -699,7 +655,7 @@ function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';se
 (function(){const qv=new URLSearchParams(location.search);if(qv.has('verificado')){if(qv.get('verificado')==='1')toast('✅ E-mail confirmado! Selo de verificado ativado.');else toast('Falha na confirmação: '+(qv.get('erro')||'token inválido'));history.replaceState({},'',location.pathname)}})();
 /* FIX: âncoras vindas de outras páginas/app (#conferir-voto etc.) — antes caíam no topo da home sem abrir a seção */
 (function(){const h=location.hash.replace('#','');if(!h)return;
-const M={'conferir-voto':'conferir','revogar-voto':'revogar','revogados':'revogados','ajuda':'ajuda','quem-somos':'quem'};
+const M={'conferir-voto':'conferir','revogar-voto':'revogar','revogados':'revogados','quem-somos':'quem'};
 if(h==='congresso'||h==='radar'){location.replace('pages/parlamentares.html');return}
 if(M[h]){go(M[h]);history.replaceState({},'',location.pathname)}})();
 function fechar(id){document.getElementById(id).classList.remove('open')}
@@ -725,7 +681,7 @@ $$('#nav a').forEach(a=>a.onclick=()=>go(a.dataset.p));
 /* Deep-link: #conferir-voto, #radar, #revogados etc. abrem a seção direto
    (usado pelos menus das páginas internas: congresso, votações…) */
 (function(){
-  const mapa={'conferir-voto':'conferir','revogar-voto':'revogar','revogados':'revogados','ajuda':'ajuda','quem-somos':'quem','congresso':'inicio','voto':'revogar'};
+  const mapa={'conferir-voto':'conferir','revogar-voto':'revogar','revogados':'revogados','quem-somos':'quem','congresso':'inicio','voto':'revogar'};
   const h=(location.hash||'').replace('#','').split('?')[0];
   if(h==='radar'){location.replace('pages/parlamentares.html');return}
   if(mapa[h]!==undefined){setTimeout(()=>go(mapa[h]),50)}
@@ -1278,8 +1234,7 @@ $('#revList').innerHTML=l.map((p,i)=>{const pct=Math.round(p.rev/p.el*100);const
 <div class="muted">Elegeram: <b style="color:var(--ink)">${p.el}</b> · Revogados: <b style="color:var(--red)">${p.rev}</b></div>
 <div class="bar70"><i style="width:${Math.min(100,pct)}%;background:var(--red)"></i><span class="mk" style="left:70%"></span></div>
 <div class="muted">${pct}% dos 70% · ${falta>0?`faltam <b style="color:var(--gold)">${falta}</b>`:'<b style="color:var(--red)">atingiu 70% — cassação</b>'}</div></div>`}).join('')||'<p class="muted">Nada encontrado.</p>'}
-const FAQ=[['O que é simulação?','A votação/revogação não tem valor jurídico hoje. Notícias, políticos e PLs são reais.'],['Como revogo?','No site, com código + login, só após a posse.'],['Quem pode responder reclamações?','Só o político/candidato com identidade verificada (selo).'],['Posso anexar provas?','Sim — o formulário aceita anexos.'],['O que é a regra dos 70%?','Proposta: 70% dos votos que elegeram = cassação.']];
-$('#faqList').innerHTML=FAQ.map(f=>`<div class="card"><b>${f[0]}</b><p class="muted" style="margin:6px 0 0">${f[1]}</p></div>`).join('');
+
 let NUF_FILTRO='GERAL';
 let _newsRetry=0;
 window._NEWS=window._NEWS||[];
@@ -1723,44 +1678,6 @@ var n=0,tm=setInterval(function(){work();if(++n>60)clearInterval(tm);},400);
 window.addEventListener('load',function(){setTimeout(work,250);});
 })();
 </script>
-<section id="faq" style="max-width:900px;margin:60px auto;padding:0 20px">
-<h2 style="font-size:1.8em;margin-bottom:30px;color:#009739">Perguntas Frequentes</h2>
-<div style="display:grid;gap:16px">
-<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
-<summary style="font-weight:700;cursor:pointer;font-size:1.1em">1. Isso ja vale como voto oficial?</summary>
-<p style="margin-top:12px;line-height:1.6">N&#227;o. Somos um prot&#243;tipo demonstrativo. Votos s&#227;o simulados; o objetivo &#233; provar o conceito e pressionar por uma lei que torne a revoga&#231;&#227;o poss&#237;vel.</p>
-</details>
-<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
-<summary style="font-weight:700;cursor:pointer;font-size:1.1em">2. Quem audita meu voto?</summary>
-<p style="margin-top:12px;line-height:1.6">Voc&#234;. Cada voto gera um c&#243;digo de 20 d&#237;gitos que prova a voc&#234; mesmo que seu voto est&#225; &#237;ntegro, sem expor sua identidade.</p>
-</details>
-<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
-<summary style="font-weight:700;cursor:pointer;font-size:1.1em">3. E se houver fraude?</summary>
-<p style="margin-top:12px;line-height:1.6">A regra &#233; bin&#225;ria e explic&#225;vel: 70% dos votos que elegeram cassam o mandato. N&#227;o h&#225; medidor subjetivo. Todos os dados v&#234;m de fontes oficiais (TSE, C&#226;mara, Senado, Portal da Transpar&#234;ncia, CNJ).</p>
-</details>
-<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
-<summary style="font-weight:700;cursor:pointer;font-size:1.1em">4. Uma minoria nao vai ficar derrubando mandato?</summary>
-<p style="margin-top:12px;line-height:1.6">N&#227;o. S&#227;o 70% dos votos que <strong>elegeram</strong> o representante, n&#227;o 70% de qualquer universo. Se 100 mil elegeram, s&#227;o 70 mil desses 100 mil.</p>
-</details>
-<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
-<summary style="font-weight:700;cursor:pointer;font-size:1.1em">5. E se o politico for injusticado?</summary>
-<p style="margin-top:12px;line-height:1.6">O painel do pol&#237;tico garante direito de resposta p&#250;blico. Reclama&#231;&#245;es s&#227;o publicadas junto com as respostas. Devido processo &#233; pilar do sistema.</p>
-</details>
-<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
-<summary style="font-weight:700;cursor:pointer;font-size:1.1em">6. Quanto custa manter isso?</summary>
-<p style="margin-top:12px;line-height:1.6">Infraestrutura web commodity (GitHub Pages + Railway). Sem urna f&#237;sica, sem log&#237;stica de dia &#250;nico, sem mes&#225;rios.</p>
-</details>
-<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
-<summary style="font-weight:700;cursor:pointer;font-size:1.1em">7. Quem assume se o mandato for cassado?</summary>
-<p style="margin-top:12px;line-height:1.6">O pr&#243;ximo mais votado pelo povo, n&#227;o o suplente do partido. E quem perde o mandato por revoga&#231;&#227;o fica 8 anos ineleg&#237;vel (mesmo prazo da Ficha Limpa).</p>
-</details>
-<details style="background:#f8f9fa;border-radius:12px;padding:20px;border-left:4px solid #009739">
-<summary style="font-weight:700;cursor:pointer;font-size:1.1em">8. Meus dados pessoais sao vendidos?</summary>
-<p style="margin-top:12px;line-height:1.6">N&#227;o. Voto &#233; an&#244;nimo por desenho. Dados pessoais n&#227;o s&#227;o produto. N&#227;o vendemos dado, n&#227;o fazemos microtargeting.</p>
-</details>
-</div>
-<p style="margin-top:30px;text-align:center;font-size:0.9em;color:#6b7280">Todas as fontes citadas s&#227;o p&#250;blicas e verific&#225;veis: TSE, C&#226;mara dos Deputados, Senado Federal, Portal da Transpar&#234;ncia, CNJ.</p>
-</section>
 <script defer src="js/offline.js"></script>
 <script defer src="js/analytics.js"></script>
 
@@ -1846,50 +1763,6 @@ window.addEventListener('load',function(){setTimeout(work,250);});
   window.MeuVotoOnboarding={showEmptyState:showEmptyState};
 })();
 
-<script>
-/* ===== FAQ ACCORDION FUNCTIONALITY ===== */
-document.addEventListener('DOMContentLoaded', function() {
-  const faqItems = document.querySelectorAll('.faq-item');
-  
-  faqItems.forEach(item => {
-    const question = item.querySelector('.faq-question');
-    
-    question.addEventListener('click', function() {
-      // Toggle active class on current item
-      const isActive = item.classList.contains('active');
-      
-      // Close all items
-      faqItems.forEach(i => i.classList.remove('active'));
-      
-      // Open clicked item if it wasn't already active
-      if (!isActive) {
-        item.classList.add('active');
-      }
-    });
-  });
-});
-
-/* ===== POLL DATA UPDATE ===== */
-function updatePoll(lulaVotes, flavioVotes) {
-  const total = lulaVotes + flavioVotes;
-  const lulaPct = Math.round((lulaVotes / total) * 100);
-  const flavioPct = 100 - lulaPct;
-  
-  document.getElementById('barLula').style.width = lulaPct + '%';
-  document.getElementById('barFlavio').style.width = flavioPct + '%';
-  document.getElementById('pctLula').textContent = lulaPct + '%';
-  document.getElementById('pctFlavio').textContent = flavioPct + '%';
-  document.getElementById('pesquisaTotal').textContent = total.toLocaleString('pt-BR');
-}
-
-/* ===== MOBILE MENU TOGGLE ===== */
-function toggleMobileMenu() {
-  const nav = document.getElementById('mbtopo-nav');
-  if (nav) {
-    nav.classList.toggle('mobile-open');
-  }
-}
-</script>
 function abrirContato(){
   document.getElementById('contatoForm').style.display='block';
   document.getElementById('contatoOk').style.display='none';

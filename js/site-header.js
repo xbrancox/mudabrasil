@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    MEUVOTO — CABEÇALHO ÚNICO (todas as páginas)
    ------------------------------------------------------------
    Injeta o mesmo cabeçalho em qualquer página, com:
@@ -55,7 +55,6 @@
     { chave: 'links',     pagina: 'links.html',            rotulo: 'Hub' },
     { chave: 'conferir',  pagina: 'index.html#conferir-voto', rotulo: 'Conferir Voto' },
     { chave: 'revogar',   pagina: 'index.html#revogar-voto',  rotulo: 'Revogar Voto' },
-    { chave: 'ajuda',     pagina: 'index.html#ajuda',         rotulo: 'Ajuda' },
     { chave: 'quem',      pagina: 'index.html#quem-somos',    rotulo: 'Quem Somos' }
   ];
 
@@ -77,7 +76,7 @@
       var mapa = { 'parlamentares.html': 'radar', 'congresso.html': 'congresso', 'votacoes.html': 'votacoes', 'eleicoes-2026.html': 'eleicoes', 'fundo-eleitoral.html': 'eleicoes', 'links.html': 'links', 'iniciativa-cidada.html': 'iniciativa' };
       return mapa[arquivoAtual] || null;
     }
-    var mapaHash = { 'radar': 'radar', 'conferir-voto': 'conferir', 'revogar-voto': 'revogar', 'ajuda': 'ajuda', 'quem-somos': 'quem' };
+    var mapaHash = { 'radar': 'radar', 'conferir-voto': 'conferir', 'revogar-voto': 'revogar', 'quem-somos': 'quem' };
     if (hashAtual && mapaHash[hashAtual]) return mapaHash[hashAtual];
     return 'inicio';
   }
