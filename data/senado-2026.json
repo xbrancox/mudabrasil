@@ -1,0 +1,133 @@
+{
+  "eleicao": "Senado Federal",
+  "ano": 2026,
+  "total_vagas_disputadas": 54,
+  "data_totalizacao": "05/10/2026",
+  "mandato": "2027-2035",
+  "cadeiras_por_partido": [
+    { "partido": "PL", "cadeiras": 18 },
+    { "partido": "PT", "cadeiras": 5 },
+    { "partido": "PSD", "cadeiras": 5 },
+    { "partido": "MDB", "cadeiras": 5 },
+    { "partido": "Republicanos", "cadeiras": 3 },
+    { "partido": "PP", "cadeiras": 3 },
+    { "partido": "União", "cadeiras": 3 },
+    { "partido": "PSB", "cadeiras": 3 },
+    { "partido": "Novo", "cadeiras": 3 },
+    { "partido": "PSDB", "cadeiras": 2 },
+    { "partido": "Podemos", "cadeiras": 2 },
+    { "partido": "PDT", "cadeiras": 1 },
+    { "partido": "Rede", "cadeiras": 1 }
+  ],
+  "eleitos_por_estado": {
+    "AC": [
+      { "nome": "Marcio Bittar", "partido": "PL" },
+      { "nome": "Mara Rocha", "partido": "Republicanos" }
+    ],
+    "AL": [
+      { "nome": "Arthur Lira", "partido": "PP" },
+      { "nome": "Marina JHC", "partido": "PSDB" }
+    ],
+    "AM": [
+      { "nome": "Eduardo Braga", "partido": "MDB" },
+      { "nome": "Plínio Valério", "partido": "PSDB" }
+    ],
+    "AP": [
+      { "nome": "Rayssa Furlan", "partido": "Podemos" },
+      { "nome": "Lucas Barreto", "partido": "PSD" }
+    ],
+    "BA": [
+      { "nome": "Rui Costa", "partido": "PT" },
+      { "nome": "Jaques Wagner", "partido": "PT" }
+    ],
+    "CE": [
+      { "nome": "Cid Gomes", "partido": "PSB" },
+      { "nome": "Luizianne Lins", "partido": "Rede" }
+    ],
+    "DF": [
+      { "nome": "Michelle Bolsonaro", "partido": "PL" },
+      { "nome": "Bia Kicis", "partido": "PL" }
+    ],
+    "ES": [
+      { "nome": "Renato Casagrande", "partido": "PSB" },
+      { "nome": "Evair de Melo", "partido": "Republicanos" }
+    ],
+    "GO": [
+      { "nome": "Gustavo Gayer", "partido": "PL" },
+      { "nome": "Gracinha Caiado", "partido": "União" }
+    ],
+    "MA": [
+      { "nome": "André Fufuca", "partido": "PP" },
+      { "nome": "Lahesio Bonfim", "partido": "Novo" }
+    ],
+    "MG": [
+      { "nome": "Domingos Sávio", "partido": "PL" },
+      { "nome": "Marília Campos", "partido": "PT" }
+    ],
+    "MS": [
+      { "nome": "Reinaldo Azambuja", "partido": "PL" },
+      { "nome": "Capitão Contar", "partido": "PL" }
+    ],
+    "MT": [
+      { "nome": "Mauro Mendes", "partido": "União" },
+      { "nome": "Zé Medeiros", "partido": "PL" }
+    ],
+    "PA": [
+      { "nome": "Helder Barbalho", "partido": "MDB" },
+      { "nome": "Chicão", "partido": "União" }
+    ],
+    "PB": [
+      { "nome": "João Azevêdo", "partido": "PSB" },
+      { "nome": "Veneziano Vital do Rêgo", "partido": "MDB" }
+    ],
+    "PE": [
+      { "nome": "Humberto Costa", "partido": "PT" },
+      { "nome": "Marília Arraes", "partido": "PDT" }
+    ],
+    "PI": [
+      { "nome": "Marcelo Castro", "partido": "MDB" },
+      { "nome": "Júlio César", "partido": "PSD" }
+    ],
+    "PR": [
+      { "nome": "Filipe Barros", "partido": "PL" },
+      { "nome": "Deltan Dallagnol", "partido": "Novo" }
+    ],
+    "RJ": [
+      { "nome": "Carlos Portinho", "partido": "PL" },
+      { "nome": "Carlos Jordy", "partido": "PL" }
+    ],
+    "RN": [
+      { "nome": "Styvenson Valentim", "partido": "Podemos" },
+      { "nome": "Samanda de Lula", "partido": "PT" }
+    ],
+    "RO": [
+      { "nome": "Fernando Máximo", "partido": "PL" },
+      { "nome": "Bruno Scheid", "partido": "PL" }
+    ],
+    "RR": [
+      { "nome": "Nicoletti", "partido": "PL" },
+      { "nome": "Teresa Surita", "partido": "MDB" }
+    ],
+    "RS": [
+      { "nome": "Ubiratan Sanderson", "partido": "PL" },
+      { "nome": "Marcel Van Hattem", "partido": "Novo" }
+    ],
+    "SC": [
+      { "nome": "Carol de Toni", "partido": "PL" },
+      { "nome": "Carlos Bolsonaro", "partido": "PL" }
+    ],
+    "SE": [
+      { "nome": "Rogério Carvalho", "partido": "PT" },
+      { "nome": "Alessandro Vieira", "partido": "MDB" }
+    ],
+    "SP": [
+      { "nome": "Guilherme Derrite", "partido": "PP" },
+      { "nome": "André do Prado", "partido": "PL" }
+    ],
+    "TO": [
+      { "nome": "Eduardo Gomes", "partido": "PL" },
+      { "nome": "Alexandre Guimarães", "partido": "MDB" }
+    ]
+  },
+  "fonte": "Tribunal Superior Eleitoral (TSE) - Totalização Oficial e Agência Câmara (05/10/2026)"
+}

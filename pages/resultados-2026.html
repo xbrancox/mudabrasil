@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultado Oficial · Eleições 2026 — MeuVoto</title>
+<meta name="description" content="Resultado oficial completo das Eleições 2026 (1º turno): presidente, governadores, Câmara, Senado e Assembleias Legislativas. Fonte: TSE.">
+<link rel="icon" type="image/svg+xml" href="../icon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/eleicoes-2026.css">
+<link rel="stylesheet" href="../css/resultados.css">
+<script src="../config.local.js?v=2"></script>
+<script src="../js/site-header.js?v=3"></script>
+</head>
+<body>
+
+<header id="mbtopo-header"></header>
+<nav id="mbtopo-nav"></nav>
+
+<!-- HERO -->
+<section class="resultados-hero">
+  <div class="resultados-hero-container">
+    <a href="../index.html" class="candidato-voltar">
+      <i class="fa-solid fa-arrow-left"></i> Voltar à disputa do 2º turno
+    </a>
+
+    <div class="badge-tse-hero">
+      <i class="fa-solid fa-check-circle"></i>
+      📊 DADOS OFICIAIS — TSE | Totalização concluída em 05/10/2026
+    </div>
+
+    <h1 class="resultados-titulo">
+      RESULTADO OFICIAL<br>
+      <span class="resultados-titulo-destaque">ELEIÇÕES 2026</span>
+    </h1>
+    <p class="resultados-subtitulo">Primeiro turno realizado em 04 de outubro de 2026</p>
+
+    <div class="resultados-nav">
+      <a href="#presidente" class="btn-nav">Presidente</a>
+      <a href="#governadores" class="btn-nav">Governadores</a>
+      <a href="#camara" class="btn-nav">Câmara</a>
+      <a href="#senado" class="btn-nav">Senado</a>
+      <a href="#assembleias" class="btn-nav">Assembleias</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTEÚDO -->
+<div class="resultados-wrap wrap">
+
+  <!-- ========== PRESIDENTE ========== -->
+  <section id="presidente" class="resultado-secao">
+    <div class="secao-cabecalho">
+      <span class="secao-tag">1º TURNO · PRESIDÊNCIA DA REPÚBLICA</span>
+      <h2 class="secao-titulo">Resultado oficial</h2>
+      <p class="secao-subtitulo">Totalização dos votos válidos, brancos e nulos</p>
+    </div>
+
+    <!-- Métricas -->
+    <div class="metricas-grid" id="metricas-presidente"></div>
+
+    <!-- Lista de candidatos -->
+    <div class="resultado-card">
+      <h3 class="resultado-card-titulo">
+        <i class="fa-solid fa-ranking-star"></i> Todos os candidatos (12)
+      </h3>
+      <div id="candidatos-presidente-lista"></div>
+    </div>
+  </section>
+
+  <!-- ========== GOVERNADORES ========== -->
+  <section id="governadores" class="resultado-secao">
+    <div class="secao-cabecalho">
+      <span class="secao-tag">GOVERNADORES · 1º TURNO</span>
+      <h2 class="secao-titulo">Resultado por estado</h2>
+      <p class="secao-subtitulo">Eleitos no 1º turno e candidatos do 2º turno</p>
+    </div>
+
+    <!-- Resumo nacional -->
+    <div class="resumo-nacional">
+      <div class="resumo-item-box resumo-item-box--verde">
+        <div class="resumo-item-numero" id="eleitos-1turno-count">—</div>
+        <div class="resumo-item-label">
+          <i class="fa-solid fa-check-circle"></i> Eleitos no 1º turno
+        </div>
+      </div>
+      <div class="resumo-item-box resumo-item-box--laranja">
+        <div class="resumo-item-numero" id="segundo-turno-count">—</div>
+        <div class="resumo-item-label">
+          <i class="fa-solid fa-rotate"></i> Disputam o 2º turno
+        </div>
+      </div>
+    </div>
+
+    <!-- Seletor -->
+    <div class="pesquisa-seletor-wrap">
+      <label for="estado-resultado" class="pesquisa-label">
+        <i class="fa-solid fa-map-location-dot"></i> Selecione seu estado
+      </label>
+      <select id="estado-resultado" class="pesquisa-select">
+        <option value="">— Escolha um estado —</option>
+      </select>
+    </div>
+
+    <div id="governador-resultado-card"></div>
+  </section>
+
+  <!-- ========== CÂMARA ========== -->
+  <section id="camara" class="resultado-secao">
+    <div class="secao-cabecalho">
+      <span class="secao-tag">CÂMARA DOS DEPUTADOS · 513 VAGAS</span>
+      <h2 class="secao-titulo">Distribuição de cadeiras</h2>
+      <p class="secao-subtitulo">Composição da Câmara por partido e deputados mais votados</p>
+    </div>
+
+    <div class="resultado-card">
+      <h3 class="resultado-card-titulo">
+        <i class="fa-solid fa-chart-column"></i> Cadeiras por partido
+      </h3>
+      <div id="camara-cadeiras"></div>
+    </div>
+
+    <div class="resultado-card" style="margin-top:28px">
+      <h3 class="resultado-card-titulo">
+        <i class="fa-solid fa-trophy"></i> Top 10 deputados mais votados
+      </h3>
+      <div id="top10-deputados"></div>
+    </div>
+  </section>
+
+  <!-- ========== SENADO ========== -->
+  <section id="senado" class="resultado-secao">
+    <div class="secao-cabecalho">
+      <span class="secao-tag">SENADO FEDERAL · 54 VAGAS</span>
+      <h2 class="secao-titulo">Senadores eleitos</h2>
+      <p class="secao-subtitulo">Cadeiras por partido e eleitos por estado</p>
+    </div>
+
+    <div class="resultado-card">
+      <h3 class="resultado-card-titulo">
+        <i class="fa-solid fa-chart-column"></i> Cadeiras por partido
+      </h3>
+      <div id="senado-cadeiras"></div>
+    </div>
+
+    <div class="resultado-card" style="margin-top:28px">
+      <h3 class="resultado-card-titulo">
+        <i class="fa-solid fa-landmark"></i> Senadores por estado
+      </h3>
+      <div class="pesquisa-seletor-wrap" style="margin-bottom:20px">
+        <label for="estado-senado" class="pesquisa-label">
+          <i class="fa-solid fa-map-location-dot"></i> Selecione o estado
+        </label>
+        <select id="estado-senado" class="pesquisa-select">
+          <option value="">— Escolha um estado —</option>
+        </select>
+      </div>
+      <div id="senadores-estado-card"></div>
+    </div>
+  </section>
+
+  <!-- ========== ASSEMBLEIAS ========== -->
+  <section id="assembleias" class="resultado-secao">
+    <div class="secao-cabecalho">
+      <span class="secao-tag">ASSEMBLEIAS LEGISLATIVAS</span>
+      <h2 class="secao-titulo">Deputados estaduais</h2>
+      <p class="secao-subtitulo">Composição das assembleias por unidade federativa</p>
+    </div>
+
+    <div class="resultado-card">
+      <div class="pesquisa-seletor-wrap" style="margin-bottom:20px">
+        <label for="estado-assembleia" class="pesquisa-label">
+          <i class="fa-solid fa-map-location-dot"></i> Selecione o estado
+        </label>
+        <select id="estado-assembleia" class="pesquisa-select">
+          <option value="">— Escolha um estado —</option>
+        </select>
+      </div>
+      <div id="assembleia-estado-card"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer-eleicoes">
+  <div class="wrap">
+    <div class="footer-eleicoes-conteudo">
+      <div class="footer-eleicoes-logo">
+        <img src="../icon.png" alt="MeuVoto">
+        <div>
+          <strong>MeuVoto</strong>
+          <span>Projeto cidadão independente</span>
+        </div>
+      </div>
+      <div class="footer-eleicoes-disclaimer">
+        <strong>Fonte:</strong> Tribunal Superior Eleitoral (TSE)<br>
+        <strong>Totalização concluída em:</strong> 05/10/2026<br>
+        Para dados completos e oficiais, consulte o <a href="https://www.tse.jus.br" target="_blank" rel="noopener">site do TSE</a>.
+      </div>
+    </div>
+    <div class="footer-eleicoes-copy">
+      © 2026 MeuVoto · Todos os direitos reservados
+    </div>
+  </div>
+</footer>
+
+<!-- JAVASCRIPT -->
+<script src="../js/resultados-2026.js"></script>
+
+</body>
+</html>

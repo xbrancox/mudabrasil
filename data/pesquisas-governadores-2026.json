@@ -1,0 +1,39 @@
+{
+  "eleicao": "Governadores",
+  "turno": 2,
+  "data_segundo_turno": "25/10/2026",
+  "pesquisas": {
+    "ac": {
+      "estado": "Acre",
+      "disputa": "Mailza Assis (PP) × Alan Rick (Republicanos)",
+      "institutos": []
+    },
+    "am": {
+      "estado": "Amazonas",
+      "disputa": "Omar Aziz (PSD) × Professora Maria do Carmo (PL)",
+      "institutos": []
+    },
+    "df": {
+      "estado": "Distrito Federal",
+      "disputa": "Celina Leão (PP) × Leandro Grass (PT)",
+      "institutos": []
+    },
+    "es": {
+      "estado": "Espírito Santo",
+      "disputa": "Lorenzo Pazolini (Republicanos) × Ricardo Ferraço (MDB)",
+      "institutos": []
+    },
+    "rn": {
+      "estado": "Rio Grande do Norte",
+      "disputa": "Allyson Bezerra (União) × Cadu de Lula (PT)",
+      "institutos": []
+    },
+    "to": {
+      "estado": "Tocantins",
+      "disputa": "Professora Dorinha (União) × Vicentinho Júnior (PSDB)",
+      "institutos": []
+    }
+  },
+  "observacao": "Pesquisas estaduais do 2º turno estão sendo divulgadas ao longo da semana. Arquivo será atualizado conforme novos registros no TSE.",
+  "fonte": "Registros oficiais de pesquisas eleitorais no TSE"
+}

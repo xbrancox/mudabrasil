@@ -1,0 +1,194 @@
+{
+  "eleicao": "Governadores",
+  "turno": 1,
+  "data_totalizacao": "05/10/2026",
+  "data_segundo_turno": "25/10/2026",
+  "resumo": {
+    "eleitos_1_turno": 21,
+    "segundo_turno": 6,
+    "sub_judice": 2
+  },
+  "estados": {
+    "ac": {
+      "nome": "Acre",
+      "uf": "AC",
+      "situacao": "2º turno",
+      "candidatos_2turno": [
+        { "nome": "Mailza Assis", "partido": "PP", "numero": 11, "votos": null, "percentual": 49.0 },
+        { "nome": "Alan Rick", "partido": "Republicanos", "numero": 10, "votos": null, "percentual": null }
+      ]
+    },
+    "al": {
+      "nome": "Alagoas",
+      "uf": "AL",
+      "situacao": "1º turno",
+      "eleito": { "nome": "JHC", "nome_completo": "João Henrique Caldas", "partido": "PSDB", "numero": 45, "percentual": 52.0 }
+    },
+    "am": {
+      "nome": "Amazonas",
+      "uf": "AM",
+      "situacao": "2º turno",
+      "candidatos_2turno": [
+        { "nome": "Omar Aziz", "partido": "PSD", "numero": 55, "votos": null, "percentual": 40.0 },
+        { "nome": "Professora Maria do Carmo", "partido": "PL", "numero": 22, "votos": null, "percentual": null }
+      ]
+    },
+    "ap": {
+      "nome": "Amapá",
+      "uf": "AP",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Dr. Furlan", "nome_completo": "Dr. Furlan", "partido": "PSD", "numero": 55, "percentual": 62.0, "observacao": "Sub judice" }
+    },
+    "ba": {
+      "nome": "Bahia",
+      "uf": "BA",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Jerônimo Rodrigues", "partido": "PT", "numero": 13, "percentual": 55.0 }
+    },
+    "ce": {
+      "nome": "Ceará",
+      "uf": "CE",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Elmano de Freitas", "partido": "PT", "numero": 13, "percentual": 52.8 }
+    },
+    "df": {
+      "nome": "Distrito Federal",
+      "uf": "DF",
+      "situacao": "2º turno",
+      "candidatos_2turno": [
+        { "nome": "Celina Leão", "partido": "PP", "numero": 11, "votos": null, "percentual": 49.0 },
+        { "nome": "Leandro Grass", "partido": "PT", "numero": 13, "votos": null, "percentual": null }
+      ]
+    },
+    "es": {
+      "nome": "Espírito Santo",
+      "uf": "ES",
+      "situacao": "2º turno",
+      "candidatos_2turno": [
+        { "nome": "Lorenzo Pazolini", "partido": "Republicanos", "numero": 10, "votos": null, "percentual": 49.6 },
+        { "nome": "Ricardo Ferraço", "partido": "MDB", "numero": 15, "votos": null, "percentual": 34.0 }
+      ]
+    },
+    "go": {
+      "nome": "Goiás",
+      "uf": "GO",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Daniel Vilela", "partido": "MDB", "numero": 15, "percentual": 59.0 }
+    },
+    "ma": {
+      "nome": "Maranhão",
+      "uf": "MA",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Eduardo Braide", "partido": "PSD", "numero": 55, "percentual": 54.0 }
+    },
+    "mg": {
+      "nome": "Minas Gerais",
+      "uf": "MG",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Cleitinho Azevedo", "partido": "Republicanos", "numero": 10, "percentual": 55.0 }
+    },
+    "ms": {
+      "nome": "Mato Grosso do Sul",
+      "uf": "MS",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Eduardo Riedel", "partido": "PP", "numero": 11, "percentual": 67.0 }
+    },
+    "mt": {
+      "nome": "Mato Grosso",
+      "uf": "MT",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Otaviano Pivetta", "partido": "Republicanos", "numero": 10, "percentual": 60.0 }
+    },
+    "pa": {
+      "nome": "Pará",
+      "uf": "PA",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Dr. Daniel", "partido": "Podemos", "numero": 19, "percentual": 51.0 }
+    },
+    "pb": {
+      "nome": "Paraíba",
+      "uf": "PB",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Lucas Ribeiro", "partido": "PP", "numero": 11, "percentual": null, "observacao": "Reeleito" }
+    },
+    "pe": {
+      "nome": "Pernambuco",
+      "uf": "PE",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Raquel Lyra", "partido": "PSD", "numero": 55, "percentual": 53.0 }
+    },
+    "pi": {
+      "nome": "Piauí",
+      "uf": "PI",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Rafael Fonteles", "partido": "PT", "numero": 13, "percentual": 70.0 }
+    },
+    "pr": {
+      "nome": "Paraná",
+      "uf": "PR",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Sergio Moro", "partido": "PL", "numero": 22, "percentual": 50.1 }
+    },
+    "rj": {
+      "nome": "Rio de Janeiro",
+      "uf": "RJ",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Douglas Ruas", "partido": "PL", "numero": 22, "percentual": 50.88, "votos": 4271199, "observacao": "Eleito após anulação dos votos de Garotinho pelo TSE" }
+    },
+    "rn": {
+      "nome": "Rio Grande do Norte",
+      "uf": "RN",
+      "situacao": "2º turno",
+      "candidatos_2turno": [
+        { "nome": "Allyson Bezerra", "partido": "União", "numero": 44, "votos": null, "percentual": 36.0 },
+        { "nome": "Cadu de Lula", "partido": "PT", "numero": 13, "votos": null, "percentual": 36.0 }
+      ]
+    },
+    "ro": {
+      "nome": "Rondônia",
+      "uf": "RO",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Marcos Rogério", "partido": "PL", "numero": 22, "percentual": null }
+    },
+    "rr": {
+      "nome": "Roraima",
+      "uf": "RR",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Arthur Henrique", "partido": "PL", "numero": 22, "percentual": null, "observacao": "Sub judice" }
+    },
+    "rs": {
+      "nome": "Rio Grande do Sul",
+      "uf": "RS",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Zucco", "nome_completo": "Luciano Zucco", "partido": "PL", "numero": 22, "percentual": 58.0 }
+    },
+    "sc": {
+      "nome": "Santa Catarina",
+      "uf": "SC",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Jorginho Mello", "partido": "PL", "numero": 22, "percentual": 68.0 }
+    },
+    "se": {
+      "nome": "Sergipe",
+      "uf": "SE",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Fábio Mitidieri", "partido": "PSD", "numero": 55, "percentual": 60.0 }
+    },
+    "sp": {
+      "nome": "São Paulo",
+      "uf": "SP",
+      "situacao": "1º turno",
+      "eleito": { "nome": "Tarcísio de Freitas", "partido": "Republicanos", "numero": 10, "votos": 14490683, "percentual": 62.65 }
+    },
+    "to": {
+      "nome": "Tocantins",
+      "uf": "TO",
+      "situacao": "2º turno",
+      "candidatos_2turno": [
+        { "nome": "Professora Dorinha", "partido": "União", "numero": 44, "votos": null, "percentual": 45.0 },
+        { "nome": "Vicentinho Júnior", "partido": "PSDB", "numero": 45, "votos": null, "percentual": 43.0 }
+      ]
+    }
+  },
+  "fonte": "Tribunal Superior Eleitoral (TSE) - Totalização Oficial"
+}

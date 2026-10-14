@@ -1,389 +1,515 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<!-- og:meuvoto -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="MeuVoto / VotaBrasil">
-<meta property="og:title" content="MeuVoto / VotaBrasil — Eleições 2026 · 2º Turno · Dados Oficiais do TSE">
-<meta property="og:description" content="Acompanhe o 2º turno das Eleições 2026 com dados oficiais do TSE: Flávio Bolsonaro × Lula, pesquisas registradas e resultado completo por estado.">
-<meta property="og:image" content="https://meu-voto.app/og-image.png">
-<meta property="og:url" content="https://meu-voto.app/">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MeuVoto — Eleições 2026 · 2º Turno">
-<meta name="twitter:description" content="Acompanhe o 2º turno das Eleições 2026 com dados oficiais do TSE.">
-<meta name="twitter:image" content="https://meu-voto.app/og-image.png">
-<!-- /og:meuvoto -->
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>MeuVoto · 2º Turno 2026 — Flávio × Lula · Dados Oficiais</title>
-<meta name="description" content="2º turno das Eleições 2026: Flávio Bolsonaro (47,03%) × Lula (45,16%). Dados oficiais do TSE, pesquisas registradas e resultado completo por estado.">
-<link rel="canonical" href="https://meu-voto.app/">
-<link rel="icon" type="image/svg+xml" href="icon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="manifest" href="/manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="css/main.css">
-<link rel="stylesheet" href="css/eleicoes-2026.css">
-<script src="config.local.js?v=2"></script>
-<script src="js/site-header.js?v=3"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+  <!-- SEO & Open Graph -->
+  <title>MeuVoto · Eleições 2026 · 2º Turno · Dados Oficiais do TSE</title>
+  <meta name="description" content="Acompanhe o 2º turno das Eleições 2026 com dados oficiais do TSE: Flávio Bolsonaro × Lula, pesquisas registradas e resultado completo por estado.">
+  <link rel="canonical" href="https://meu-voto.app/">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MeuVoto / VotaBrasil">
+  <meta property="og:title" content="MeuVoto · Eleições 2026 · 2º Turno · Dados Oficiais">
+  <meta property="og:description" content="Acompanhe o 2º turno com dados oficiais do TSE: Flávio × Lula, pesquisas e resultados por estado.">
+  <meta property="og:image" content="https://meu-voto.app/og-image.png">
+  <meta property="og:url" content="https://meu-voto.app/">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MeuVoto · Eleições 2026 · 2º Turno">
+  <meta name="twitter:description" content="Acompanhe o 2º turno com dados oficiais do TSE.">
+  <meta name="twitter:image" content="https://meu-voto.app/og-image.png">
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/eleicoes-2026.css">
+  
+  <!-- Config -->
+  <script src="config.local.js?v=2"></script>
+  <script src="js/site-header.js?v=3"></script>
 </head>
+
 <body>
 
-<!-- HEADER e NAV injetados por site-header.js -->
+<!-- ===== HEADER (injetado por site-header.js) ===== -->
 <header id="mbtopo-header"></header>
 <nav id="mbtopo-nav"></nav>
 
 <main>
 
-<!-- ============================================================
-     HERO ORIGINAL (recuperado de af0dd3b)
-============================================================ -->
-<section id="sec-inicio">
-<div class="hero2">
-  <span class="turno"><span class="dot"></span> 2º Turno · Dia 25 de Outubro</span>
-  <h1>O poder emana do povo.<br><span class="hl">Não acaba no dia da eleição.</span></h1>
-  <div class="sub">Seu voto coloca. Seu voto tira.</div>
-  <p class="lead">Acompanhe a disputa presidencial com <b>dados oficiais do TSE</b>, veja pesquisas registradas, confira seu voto e revogue a confiança de quem descumprir.</p>
-  <div class="cta">
-    <a class="btn gold" href="pages/resultados-2026.html" style="text-decoration:none"><i class="fa-solid fa-flag-checkered"></i> Resultado do 1º Turno</a>
-    <a class="btn" href="#pesquisas" style="text-decoration:none"><i class="fa-solid fa-chart-line"></i> Pesquisas 2º Turno</a>
-    <a class="btn" href="#estados" style="text-decoration:none"><i class="fa-solid fa-map-location-dot"></i> Meu Estado</a>
-  </div>
-  <div class="trust">
-    <span class="badge" id="bVotos">6 votos simulados</span>
-    <span class="badge blue" id="bReais">dados TSE</span>
-    <span class="badge" id="bPls">30 PLs em análise</span>
-  </div>
-</div>
-
-<!-- ============================================================
-     FAIXA-RESUMO: 1º TURNO (OFICIAL TSE) — NOVO
-============================================================ -->
-<div class="wrap">
-  <div class="faixa-resumo">
-    <div class="faixa-resumo-badge badge-tse">
-      <i class="fa-solid fa-check-circle"></i>
-      1º TURNO — DADOS OFICIAIS DO TSE
+  <!-- ===== 1. HERO SECTION ===== -->
+  <section class="hero-eleicoes">
+    <div class="hero-container">
+      <span class="hero-badge-tse">
+        <i class="fa-solid fa-calendar-check"></i>
+        2º Turno · 25 de Outubro de 2026
+      </span>
+      
+      <h1 class="hero-titulo">
+        O poder emana do povo.<br>
+        <span class="hero-destaque">Não acaba no dia da eleição.</span>
+      </h1>
+      
+      <p class="hero-subtitulo">
+        Seu voto coloca. Seu voto tira. Acompanhe a disputa presidencial com dados oficiais do TSE.
+      </p>
+      
+      <div class="hero-cta">
+        <a href="pages/resultados-2026.html" class="btn btn-primary btn-lg">
+          <i class="fa-solid fa-flag-checkered"></i>
+          Resultado do 1º Turno
+        </a>
+        <a href="#pesquisas" class="btn btn-secondary btn-lg">
+          <i class="fa-solid fa-chart-line"></i>
+          Pesquisas 2º Turno
+        </a>
+        <a href="#estados" class="btn btn-secondary btn-lg">
+          <i class="fa-solid fa-map-location-dot"></i>
+          Meu Estado
+        </a>
+      </div>
+      
+      <div class="hero-trust">
+        <span class="badge badge-info">6 votos simulados</span>
+        <span class="badge badge-success">dados TSE</span>
+        <span class="badge badge-info">30 PLs em análise</span>
+      </div>
     </div>
-    <div class="faixa-resumo-conteudo">
-      <div class="faixa-candidato">
-        <div class="faixa-avatar" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6)">22</div>
+  </section>
+
+  <!-- ===== 2. FAIXA-RESUMO TSE ===== -->
+  <section class="faixa-resumo-section">
+    <div class="container">
+      <div class="faixa-resumo">
+        <div class="faixa-resumo-badge">
+          <i class="fa-solid fa-check-circle"></i>
+          <span>1º TURNO — DADOS OFICIAIS DO TSE</span>
+        </div>
+        
+        <div class="faixa-resumo-conteudo">
+          <div class="faixa-candidato">
+            <div class="faixa-avatar faixa-avatar-azul">22</div>
+            <div class="faixa-info">
+              <div class="faixa-nome">Flávio Bolsonaro</div>
+              <div class="faixa-partido">PL · Nº 22</div>
+            </div>
+            <div class="faixa-votos">47,03%</div>
+          </div>
+          
+          <div class="faixa-vs">VS</div>
+          
+          <div class="faixa-candidato">
+            <div class="faixa-avatar faixa-avatar-vermelho">13</div>
+            <div class="faixa-info">
+              <div class="faixa-nome">Lula</div>
+              <div class="faixa-partido">PT · Nº 13</div>
+            </div>
+            <div class="faixa-votos">45,16%</div>
+          </div>
+        </div>
+        
+        <a href="pages/resultados-2026.html" class="faixa-acao">
+          Ver resultado completo
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. PROVAS DE IMPACTO ===== -->
+  <section class="provas-impacto">
+    <div class="container">
+      <div class="provas-grid">
+        <div class="prova-card">
+          <div class="prova-valor">+14.200</div>
+          <div class="prova-label">Assinaturas Validadas</div>
+        </div>
+        <div class="prova-card">
+          <div class="prova-valor">38 PLs</div>
+          <div class="prova-label">Propostas Cívicas Ativas</div>
+        </div>
+        <div class="prova-card">
+          <div class="prova-valor">45 Deputados</div>
+          <div class="prova-label">Parlamentares Apoiadores</div>
+        </div>
+        <div class="prova-card">
+          <div class="prova-valor">100% Cívico</div>
+          <div class="prova-label">Independente e Transparente</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. CANDIDATOS DO 2º TURNO ===== -->
+  <section id="candidatos" class="secao">
+    <div class="container">
+      <div class="secao-cabecalho">
+        <span class="secao-tag">DISPUTA PRESIDENCIAL</span>
+        <h2 class="secao-titulo">Quem disputa o 2º turno</h2>
+        <p class="secao-subtitulo">Os dois candidatos mais votados no 1º turno — fotos oficiais do TSE</p>
+      </div>
+
+      <div class="candidatos-grid">
+        <!-- CARD FLÁVIO BOLSONARO -->
+        <article class="candidato-card candidato-azul">
+          <div class="candidato-numero">22</div>
+          <div class="candidato-avatar">
+            <img src="https://raw.githubusercontent.com/Marinasantosrocha/fotos-candidatos2026/main/FBR280002551544_div.jpg" 
+                 alt="Flávio Bolsonaro - Foto oficial TSE"
+                 class="candidato-foto"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="candidato-iniciais" style="display:none">FB</div>
+          </div>
+          <h3 class="candidato-nome">Flávio Bolsonaro</h3>
+          <p class="candidato-partido">PL · Partido Liberal</p>
+          <p class="candidato-cargo">Candidato à Presidência</p>
+
+          <div class="candidato-resumo">
+            <div class="resumo-item">
+              <span class="resumo-rotulo">1º turno:</span>
+              <span class="resumo-valor">47,03% · 56.104.503 votos</span>
+            </div>
+            <div class="resumo-item">
+              <span class="resumo-rotulo">Vice:</span>
+              <span class="resumo-valor">A definir</span>
+            </div>
+            <div class="resumo-item">
+              <span class="resumo-rotulo">Coligação:</span>
+              <span class="resumo-valor">PL / Republicanos / PP</span>
+            </div>
+          </div>
+
+          <div class="candidato-acoes">
+            <a href="pages/flavio-bolsonaro.html" class="btn btn-primary">
+              <i class="fa-solid fa-file-lines"></i> Ver propostas
+            </a>
+            <a href="pages/comparador.html" class="btn btn-secondary">
+              <i class="fa-solid fa-scale-balanced"></i> Comparar
+            </a>
+          </div>
+        </article>
+
+        <!-- CARD LULA -->
+        <article class="candidato-card candidato-vermelho">
+          <div class="candidato-numero">13</div>
+          <div class="candidato-avatar">
+            <img src="https://raw.githubusercontent.com/Marinasantosrocha/fotos-candidatos2026/main/FBR280002542548_div.jpg" 
+                 alt="Lula - Foto oficial TSE"
+                 class="candidato-foto"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="candidato-iniciais" style="display:none">L</div>
+          </div>
+          <h3 class="candidato-nome">Lula</h3>
+          <p class="candidato-partido">PT · Partido dos Trabalhadores</p>
+          <p class="candidato-cargo">Candidato à Presidência (reeleição)</p>
+
+          <div class="candidato-resumo">
+            <div class="resumo-item">
+              <span class="resumo-rotulo">1º turno:</span>
+              <span class="resumo-valor">45,16% · 53.879.538 votos</span>
+            </div>
+            <div class="resumo-item">
+              <span class="resumo-rotulo">Vice:</span>
+              <span class="resumo-valor">Geraldo Alckmin (PSB)</span>
+            </div>
+            <div class="resumo-item">
+              <span class="resumo-rotulo">Coligação:</span>
+              <span class="resumo-valor">PT / PSB / PCdoB / PV</span>
+            </div>
+          </div>
+
+          <div class="candidato-acoes">
+            <a href="pages/lula.html" class="btn btn-primary">
+              <i class="fa-solid fa-file-lines"></i> Ver propostas
+            </a>
+            <a href="pages/comparador.html" class="btn btn-secondary">
+              <i class="fa-solid fa-scale-balanced"></i> Comparar
+            </a>
+          </div>
+        </article>
+      </div>
+
+      <div class="cta-comparador">
+        <a href="pages/comparador.html" class="btn btn-primary btn-lg">
+          <i class="fa-solid fa-scale-balanced"></i>
+          Comparar os dois candidatos lado a lado
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5. PESQUISAS DE OPINIÃO ===== -->
+  <section id="pesquisas" class="secao secao-destaque">
+    <div class="container">
+      <div class="secao-cabecalho">
+        <span class="secao-tag">PESQUISAS DE OPINIÃO</span>
+        <h2 class="secao-titulo">Intenções de voto para o 2º turno</h2>
+        <p class="secao-subtitulo">Escolha o instituto para ver os números da pesquisa</p>
+      </div>
+
+      <div class="disclaimer-pesquisa">
+        <i class="fa-solid fa-triangle-exclamation"></i>
         <div>
-          <div class="faixa-nome">Flávio Bolsonaro</div>
-          <div class="faixa-partido">PL · Nº 22</div>
+          <strong>ATENÇÃO:</strong> Esta seção apresenta <strong>PESQUISAS DE OPINIÃO</strong> realizadas por institutos independentes e registradas no TSE. Estes números <strong>NÃO representam votos reais</strong>, apenas intenções de voto apuradas por amostragem.
         </div>
-        <div class="faixa-votos">47,03%</div>
       </div>
-      <div class="faixa-vs">VS</div>
-      <div class="faixa-candidato">
-        <div class="faixa-avatar" style="background:linear-gradient(135deg,#B91C1C,#EF4444)">13</div>
-        <div>
-          <div class="faixa-nome">Lula</div>
-          <div class="faixa-partido">PT · Nº 13</div>
-        </div>
-        <div class="faixa-votos">45,16%</div>
+
+      <div class="pesquisa-seletor">
+        <label for="seletor-pesquisa" class="pesquisa-label">
+          <i class="fa-solid fa-building-columns"></i> Selecione o instituto
+        </label>
+        <select id="seletor-pesquisa" class="pesquisa-select">
+          <option value="datafolha">Datafolha · 08/10/2026</option>
+          <option value="quaest">Quaest · 14/10/2026</option>
+          <option value="futura">Futura · 13/10/2026</option>
+          <option value="ipec">Ipec · em breve</option>
+          <option value="gerp">Gerp · 13/10/2026</option>
+          <option value="indexa">Indexa/Broadcast · 11/10/2026</option>
+        </select>
       </div>
-    </div>
-    <div class="faixa-acao">
-      <a href="pages/resultados-2026.html" class="btn-faixa">
-        Ver resultado completo <i class="fa-solid fa-arrow-right"></i>
-      </a>
-    </div>
-  </div>
-</div>
 
-<!-- ============================================================
-     PROVAS DE IMPACTO (recuperado)
-============================================================ -->
-<div class="provas">
-  <div class="prova"><b>+14.200</b><span>Assinaturas Validadas</span></div>
-  <div class="prova"><b>38 PLs</b><span>Propostas Cívicas Ativas</span></div>
-  <div class="prova"><b>45 Deputados</b><span>Parlamentares Apoiadores</span></div>
-  <div class="prova"><b>100% Cívico</b><span>Independente e Transparente</span></div>
-</div>
-
-<!-- ============================================================
-     CANDIDATOS DO 2º TURNO (com fotos oficiais TSE) — NOVO
-============================================================ -->
-<section id="candidatos" class="secao">
-  <div class="wrap">
-    <div class="secao-cabecalho">
-      <span class="secao-tag">DISPUTA PRESIDENCIAL</span>
-      <h2 class="secao-titulo">Quem disputa o 2º turno</h2>
-      <p class="secao-subtitulo">Os dois candidatos mais votados no 1º turno — fotos oficiais do TSE</p>
-    </div>
-
-    <div class="candidatos-grid">
-      <!-- CARD FLÁVIO BOLSONARO -->
-      <article class="candidato-card candidato-card--azul">
-        <div class="candidato-card__numero">22</div>
-        <div class="candidato-card__avatar">
-          <img src="https://raw.githubusercontent.com/Marinasantosrocha/fotos-candidatos2026/main/FBR280002551544_div.jpg" 
-               alt="Flávio Bolsonaro - Foto oficial TSE"
-               class="candidato-card__foto"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-          <div class="candidato-card__avatar-iniciais" style="background:linear-gradient(135deg,#1E3A8A,#3B82F6);display:none">FB</div>
-        </div>
-        <h3 class="candidato-card__nome">Flávio Bolsonaro</h3>
-        <p class="candidato-card__partido">PL · Partido Liberal</p>
-        <p class="candidato-card__cargo">Candidato à Presidência</p>
-
-        <div class="candidato-card__resumo">
-          <div class="resumo-item">
-            <span class="resumo-rotulo">1º turno:</span>
-            <span class="resumo-valor">47,03% · 56.104.503 votos</span>
-          </div>
-          <div class="resumo-item">
-            <span class="resumo-rotulo">Vice:</span>
-            <span class="resumo-valor">A definir</span>
-          </div>
-          <div class="resumo-item">
-            <span class="resumo-rotulo">Coligação:</span>
-            <span class="resumo-valor">PL / Republicanos / PP</span>
-          </div>
-        </div>
-
-        <div class="candidato-card__acoes">
-          <a href="pages/flavio-bolsonaro.html" class="btn-card btn-card--primario">
-            <i class="fa-solid fa-file-lines"></i> Ver propostas
-          </a>
-          <a href="pages/comparador.html" class="btn-card btn-card--secundario">
-            <i class="fa-solid fa-scale-balanced"></i> Comparar
-          </a>
-        </div>
-      </article>
-
-      <!-- CARD LULA -->
-      <article class="candidato-card candidato-card--vermelho">
-        <div class="candidato-card__numero">13</div>
-        <div class="candidato-card__avatar">
-          <img src="https://raw.githubusercontent.com/Marinasantosrocha/fotos-candidatos2026/main/FBR280002542548_div.jpg" 
-               alt="Lula - Foto oficial TSE"
-               class="candidato-card__foto"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-          <div class="candidato-card__avatar-iniciais" style="background:linear-gradient(135deg,#B91C1C,#EF4444);display:none">L</div>
-        </div>
-        <h3 class="candidato-card__nome">Lula</h3>
-        <p class="candidato-card__partido">PT · Partido dos Trabalhadores</p>
-        <p class="candidato-card__cargo">Candidato à Presidência (reeleição)</p>
-
-        <div class="candidato-card__resumo">
-          <div class="resumo-item">
-            <span class="resumo-rotulo">1º turno:</span>
-            <span class="resumo-valor">45,16% · 53.879.538 votos</span>
-          </div>
-          <div class="resumo-item">
-            <span class="resumo-rotulo">Vice:</span>
-            <span class="resumo-valor">Geraldo Alckmin (PSB)</span>
-          </div>
-          <div class="resumo-item">
-            <span class="resumo-rotulo">Coligação:</span>
-            <span class="resumo-valor">PT / PSB / PCdoB / PV</span>
-          </div>
-        </div>
-
-        <div class="candidato-card__acoes">
-          <a href="pages/lula.html" class="btn-card btn-card--primario">
-            <i class="fa-solid fa-file-lines"></i> Ver propostas
-          </a>
-          <a href="pages/comparador.html" class="btn-card btn-card--secundario">
-            <i class="fa-solid fa-scale-balanced"></i> Comparar
-          </a>
-        </div>
-      </article>
-    </div>
-
-    <div class="cta-comparador">
-      <a href="pages/comparador.html" class="btn-comparador-grande">
-        <i class="fa-solid fa-scale-balanced"></i>
-        Comparar os dois candidatos lado a lado
-        <i class="fa-solid fa-arrow-right"></i>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     PESQUISAS DE OPINIÃO DO 2º TURNO — NOVO
-============================================================ -->
-<section id="pesquisas" class="secao secao--alternativa">
-  <div class="wrap">
-    <div class="secao-cabecalho">
-      <span class="secao-tag">PESQUISAS DE OPINIÃO</span>
-      <h2 class="secao-titulo">Intenções de voto para o 2º turno</h2>
-      <p class="secao-subtitulo">Escolha o instituto para ver os números da pesquisa</p>
-    </div>
-
-    <div class="disclaimer-pesquisa">
-      <i class="fa-solid fa-triangle-exclamation"></i>
-      <div>
-        <strong>ATENÇÃO:</strong> Esta seção apresenta <strong>PESQUISAS DE OPINIÃO</strong> realizadas por institutos independentes e registradas no TSE. Estes números <strong>NÃO representam votos reais</strong>, apenas intenções de voto apuradas por amostragem.
+      <div id="pesquisa-card" class="pesquisa-card">
+        <!-- Preenchido via JS -->
       </div>
     </div>
+  </section>
 
-    <div class="pesquisa-seletor-wrap">
-      <label for="seletor-pesquisa" class="pesquisa-label">
-        <i class="fa-solid fa-building-columns"></i> Selecione o instituto
-      </label>
-      <select id="seletor-pesquisa" class="pesquisa-select">
-        <option value="datafolha">Datafolha · 08/10/2026</option>
-        <option value="quaest">Quaest · 14/10/2026</option>
-        <option value="futura">Futura · 13/10/2026</option>
-        <option value="ipec">Ipec · em breve</option>
-        <option value="gerp">Gerp · 13/10/2026</option>
-        <option value="indexa">Indexa/Broadcast · 11/10/2026</option>
-      </select>
-    </div>
+  <!-- ===== 6. GOVERNADORES POR ESTADO ===== -->
+  <section id="estados" class="secao">
+    <div class="container">
+      <div class="secao-cabecalho">
+        <span class="secao-tag">GOVERNADORES</span>
+        <h2 class="secao-titulo">Quem governa seu estado?</h2>
+        <p class="secao-subtitulo">Selecione seu estado para ver quem foi eleito ou quem disputa o 2º turno</p>
+      </div>
 
-    <div id="pesquisa-card" class="pesquisa-card">
-      <!-- Preenchido via JS -->
-    </div>
-  </div>
-</section>
+      <div class="pesquisa-seletor">
+        <label for="seletor-estado" class="pesquisa-label">
+          <i class="fa-solid fa-map-location-dot"></i> Selecione seu estado
+        </label>
+        <select id="seletor-estado" class="pesquisa-select">
+          <option value="">— Escolha um estado —</option>
+        </select>
+      </div>
 
-<!-- ============================================================
-     GOVERNADORES POR ESTADO — NOVO
-============================================================ -->
-<section id="estados" class="secao">
-  <div class="wrap">
-    <div class="secao-cabecalho">
-      <span class="secao-tag">GOVERNADORES</span>
-      <h2 class="secao-titulo">Quem governa seu estado?</h2>
-      <p class="secao-subtitulo">Selecione seu estado para ver quem foi eleito ou quem disputa o 2º turno</p>
-    </div>
-
-    <div class="pesquisa-seletor-wrap">
-      <label for="seletor-estado" class="pesquisa-label">
-        <i class="fa-solid fa-map-location-dot"></i> Selecione seu estado
-      </label>
-      <select id="seletor-estado" class="pesquisa-select">
-        <option value="">— Escolha um estado —</option>
-      </select>
-    </div>
-
-    <div id="estado-card" class="estado-card">
-      <div class="estado-placeholder">
-        <i class="fa-solid fa-hand-pointer"></i>
-        <p>Selecione um estado acima para ver os resultados e pesquisas</p>
+      <div id="estado-card" class="estado-card">
+        <div class="estado-placeholder">
+          <i class="fa-solid fa-hand-pointer"></i>
+          <p>Selecione um estado acima para ver os resultados e pesquisas</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ============================================================
-     COMO FUNCIONA (recuperado)
-============================================================ -->
-<div class="wrap">
-  <div class="sec-head" style="margin-top:56px"><span class="tag">COMO FUNCIONA</span><h2 style="margin-top:14px">Três passos, zero burocracia</h2></div>
-  <div class="steps">
-    <div class="step"><div class="n" style="background:var(--green)">1</div><h3>Escolha no app</h3><p class="muted">Escolha seus candidatos, vote com total segurança.</p></div>
-    <div class="step"><div class="n" style="background:var(--blue)">2</div><h3>Guarde o código</h3><p class="muted">Cada voto gera um código de 20 dígitos. É o seu comprovante.</p></div>
-    <div class="step"><div class="n" style="background:var(--gold);color:#1a1400">3</div><h3>Confira aqui</h3><p class="muted">No site, você cola o código e confere em quem votou.</p></div>
-  </div>
-</div>
+  <!-- ===== 7. COMO FUNCIONA ===== -->
+  <section class="secao">
+    <div class="container">
+      <div class="secao-cabecalho">
+        <span class="secao-tag">COMO FUNCIONA</span>
+        <h2 class="secao-titulo">Três passos, zero burocracia</h2>
+      </div>
 
-<!-- ============================================================
-     EXPLORE O MEUVOTO (recuperado)
-============================================================ -->
-<div class="wrap">
-  <div class="sec-head" style="margin-top:56px"><h2>Explore o MeuVoto</h2><p>Tudo o que você precisa para uma participação cívica informada e ativa.</p></div>
-  <div class="explore">
-    <div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-solid fa-vote-yea"></i></div><h3>Radar Político</h3><p>Promessas, votações e histórico dos candidatos.</p><a href="pages/parlamentares.html">Acessar</a></div>
-    <div class="exp"><div class="ic" style="background:rgba(59,130,246,.15);color:var(--blueL)"><i class="fa-solid fa-file-lines"></i></div><h3>Congresso</h3><p>PLs em tramitação e votações nominais.</p><a href="pages/congresso.html">Ir</a></div>
-    <div class="exp"><div class="ic" style="background:rgba(255,215,0,.15);color:var(--gold)"><i class="fa-solid fa-check"></i></div><h3>Conferir Voto</h3><p>Seu voto, seu comprovante.</p><a href="#conferir-voto">Verificar</a></div>
-    <div class="exp"><div class="ic" style="background:rgba(231,76,60,.15);color:var(--red)"><i class="fa-solid fa-eraser"></i></div><h3>Revogar Voto</h3><p>Revogue políticos que não cumpriram.</p><a href="#revogar-voto" style="color:var(--red)">Revogar</a></div>
-    <div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-balance-scale"></i></div><h3>Comparar</h3><p>Compare políticos lado a lado.</p><a href="pages/parlamentares.html">Comparar</a></div>
-    <div class="exp"><div class="ic" style="background:rgba(46,204,113,.15);color:var(--green)"><i class="fa-solid fa-sack-dollar"></i></div><h3>Fundo Eleitoral</h3><p>Quanto cada partido recebeu do TSE.</p><a href="pages/fundo-eleitoral.html">Ver</a></div>
-  </div>
-</div>
-
-<!-- ============================================================
-     NOTÍCIAS (recuperado)
-============================================================ -->
-<div style="margin-top:40px" class="wrap">
-  <h2 style="margin-top:0">Notícias do Congresso e da política</h2>
-  <p class="muted">Só política, direto das fontes oficiais e da grande imprensa — <b>com os devidos créditos</b>. Filtre por Geral (nacional), Brasil ou qualquer um dos 27 estados.</p>
-  <div class="nbar">
-    <button class="npill on" id="nf-geral" onclick="nufSet('GERAL')">Notícias Nacionais</button>
-    <select id="nf-uf" class="nsel" onchange="nufSet(this.value||'GERAL')" aria-label="Selecione seu estado">
-      <option value="">Estado</option>
-    </select>
-    <span class="nct" id="nf-count"></span>
-  </div>
-  <div class="ncar-wrap">
-    <button class="ncar-btn" onclick="ncarScroll(-1)" aria-label="Anteriores">‹</button>
-    <div class="ncar" id="homeNews"></div>
-    <button class="ncar-btn" onclick="ncarScroll(1)" aria-label="Próximas">›</button>
-  </div>
-  <div id="nstatus" class="muted" style="font-size:12px;margin-top:8px">Carregando notícias…</div>
-</div>
-
-<!-- ============================================================
-     CONFERIR VOTO (recuperado)
-============================================================ -->
-<section id="conferir-voto" class="sec" style="padding:40px 0 70px">
-  <div class="wrap" style="max-width:640px">
-    <span class="kick">CONFERIR VOTO</span>
-    <h2 style="margin:8px 0 6px">Conferir voto</h2>
-    <p class="muted">Local onde você prova que seu voto existe e confirma em quem realmente votou.</p>
-    <div class="card" style="margin-top:18px">
-      <label class="muted">Cole seu código de verificação</label>
-      <input id="chk" placeholder="0000 0000 0000 0000 0000" style="text-align:center;letter-spacing:2px;margin:10px 0"/>
-      <button class="btn gold" style="width:100%" onclick="conferir()"><i class="fa-solid fa-magnifying-glass"></i> Conferir</button>
-      <button class="btn sm" style="width:100%;margin-top:8px" onclick="usarDemo()">Testar com um exemplo</button>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-numero step-verde">1</div>
+          <h3>Escolha no app</h3>
+          <p>Escolha seus candidatos, vote com total segurança.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-numero step-azul">2</div>
+          <h3>Guarde o código</h3>
+          <p>Cada voto gera um código de 20 dígitos. É o seu comprovante.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-numero step-dourado">3</div>
+          <h3>Confira aqui</h3>
+          <p>No site, você cola o código e confere em quem votou.</p>
+        </div>
+      </div>
     </div>
-    <div id="chkRes"></div>
-  </div>
-</section>
+  </section>
 
-<!-- ============================================================
-     REVOGAR VOTO (recuperado)
-============================================================ -->
-<section id="revogar-voto" class="sec" style="padding:40px 0 70px">
-  <div class="wrap" style="max-width:640px">
-    <span class="kick" style="color:var(--red)">REVOGAR VOTO</span>
-    <h2 style="margin:8px 0 6px">Não cumpriu? Revogue.</h2>
-    <p class="muted">A revogação abre <b>a partir da posse</b> e fica aberta durante o mandato.</p>
-    <div class="card" style="margin-top:18px">
-      <p class="muted"><i class="fa-solid fa-lock" style="color:var(--red)"></i> Janela travada até a posse. Cole seu código no <b>Conferir Voto</b>.</p>
-      <button class="btn red" style="width:100%" onclick="document.getElementById('conferir-voto').scrollIntoView({behavior:'smooth'})">Ir para Conferir Voto</button>
-    </div>
-  </div>
-</section>
+  <!-- ===== 8. EXPLORE O MEUVOTO ===== -->
+  <section class="secao">
+    <div class="container">
+      <div class="secao-cabecalho">
+        <h2 class="secao-titulo">Explore o MeuVoto</h2>
+        <p class="secao-subtitulo">Tudo o que você precisa para uma participação cívica informada e ativa</p>
+      </div>
 
-<!-- ============================================================
-     QUEM SOMOS (recuperado)
-============================================================ -->
-<section id="quem-somos" class="sec" style="padding:40px 0 70px">
-  <div class="wrap" style="max-width:700px">
-    <span class="kick">QUEM SOMOS</span>
-    <h2 style="margin:8px 0 14px">MeuVoto</h2>
-    <div class="card">
-      <p>Plataforma cívica de <b>revogação do voto</b> (protótipo demonstrativo, sem valor jurídico). O poder emana do povo — e não acaba no dia da eleição.</p>
-      <p style="color:var(--gold);font-weight:800">"Meu voto coloca, meu voto tira."</p>
+      <div class="explore-grid">
+        <div class="explore-card">
+          <div class="explore-icon explore-icon-dourado">
+            <i class="fa-solid fa-vote-yea"></i>
+          </div>
+          <h3>Radar Político</h3>
+          <p>Promessas, votações e histórico dos candidatos.</p>
+          <a href="pages/parlamentares.html" class="explore-link">Acessar</a>
+        </div>
+
+        <div class="explore-card">
+          <div class="explore-icon explore-icon-azul">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <h3>Congresso</h3>
+          <p>PLs em tramitação e votações nominais.</p>
+          <a href="pages/congresso.html" class="explore-link">Ir</a>
+        </div>
+
+        <div class="explore-card">
+          <div class="explore-icon explore-icon-dourado">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <h3>Conferir Voto</h3>
+          <p>Seu voto, seu comprovante.</p>
+          <a href="#conferir-voto" class="explore-link">Verificar</a>
+        </div>
+
+        <div class="explore-card">
+          <div class="explore-icon explore-icon-vermelho">
+            <i class="fa-solid fa-eraser"></i>
+          </div>
+          <h3>Revogar Voto</h3>
+          <p>Revogue políticos que não cumpriram.</p>
+          <a href="#revogar-voto" class="explore-link explore-link-vermelho">Revogar</a>
+        </div>
+
+        <div class="explore-card">
+          <div class="explore-icon explore-icon-verde">
+            <i class="fa-solid fa-balance-scale"></i>
+          </div>
+          <h3>Comparar</h3>
+          <p>Compare políticos lado a lado.</p>
+          <a href="pages/parlamentares.html" class="explore-link">Comparar</a>
+        </div>
+
+        <div class="explore-card">
+          <div class="explore-icon explore-icon-verde">
+            <i class="fa-solid fa-sack-dollar"></i>
+          </div>
+          <h3>Fundo Eleitoral</h3>
+          <p>Quanto cada partido recebeu do TSE.</p>
+          <a href="pages/fundo-eleitoral.html" class="explore-link">Ver</a>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- ===== 9. NOTÍCIAS ===== -->
+  <section class="secao">
+    <div class="container">
+      <div class="secao-cabecalho">
+        <h2 class="secao-titulo">Notícias do Congresso e da política</h2>
+        <p class="secao-subtitulo">Só política, direto das fontes oficiais e da grande imprensa — com os devidos créditos</p>
+      </div>
+
+      <div class="noticias-bar">
+        <button class="noticias-pill noticias-pill-ativo" id="nf-geral" onclick="nufSet('GERAL')">Notícias Nacionais</button>
+        <select id="nf-uf" class="noticias-select" onchange="nufSet(this.value||'GERAL')" aria-label="Selecione seu estado">
+          <option value="">Estado</option>
+        </select>
+        <span class="noticias-contador" id="nf-count"></span>
+      </div>
+
+      <div class="noticias-wrapper">
+        <button class="noticias-btn" onclick="ncarScroll(-1)" aria-label="Anteriores">‹</button>
+        <div class="noticias-carrossel" id="homeNews"></div>
+        <button class="noticias-btn" onclick="ncarScroll(1)" aria-label="Próximas">›</button>
+      </div>
+
+      <div id="nstatus" class="noticias-status">Carregando notícias…</div>
+    </div>
+  </section>
+
+  <!-- ===== 10. CONFERIR VOTO ===== -->
+  <section id="conferir-voto" class="secao secao-compacta">
+    <div class="container container-compacto">
+      <div class="secao-cabecalho">
+        <span class="secao-tag">CONFERIR VOTO</span>
+        <h2 class="secao-titulo">Conferir voto</h2>
+        <p class="secao-subtitulo">Local onde você prova que seu voto existe e confirma em quem realmente votou</p>
+      </div>
+
+      <div class="card-voto">
+        <label class="voto-label">Cole seu código de verificação</label>
+        <input id="chk" class="voto-input" placeholder="0000 0000 0000 0000 0000">
+        <button class="btn btn-primary btn-block" onclick="conferir()">
+          <i class="fa-solid fa-magnifying-glass"></i> Conferir
+        </button>
+        <button class="btn btn-secondary btn-block" onclick="usarDemo()">Testar com um exemplo</button>
+      </div>
+      <div id="chkRes"></div>
+    </div>
+  </section>
+
+  <!-- ===== 11. REVOGAR VOTO ===== -->
+  <section id="revogar-voto" class="secao secao-compacta">
+    <div class="container container-compacto">
+      <div class="secao-cabecalho">
+        <span class="secao-tag secao-tag-vermelho">REVOGAR VOTO</span>
+        <h2 class="secao-titulo">Não cumpriu? Revogue.</h2>
+        <p class="secao-subtitulo">A revogação abre a partir da posse e fica aberta durante o mandato</p>
+      </div>
+
+      <div class="card-voto card-voto-aviso">
+        <p>
+          <i class="fa-solid fa-lock"></i>
+          Janela travada até a posse. Cole seu código no <strong>Conferir Voto</strong>.
+        </p>
+        <button class="btn btn-danger btn-block" onclick="document.getElementById('conferir-voto').scrollIntoView({behavior:'smooth'})">
+          Ir para Conferir Voto
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 12. QUEM SOMOS ===== -->
+  <section id="quem-somos" class="secao secao-compacta">
+    <div class="container container-compacto">
+      <div class="secao-cabecalho">
+        <span class="secao-tag">QUEM SOMOS</span>
+        <h2 class="secao-titulo">MeuVoto</h2>
+      </div>
+
+      <div class="card-quem-somos">
+        <p>Plataforma cívica de <strong>revogação do voto</strong> (protótipo demonstrativo, sem valor jurídico). O poder emana do povo — e não acaba no dia da eleição.</p>
+        <p class="destaque-dourado">"Meu voto coloca, meu voto tira."</p>
+      </div>
+    </div>
+  </section>
 
 </main>
 
-<!-- ============================================================
-     FOOTER
-============================================================ -->
-<footer>
-  <div class="wrap">
-    <div class="ft">
-      <div>
-        <div class="lg">
-          <div class="ic"><img src="assets/logo/header-icon-48.png" alt="MeuVoto" width="48" height="48" style="border-radius:12px;object-fit:contain;display:block"></div>
-          <b>MeuVoto</b>
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-coluna footer-coluna-logo">
+        <div class="footer-logo">
+          <div class="footer-logo-icon">
+            <img src="assets/logo/header-icon-48.png" alt="MeuVoto" width="48" height="48">
+          </div>
+          <div class="footer-logo-texto">MeuVoto</div>
         </div>
-        <p class="muted" style="margin:12px 0">Plataforma de opinião e participação para um Brasil com mais transparência, voz e poder de voto real.</p>
-        <p style="color:var(--gold);font-weight:800;font-size:13px">"Meu voto coloca, meu voto tira."</p>
+        <p class="footer-descricao">Plataforma de opinião e participação para um Brasil com mais transparência, voz e poder de voto real.</p>
+        <p class="footer-slogan">"Meu voto coloca, meu voto tira."</p>
       </div>
-      <div>
+
+      <div class="footer-coluna">
         <h5>Eleições 2026</h5>
         <a href="pages/resultados-2026.html">Resultado do 1º Turno</a>
         <a href="#pesquisas">Pesquisas 2º Turno</a>
@@ -391,14 +517,16 @@
         <a href="pages/comparador.html">Comparar Candidatos</a>
         <a href="https://www.tse.jus.br" target="_blank" rel="noopener">Site oficial do TSE</a>
       </div>
-      <div>
+
+      <div class="footer-coluna">
         <h5>Navegar</h5>
         <a href="pages/parlamentares.html">Radar Político</a>
         <a href="pages/fundo-eleitoral.html">Fundo Eleitoral</a>
         <a href="pages/congresso.html">PLs no Congresso</a>
         <a href="#conferir-voto">Conferir Voto</a>
       </div>
-      <div>
+
+      <div class="footer-coluna">
         <h5>Institucional</h5>
         <a href="app/">📱 App de Votação</a>
         <a href="#quem-somos">Quem Somos</a>
@@ -406,13 +534,14 @@
         <a href="privacidade.html">Política de Privacidade</a>
       </div>
     </div>
-    <div class="fbot" style="flex-direction:column;gap:16px;text-align:center;">
-      <div style="font-size:12px;color:var(--muted);max-width:800px;margin:0 auto">
+
+    <div class="footer-info">
+      <div class="footer-disclaimer">
         <strong>Dados oficiais:</strong> Tribunal Superior Eleitoral (TSE) · Totalização concluída em 05/10/2026.<br>
         <strong>Pesquisas:</strong> Datafolha, Quaest, Futura, Ipec, Gerp, Indexa/Broadcast — registros oficiais no TSE.<br>
         Este site é um <strong>projeto cívico independente</strong>, sem vínculo com partidos, candidatos ou instituições oficiais.
       </div>
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;">
+      <div class="footer-copyright">
         <span>© 2026 MeuVoto · Projeto cidadão independente</span>
         <span>meu-voto.app</span>
       </div>
@@ -420,23 +549,20 @@
   </div>
 </footer>
 
-<!-- ============================================================
-     JAVASCRIPT — NOVO + RECUPERADO
-============================================================ -->
+<!-- ===== JAVASCRIPT ===== -->
 <script src="js/home-2026.js"></script>
 <script>
-// ===== FUNÇÕES RECUPERADAS DA HOME ANTIGA =====
-// (conferir voto, revogar, notícias, etc.)
+// ===== FUNÇÕES DA HOME =====
 
 // Conferir Voto (demo)
 function conferir() {
   const codigo = document.getElementById('chk').value.trim();
   const res = document.getElementById('chkRes');
   if (!codigo) {
-    res.innerHTML = '<div class="card" style="margin-top:14px;border-color:var(--red)"><p style="color:var(--red)"><i class="fa-solid fa-circle-exclamation"></i> Cole um código de verificação.</p></div>';
+    res.innerHTML = '<div class="card-voto card-voto-erro"><p><i class="fa-solid fa-circle-exclamation"></i> Cole um código de verificação.</p></div>';
     return;
   }
-  res.innerHTML = '<div class="card" style="margin-top:14px;border-color:var(--green)"><p style="color:var(--green)"><i class="fa-solid fa-check-circle"></i> Código válido! (demonstração)</p><p class="muted" style="margin-top:8px">Em produção, aqui apareceria o candidato em quem você votou.</p></div>';
+  res.innerHTML = '<div class="card-voto card-voto-sucesso"><p><i class="fa-solid fa-check-circle"></i> Código válido! (demonstração)</p><p class="muted">Em produção, aqui apareceria o candidato em quem você votou.</p></div>';
 }
 
 function usarDemo() {
@@ -465,7 +591,7 @@ async function nufSet(uf) {
     status.textContent = '';
     
     if (recentes.length === 0) {
-      container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)"><i class="fa-solid fa-newspaper"></i> Nenhuma notícia encontrada.</div>';
+      container.innerHTML = '<div class="noticias-vazio"><i class="fa-solid fa-newspaper"></i> Nenhuma notícia encontrada.</div>';
       return;
     }
     
@@ -480,24 +606,26 @@ async function nufSet(uf) {
       if (data) { try { dataFmt = new Date(data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }); } catch(e) {} }
       const tEsc = String(titulo).replace(/</g, '&lt;').replace(/>/g, '&gt;');
       const rEsc = String(resumo).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      return '<article class="ncard-new">' +
-        '<div class="nimg">' +
-          (imagem ? '<img src="' + imagem + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '<i class="fa-solid fa-newspaper nph"></i>') +
-          '<span class="nfonte">' + fonte + '</span>' +
-        '</div>' +
-        '<div class="nbody">' +
-          '<h4>' + tEsc + '</h4>' +
-          '<p>' + rEsc + '</p>' +
-          '<div class="nfoot">' +
-            '<span>' + dataFmt + '</span>' +
-            '<a href="' + link + '" target="_blank" rel="noopener">Ler mais <i class="fa-solid fa-arrow-right"></i></a>' +
-          '</div>' +
-        '</div>' +
-      '</article>';
+      return `
+        <article class="noticia-card">
+          <div class="noticia-imagem">
+            ${imagem ? `<img src="${imagem}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<i class="fa-solid fa-newspaper"></i>'}
+            <span class="noticia-fonte">${fonte}</span>
+          </div>
+          <div class="noticia-conteudo">
+            <h4>${tEsc}</h4>
+            <p>${rEsc}</p>
+            <div class="noticia-rodape">
+              <span>${dataFmt}</span>
+              <a href="${link}" target="_blank" rel="noopener">Ler mais <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+      `;
     }).join('');
   } catch (err) {
     status.textContent = 'Erro ao carregar notícias.';
-    container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--red)"><i class="fa-solid fa-circle-exclamation"></i> Erro ao carregar notícias.</div>';
+    container.innerHTML = '<div class="noticias-vazio noticias-erro"><i class="fa-solid fa-circle-exclamation"></i> Erro ao carregar notícias.</div>';
   }
 }
 
@@ -517,7 +645,6 @@ function ncarScroll(dir) {
     opt.textContent = uf;
     sel.appendChild(opt);
   });
-  // Carregar notícias nacionais por padrão
   if (typeof nufSet === 'function') nufSet('GERAL');
 })();
 </script>

@@ -1,0 +1,132 @@
+{
+  "eleicao": "Presidência da República",
+  "turno": 1,
+  "data_totalizacao": "05/10/2026",
+  "data_segundo_turno": "25/10/2026",
+  "metricas_gerais": {
+    "eleitores_aptos": 158745079,
+    "comparecimento": 125275835,
+    "percentual_comparecimento": 78.92,
+    "abstencao": 33469244,
+    "percentual_abstencao": 21.08,
+    "votos_validos": 119300788,
+    "percentual_validos": 95.23,
+    "votos_brancos": 2300798,
+    "percentual_brancos": 1.84,
+    "votos_nulos": 3674249,
+    "percentual_nulos": 2.93
+  },
+  "candidatos": [
+    {
+      "nome": "Flávio Bolsonaro",
+      "nome_urna": "Flávio Bolsonaro",
+      "partido": "PL",
+      "numero": 22,
+      "votos": 56104503,
+      "percentual": 47.03,
+      "situacao": "2º turno",
+      "vice": "A definir"
+    },
+    {
+      "nome": "Lula",
+      "nome_urna": "Lula",
+      "partido": "PT",
+      "numero": 13,
+      "votos": 53879538,
+      "percentual": 45.16,
+      "situacao": "2º turno",
+      "vice": "A definir"
+    },
+    {
+      "nome": "Augusto Cury",
+      "nome_urna": "Escritor Augusto Cury",
+      "partido": "Avante",
+      "numero": 70,
+      "votos": 3448569,
+      "percentual": 2.89,
+      "situacao": "Não eleito"
+    },
+    {
+      "nome": "Renan Santos",
+      "nome_urna": "Renan Santos",
+      "partido": "Missão",
+      "numero": 10,
+      "votos": 2675887,
+      "percentual": 2.24,
+      "situacao": "Não eleito"
+    },
+    {
+      "nome": "Ronaldo Caiado",
+      "nome_urna": "Ronaldo Caiado",
+      "partido": "PSD",
+      "numero": 55,
+      "votos": 2605148,
+      "percentual": 2.18,
+      "situacao": "Não eleito"
+    },
+    {
+      "nome": "Romeu Zema",
+      "nome_urna": "Zema",
+      "partido": "Novo",
+      "numero": 30,
+      "votos": 326488,
+      "percentual": 0.27,
+      "situacao": "Não eleito"
+    },
+    {
+      "nome": "Samara Martins",
+      "nome_urna": "Samara",
+      "partido": "UP",
+      "numero": 80,
+      "votos": 122911,
+      "percentual": 0.10,
+      "situacao": "Não eleito"
+    },
+    {
+      "nome": "Hertz Dias",
+      "nome_urna": "Hertz Dias",
+      "partido": "PSTU",
+      "numero": 16,
+      "votos": 43103,
+      "percentual": 0.04,
+      "situacao": "Não eleito"
+    },
+    {
+      "nome": "Clariana Barão",
+      "nome_urna": "Clariana Barão",
+      "partido": "DC",
+      "numero": 27,
+      "votos": 40043,
+      "percentual": 0.03,
+      "situacao": "Não eleito"
+    },
+    {
+      "nome": "Edmilson Costa",
+      "nome_urna": "Edmilson Costa",
+      "partido": "PCB",
+      "numero": 21,
+      "votos": 22693,
+      "percentual": 0.02,
+      "situacao": "Não eleito"
+    },
+    {
+      "nome": "Wilson Grassi",
+      "nome_urna": "Veterinário Wilson Grassi",
+      "partido": "Democrata",
+      "numero": 11,
+      "votos": 16881,
+      "percentual": 0.01,
+      "situacao": "Não eleito"
+    },
+    {
+      "nome": "Rui Costa Pimenta",
+      "nome_urna": "Rui Costa Pimenta",
+      "partido": "PCO",
+      "numero": 29,
+      "votos": 15024,
+      "percentual": 0.01,
+      "situacao": "Não eleito"
+    }
+  ],
+  "fonte": "Tribunal Superior Eleitoral (TSE) - Totalização Oficial concluída em 05/10/2026"
+}

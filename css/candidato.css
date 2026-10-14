@@ -1,0 +1,564 @@
+/* ============================================================
+   CANDIDATO / COMPARADOR — ESTILOS
+   ============================================================ */
+
+/* HERO DO CANDIDATO */
+.candidato-hero {
+  position: relative;
+  padding: 40px 20px 60px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.18);
+}
+
+.candidato-hero--azul {
+  background:
+    radial-gradient(ellipse at top right, rgba(59, 130, 246, 0.18), transparent 60%),
+    radial-gradient(ellipse at bottom left, rgba(30, 58, 138, 0.12), transparent 50%),
+    linear-gradient(180deg, #0E1726 0%, #16223A 100%);
+}
+
+.candidato-hero--vermelho {
+  background:
+    radial-gradient(ellipse at top right, rgba(239, 68, 68, 0.18), transparent 60%),
+    radial-gradient(ellipse at bottom left, rgba(185, 28, 28, 0.12), transparent 50%),
+    linear-gradient(180deg, #0E1726 0%, #16223A 100%);
+}
+
+.candidato-hero--neutro {
+  background:
+    radial-gradient(ellipse at top, rgba(212, 175, 55, 0.1), transparent 60%),
+    linear-gradient(180deg, #0E1726 0%, #16223A 100%);
+  text-align: center;
+}
+
+.candidato-hero-container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.candidato-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #8A9BA7;
+  font: 700 13px 'Manrope', sans-serif;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(22, 34, 58, 0.6);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.candidato-voltar:hover {
+  color: #FFD700;
+  border-color: rgba(212, 175, 55, 0.5);
+  transform: translateX(-2px);
+}
+
+.candidato-hero-conteudo {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.candidato-hero-avatar {
+  flex: 0 0 auto;
+}
+
+.candidato-avatar-iniciais {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font: 900 80px 'Montserrat', sans-serif;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 4px solid rgba(255, 215, 0, 0.35);
+}
+
+.candidato-hero-info {
+  flex: 1;
+  min-width: 280px;
+}
+
+.candidato-numero-grande {
+  font: 900 60px 'Montserrat', sans-serif;
+  color: rgba(255, 215, 0, 0.2);
+  line-height: 1;
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+
+.candidato-nome-grande {
+  font: 900 clamp(32px, 6vw, 52px) 'Montserrat', sans-serif;
+  color: #fff;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.candidato-partido-grande {
+  color: #D4AF37;
+  font: 700 18px 'Manrope', sans-serif;
+  margin: 0 0 4px;
+}
+
+.candidato-cargo-grande {
+  color: #8A9BA7;
+  font-size: 16px;
+  margin: 0 0 28px;
+}
+
+.candidato-stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-valor {
+  font: 900 24px 'Montserrat', sans-serif;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+  color: #8A9BA7;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* CONTEÚDO DO CANDIDATO */
+.candidato-conteudo {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.candidato-secao {
+  margin-bottom: 56px;
+}
+
+.candidato-secao-titulo {
+  font: 900 clamp(22px, 3.5vw, 30px) 'Montserrat', sans-serif;
+  color: #fff;
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.01em;
+}
+
+.candidato-secao-titulo i {
+  color: #D4AF37;
+  font-size: 0.85em;
+}
+
+.candidato-secao-descricao {
+  color: #8A9BA7;
+  font-size: 15px;
+  margin: 0 0 28px;
+}
+
+.candidato-card-conteudo {
+  background: linear-gradient(180deg, rgba(22, 34, 58, 0.8), rgba(14, 23, 38, 0.8));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 18px;
+  padding: 28px 32px;
+}
+
+.candidato-card-conteudo p {
+  color: #C8D5E7;
+  font-size: 15.5px;
+  line-height: 1.75;
+  margin: 0 0 14px;
+}
+
+.candidato-card-conteudo p:last-child {
+  margin-bottom: 0;
+}
+
+.candidato-disclaimer {
+  background: rgba(212, 175, 55, 0.08);
+  border-left: 3px solid #D4AF37;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 13.5px !important;
+  color: #D4AF37 !important;
+  margin-top: 20px !important;
+}
+
+.candidato-disclaimer i {
+  margin-right: 8px;
+}
+
+.candidato-disclaimer a {
+  color: #FFD700;
+  text-decoration: underline;
+}
+
+/* INFO GRID (vice e coligação) */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.info-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(14, 23, 38, 0.5);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.info-icone {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #D4AF37, #FFA500);
+  color: #1a1400;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex: 0 0 44px;
+}
+
+.info-rotulo {
+  display: block;
+  color: #8A9BA7;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
+}
+
+.info-valor {
+  color: #fff;
+  font: 700 15px 'Manrope', sans-serif;
+}
+
+/* PROPOSTAS */
+.propostas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.proposta-card {
+  background: linear-gradient(180deg, rgba(22, 34, 58, 0.8), rgba(14, 23, 38, 0.8));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 18px;
+  padding: 28px 26px;
+  transition: all 0.2s ease;
+}
+
+.proposta-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.proposta-icone {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.proposta-card h3 {
+  font: 900 20px 'Montserrat', sans-serif;
+  color: #fff;
+  margin: 0 0 16px;
+}
+
+.proposta-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.proposta-card li {
+  color: #C8D5E7;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 8px 0 8px 24px;
+  position: relative;
+  border-bottom: 1px dashed rgba(255, 215, 0, 0.1);
+}
+
+.proposta-card li:last-child {
+  border-bottom: none;
+}
+
+.proposta-card li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  color: #D4AF37;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+/* AÇÕES */
+.candidato-acoes {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* COMPARADOR */
+.comparador-titulo {
+  font: 900 clamp(28px, 5vw, 44px) 'Montserrat', sans-serif;
+  color: #fff;
+  margin: 24px 0 12px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.comparador-titulo i {
+  color: #D4AF37;
+}
+
+.comparador-subtitulo {
+  color: #8A9BA7;
+  font-size: 17px;
+  margin: 0 0 40px;
+}
+
+.comparador-conteudo {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.comparador-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.comparador-coluna {
+  background: linear-gradient(180deg, rgba(22, 34, 58, 0.8), rgba(14, 23, 38, 0.8));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 20px;
+  padding: 32px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.comparador-coluna::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.comparador-coluna--azul::before {
+  background: linear-gradient(90deg, #1E3A8A, #3B82F6, #60A5FA);
+}
+
+.comparador-coluna--vermelho::before {
+  background: linear-gradient(90deg, #7F1D1D, #B91C1C, #EF4444);
+}
+
+.comparador-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font: 900 42px 'Montserrat', sans-serif;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 3px solid rgba(255, 215, 0, 0.3);
+}
+
+.comparador-coluna h2 {
+  font: 900 clamp(22px, 3vw, 30px) 'Montserrat', sans-serif;
+  color: #fff;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+.comparador-partido {
+  color: #D4AF37;
+  font: 700 14px 'Manrope', sans-serif;
+  margin: 0 0 20px;
+}
+
+.comparador-stat {
+  background: rgba(14, 23, 38, 0.6);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.comparador-stat-valor {
+  font: 900 28px 'Montserrat', sans-serif;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.comparador-stat-label {
+  color: #8A9BA7;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* TABELA DE COMPARAÇÃO */
+.comparador-tabela {
+  background: linear-gradient(180deg, rgba(22, 34, 58, 0.8), rgba(14, 23, 38, 0.8));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.comparador-linha {
+  display: grid;
+  grid-template-columns: 220px 1fr 1fr;
+  gap: 20px;
+  padding: 20px 28px;
+  border-bottom: 1px dashed rgba(255, 215, 0, 0.12);
+  align-items: start;
+}
+
+.comparador-linha:last-child {
+  border-bottom: none;
+}
+
+.comparador-linha--secao {
+  background: rgba(14, 23, 38, 0.4);
+}
+
+.comparador-rotulo {
+  color: #D4AF37;
+  font: 800 14px 'Manrope', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comparador-rotulo i {
+  font-size: 16px;
+}
+
+.comparador-rotulo-secao {
+  color: #FFD700;
+  font: 900 13px 'Manrope', sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comparador-valor {
+  color: #C8D5E7;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 900px) {
+  .comparador-linha {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .comparador-rotulo,
+  .comparador-rotulo-secao {
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(255, 215, 0, 0.2);
+  }
+
+  .comparador-header-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .candidato-hero-conteudo {
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+  }
+
+  .candidato-avatar-iniciais {
+    width: 140px;
+    height: 140px;
+    font-size: 60px;
+  }
+
+  .candidato-stats {
+    justify-content: center;
+  }
+
+  .candidato-card-conteudo {
+    padding: 22px;
+  }
+
+  .candidato-secao {
+    margin-bottom: 40px;
+  }
+
+  .propostas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .candidato-acoes {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .candidato-acoes .btn-comparador-grande {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .comparador-coluna {
+    padding: 24px 20px;
+  }
+
+  .comparador-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 36px;
+  }
+}

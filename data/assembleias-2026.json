@@ -1,0 +1,144 @@
+{
+  "eleicao": "Assembleias Legislativas",
+  "ano": 2026,
+  "data_totalizacao": "05/10/2026",
+  "observacao": "Dados resumidos por estado. Para composição completa das assembleias, consulte os TREs estaduais.",
+  "resumo_por_estado": {
+    "AC": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "AL": {
+      "total_cadeiras": 27,
+      "maior_bancada": "PSDB",
+      "deputado_mais_votado": null
+    },
+    "AM": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "AP": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PSD",
+      "deputado_mais_votado": null
+    },
+    "BA": {
+      "total_cadeiras": 63,
+      "maior_bancada": "PT",
+      "deputado_mais_votado": null
+    },
+    "CE": {
+      "total_cadeiras": 42,
+      "maior_bancada": "PT",
+      "deputado_mais_votado": null
+    },
+    "DF": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "ES": {
+      "total_cadeiras": 30,
+      "maior_bancada": "Republicanos",
+      "deputado_mais_votado": null
+    },
+    "GO": {
+      "total_cadeiras": 41,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "MA": {
+      "total_cadeiras": 42,
+      "maior_bancada": "PSD",
+      "deputado_mais_votado": null
+    },
+    "MG": {
+      "total_cadeiras": 77,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "MS": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "MT": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "PA": {
+      "total_cadeiras": 41,
+      "maior_bancada": "MDB",
+      "deputado_mais_votado": null
+    },
+    "PB": {
+      "total_cadeiras": 36,
+      "maior_bancada": "PP",
+      "deputado_mais_votado": null
+    },
+    "PE": {
+      "total_cadeiras": 49,
+      "maior_bancada": "PSD",
+      "deputado_mais_votado": null
+    },
+    "PI": {
+      "total_cadeiras": 30,
+      "maior_bancada": "PT",
+      "deputado_mais_votado": null
+    },
+    "PR": {
+      "total_cadeiras": 54,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "RJ": {
+      "total_cadeiras": 70,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "RN": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PT",
+      "deputado_mais_votado": null
+    },
+    "RO": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "RR": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "RS": {
+      "total_cadeiras": 55,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "SC": {
+      "total_cadeiras": 40,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "SE": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PSD",
+      "deputado_mais_votado": null
+    },
+    "SP": {
+      "total_cadeiras": 94,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    },
+    "TO": {
+      "total_cadeiras": 24,
+      "maior_bancada": "PL",
+      "deputado_mais_votado": null
+    }
+  },
+  "fonte": "Totalização do TSE - dados completos pendentes"
+}

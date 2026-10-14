@@ -1,0 +1,98 @@
+{
+  "eleicao": "Presidência da República",
+  "turno": 2,
+  "data_segundo_turno": "25/10/2026",
+  "pesquisas": [
+    {
+      "instituto": "Datafolha",
+      "data": "08/10/2026",
+      "registro_tse": "BR-08729/2026",
+      "contratante": "Folha de S.Paulo",
+      "amostra": 2520,
+      "margem_erro": 2.0,
+      "espontanea": {
+        "Flávio Bolsonaro": 49,
+        "Lula": 45,
+        "Brancos/Nulos/Nenhum": 5,
+        "Não sabe": 1
+      },
+      "votos_validos": {
+        "Flávio Bolsonaro": 52,
+        "Lula": 48
+      },
+      "status": "divulgada"
+    },
+    {
+      "instituto": "Quaest",
+      "data": "14/10/2026",
+      "registro_tse": "BR-08855/2026",
+      "contratante": "Grupo Globo",
+      "amostra": 2020,
+      "margem_erro": 2.0,
+      "espontanea": null,
+      "votos_validos": null,
+      "status": "em divulgação"
+    },
+    {
+      "instituto": "Futura",
+      "data": "13/10/2026",
+      "registro_tse": "BR-09102/2026",
+      "contratante": "CNN Brasil",
+      "amostra": 1800,
+      "margem_erro": 2.3,
+      "espontanea": null,
+      "votos_validos": null,
+      "status": "em divulgação"
+    },
+    {
+      "instituto": "Ipec",
+      "data": "Em breve",
+      "registro_tse": "Aguardando registro",
+      "contratante": "TV Globo",
+      "amostra": null,
+      "margem_erro": null,
+      "espontanea": null,
+      "votos_validos": null,
+      "status": "em campo"
+    },
+    {
+      "instituto": "Gerp",
+      "data": "13/10/2026",
+      "registro_tse": "BR-09187/2026",
+      "contratante": "Independente",
+      "amostra": 2000,
+      "margem_erro": 2.2,
+      "espontanea": {
+        "Flávio Bolsonaro": 50,
+        "Lula": 43,
+        "Brancos/Nulos/Nenhum": 5,
+        "Não sabe": 2
+      },
+      "votos_validos": {
+        "Flávio Bolsonaro": 55,
+        "Lula": 45
+      },
+      "status": "divulgada"
+    },
+    {
+      "instituto": "Indexa/Broadcast",
+      "data": "11/10/2026",
+      "registro_tse": "BR-08950/2026",
+      "contratante": "Estadão Broadcast",
+      "amostra": 2500,
+      "margem_erro": 2.0,
+      "espontanea": {
+        "Lula": 46,
+        "Flávio Bolsonaro": 41,
+        "Brancos/Nulos/Nenhum": 10,
+        "Não sabe": 3
+      },
+      "votos_validos": {
+        "Lula": 53,
+        "Flávio Bolsonaro": 47
+      },
+      "status": "divulgada"
+    }
+  ],
+  "fonte": "Registros oficiais de pesquisas eleitorais no TSE"
+}
