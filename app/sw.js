@@ -3,7 +3,7 @@ const ASSETS = [
   './',
   './index.html',
   '/manifest.json',
-  './logo-hd.png',
+  './assets/logo/logo-meuvoto.png',
   './icon.png'
 ];
 

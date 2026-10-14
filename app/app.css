@@ -14,6 +14,7 @@ body{padding-bottom:90px}
 /* HEADER */
 header{position:sticky;top:0;background:var(--navy);padding:14px 16px;z-index:100;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between}
 .logo{display:flex;align-items:center;gap:10px}
+.logo img{height:44px;width:auto;max-width:180px;object-fit:contain}
 .logo-icon{width:36px;height:36px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--white);font-weight:900;font-size:.85rem}
 .logo-text{font-size:1.15rem;font-weight:800;color:var(--white)}
 .header-right{display:flex;align-items:center;gap:10px}

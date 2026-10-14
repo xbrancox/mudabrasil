@@ -1,7 +1,7 @@
 {
     "theme_color": "#061a3a",
-    "name": "VotaBrasil",
-    "short_name": "VotaBrasil",
+    "name": "MeuVoto",
+    "short_name": "MeuVoto",
     "description": "Plataforma cívica de participação e acompanhamento parlamentar. Meu voto coloca, meu voto tira.",
     "display": "standalone",
     "background_color": "#061a3a",
@@ -11,14 +11,20 @@
         {
             "type": "image/png",
             "sizes": "512x512",
-            "src": "/logo-hd.png",
+            "src": "/assets/logo/icon-512x512.png",
             "purpose": "any maskable"
         },
         {
             "type": "image/png",
             "sizes": "192x192",
-            "src": "/logo-hd.png",
+            "src": "/assets/logo/icon-192x192.png",
             "purpose": "any"
+        },
+        {
+            "type": "image/png",
+            "sizes": "512x512",
+            "src": "/assets/logo/icon-white-512x512.png",
+            "purpose": "maskable"
         }
     ],
     "lang": "pt-BR",

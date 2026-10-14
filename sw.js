@@ -4,7 +4,7 @@ var PRE = [
   './', './index.html', './config.local.js', 
   './js/cache.js', './js/offline.js', './js/push-notifications.js',
   './js/site-header.js', './js/shared-ui.js',
-  './icon.svg', './logo.svg', './og-image.png',
+  './icon.svg', './assets/logo/logo-meuvoto.png', './og-image.png',
   './offline.html',
   './pages/digest.html', './pages/digest-confirm.html', './pages/iniciativa-cidada.html',
   './css/main.css', './css/design-system.css'
