@@ -41,8 +41,8 @@
     '#mbtopo .mnav a{color:#eaf1fb;text-decoration:none;padding:11px 8px;border-bottom:1px dashed rgba(127,176,245,0.15);font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:color 0.2s ease}',
     '#mbtopo .mnav a:hover{color:#FFD700;padding-left:12px}',
     '@media(max-width:1180px){#mbtopo nav{display:none}#mbtopo .ham{display:block}}',
-    '#mbtopo .lg img{height:64px;width:64px;object-fit:contain}',
-    '@media(max-width:640px){#mbtopo .lg img{height:40px!important;width:40px!important}#mbtopo .lg b{font-size:15px!important}#mbtopo .lg .mv-slogan{font-size:0.6rem!important}}'
+    '#mbtopo .lg img{height:48px;width:48px;object-fit:contain}',
+    '@media(max-width:640px){#mbtopo .lg img{height:36px!important;width:36px!important}#mbtopo .lg b{font-size:15px!important}#mbtopo .lg .mv-slogan{font-size:0.6rem!important}}'
   ].join('\n');
 
   var ITENS = [
@@ -103,7 +103,7 @@
     topo.id = 'mbtopo';
     topo.innerHTML =
       '<header>' +
-      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'assets/logo/icon-64x64.png" alt="MeuVoto" width="64" height="64" style="border-radius:16px;object-fit:contain;display:block"></span><span><b>MeuVoto</b><span class="mv-slogan">Meu voto coloca, meu voto tira.</span></span></a>' +
+      ' <a class="lg" href="' + R + 'index.html"><span class="ic"><img src="' + R + 'assets/logo/header-icon-48.png" alt="MeuVoto" width="48" height="48" style="border-radius:12px;object-fit:contain;display:block"></span><span><b>MeuVoto</b><span class="mv-slogan">Meu voto coloca, meu voto tira.</span></span></a>' +
       ' <button class="ham" aria-label="Menu" onclick="document.getElementById(\'mbtopo-mnav\').classList.toggle(\'open\')"><i class="fa-solid fa-bars"></i></button>' +
       ' <nav>' + nav + '</nav>' +
       ' <div class="hact"><span class="hbadge" id="mbtopo-badge" hidden>conectando\u2026</span>' +

@@ -36,7 +36,7 @@
 - [x] **VAPID Keys**: Configuradas para push notifications
 - [x] **Digest Secret**: Configurado para worker
 - [x] **CORS**: Configurado para aceitar requisições do frontend
-- [ ] **SMTP configurado**: Variáveis SMTP_* setadas no Railway
+- [x] **SMTP configurado**: Variáveis SMTP_* setadas no Railway (modo dev desativado; credenciais necessárias)
 - [ ] **Teste de envio**: Enviar e-mail de teste do digest
 - [ ] **Monitoramento**: Logs do Railway acessíveis
 

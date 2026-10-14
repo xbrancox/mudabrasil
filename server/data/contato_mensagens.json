@@ -1,0 +1,43 @@
+{
+  "mensagens": [
+    {
+      "id": "msg-6fdbec693585c875",
+      "protocolo": "MV-CONTATO-2026-115197",
+      "nome": "Teste",
+      "email": "teste@example.com",
+      "assunto": "Teste de SMTP",
+      "mensagem": "Esta é uma mensagem de teste do sistema MeuVota.",
+      "ip": null,
+      "userAgent": null,
+      "lida": false,
+      "createdAt": 1791902694033,
+      "createdAtISO": "2026-10-13T14:44:54.033Z"
+    },
+    {
+      "id": "msg-9652cc4ba2a6c321",
+      "protocolo": "MV-CONTATO-2026-413586",
+      "nome": "João Silva",
+      "email": "joao@exemplo.com",
+      "assunto": "Teste de contato via SMTP",
+      "mensagem": "Esta é uma mensagem de teste para verificar se o envio de e-mails está funcionando corretamente.",
+      "ip": null,
+      "userAgent": null,
+      "lida": false,
+      "createdAt": 1791902807829,
+      "createdAtISO": "2026-10-13T14:46:47.829Z"
+    },
+    {
+      "id": "msg-30967f6477c4ff2e",
+      "protocolo": "MV-CONTATO-2026-562316",
+      "nome": "João Silva",
+      "email": "joao@exemplo.com",
+      "assunto": "Teste de contato via Gmail SMTP",
+      "mensagem": "Esta é uma mensagem de teste para verificar o envio de e-mails pelo formulário de contato.",
+      "ip": null,
+      "userAgent": null,
+      "lida": false,
+      "createdAt": 1791902838048,
+      "createdAtISO": "2026-10-13T14:47:18.048Z"
+    }
+  ]
+}
