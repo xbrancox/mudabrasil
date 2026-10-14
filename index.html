@@ -452,6 +452,7 @@
 
       <div class="footer-coluna">
         <h5>Institucional</h5>
+        <a href="pages/meu-voto.html">Quem Somos</a>
         <a href="app/">📱 App de Votação</a>
         <a href="termos.html">Termos de Uso</a>
         <a href="privacidade.html">Política de Privacidade</a>
@@ -527,7 +528,9 @@ async function nufSet(uf) {
       const link = n.l || n.link || n.url || '#';
       const fonte = n.fonte || n.source || 'Fonte';
       const data = n.dt || n.pubDate || n.data || '';
-      const imagem = n.thumb || n.imagem || n.image || '';
+      const imagemOriginal = n.thumb || n.imagem || n.image || '';
+      const FALLBACK = 'images/noticia-fallback.svg';
+      const imagem = imagemOriginal || FALLBACK;
       let dataFmt = '';
       if (data) { try { dataFmt = new Date(data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }); } catch(e) {} }
       const tEsc = String(titulo).replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -535,7 +538,7 @@ async function nufSet(uf) {
       return `
         <article class="noticia-card">
           <div class="noticia-imagem">
-            ${imagem ? `<img src="${imagem}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<i class="fa-solid fa-newspaper"></i>'}
+            <img src="${imagem}" alt="${tEsc}" loading="lazy" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='${FALLBACK}';}">
             <span class="noticia-fonte">${fonte}</span>
           </div>
           <div class="noticia-conteudo">
