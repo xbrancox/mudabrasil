@@ -480,6 +480,9 @@ async function handleApi(req, res, url) {
       if (ano) lista = lista.filter(c => !c.ano || String(c.ano) === String(ano));
       if (q.cargo) lista = lista.filter(c => String(c.cargo) === String(q.cargo));
       if (q.uf) lista = lista.filter(c => c.uf === q.uf);
+      if (q.segundoTurno === "true" || q.segundoTurno === "1") {
+        lista = lista.filter(c => c.segundoTurno === true);
+      }
       if (q.situacao) {
         const sitUpper = String(q.situacao).toUpperCase();
         lista = lista.filter(c => {
